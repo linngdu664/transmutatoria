@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "transmutatoria:block/transmutation_crucible"
+    },
+    "facing=south": {
+      "model": "transmutatoria:block/transmutation_crucible",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "transmutatoria:block/transmutation_crucible",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "transmutatoria:block/transmutation_crucible",
+      "y": 90
+    }
+  }
+}

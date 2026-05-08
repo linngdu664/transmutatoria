@@ -1,5 +1,7 @@
 package com.linngdu664.transmutatoria;
 
+import com.linngdu664.transmutatoria.init.InitBlocks;
+import com.linngdu664.transmutatoria.init.InitItems;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -70,11 +72,14 @@ public class ArsTransmutatoria {
         modEventBus.addListener(this::commonSetup);
 
         // Register the Deferred Register to the mod event bus so blocks get registered
-        BLOCKS.register(modEventBus);
+//        BLOCKS.register(modEventBus);
+        InitBlocks.BLOCKS.register(modEventBus);
+        InitItems.ITEMS.register(modEventBus);
+        InitItems.TABS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
-        ITEMS.register(modEventBus);
+//        ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
-        CREATIVE_MODE_TABS.register(modEventBus);
+//        CREATIVE_MODE_TABS.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (ArsTransmutatoria) to respond directly to events.
@@ -82,7 +87,7 @@ public class ArsTransmutatoria {
         NeoForge.EVENT_BUS.register(this);
 
         // Register the item to a creative tab
-        modEventBus.addListener(this::addCreative);
+//        modEventBus.addListener(this::addCreative);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -102,11 +107,11 @@ public class ArsTransmutatoria {
     }
 
     // Add the example block item to the building blocks tab
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
-            event.accept(EXAMPLE_BLOCK_ITEM);
-        }
-    }
+//    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+//        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
+//            event.accept(EXAMPLE_BLOCK_ITEM);
+//        }
+//    }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
