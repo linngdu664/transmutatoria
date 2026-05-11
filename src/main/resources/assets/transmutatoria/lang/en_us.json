@@ -1,13 +1,96 @@
 {
   "itemGroup.transmutatoria": "Transmutatoria",
-  "block.transmutatoria.example_block": "Example Block",
-  "item.transmutatoria.example_item": "Example Item",
+  "block.transmutatoria.transmutation_crucible": "Transmutation Crucible",
+  "item.transmutatoria.transmutation_crystal": "Transmutation Crystal",
+  "item.transmutatoria.alchemical_dross": "Alchemical Dross",
+  "block.transmutatoria.alchemical_dross_block": "Alchemical Dross Block",
 
-  "transmutatoria.configuration.title": "Ars Transmutatoria Configs",
-  "transmutatoria.configuration.section.transmutatoria.common.toml": "Ars Transmutatoria Configs",
-  "transmutatoria.configuration.section.transmutatoria.common.toml.title": "Ars Transmutatoria Configs",
-  "transmutatoria.configuration.items": "Item List",
-  "transmutatoria.configuration.logDirtBlock": "Log Dirt Block",
-  "transmutatoria.configuration.magicNumberIntroduction": "Magic Number Text",
-  "transmutatoria.configuration.magicNumber": "Magic Number"
+  "item.transmutatoria.eclipsium": "Eclipsium",
+  "item.transmutatoria.nigredo_tainted_eclipsium": "Nigredo-tainted Eclipsium",
+  "item.transmutatoria.albedo_infused_eclipsium": "Albedo-infused Eclipsium",
+  "item.transmutatoria.citrinitas_infused_eclipsium": "Citrinitas-infused Eclipsium",
+
+  "item.transmutatoria.lunargent": "Lunargent",
+  "item.transmutatoria.nigredo_tainted_lunargent": "Nigredo-tainted Lunargent",
+  "item.transmutatoria.albedo_infused_lunargent": "Albedo-infused Lunargent",
+  "item.transmutatoria.citrinitas_infused_lunargent": "Citrinitas-infused Lunargent",
+
+  "item.transmutatoria.astrotite": "Astrotite",
+  "item.transmutatoria.nigredo_tainted_astrotite": "Nigredo-tainted Astrotite",
+  "item.transmutatoria.albedo_infused_astrotite": "Albedo-infused Astrotite",
+  "item.transmutatoria.citrinitas_infused_astrotite": "Citrinitas-infused Astrotite",
+
+  "item.transmutatoria.abyssion": "Abyssion",
+  "item.transmutatoria.nigredo_tainted_abyssion": "Nigredo-tainted Abyssion",
+  "item.transmutatoria.albedo_infused_abyssion": "Albedo-infused Abyssion",
+  "item.transmutatoria.citrinitas_infused_abyssion": "Citrinitas-infused Abyssion",
+
+  "item.transmutatoria.animercury": "Animercury",
+  "item.transmutatoria.nigredo_tainted_animercury": "Nigredo-tainted Animercury",
+  "item.transmutatoria.albedo_infused_animercury": "Albedo-infused Animercury",
+  "item.transmutatoria.citrinitas_infused_animercury": "Citrinitas-infused Animercury",
+
+  "item.transmutatoria.necroplumb": "Necroplumb",
+  "item.transmutatoria.nigredo_tainted_necroplumb": "Nigredo-tainted Necroplumb",
+  "item.transmutatoria.albedo_infused_necroplumb": "Albedo-infused Necroplumb",
+  "item.transmutatoria.citrinitas_infused_necroplumb": "Citrinitas-infused Necroplumb",
+
+  "item.transmutatoria.sanguibronze": "Sanguibronze",
+  "item.transmutatoria.nigredo_tainted_sanguibronze": "Nigredo-tainted Sanguibronze",
+  "item.transmutatoria.albedo_infused_sanguibronze": "Albedo-infused Sanguibronze",
+  "item.transmutatoria.citrinitas_infused_sanguibronze": "Citrinitas-infused Sanguibronze",
+
+  "item.transmutatoria.venotite": "Venotite",
+  "item.transmutatoria.nigredo_tainted_venotite": "Nigredo-tainted Venotite",
+  "item.transmutatoria.albedo_infused_venotite": "Albedo-infused Venotite",
+  "item.transmutatoria.citrinitas_infused_venotite": "Citrinitas-infused Venotite",
+
+  "item.transmutatoria.ossantimony": "Ossantimony",
+  "item.transmutatoria.nigredo_tainted_ossantimony": "Nigredo-tainted Ossantimony",
+  "item.transmutatoria.albedo_infused_ossantimony": "Albedo-infused Ossantimony",
+  "item.transmutatoria.citrinitas_infused_ossantimony": "Citrinitas-infused Ossantimony",
+
+  "item.transmutatoria.fulgurzinc": "Fulgurzinc",
+  "item.transmutatoria.nigredo_tainted_fulgurzinc": "Nigredo-tainted Fulgurzinc",
+  "item.transmutatoria.albedo_infused_fulgurzinc": "Albedo-infused Fulgurzinc",
+  "item.transmutatoria.citrinitas_infused_fulgurzinc": "Citrinitas-infused Fulgurzinc",
+
+  "item.transmutatoria.chronoplatinum": "Chronoplatinum",
+  "item.transmutatoria.nigredo_tainted_chronoplatinum": "Nigredo-tainted Chronoplatinum",
+  "item.transmutatoria.albedo_infused_chronoplatinum": "Albedo-infused Chronoplatinum",
+  "item.transmutatoria.citrinitas_infused_chronoplatinum": "Citrinitas-infused Chronoplatinum",
+
+  "item.transmutatoria.pandemonium": "Pandemonium",
+  "item.transmutatoria.nigredo_tainted_pandemonium": "Nigredo-tainted Pandemonium",
+  "item.transmutatoria.albedo_infused_pandemonium": "Albedo-infused Pandemonium",
+  "item.transmutatoria.citrinitas_infused_pandemonium": "Citrinitas-infused Pandemonium",
+
+  "item.transmutatoria.salic_matrix": "Salic Matrix",
+  "item.transmutatoria.mercurial_matrix": "Mercurial Matrix",
+  "item.transmutatoria.sulfuric_matrix": "Sulfuric Matrix",
+
+  "item.transmutatoria.prima_materia": "Prima Materia",
+  "item.transmutatoria.nigredo_essence": "Nigredo Essence",
+  "item.transmutatoria.albedo_essence": "Albedo Essence",
+  "item.transmutatoria.citrinitas_essence": "Citrinitas Essence",
+  "item.transmutatoria.rubedo_essence": "Rubedo Essence",
+  "item.transmutatoria.philosophers_stone": "Philosopher's Stone",
+
+  "item.transmutatoria.transmutation_sigil_scroll": "Transmutation Sigil Scroll",
+  "item.transmutatoria.activated_transmutation_sigil_scroll": "Activated Transmutation Sigil Scroll",
+  "item.transmutatoria.terrestrial_sigil_scroll": "Terrestrial Sigil Scroll",
+  "item.transmutatoria.activated_terrestrial_sigil_scroll": "Activated Terrestrial Sigil Scroll",
+  "item.transmutatoria.lunar_sigil_scroll": "Lunar Sigil Scroll",
+  "item.transmutatoria.activated_lunar_sigil_scroll": "Activated Lunar Sigil Scroll",
+  "item.transmutatoria.solar_sigil_scroll": "Solar Sigil Scroll",
+  "item.transmutatoria.activated_solar_sigil_scroll": "Activated Solar Sigil Scroll",
+
+  "item.transmutatoria.transmutation_equation_scroll": "Transmutation Equation Scroll",
+  "item.transmutatoria.activated_transmutation_equation_scroll": "Activated Transmutation Equation Scroll",
+  "item.transmutatoria.terrestrial_equation_scroll": "Terrestrial Equation Scroll",
+  "item.transmutatoria.activated_terrestrial_equation_scroll": "Activated Terrestrial Equation Scroll",
+  "item.transmutatoria.lunar_equation_scroll": "Lunar Equation Scroll",
+  "item.transmutatoria.activated_lunar_equation_scroll": "Activated Lunar Equation Scroll",
+  "item.transmutatoria.solar_equation_scroll": "Solar Equation Scroll",
+  "item.transmutatoria.activated_solar_equation_scroll": "Activated Solar Equation Scroll"
 }

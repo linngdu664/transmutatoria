@@ -1,0 +1,96 @@
+{
+  "itemGroup.transmutatoria": "混沌炼金",
+  "block.transmutatoria.transmutation_crucible": "混沌炼金锅",
+  "item.transmutatoria.transmutation_crystal": "嬗变结晶",
+  "item.transmutatoria.alchemical_dross": "残渣",
+  "block.transmutatoria.alchemical_dross_block": "残渣块",
+
+  "item.transmutatoria.eclipsium": "蚀日金",
+  "item.transmutatoria.nigredo_tainted_eclipsium": "黑化蚀日金",
+  "item.transmutatoria.albedo_infused_eclipsium": "白化蚀日金",
+  "item.transmutatoria.citrinitas_infused_eclipsium": "黄化蚀日金",
+
+  "item.transmutatoria.lunargent": "泣月银",
+  "item.transmutatoria.nigredo_tainted_lunargent": "黑化泣月银",
+  "item.transmutatoria.albedo_infused_lunargent": "白化泣月银",
+  "item.transmutatoria.citrinitas_infused_lunargent": "黄化泣月银",
+
+  "item.transmutatoria.astrotite": "灾星钛",
+  "item.transmutatoria.nigredo_tainted_astrotite": "黑化灾星钛",
+  "item.transmutatoria.albedo_infused_astrotite": "白化灾星钛",
+  "item.transmutatoria.citrinitas_infused_astrotite": "黄化灾星钛",
+
+  "item.transmutatoria.abyssion": "渊海钢",
+  "item.transmutatoria.nigredo_tainted_abyssion": "黑化渊海钢",
+  "item.transmutatoria.albedo_infused_abyssion": "白化渊海钢",
+  "item.transmutatoria.citrinitas_infused_abyssion": "黄化渊海钢",
+
+  "item.transmutatoria.animercury": "幻魂汞",
+  "item.transmutatoria.nigredo_tainted_animercury": "黑化幻魂汞",
+  "item.transmutatoria.albedo_infused_animercury": "白化幻魂汞",
+  "item.transmutatoria.citrinitas_infused_animercury": "黄化幻魂汞",
+
+  "item.transmutatoria.necroplumb": "冥沼铅",
+  "item.transmutatoria.nigredo_tainted_necroplumb": "黑化冥沼铅",
+  "item.transmutatoria.albedo_infused_necroplumb": "白化冥沼铅",
+  "item.transmutatoria.citrinitas_infused_necroplumb": "黄化冥沼铅",
+
+  "item.transmutatoria.sanguibronze": "棘血铜",
+  "item.transmutatoria.nigredo_tainted_sanguibronze": "黑化棘血铜",
+  "item.transmutatoria.albedo_infused_sanguibronze": "白化棘血铜",
+  "item.transmutatoria.citrinitas_infused_sanguibronze": "黄化棘血铜",
+
+  "item.transmutatoria.venotite": "鸩林锡",
+  "item.transmutatoria.nigredo_tainted_venotite": "黑化鸩林锡",
+  "item.transmutatoria.albedo_infused_venotite": "白化鸩林锡",
+  "item.transmutatoria.citrinitas_infused_venotite": "黄化鸩林锡",
+
+  "item.transmutatoria.ossantimony": "骸骨锑",
+  "item.transmutatoria.nigredo_tainted_ossantimony": "黑化骸骨锑",
+  "item.transmutatoria.albedo_infused_ossantimony": "白化骸骨锑",
+  "item.transmutatoria.citrinitas_infused_ossantimony": "黄化骸骨锑",
+
+  "item.transmutatoria.fulgurzinc": "怒雷锌",
+  "item.transmutatoria.nigredo_tainted_fulgurzinc": "黑化怒雷锌",
+  "item.transmutatoria.albedo_infused_fulgurzinc": "白化怒雷锌",
+  "item.transmutatoria.citrinitas_infused_fulgurzinc": "黄化怒雷锌",
+
+  "item.transmutatoria.chronoplatinum": "凝时铂",
+  "item.transmutatoria.nigredo_tainted_chronoplatinum": "黑化凝时铂",
+  "item.transmutatoria.albedo_infused_chronoplatinum": "白化凝时铂",
+  "item.transmutatoria.citrinitas_infused_chronoplatinum": "黄化凝时铂",
+
+  "item.transmutatoria.pandemonium": "无相源金",
+  "item.transmutatoria.nigredo_tainted_pandemonium": "黑化无相源金",
+  "item.transmutatoria.albedo_infused_pandemonium": "白化无相源金",
+  "item.transmutatoria.citrinitas_infused_pandemonium": "黄化无相源金",
+
+  "item.transmutatoria.salic_matrix": "盐化基质",
+  "item.transmutatoria.mercurial_matrix": "汞化基质",
+  "item.transmutatoria.sulfuric_matrix": "硫化基质",
+
+  "item.transmutatoria.prima_materia": "第一原质",
+  "item.transmutatoria.nigredo_essence": "黑化源质",
+  "item.transmutatoria.albedo_essence": "白化源质",
+  "item.transmutatoria.citrinitas_essence": "黄化源质",
+  "item.transmutatoria.rubedo_essence": "红化源质",
+  "item.transmutatoria.philosophers_stone": "贤者之石",
+
+  "item.transmutatoria.transmutation_sigil_scroll": "嬗变印记卷",
+  "item.transmutatoria.activated_transmutation_sigil_scroll": "活化嬗变印记卷",
+  "item.transmutatoria.terrestrial_sigil_scroll": "地相印记卷",
+  "item.transmutatoria.activated_terrestrial_sigil_scroll": "活化地相印记卷",
+  "item.transmutatoria.lunar_sigil_scroll": "月相印记卷",
+  "item.transmutatoria.activated_lunar_sigil_scroll": "活化月相印记卷",
+  "item.transmutatoria.solar_sigil_scroll": "日相印记卷",
+  "item.transmutatoria.activated_solar_sigil_scroll": "活化日相印记卷",
+
+  "item.transmutatoria.transmutation_equation_scroll": "嬗变方程卷",
+  "item.transmutatoria.activated_transmutation_equation_scroll": "活化嬗变方程卷",
+  "item.transmutatoria.terrestrial_equation_scroll": "地相方程卷",
+  "item.transmutatoria.activated_terrestrial_equation_scroll": "活化地相方程卷",
+  "item.transmutatoria.lunar_equation_scroll": "月相方程卷",
+  "item.transmutatoria.activated_lunar_equation_scroll": "活化月相方程卷",
+  "item.transmutatoria.solar_equation_scroll": "日相方程卷",
+  "item.transmutatoria.activated_solar_equation_scroll": "活化日相方程卷"
+}

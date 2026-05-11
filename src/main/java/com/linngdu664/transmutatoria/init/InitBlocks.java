@@ -11,6 +11,7 @@ import static com.linngdu664.transmutatoria.ArsTransmutatoria.MODID;
 public class InitBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     public static DeferredBlock<Block> TRANSMUTATION_CRUCIBLE = BLOCKS.register("transmutation_crucible", BlockTransmutationCrucible::new);
+    public static DeferredBlock<Block> ALCHEMICAL_DROSS_BLOCK = BLOCKS.registerSimpleBlock("alchemical_dross_block");
 //    public static DeferredBlock<Block> TRANSMUTATION_CRUCIBLE = BLOCKS.registerSimpleBlock("transmutation_crucible", p -> p.mapColor(MapColor.STONE));
 
 }
