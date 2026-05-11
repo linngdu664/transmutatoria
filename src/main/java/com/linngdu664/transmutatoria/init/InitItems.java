@@ -1,8 +1,11 @@
 package com.linngdu664.transmutatoria.init;
 
+import com.linngdu664.transmutatoria.item.EssenceMetal;
+import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
 import com.linngdu664.transmutatoria.item.ItemTransmutationCrucible;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,72 +25,72 @@ public class InitItems {
     // ================= [ 基础物品 ] =================
     public static DeferredItem<Item> TRANSMUTATION_CRYSTAL = ITEMS.registerSimpleItem("transmutation_crystal");
     public static DeferredItem<Item> ALCHEMICAL_DROSS = ITEMS.registerSimpleItem("alchemical_dross");
-    public static DeferredItem<Item> ALCHEMICAL_DROSS_BLOCK = ITEMS.registerSimpleItem("alchemical_dross_block");
+    public static DeferredItem<BlockItem> ALCHEMICAL_DROSS_BLOCK = ITEMS.registerSimpleBlockItem("alchemical_dross_block",InitBlocks.ALCHEMICAL_DROSS_BLOCK);
 
     // ================= [ 金属变体 (12种 x 4状态) ] =================
-    // 【星火】 蚀日金 / 泣月银 / 灾星钛
-    public static DeferredItem<Item> ECLIPSIUM = ITEMS.registerSimpleItem("eclipsium");
-    public static DeferredItem<Item> NIGREDO_TAINTED_ECLIPSIUM = ITEMS.registerSimpleItem("nigredo_tainted_eclipsium");
-    public static DeferredItem<Item> ALBEDO_INFUSED_ECLIPSIUM = ITEMS.registerSimpleItem("albedo_infused_eclipsium");
-    public static DeferredItem<Item> CITRINITAS_INFUSED_ECLIPSIUM = ITEMS.registerSimpleItem("citrinitas_infused_eclipsium");
+    // 【星火】 蚀日金 (A) / 泣月银 (B) / 灾星钛 (C)
+    public static DeferredItem<Item> ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, 0);
+    public static DeferredItem<Item> NIGREDO_TAINTED_ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, -1);
+    public static DeferredItem<Item> ALBEDO_INFUSED_ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, 1);
+    public static DeferredItem<Item> CITRINITAS_INFUSED_ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, 2);
 
-    public static DeferredItem<Item> LUNARGENT = ITEMS.registerSimpleItem("lunargent");
-    public static DeferredItem<Item> NIGREDO_TAINTED_LUNARGENT = ITEMS.registerSimpleItem("nigredo_tainted_lunargent");
-    public static DeferredItem<Item> ALBEDO_INFUSED_LUNARGENT = ITEMS.registerSimpleItem("albedo_infused_lunargent");
-    public static DeferredItem<Item> CITRINITAS_INFUSED_LUNARGENT = ITEMS.registerSimpleItem("citrinitas_infused_lunargent");
+    public static DeferredItem<Item> LUNARGENT = essenceMetalRegister(EssenceMetal.B, 0);
+    public static DeferredItem<Item> NIGREDO_TAINTED_LUNARGENT = essenceMetalRegister(EssenceMetal.B, -1);
+    public static DeferredItem<Item> ALBEDO_INFUSED_LUNARGENT = essenceMetalRegister(EssenceMetal.B, 1);
+    public static DeferredItem<Item> CITRINITAS_INFUSED_LUNARGENT = essenceMetalRegister(EssenceMetal.B, 2);
 
-    public static DeferredItem<Item> ASTROTITE = ITEMS.registerSimpleItem("astrotite");
-    public static DeferredItem<Item> NIGREDO_TAINTED_ASTROTITE = ITEMS.registerSimpleItem("nigredo_tainted_astrotite");
-    public static DeferredItem<Item> ALBEDO_INFUSED_ASTROTITE = ITEMS.registerSimpleItem("albedo_infused_astrotite");
-    public static DeferredItem<Item> CITRINITAS_INFUSED_ASTROTITE = ITEMS.registerSimpleItem("citrinitas_infused_astrotite");
+    public static DeferredItem<Item> ASTROTITE = essenceMetalRegister(EssenceMetal.C, 0);
+    public static DeferredItem<Item> NIGREDO_TAINTED_ASTROTITE = essenceMetalRegister(EssenceMetal.C, -1);
+    public static DeferredItem<Item> ALBEDO_INFUSED_ASTROTITE = essenceMetalRegister(EssenceMetal.C, 1);
+    public static DeferredItem<Item> CITRINITAS_INFUSED_ASTROTITE = essenceMetalRegister(EssenceMetal.C, 2);
 
-    // 【渊水】 渊海钢 / 幻魂汞 / 冥沼铅
-    public static DeferredItem<Item> ABYSSION = ITEMS.registerSimpleItem("abyssion");
-    public static DeferredItem<Item> NIGREDO_TAINTED_ABYSSION = ITEMS.registerSimpleItem("nigredo_tainted_abyssion");
-    public static DeferredItem<Item> ALBEDO_INFUSED_ABYSSION = ITEMS.registerSimpleItem("albedo_infused_abyssion");
-    public static DeferredItem<Item> CITRINITAS_INFUSED_ABYSSION = ITEMS.registerSimpleItem("citrinitas_infused_abyssion");
+    // 【渊水】 渊海钢 (D) / 幻魂汞 (E) / 冥沼铅 (F)
+    public static DeferredItem<Item> ABYSSION = essenceMetalRegister(EssenceMetal.D, 0);
+    public static DeferredItem<Item> NIGREDO_TAINTED_ABYSSION = essenceMetalRegister(EssenceMetal.D, -1);
+    public static DeferredItem<Item> ALBEDO_INFUSED_ABYSSION = essenceMetalRegister(EssenceMetal.D, 1);
+    public static DeferredItem<Item> CITRINITAS_INFUSED_ABYSSION = essenceMetalRegister(EssenceMetal.D, 2);
 
-    public static DeferredItem<Item> ANIMERCURY = ITEMS.registerSimpleItem("animercury");
-    public static DeferredItem<Item> NIGREDO_TAINTED_ANIMERCURY = ITEMS.registerSimpleItem("nigredo_tainted_animercury");
-    public static DeferredItem<Item> ALBEDO_INFUSED_ANIMERCURY = ITEMS.registerSimpleItem("albedo_infused_animercury");
-    public static DeferredItem<Item> CITRINITAS_INFUSED_ANIMERCURY = ITEMS.registerSimpleItem("citrinitas_infused_animercury");
+    public static DeferredItem<Item> ANIMERCURY = essenceMetalRegister(EssenceMetal.E, 0);
+    public static DeferredItem<Item> NIGREDO_TAINTED_ANIMERCURY = essenceMetalRegister(EssenceMetal.E, -1);
+    public static DeferredItem<Item> ALBEDO_INFUSED_ANIMERCURY = essenceMetalRegister(EssenceMetal.E, 1);
+    public static DeferredItem<Item> CITRINITAS_INFUSED_ANIMERCURY = essenceMetalRegister(EssenceMetal.E, 2);
 
-    public static DeferredItem<Item> NECROPLUMB = ITEMS.registerSimpleItem("necroplumb");
-    public static DeferredItem<Item> NIGREDO_TAINTED_NECROPLUMB = ITEMS.registerSimpleItem("nigredo_tainted_necroplumb");
-    public static DeferredItem<Item> ALBEDO_INFUSED_NECROPLUMB = ITEMS.registerSimpleItem("albedo_infused_necroplumb");
-    public static DeferredItem<Item> CITRINITAS_INFUSED_NECROPLUMB = ITEMS.registerSimpleItem("citrinitas_infused_necroplumb");
+    public static DeferredItem<Item> NECROPLUMB = essenceMetalRegister(EssenceMetal.F, 0);
+    public static DeferredItem<Item> NIGREDO_TAINTED_NECROPLUMB = essenceMetalRegister(EssenceMetal.F, -1);
+    public static DeferredItem<Item> ALBEDO_INFUSED_NECROPLUMB = essenceMetalRegister(EssenceMetal.F, 1);
+    public static DeferredItem<Item> CITRINITAS_INFUSED_NECROPLUMB = essenceMetalRegister(EssenceMetal.F, 2);
 
-    // 【腐土】 棘血铜 / 鸩林锡 / 骸骨锑
-    public static DeferredItem<Item> SANGUIBRONZE = ITEMS.registerSimpleItem("sanguibronze");
-    public static DeferredItem<Item> NIGREDO_TAINTED_SANGUIBRONZE = ITEMS.registerSimpleItem("nigredo_tainted_sanguibronze");
-    public static DeferredItem<Item> ALBEDO_INFUSED_SANGUIBRONZE = ITEMS.registerSimpleItem("albedo_infused_sanguibronze");
-    public static DeferredItem<Item> CITRINITAS_INFUSED_SANGUIBRONZE = ITEMS.registerSimpleItem("citrinitas_infused_sanguibronze");
+    // 【腐土】 棘血铜 (G) / 鸩林锡 (H) / 骸骨锑 (I)
+    public static DeferredItem<Item> SANGUIBRONZE = essenceMetalRegister(EssenceMetal.G, 0);
+    public static DeferredItem<Item> NIGREDO_TAINTED_SANGUIBRONZE = essenceMetalRegister(EssenceMetal.G, -1);
+    public static DeferredItem<Item> ALBEDO_INFUSED_SANGUIBRONZE = essenceMetalRegister(EssenceMetal.G, 1);
+    public static DeferredItem<Item> CITRINITAS_INFUSED_SANGUIBRONZE = essenceMetalRegister(EssenceMetal.G, 2);
 
-    public static DeferredItem<Item> VENOTITE = ITEMS.registerSimpleItem("venotite");
-    public static DeferredItem<Item> NIGREDO_TAINTED_VENOTITE = ITEMS.registerSimpleItem("nigredo_tainted_venotite");
-    public static DeferredItem<Item> ALBEDO_INFUSED_VENOTITE = ITEMS.registerSimpleItem("albedo_infused_venotite");
-    public static DeferredItem<Item> CITRINITAS_INFUSED_VENOTITE = ITEMS.registerSimpleItem("citrinitas_infused_venotite");
+    public static DeferredItem<Item> VENOTITE = essenceMetalRegister(EssenceMetal.H, 0);
+    public static DeferredItem<Item> NIGREDO_TAINTED_VENOTITE = essenceMetalRegister(EssenceMetal.H, -1);
+    public static DeferredItem<Item> ALBEDO_INFUSED_VENOTITE = essenceMetalRegister(EssenceMetal.H, 1);
+    public static DeferredItem<Item> CITRINITAS_INFUSED_VENOTITE = essenceMetalRegister(EssenceMetal.H, 2);
 
-    public static DeferredItem<Item> OSSANTIMONY = ITEMS.registerSimpleItem("ossantimony");
-    public static DeferredItem<Item> NIGREDO_TAINTED_OSSANTIMONY = ITEMS.registerSimpleItem("nigredo_tainted_ossantimony");
-    public static DeferredItem<Item> ALBEDO_INFUSED_OSSANTIMONY = ITEMS.registerSimpleItem("albedo_infused_ossantimony");
-    public static DeferredItem<Item> CITRINITAS_INFUSED_OSSANTIMONY = ITEMS.registerSimpleItem("citrinitas_infused_ossantimony");
+    public static DeferredItem<Item> OSSANTIMONY = essenceMetalRegister(EssenceMetal.I, 0);
+    public static DeferredItem<Item> NIGREDO_TAINTED_OSSANTIMONY = essenceMetalRegister(EssenceMetal.I, -1);
+    public static DeferredItem<Item> ALBEDO_INFUSED_OSSANTIMONY = essenceMetalRegister(EssenceMetal.I, 1);
+    public static DeferredItem<Item> CITRINITAS_INFUSED_OSSANTIMONY = essenceMetalRegister(EssenceMetal.I, 2);
 
-    // 【劫风】 怒雷锌 / 凝时铂 / 无相源金
-    public static DeferredItem<Item> FULGURZINC = ITEMS.registerSimpleItem("fulgurzinc");
-    public static DeferredItem<Item> NIGREDO_TAINTED_FULGURZINC = ITEMS.registerSimpleItem("nigredo_tainted_fulgurzinc");
-    public static DeferredItem<Item> ALBEDO_INFUSED_FULGURZINC = ITEMS.registerSimpleItem("albedo_infused_fulgurzinc");
-    public static DeferredItem<Item> CITRINITAS_INFUSED_FULGURZINC = ITEMS.registerSimpleItem("citrinitas_infused_fulgurzinc");
+    // 【劫风】 怒雷锌 (J) / 凝时铂 (K) / 无相源金 (L)
+    public static DeferredItem<Item> FULGURZINC = essenceMetalRegister(EssenceMetal.J, 0);
+    public static DeferredItem<Item> NIGREDO_TAINTED_FULGURZINC = essenceMetalRegister(EssenceMetal.J, -1);
+    public static DeferredItem<Item> ALBEDO_INFUSED_FULGURZINC = essenceMetalRegister(EssenceMetal.J, 1);
+    public static DeferredItem<Item> CITRINITAS_INFUSED_FULGURZINC = essenceMetalRegister(EssenceMetal.J, 2);
 
-    public static DeferredItem<Item> CHRONOPLATINUM = ITEMS.registerSimpleItem("chronoplatinum");
-    public static DeferredItem<Item> NIGREDO_TAINTED_CHRONOPLATINUM = ITEMS.registerSimpleItem("nigredo_tainted_chronoplatinum");
-    public static DeferredItem<Item> ALBEDO_INFUSED_CHRONOPLATINUM = ITEMS.registerSimpleItem("albedo_infused_chronoplatinum");
-    public static DeferredItem<Item> CITRINITAS_INFUSED_CHRONOPLATINUM = ITEMS.registerSimpleItem("citrinitas_infused_chronoplatinum");
+    public static DeferredItem<Item> CHRONOPLATINUM = essenceMetalRegister(EssenceMetal.K, 0);
+    public static DeferredItem<Item> NIGREDO_TAINTED_CHRONOPLATINUM = essenceMetalRegister(EssenceMetal.K, -1);
+    public static DeferredItem<Item> ALBEDO_INFUSED_CHRONOPLATINUM = essenceMetalRegister(EssenceMetal.K, 1);
+    public static DeferredItem<Item> CITRINITAS_INFUSED_CHRONOPLATINUM = essenceMetalRegister(EssenceMetal.K, 2);
 
-    public static DeferredItem<Item> PANDEMONIUM = ITEMS.registerSimpleItem("pandemonium");
-    public static DeferredItem<Item> NIGREDO_TAINTED_PANDEMONIUM = ITEMS.registerSimpleItem("nigredo_tainted_pandemonium");
-    public static DeferredItem<Item> ALBEDO_INFUSED_PANDEMONIUM = ITEMS.registerSimpleItem("albedo_infused_pandemonium");
-    public static DeferredItem<Item> CITRINITAS_INFUSED_PANDEMONIUM = ITEMS.registerSimpleItem("citrinitas_infused_pandemonium");
+    public static DeferredItem<Item> PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, 0);
+    public static DeferredItem<Item> NIGREDO_TAINTED_PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, -1);
+    public static DeferredItem<Item> ALBEDO_INFUSED_PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, 1);
+    public static DeferredItem<Item> CITRINITAS_INFUSED_PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, 2);
 
     // ================= [ 炼金基质 ] =================
     public static DeferredItem<Item> SALIC_MATRIX = ITEMS.registerSimpleItem("salic_matrix");
@@ -126,6 +129,10 @@ public class InitItems {
 
     public static DeferredItem<Item> SOLAR_EQUATION_SCROLL = ITEMS.registerSimpleItem("solar_equation_scroll");
     public static DeferredItem<Item> ACTIVATED_SOLAR_EQUATION_SCROLL = ITEMS.registerSimpleItem("activated_solar_equation_scroll");
+
+    public static DeferredItem<Item> essenceMetalRegister(EssenceMetal essenceMetal, int state){
+        return ITEMS.register(EssenceMetal.A.getKeyWithPrefix(state),()->new ItemEssenceMetal(essenceMetal, state));
+    }
 
 
     // ================= [ 创造模式物品栏注册 ] =================
