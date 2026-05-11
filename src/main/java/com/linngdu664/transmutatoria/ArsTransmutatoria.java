@@ -2,6 +2,7 @@ package com.linngdu664.transmutatoria;
 
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.init.InitItems;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -64,6 +65,9 @@ public class ArsTransmutatoria {
                 output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
             }).build());
 
+    public static Identifier makeMyIdentifier(String path) {
+        return Identifier.fromNamespaceAndPath(MODID, path);
+    }
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public ArsTransmutatoria(IEventBus modEventBus, ModContainer modContainer) {

@@ -29,6 +29,7 @@ public class InitItems {
 
     // ================= [ 金属变体 (12种 x 4状态) ] =================
     // 【星火】 蚀日金 (A) / 泣月银 (B) / 灾星钛 (C)
+//    public static DeferredItem<Item> ECLIPSIUM = ITEMS.register(EssenceMetal.A.getKeyWithPrefix(0),()->new ItemEssenceMetal(EssenceMetal.A, 0));
     public static DeferredItem<Item> ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, 0);
     public static DeferredItem<Item> NIGREDO_TAINTED_ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, -1);
     public static DeferredItem<Item> ALBEDO_INFUSED_ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, 1);
@@ -44,7 +45,7 @@ public class InitItems {
     public static DeferredItem<Item> ALBEDO_INFUSED_ASTROTITE = essenceMetalRegister(EssenceMetal.C, 1);
     public static DeferredItem<Item> CITRINITAS_INFUSED_ASTROTITE = essenceMetalRegister(EssenceMetal.C, 2);
 
-    // 【渊水】 渊海钢 (D) / 幻魂汞 (E) / 冥沼铅 (F)
+    //  【渊水】 渊海钢 (D) / 幻魂汞 (E) / 冥沼铅 (F)
     public static DeferredItem<Item> ABYSSION = essenceMetalRegister(EssenceMetal.D, 0);
     public static DeferredItem<Item> NIGREDO_TAINTED_ABYSSION = essenceMetalRegister(EssenceMetal.D, -1);
     public static DeferredItem<Item> ALBEDO_INFUSED_ABYSSION = essenceMetalRegister(EssenceMetal.D, 1);
@@ -131,7 +132,7 @@ public class InitItems {
     public static DeferredItem<Item> ACTIVATED_SOLAR_EQUATION_SCROLL = ITEMS.registerSimpleItem("activated_solar_equation_scroll");
 
     public static DeferredItem<Item> essenceMetalRegister(EssenceMetal essenceMetal, int state){
-        return ITEMS.register(EssenceMetal.A.getKeyWithPrefix(state),()->new ItemEssenceMetal(essenceMetal, state));
+        return ITEMS.register(essenceMetal.getKeyWithPrefix(state),()->new ItemEssenceMetal(essenceMetal, state));
     }
 
 
