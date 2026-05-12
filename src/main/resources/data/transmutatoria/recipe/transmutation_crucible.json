@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": "minecraft:gold_ingot",
+    "C": "minecraft:cauldron",
+    "X": "transmutatoria:transmutation_crystal"
+  },
+  "pattern": [
+    " # ",
+    "#C#",
+    " X "
+  ],
+  "result": {
+    "id": "transmutatoria:transmutation_crucible"
+  }
+}

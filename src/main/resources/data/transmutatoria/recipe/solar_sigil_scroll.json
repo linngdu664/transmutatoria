@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "transmutatoria:eclipsium",
+    "transmutatoria:sulfuric_matrix",
+    "minecraft:paper"
+  ],
+  "result": {
+    "id": "transmutatoria:solar_sigil_scroll"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "transmutatoria:catalyst_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "transmutatoria:pandemonium",
+    "transmutatoria:solar_equation_scroll"
+  ],
+  "catalysts": [
+    "transmutatoria:philosophers_stone"
+  ],
+  "result": {
+    "id": "transmutatoria:void_equation_scroll"
+  }
+}

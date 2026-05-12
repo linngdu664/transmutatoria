@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "transmutatoria:lunargent",
+    "transmutatoria:mercurial_matrix",
+    "minecraft:redstone"
+  ],
+  "result": {
+    "id": "transmutatoria:lunar_equation_scroll"
+  }
+}

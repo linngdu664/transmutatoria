@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "#transmutatoria:essence_metals",
+    "transmutatoria:transmutation_crystal",
+    "minecraft:paper"
+  ],
+  "result": {
+    "id": "transmutatoria:transmutation_sigil_scroll"
+  }
+}

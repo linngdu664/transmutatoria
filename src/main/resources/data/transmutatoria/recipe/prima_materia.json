@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": "minecraft:cobblestone",
+    "X": "transmutatoria:transmutation_crystal"
+  },
+  "pattern": [
+    " # ",
+    "#X#",
+    " # "
+  ],
+  "result": {
+    "id": "transmutatoria:prima_materia"
+  }
+}

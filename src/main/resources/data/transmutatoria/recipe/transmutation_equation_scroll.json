@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "#transmutatoria:essence_metals",
+    "transmutatoria:transmutation_crystal",
+    "minecraft:redstone"
+  ],
+  "result": {
+    "id": "transmutatoria:transmutation_equation_scroll"
+  }
+}

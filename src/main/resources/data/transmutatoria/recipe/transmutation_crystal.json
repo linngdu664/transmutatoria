@@ -1,0 +1,17 @@
+{
+  "type": "transmutatoria:catalyst_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:gunpowder",
+    "minecraft:redstone",
+    "minecraft:glowstone_dust",
+    "minecraft:water_bucket"
+  ],
+  "catalysts": [
+    "minecraft:emerald"
+  ],
+  "result": {
+    "id": "transmutatoria:transmutation_crystal",
+    "count": 3
+  }
+}

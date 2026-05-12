@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "transmutatoria:astrotite",
+    "transmutatoria:salic_matrix",
+    "minecraft:paper"
+  ],
+  "result": {
+    "id": "transmutatoria:terrestrial_sigil_scroll"
+  }
+}

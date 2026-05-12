@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "transmutatoria:eclipsium",
+    "transmutatoria:sulfuric_matrix",
+    "minecraft:redstone"
+  ],
+  "result": {
+    "id": "transmutatoria:solar_equation_scroll"
+  }
+}
