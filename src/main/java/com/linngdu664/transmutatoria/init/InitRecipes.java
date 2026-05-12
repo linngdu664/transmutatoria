@@ -1,5 +1,6 @@
-package com.linngdu664.transmutatoria.recipe;
+package com.linngdu664.transmutatoria.init;
 
+import com.linngdu664.transmutatoria.recipe.CatalystShapelessRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.registries.DeferredHolder;

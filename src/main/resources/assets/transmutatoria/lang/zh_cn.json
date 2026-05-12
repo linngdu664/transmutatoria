@@ -96,5 +96,7 @@
   "item.transmutatoria.solar_equation_scroll": "日相方程卷",
   "item.transmutatoria.activated_solar_equation_scroll": "活化日相方程卷",
   "item.transmutatoria.void_equation_scroll": "无相方程卷",
-  "item.transmutatoria.activated_void_equation_scroll": "活化无相方程卷"
+  "item.transmutatoria.activated_void_equation_scroll": "活化无相方程卷",
+
+  "jei.transmutatoria.catalyst_shapeless": "催化剂合成"
 }

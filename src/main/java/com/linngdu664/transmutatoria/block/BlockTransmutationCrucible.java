@@ -6,20 +6,28 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-public class BlockTransmutationCrucible extends HorizontalDirectionalBlock {
+public class BlockTransmutationCrucible extends HorizontalDirectionalBlock implements EntityBlock {
     protected static final VoxelShape NORTH_AABB = makeShape();
     protected static final VoxelShape SOUTH_AABB = rotateShape(Direction.SOUTH, Direction.NORTH, NORTH_AABB);
     protected static final VoxelShape EAST_AABB = rotateShape(Direction.SOUTH, Direction.EAST, NORTH_AABB);
@@ -35,9 +43,27 @@ public class BlockTransmutationCrucible extends HorizontalDirectionalBlock {
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH));
     }
+
     public BlockTransmutationCrucible(Properties properties) {
         super(properties);
     }
+
+    @Override
+    protected @NonNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (!level.isClientSide()) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof BlockEntityTransmutationCrucible crucible) {
+                player.openMenu(crucible);
+            }
+        }
+        return InteractionResult.SUCCESS_SERVER;
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new BlockEntityTransmutationCrucible(pos, state);
+    }
+
     private static VoxelShape rotateShape(Direction from, Direction to, VoxelShape shape) {
         VoxelShape[] buffer = new VoxelShape[]{shape, Shapes.empty()};
         int times = (to.ordinal() - from.get2DDataValue() + 4) % 4;
@@ -49,11 +75,13 @@ public class BlockTransmutationCrucible extends HorizontalDirectionalBlock {
         }
         return buffer[0];
     }
+
     private static VoxelShape makeShape() {
         VoxelShape shape = Shapes.empty();
         shape = Shapes.join(shape, Block.box(3, 0, 3, 13, 9, 13), BooleanOp.OR);
         return shape;
     }
+
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter worldIn,
                                BlockPos pos, CollisionContext context) {
@@ -73,6 +101,7 @@ public class BlockTransmutationCrucible extends HorizontalDirectionalBlock {
             }
         }
     }
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
@@ -82,6 +111,4 @@ public class BlockTransmutationCrucible extends HorizontalDirectionalBlock {
     protected @NonNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
     }
-
-
 }

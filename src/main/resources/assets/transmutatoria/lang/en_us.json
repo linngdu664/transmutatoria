@@ -96,5 +96,8 @@
   "item.transmutatoria.solar_equation_scroll": "Solar Equation Scroll",
   "item.transmutatoria.activated_solar_equation_scroll": "Activated Solar Equation Scroll",
   "item.transmutatoria.void_equation_scroll": "Void Equation Scroll",
-  "item.transmutatoria.activated_void_equation_scroll": "Activated Void Equation Scroll"
+  "item.transmutatoria.activated_void_equation_scroll": "Activated Void Equation Scroll",
+
+  "jei.transmutatoria.catalyst_shapeless": "Catalyst Crafting"
 }
+

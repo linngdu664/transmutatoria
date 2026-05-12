@@ -1,5 +1,6 @@
 package com.linngdu664.transmutatoria.recipe;
 
+import com.linngdu664.transmutatoria.init.InitRecipes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -94,6 +95,18 @@ public class CatalystShapelessRecipe implements CraftingRecipe {
     @Override
     public ItemStack assemble(CraftingInput input) {
         return result.create();
+    }
+
+    public ItemStackTemplate getResult() {
+        return result;
+    }
+
+    public NonNullList<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public NonNullList<Ingredient> getCatalysts() {
+        return catalysts;
     }
 
     @Override

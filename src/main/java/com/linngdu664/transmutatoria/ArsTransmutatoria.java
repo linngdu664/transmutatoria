@@ -2,7 +2,8 @@ package com.linngdu664.transmutatoria;
 
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.init.InitItems;
-import com.linngdu664.transmutatoria.recipe.InitRecipes;
+import com.linngdu664.transmutatoria.init.InitMenuTypes;
+import com.linngdu664.transmutatoria.init.InitRecipes;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 
@@ -11,16 +12,13 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -28,7 +26,6 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -78,8 +75,10 @@ public class ArsTransmutatoria {
         // Register the Deferred Register to the mod event bus so blocks get registered
 //        BLOCKS.register(modEventBus);
         InitBlocks.BLOCKS.register(modEventBus);
+        InitBlocks.BLOCK_ENTITIES.register(modEventBus);
         InitItems.ITEMS.register(modEventBus);
         InitItems.TABS.register(modEventBus);
+        InitMenuTypes.MENU_TYPES.register(modEventBus);
         InitRecipes.RECIPE_SERIALIZERS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
 //        ITEMS.register(modEventBus);
