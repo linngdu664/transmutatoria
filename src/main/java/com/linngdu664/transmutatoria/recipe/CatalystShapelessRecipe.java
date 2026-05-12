@@ -18,11 +18,11 @@ import java.util.List;
 public class CatalystShapelessRecipe implements CraftingRecipe {
     private final String group;
     private final CraftingBookCategory category;
-    private final ItemStack result;
+    private final ItemStackTemplate result;
     private final NonNullList<Ingredient> ingredients;
     private final NonNullList<Ingredient> catalysts;
 
-    public CatalystShapelessRecipe(String group, CraftingBookCategory category, ItemStack result,
+    public CatalystShapelessRecipe(String group, CraftingBookCategory category, ItemStackTemplate result,
                                    List<Ingredient> ingredients, List<Ingredient> catalysts) {
         this.group = group;
         this.category = category;
@@ -93,7 +93,7 @@ public class CatalystShapelessRecipe implements CraftingRecipe {
 
     @Override
     public ItemStack assemble(CraftingInput input) {
-        return result.copy();
+        return result.create();
     }
 
     @Override
@@ -134,7 +134,7 @@ public class CatalystShapelessRecipe implements CraftingRecipe {
     public static final MapCodec<CatalystShapelessRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.optionalFieldOf("group", "").forGetter(r -> r.group),
             CraftingBookCategory.CODEC.fieldOf("category").orElse(CraftingBookCategory.MISC).forGetter(r -> r.category),
-            ItemStack.CODEC.fieldOf("result").forGetter(r -> r.result),
+            ItemStackTemplate.CODEC.fieldOf("result").forGetter(r -> r.result),
             Ingredient.CODEC.listOf().fieldOf("ingredients").forGetter(r -> r.ingredients),
             Ingredient.CODEC.listOf().fieldOf("catalysts").forGetter(r -> r.catalysts)
     ).apply(instance, CatalystShapelessRecipe::new));
@@ -142,7 +142,7 @@ public class CatalystShapelessRecipe implements CraftingRecipe {
     public static final StreamCodec<RegistryFriendlyByteBuf, CatalystShapelessRecipe> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, r -> r.group,
             CraftingBookCategory.STREAM_CODEC, r -> r.category,
-            ItemStack.STREAM_CODEC, r -> r.result,
+            ItemStackTemplate.STREAM_CODEC, r -> r.result,
             Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()), r -> r.ingredients,
             Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()), r -> r.catalysts,
             CatalystShapelessRecipe::new

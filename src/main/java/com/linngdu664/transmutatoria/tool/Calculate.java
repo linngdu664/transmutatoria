@@ -1,5 +1,8 @@
 package com.linngdu664.transmutatoria.tool;
 
-public class Calculate {
+//import mezz.jei.api.JeiPlugin;
+//
+//@JeiPlugin
+public class Calculate{
 
 }
