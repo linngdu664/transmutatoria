@@ -3,6 +3,7 @@ package com.linngdu664.transmutatoria.init;
 import com.linngdu664.transmutatoria.item.EssenceMetal;
 import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
 import com.linngdu664.transmutatoria.item.ItemTransmutationCrucible;
+
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -119,6 +120,9 @@ public class InitItems {
     public static DeferredItem<Item> SOLAR_SIGIL_SCROLL = ITEMS.registerSimpleItem("solar_sigil_scroll");
     public static DeferredItem<Item> ACTIVATED_SOLAR_SIGIL_SCROLL = ITEMS.registerSimpleItem("activated_solar_sigil_scroll");
 
+    public static DeferredItem<Item> VOID_SIGIL_SCROLL = ITEMS.registerSimpleItem("void_sigil_scroll");
+    public static DeferredItem<Item> ACTIVATED_VOID_SIGIL_SCROLL = ITEMS.registerSimpleItem("activated_void_sigil_scroll");
+
     public static DeferredItem<Item> TRANSMUTATION_EQUATION_SCROLL = ITEMS.registerSimpleItem("transmutation_equation_scroll");
     public static DeferredItem<Item> ACTIVATED_TRANSMUTATION_EQUATION_SCROLL = ITEMS.registerSimpleItem("activated_transmutation_equation_scroll");
 
@@ -130,6 +134,9 @@ public class InitItems {
 
     public static DeferredItem<Item> SOLAR_EQUATION_SCROLL = ITEMS.registerSimpleItem("solar_equation_scroll");
     public static DeferredItem<Item> ACTIVATED_SOLAR_EQUATION_SCROLL = ITEMS.registerSimpleItem("activated_solar_equation_scroll");
+
+    public static DeferredItem<Item> VOID_EQUATION_SCROLL = ITEMS.registerSimpleItem("void_equation_scroll");
+    public static DeferredItem<Item> ACTIVATED_VOID_EQUATION_SCROLL = ITEMS.registerSimpleItem("activated_void_equation_scroll");
 
     public static DeferredItem<Item> essenceMetalRegister(EssenceMetal essenceMetal, int state){
         return ITEMS.register(essenceMetal.getKeyWithPrefix(state),()->new ItemEssenceMetal(essenceMetal, state));
@@ -241,6 +248,8 @@ public class InitItems {
                 output.accept(new ItemStack(ACTIVATED_LUNAR_SIGIL_SCROLL.get()));
                 output.accept(new ItemStack(SOLAR_SIGIL_SCROLL.get()));
                 output.accept(new ItemStack(ACTIVATED_SOLAR_SIGIL_SCROLL.get()));
+                output.accept(new ItemStack(VOID_SIGIL_SCROLL.get()));
+                output.accept(new ItemStack(ACTIVATED_VOID_SIGIL_SCROLL.get()));
 
                 output.accept(new ItemStack(TRANSMUTATION_EQUATION_SCROLL.get()));
                 output.accept(new ItemStack(ACTIVATED_TRANSMUTATION_EQUATION_SCROLL.get()));
@@ -250,6 +259,8 @@ public class InitItems {
                 output.accept(new ItemStack(ACTIVATED_LUNAR_EQUATION_SCROLL.get()));
                 output.accept(new ItemStack(SOLAR_EQUATION_SCROLL.get()));
                 output.accept(new ItemStack(ACTIVATED_SOLAR_EQUATION_SCROLL.get()));
+                output.accept(new ItemStack(VOID_EQUATION_SCROLL.get()));
+                output.accept(new ItemStack(ACTIVATED_VOID_EQUATION_SCROLL.get()));
 
             }).build()
     );

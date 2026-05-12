@@ -82,7 +82,7 @@ public enum EssenceMetal {
         return switch (state) {
             case -1 -> "nigredo_tainted_" + key;
             case 1 -> "albedo_infused_" + key;
-            case 2 -> "citrinitas_infused" + key;
+            case 2 -> "citrinitas_infused_" + key;
             default -> key;
         };
     }

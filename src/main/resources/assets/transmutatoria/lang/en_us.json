@@ -84,6 +84,8 @@
   "item.transmutatoria.activated_lunar_sigil_scroll": "Activated Lunar Sigil Scroll",
   "item.transmutatoria.solar_sigil_scroll": "Solar Sigil Scroll",
   "item.transmutatoria.activated_solar_sigil_scroll": "Activated Solar Sigil Scroll",
+  "item.transmutatoria.void_sigil_scroll": "Void Sigil Scroll",
+  "item.transmutatoria.activated_void_sigil_scroll": "Activated Void Sigil Scroll",
 
   "item.transmutatoria.transmutation_equation_scroll": "Transmutation Equation Scroll",
   "item.transmutatoria.activated_transmutation_equation_scroll": "Activated Transmutation Equation Scroll",
@@ -92,5 +94,7 @@
   "item.transmutatoria.lunar_equation_scroll": "Lunar Equation Scroll",
   "item.transmutatoria.activated_lunar_equation_scroll": "Activated Lunar Equation Scroll",
   "item.transmutatoria.solar_equation_scroll": "Solar Equation Scroll",
-  "item.transmutatoria.activated_solar_equation_scroll": "Activated Solar Equation Scroll"
+  "item.transmutatoria.activated_solar_equation_scroll": "Activated Solar Equation Scroll",
+  "item.transmutatoria.void_equation_scroll": "Void Equation Scroll",
+  "item.transmutatoria.activated_void_equation_scroll": "Activated Void Equation Scroll"
 }

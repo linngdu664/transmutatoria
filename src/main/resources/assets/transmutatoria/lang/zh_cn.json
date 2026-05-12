@@ -84,6 +84,8 @@
   "item.transmutatoria.activated_lunar_sigil_scroll": "活化月相印记卷",
   "item.transmutatoria.solar_sigil_scroll": "日相印记卷",
   "item.transmutatoria.activated_solar_sigil_scroll": "活化日相印记卷",
+  "item.transmutatoria.void_sigil_scroll": "无相印记卷",
+  "item.transmutatoria.activated_void_sigil_scroll": "活化无相印记卷",
 
   "item.transmutatoria.transmutation_equation_scroll": "嬗变方程卷",
   "item.transmutatoria.activated_transmutation_equation_scroll": "活化嬗变方程卷",
@@ -92,5 +94,7 @@
   "item.transmutatoria.lunar_equation_scroll": "月相方程卷",
   "item.transmutatoria.activated_lunar_equation_scroll": "活化月相方程卷",
   "item.transmutatoria.solar_equation_scroll": "日相方程卷",
-  "item.transmutatoria.activated_solar_equation_scroll": "活化日相方程卷"
+  "item.transmutatoria.activated_solar_equation_scroll": "活化日相方程卷",
+  "item.transmutatoria.void_equation_scroll": "无相方程卷",
+  "item.transmutatoria.activated_void_equation_scroll": "活化无相方程卷"
 }

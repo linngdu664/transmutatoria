@@ -2,6 +2,7 @@ package com.linngdu664.transmutatoria;
 
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.init.InitItems;
+import com.linngdu664.transmutatoria.recipe.InitRecipes;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 
@@ -79,6 +80,7 @@ public class ArsTransmutatoria {
         InitBlocks.BLOCKS.register(modEventBus);
         InitItems.ITEMS.register(modEventBus);
         InitItems.TABS.register(modEventBus);
+        InitRecipes.RECIPE_SERIALIZERS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
 //        ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
