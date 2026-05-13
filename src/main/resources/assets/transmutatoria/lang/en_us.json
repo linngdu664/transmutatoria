@@ -1,6 +1,10 @@
 {
   "itemGroup.transmutatoria": "Transmutatoria",
   "block.transmutatoria.transmutation_crucible": "Transmutation Crucible",
+  "item.transmutatoria.alchemist_storage_box": "Alchemist's Storage Box",
+  "item.transmutatoria.nigredo_alchemist_storage_box": "Nigredo Alchemist's Storage Box",
+  "item.transmutatoria.albedo_alchemist_storage_box": "Albedo Alchemist's Storage Box",
+  "item.transmutatoria.citrinitas_alchemist_storage_box": "Citrinitas Alchemist's Storage Box",
   "item.transmutatoria.transmutation_crystal": "Transmutation Crystal",
   "item.transmutatoria.alchemical_dross": "Alchemical Dross",
   "block.transmutatoria.alchemical_dross_block": "Alchemical Dross Block",

@@ -14,6 +14,14 @@ public class ItemEssenceMetal extends Item {
         super(new Item.Properties()
                 .setId(ResourceKey.create(Registries.ITEM, ArsTransmutatoria.makeMyIdentifier(essenceMetal.getKeyWithPrefix(state)))));
     }
+    public EssenceMetal getEssenceMetal() {
+        return essenceMetal;
+    }
+
+    public int getState() {
+        return state;
+    }
+
     public EssenceMetal.Relation getRelation(EssenceMetal essenceMetal) {
         return this.essenceMetal.getRelationTo(essenceMetal);
     }

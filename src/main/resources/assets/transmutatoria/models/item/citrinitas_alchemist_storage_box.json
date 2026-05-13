@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "transmutatoria:item/citrinitas_alchemist_storage_box"
+  }
+}

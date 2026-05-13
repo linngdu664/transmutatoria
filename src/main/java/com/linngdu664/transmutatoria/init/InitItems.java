@@ -1,6 +1,7 @@
 package com.linngdu664.transmutatoria.init;
 
 import com.linngdu664.transmutatoria.item.EssenceMetal;
+import com.linngdu664.transmutatoria.item.ItemAlchemistStorageBox;
 import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
 import com.linngdu664.transmutatoria.item.ItemTransmutationCrucible;
 
@@ -22,6 +23,16 @@ public class InitItems {
 
     // ================= [ 方块/特殊物品示例 ] =================
     public static DeferredItem<Item> TRANSMUTATION_CRUCIBLE = ITEMS.register("transmutation_crucible", ItemTransmutationCrucible::new);
+
+    // ================= [ 炼金术士储物盒 ] =================
+    public static DeferredItem<Item> ALCHEMIST_STORAGE_BOX = ITEMS.register("alchemist_storage_box",
+            (id) -> new ItemAlchemistStorageBox(id, 0));
+    public static DeferredItem<Item> NIGREDO_ALCHEMIST_STORAGE_BOX = ITEMS.register("nigredo_alchemist_storage_box",
+            (id) -> new ItemAlchemistStorageBox(id, -1));
+    public static DeferredItem<Item> ALBEDO_ALCHEMIST_STORAGE_BOX = ITEMS.register("albedo_alchemist_storage_box",
+            (id) -> new ItemAlchemistStorageBox(id, 1));
+    public static DeferredItem<Item> CITRINITAS_ALCHEMIST_STORAGE_BOX = ITEMS.register("citrinitas_alchemist_storage_box",
+            (id) -> new ItemAlchemistStorageBox(id, 2));
 
     // ================= [ 基础物品 ] =================
     public static DeferredItem<Item> TRANSMUTATION_CRYSTAL = ITEMS.registerSimpleItem("transmutation_crystal");
@@ -150,6 +161,13 @@ public class InitItems {
             .displayItems((parameters, output) -> {
 
                 output.accept(new ItemStack(TRANSMUTATION_CRUCIBLE.get()));
+
+                // 储物盒
+                output.accept(new ItemStack(ALCHEMIST_STORAGE_BOX.get()));
+                output.accept(new ItemStack(NIGREDO_ALCHEMIST_STORAGE_BOX.get()));
+                output.accept(new ItemStack(ALBEDO_ALCHEMIST_STORAGE_BOX.get()));
+                output.accept(new ItemStack(CITRINITAS_ALCHEMIST_STORAGE_BOX.get()));
+
                 output.accept(new ItemStack(TRANSMUTATION_CRYSTAL.get()));
                 output.accept(new ItemStack(ALCHEMICAL_DROSS.get()));
                 output.accept(new ItemStack(ALCHEMICAL_DROSS_BLOCK.get()));

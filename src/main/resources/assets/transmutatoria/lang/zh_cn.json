@@ -1,6 +1,10 @@
 {
   "itemGroup.transmutatoria": "混沌炼金",
   "block.transmutatoria.transmutation_crucible": "混沌炼金锅",
+  "item.transmutatoria.alchemist_storage_box": "炼金术士储物盒",
+  "item.transmutatoria.nigredo_alchemist_storage_box": "黑化炼金术士储物盒",
+  "item.transmutatoria.albedo_alchemist_storage_box": "白化炼金术士储物盒",
+  "item.transmutatoria.citrinitas_alchemist_storage_box": "黄化炼金术士储物盒",
   "item.transmutatoria.transmutation_crystal": "嬗变结晶",
   "item.transmutatoria.alchemical_dross": "残渣",
   "block.transmutatoria.alchemical_dross_block": "残渣块",
