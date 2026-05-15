@@ -1,5 +1,6 @@
 package com.linngdu664.transmutatoria.client.gui;
 
+import com.linngdu664.transmutatoria.init.InitDataComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.NonNullList;
@@ -20,12 +21,14 @@ public class GuiHandler {
         int centerY = (int) (screenH * 0.5);
         int radius = (int) (screenH * 0.5 * RADIUS_RATE);
 
+        int rotation = boxStack.getOrDefault(InitDataComponents.ROTATION, 0);
+
         ItemContainerContents contents = boxStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
         NonNullList<ItemStack> items = NonNullList.withSize(12, ItemStack.EMPTY);
         contents.copyInto(items);
 
         for (int i = 0; i < 12; i++) {
-            double angle = Math.toRadians(i * 30.0 - 90.0);
+            double angle = Math.toRadians((i - rotation) * 30.0 - 90.0);
             int slotX = (int) (centerX + radius * Math.cos(angle));
             int slotY = (int) (centerY + radius * Math.sin(angle));
 

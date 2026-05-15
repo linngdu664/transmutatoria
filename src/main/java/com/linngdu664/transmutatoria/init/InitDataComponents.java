@@ -24,4 +24,9 @@ public class InitDataComponents {
                     "entropy",
                     builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
             );
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ROTATION =
+            DATA_COMPONENTS.registerComponentType(
+                    "rotation",
+                    builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+            );
 }

@@ -1,6 +1,7 @@
 package com.linngdu664.transmutatoria;
 
 import com.linngdu664.transmutatoria.init.*;
+import com.linngdu664.transmutatoria.network.RotateStorageBoxPayload;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 
@@ -10,6 +11,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(ArsTransmutatoria.MODID)
@@ -42,5 +44,16 @@ public class ArsTransmutatoria {
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+        modEventBus.addListener(ArsTransmutatoria::registerPayloads);
+    }
+
+    private static void registerPayloads(RegisterPayloadHandlersEvent event) {
+        event.registrar(MODID)
+                .playToServer(
+                        RotateStorageBoxPayload.TYPE,
+                        RotateStorageBoxPayload.STREAM_CODEC,
+                        (payload, context) -> payload.handle(context.player())
+                );
     }
 }
