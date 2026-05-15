@@ -48,7 +48,7 @@ public class RenderGuiEventHandler {
         HitResult hit = mc.hitResult;
         if (hit instanceof BlockHitResult blockHit) {
             if (player.level().getBlockState(blockHit.getBlockPos()).getBlock() instanceof BlockTransmutationCrucible) {
-                GuiHandler.renderStorageBoxHud(event.getGuiGraphics(), boxStack);
+                GuiHandler.renderStorageBoxHud(event.getGuiGraphics(), boxStack, event.getPartialTick());
             }
         }
     }
