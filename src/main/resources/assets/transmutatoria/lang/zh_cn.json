@@ -102,5 +102,7 @@
   "item.transmutatoria.void_equation_scroll": "无相方程卷",
   "item.transmutatoria.activated_void_equation_scroll": "活化无相方程卷",
 
-  "jei.transmutatoria.catalyst_shapeless": "催化剂合成"
+  "jei.transmutatoria.catalyst_shapeless": "催化剂合成",
+  "jei.transmutatoria.alchemical_replication": "炼金复制",
+  "jei.transmutatoria.alchemical_transformation": "炼金转化"
 }

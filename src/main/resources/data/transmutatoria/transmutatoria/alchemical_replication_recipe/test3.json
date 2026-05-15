@@ -1,0 +1,6 @@
+{
+  "target_type": "item",
+  "target_id": "minecraft:diamond",
+  "min_level": 5,
+  "max_level": 10
+}
