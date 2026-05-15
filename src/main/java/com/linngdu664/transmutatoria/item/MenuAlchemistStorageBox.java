@@ -3,6 +3,7 @@ package com.linngdu664.transmutatoria.item;
 import com.linngdu664.transmutatoria.init.InitMenuTypes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -51,8 +52,8 @@ public class MenuAlchemistStorageBox extends AbstractContainerMenu {
 
         for (int i = 0; i < 12; i++) {
             double angle = Math.toRadians(i * 30.0 - 90.0);
-            int x = (int) (centerX + radius * Math.cos(angle)) - 9;
-            int y = (int) (centerY + radius * Math.sin(angle)) - 9;
+            int x = (int) (centerX + radius * Mth.cos(angle)) - 9;
+            int y = (int) (centerY + radius * Mth.sin(angle)) - 9;
             addSlot(new LockedEssenceMetalSlot(container, i, x, y, metals[i], boxState));
         }
     }

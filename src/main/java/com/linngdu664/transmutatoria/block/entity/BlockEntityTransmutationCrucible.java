@@ -1,5 +1,6 @@
-package com.linngdu664.transmutatoria.block;
+package com.linngdu664.transmutatoria.block.entity;
 
+import com.linngdu664.transmutatoria.block.MenuTransmutationCrucible;
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;

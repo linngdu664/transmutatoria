@@ -1,5 +1,6 @@
 package com.linngdu664.transmutatoria.block;
 
+import com.linngdu664.transmutatoria.block.entity.BlockEntityTransmutationCrucible;
 import com.linngdu664.transmutatoria.init.InitMenuTypes;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;

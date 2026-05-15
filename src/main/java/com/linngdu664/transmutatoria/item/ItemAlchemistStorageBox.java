@@ -29,8 +29,8 @@ public class ItemAlchemistStorageBox extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(new SimpleMenuProvider(
+        if (!level.isClientSide()) {
+            player.openMenu(new SimpleMenuProvider(
                     (containerId, playerInventory, p) ->
                             new MenuAlchemistStorageBox(containerId, playerInventory, stack, state),
                     stack.getHoverName()));

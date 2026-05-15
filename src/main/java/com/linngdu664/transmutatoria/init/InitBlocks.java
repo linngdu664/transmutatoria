@@ -1,6 +1,6 @@
 package com.linngdu664.transmutatoria.init;
 
-import com.linngdu664.transmutatoria.block.BlockEntityTransmutationCrucible;
+import com.linngdu664.transmutatoria.block.entity.BlockEntityTransmutationCrucible;
 import com.linngdu664.transmutatoria.block.BlockTransmutationCrucible;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;

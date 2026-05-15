@@ -6,8 +6,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 
 public class ItemEssenceMetal extends Item {
-    private EssenceMetal essenceMetal;
-    private int state;
+    private final EssenceMetal essenceMetal;
+    private final int state;
     public ItemEssenceMetal(EssenceMetal essenceMetal, int state) {
         this.essenceMetal = essenceMetal;
         this.state = state;

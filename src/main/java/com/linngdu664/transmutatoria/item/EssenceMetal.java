@@ -1,9 +1,15 @@
 package com.linngdu664.transmutatoria.item;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.StringRepresentable;
+
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
-public enum EssenceMetal {
+public enum EssenceMetal implements StringRepresentable {
     A("eclipsium"),
     B("lunargent"),
     C("astrotite"),
@@ -19,8 +25,24 @@ public enum EssenceMetal {
     J("fulgurzinc"),
     K("chronoplatinum"),
     L("pandemonium");
-    private final String key;
 
+    public static final Codec<EssenceMetal> CODEC = StringRepresentable.fromEnum(EssenceMetal::values);
+    public static final Codec<List<EssenceMetal>> LIST_CODEC = CODEC.listOf();
+
+    public static final StreamCodec<FriendlyByteBuf, EssenceMetal> STREAM_CODEC = StreamCodec.of(
+            // 编码器 (写入网络数据)
+            FriendlyByteBuf::writeEnum,
+            // 解码器 (读取网络数据)
+            (buf) -> buf.readEnum(EssenceMetal.class)
+    );
+    public static final StreamCodec<FriendlyByteBuf, List<EssenceMetal>>  LIST_STREAM_CODEC = StreamCodec.of(
+            // 编码器：写入集合
+            (buf, list) -> buf.writeCollection(list, EssenceMetal.STREAM_CODEC),
+            // 解码器：读取列表
+            (buf) -> buf.readList(EssenceMetal.STREAM_CODEC)
+    );
+
+    private final String key;
     private Set<EssenceMetal> restrains;
     private Set<EssenceMetal> double_restrains;
     private Set<EssenceMetal> symbiosisWith;
@@ -46,15 +68,30 @@ public enum EssenceMetal {
         K.restrains = EnumSet.of(G,H,I,C);
         L.restrains = EnumSet.of(A,B,C,D,E,F,G,H,I,J,K);
     }
+
+    EssenceMetal(String key) {
+        this.key = key;
+    }
+
     public Relation getRelationTo(EssenceMetal other) {
         if (this.equals(other)) return Relation.SAME;//相同
         if (this.symbiosisWith.contains(other)) return Relation.SYMBIOSIS;//相生
-        if (this.restrains.contains(other)) return other.restrains.contains(this)?Relation.MUTUAL_RESTRAINED:Relation.RESTRAIN;//克制或互克
+        if (this.restrains.contains(other)) return other.restrains.contains(this) ? Relation.MUTUAL_RESTRAINED : Relation.RESTRAIN;//克制或互克
         if (this.double_restrains.contains(other)) return Relation.DOUBLE_RESTRAIN;//双倍克制
-        if (other.restrains.contains(this)) return this.restrains.contains(other)?Relation.MUTUAL_RESTRAINED:Relation.BE_RESTRAINED;//被克制或互克
+        if (other.restrains.contains(this)) return this.restrains.contains(other) ? Relation.MUTUAL_RESTRAINED : Relation.BE_RESTRAINED;//被克制或互克
         if (other.double_restrains.contains(this)) return Relation.DOUBLE_BE_RESTRAINED;//双倍被克制
         return Relation.NEUTRAL;//无关
     }
+
+    @Override
+    public String getSerializedName() {
+        return key;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
     public enum Relation {
         SYMBIOSIS(1,1),
         RESTRAIN(1,-1),
@@ -72,12 +109,6 @@ public enum EssenceMetal {
         }
     }
 
-    EssenceMetal(String key) {
-        this.key = key;
-    }
-    public String getKey() {
-        return key;
-    }
     public String getKeyWithPrefix(int state) {
         return switch (state) {
             case -1 -> "nigredo_tainted_" + key;

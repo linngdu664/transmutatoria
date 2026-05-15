@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenAlchemistStorageBox extends AbstractContainerScreen<MenuAlchemistStorageBox> {
@@ -33,8 +34,8 @@ public class ScreenAlchemistStorageBox extends AbstractContainerScreen<MenuAlche
         // Slot backgrounds for the 12 clock-position container slots
         for (int i = 0; i < 12; i++) {
             double angle = Math.toRadians(i * 30.0 - 90.0);
-            int sx = (int) (x + 88 + 50 * Math.cos(angle)) - 9;
-            int sy = (int) (y + 85 + 50 * Math.sin(angle)) - 9;
+            int sx = (int) (x + 88 + 50 * Mth.cos(angle)) - 9;
+            int sy = (int) (y + 85 + 50 * Mth.sin(angle)) - 9;
             graphics.blit(INVENTORY_BG, sx, sx + 18, sy, sy + 18, 7.0F, 25.0F, 83.0F, 101.0F);
         }
 
