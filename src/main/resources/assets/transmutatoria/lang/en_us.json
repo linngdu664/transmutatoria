@@ -102,6 +102,8 @@
   "item.transmutatoria.void_equation_scroll": "Void Equation Scroll",
   "item.transmutatoria.activated_void_equation_scroll": "Activated Void Equation Scroll",
 
-  "jei.transmutatoria.catalyst_shapeless": "Catalyst Crafting"
+  "jei.transmutatoria.catalyst_shapeless": "Catalyst Crafting",
+  "jei.transmutatoria.alchemical_replication": "Alchemical Replication",
+  "jei.transmutatoria.alchemical_transformation": "Alchemical Transformation"
 }
 

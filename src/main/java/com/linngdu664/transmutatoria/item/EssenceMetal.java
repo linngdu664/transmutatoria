@@ -35,7 +35,7 @@ public enum EssenceMetal implements StringRepresentable {
             // 解码器 (读取网络数据)
             (buf) -> buf.readEnum(EssenceMetal.class)
     );
-    public static final StreamCodec<FriendlyByteBuf, List<EssenceMetal>>  LIST_STREAM_CODEC = StreamCodec.of(
+    public static final StreamCodec<FriendlyByteBuf, List<EssenceMetal>> LIST_STREAM_CODEC = StreamCodec.of(
             // 编码器：写入集合
             (buf, list) -> buf.writeCollection(list, EssenceMetal.STREAM_CODEC),
             // 解码器：读取列表
