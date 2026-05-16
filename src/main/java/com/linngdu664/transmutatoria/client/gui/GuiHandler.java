@@ -1,13 +1,17 @@
 package com.linngdu664.transmutatoria.client.gui;
 
+import com.linngdu664.transmutatoria.block.entity.BlockEntityTransmutationCrucible;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class GuiHandler {
     private static final int FRAME_SIZE = 22;
@@ -24,7 +28,7 @@ public class GuiHandler {
     private static int lastComponentRotation = 0;
     private static boolean initialized = false;
 
-    public static void renderStorageBoxHud(GuiGraphicsExtractor guiGraphics, ItemStack boxStack, DeltaTracker delta) {
+    public static void renderCrucibleStorageBoxHud(GuiGraphicsExtractor guiGraphics, ItemStack boxStack, DeltaTracker delta) {
         Minecraft mc = Minecraft.getInstance();
 
         int componentRotation = boxStack.getOrDefault(InitDataComponents.ROTATION, 0);
@@ -80,8 +84,8 @@ public class GuiHandler {
 
         for (int i = 0; i < 12; i++) {
             double angle = Math.toRadians((i - smoothRotation) * 30.0 - 90.0);
-            int slotX = (int) (centerX + radiusX * Math.cos(angle));
-            int slotY = (int) (centerY + radiusY * Math.sin(angle));
+            int slotX = (int) (centerX + radiusX * Mth.cos(angle));
+            int slotY = (int) (centerY + radiusY * Mth.sin(angle));
 
             boolean isBottom = i == bottomSlot;
             if (isBottom) {
@@ -106,5 +110,24 @@ public class GuiHandler {
                 guiGraphics.pose().popMatrix();
             }
         }
+    }
+
+    public static void renderCrucibleCommonHud(GuiGraphicsExtractor guiGraphics, BlockEntity be) {
+        if (be instanceof BlockEntityTransmutationCrucible crucible) {
+            Minecraft mc = Minecraft.getInstance();
+            // catalyst
+            Window window = mc.getWindow();
+            V2I pos = BSFGuiTool.SIMPLE_FRAME_IMG.renderRatio(guiGraphics, window, 0.1, 0.2);
+            guiGraphics.item(crucible.getCatalyst(), pos.x() + 3, pos.y() + 3);
+
+            // output
+            pos = BSFGuiTool.SIMPLE_FRAME_IMG.renderRatio(guiGraphics, window, 0.1, 0.8);
+            guiGraphics.item(crucible.getOutput(), pos.x() + 3, pos.y() + 3);
+
+            // input
+            pos = BSFGuiTool.SIMPLE_FRAME_IMG.renderRatio(guiGraphics, window, 0.9, 0.8);
+            guiGraphics.item(crucible.getInput(), pos.x() + 3, pos.y() + 3);
+        }
+
     }
 }

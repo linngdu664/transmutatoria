@@ -8,6 +8,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -53,15 +55,29 @@ public class BlockTransmutationCrucible extends HorizontalDirectionalBlock imple
         if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof BlockEntityTransmutationCrucible crucible) {
-                player.openMenu(crucible);
+                if ((!crucible.getOutput().isEmpty() || player.isShiftKeyDown()) && crucible.hasEssenceMetals()) {
+                    crucible.takeEssenceMetals(player);
+                    return InteractionResult.SUCCESS_SERVER;
+                } else if (!crucible.hasEssenceMetals() && player.isShiftKeyDown()) {
+                    crucible.takeCatalyst(player);
+                    return InteractionResult.SUCCESS_SERVER;
+                }
             }
         }
-        return InteractionResult.SUCCESS_SERVER;
+        return InteractionResult.PASS;
     }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BlockEntityTransmutationCrucible(pos, state);
+    }
+
+    @Override
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof BlockEntityTransmutationCrucible crucibleEntity) {
+            crucibleEntity.entityInside(level, pos, entity);
+        }
     }
 
     private static VoxelShape rotateShape(Direction from, Direction to, VoxelShape shape) {

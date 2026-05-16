@@ -1,11 +1,14 @@
 package com.linngdu664.transmutatoria.client.gui;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.block.BlockTransmutationCrucible;
+import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.item.ItemAlchemistStorageBox;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
@@ -30,6 +33,7 @@ public class RenderGuiEventHandler {
         if (player == null) {
             return;
         }
+        GuiGraphicsExtractor guiGraphics = event.getGuiGraphics();
 
         ItemStack boxStack = null;
         ItemStack mainHand = player.getMainHandItem();
@@ -41,14 +45,17 @@ public class RenderGuiEventHandler {
             boxStack = offHand;
         }
 
-        if (boxStack == null) {
-            return;
-        }
-
         HitResult hit = mc.hitResult;
-        if (hit instanceof BlockHitResult blockHit) {
-            if (player.level().getBlockState(blockHit.getBlockPos()).getBlock() instanceof BlockTransmutationCrucible) {
-                GuiHandler.renderStorageBoxHud(event.getGuiGraphics(), boxStack, event.getPartialTick());
+        if (hit != null && hit.getType() == HitResult.Type.BLOCK) {
+            BlockHitResult blockHit = (BlockHitResult) hit;
+            BlockPos blockPos = blockHit.getBlockPos();
+
+            if (player.level().getBlockState(blockPos).getBlock() == InitBlocks.TRANSMUTATION_CRUCIBLE.get()) {
+                BlockEntity be = player.level().getBlockEntity(blockPos);
+                if (boxStack != null) {
+                    GuiHandler.renderCrucibleStorageBoxHud(guiGraphics, boxStack, event.getPartialTick());
+                }
+                GuiHandler.renderCrucibleCommonHud(guiGraphics, be);
             }
         }
     }

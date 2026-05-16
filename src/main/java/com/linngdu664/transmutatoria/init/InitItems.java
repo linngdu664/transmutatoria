@@ -105,6 +105,10 @@ public class InitItems {
     public static DeferredItem<Item> ALBEDO_INFUSED_PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, 1);
     public static DeferredItem<Item> CITRINITAS_INFUSED_PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, 2);
 
+    public static DeferredItem<Item>[] ESSENCE_METAL_ITEMS = new DeferredItem[]{
+        ECLIPSIUM, LUNARGENT, ASTROTITE, ABYSSION, ANIMERCURY, NECROPLUMB, SANGUIBRONZE, VENOTITE, OSSANTIMONY, FULGURZINC, CHRONOPLATINUM, PANDEMONIUM
+    };
+
     // ================= [ 炼金基质 ] =================
     public static DeferredItem<Item> SALIC_MATRIX = ITEMS.registerSimpleItem("salic_matrix");
     public static DeferredItem<Item> MERCURIAL_MATRIX = ITEMS.registerSimpleItem("mercurial_matrix");
