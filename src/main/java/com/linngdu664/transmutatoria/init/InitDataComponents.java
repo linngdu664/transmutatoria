@@ -2,6 +2,7 @@ package com.linngdu664.transmutatoria.init;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.item.EssenceMetal;
+import com.linngdu664.transmutatoria.item.component.ExpireInfo;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -28,5 +29,15 @@ public class InitDataComponents {
             DATA_COMPONENTS.registerComponentType(
                     "rotation",
                     builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+            );
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ExpireInfo>> EXPIRE_INFO =
+            DATA_COMPONENTS.registerComponentType(
+                    "expire_info",
+                    builder -> builder.persistent(ExpireInfo.CODEC).networkSynchronized(ExpireInfo.STREAM_CODEC)
+            );
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> NEXT_EXPIRE =
+            DATA_COMPONENTS.registerComponentType(
+                    "next_expire",
+                    builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.LONG)
             );
 }
