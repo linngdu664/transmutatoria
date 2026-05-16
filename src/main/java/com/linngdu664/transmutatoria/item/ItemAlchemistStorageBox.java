@@ -1,5 +1,6 @@
 package com.linngdu664.transmutatoria.item;
 
+import com.linngdu664.transmutatoria.gui.MenuAlchemistStorageBox;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;

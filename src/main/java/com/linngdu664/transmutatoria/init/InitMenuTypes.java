@@ -1,7 +1,8 @@
 package com.linngdu664.transmutatoria.init;
 
-import com.linngdu664.transmutatoria.block.MenuTransmutationCrucible;
-import com.linngdu664.transmutatoria.item.MenuAlchemistStorageBox;
+import com.linngdu664.transmutatoria.gui.MenuTransmutationCrucible;
+import com.linngdu664.transmutatoria.gui.MenuAlchemistStorageBox;
+import com.linngdu664.transmutatoria.gui.MenuTransmutationSigilScroll;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
@@ -20,4 +21,8 @@ public class InitMenuTypes {
     public static final DeferredHolder<MenuType<?>, MenuType<MenuAlchemistStorageBox>> ALCHEMIST_STORAGE_BOX_MENU =
             MENU_TYPES.register("alchemist_storage_box",
                     () -> new MenuType<>(MenuAlchemistStorageBox::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MenuTransmutationSigilScroll>> TRANSMUTATION_SIGIL_SCROLL_MENU =
+            MENU_TYPES.register("transmutation_sigil_scroll",
+                    () -> new MenuType<>(MenuTransmutationSigilScroll::new, FeatureFlags.DEFAULT_FLAGS));
 }

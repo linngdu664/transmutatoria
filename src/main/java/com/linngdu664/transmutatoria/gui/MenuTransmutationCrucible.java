@@ -1,4 +1,4 @@
-package com.linngdu664.transmutatoria.block;
+package com.linngdu664.transmutatoria.gui;
 
 import com.linngdu664.transmutatoria.block.entity.BlockEntityTransmutationCrucible;
 import com.linngdu664.transmutatoria.init.InitMenuTypes;

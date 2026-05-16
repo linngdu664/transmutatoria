@@ -4,6 +4,8 @@ import com.linngdu664.transmutatoria.item.EssenceMetal;
 import com.linngdu664.transmutatoria.item.ItemAlchemistStorageBox;
 import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
 import com.linngdu664.transmutatoria.item.ItemTransmutationCrucible;
+import com.linngdu664.transmutatoria.item.ItemTransmutationEquationScroll;
+import com.linngdu664.transmutatoria.item.ItemTransmutationSigilScroll;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -122,36 +124,19 @@ public class InitItems {
     public static DeferredItem<Item> RUBEDO_ESSENCE = ITEMS.registerSimpleItem("rubedo_essence");
     public static DeferredItem<Item> PHILOSOPHERS_STONE = ITEMS.registerSimpleItem("philosophers_stone");
 
-    // ================= [ 卷轴 ] =================
-    public static DeferredItem<Item> TRANSMUTATION_SIGIL_SCROLL = ITEMS.registerSimpleItem("transmutation_sigil_scroll");
-    public static DeferredItem<Item> ACTIVATED_TRANSMUTATION_SIGIL_SCROLL = ITEMS.registerSimpleItem("activated_transmutation_sigil_scroll");
+    // ================= [ 卷轴 — 印记（复制） ] =================
+    public static DeferredItem<Item> TRANSMUTATION_SIGIL_SCROLL = ITEMS.register("transmutation_sigil_scroll", ItemTransmutationSigilScroll::new);
+    public static DeferredItem<Item> TERRESTRIAL_SIGIL_SCROLL = ITEMS.register("terrestrial_sigil_scroll", ItemTransmutationSigilScroll::new);
+    public static DeferredItem<Item> LUNAR_SIGIL_SCROLL = ITEMS.register("lunar_sigil_scroll", ItemTransmutationSigilScroll::new);
+    public static DeferredItem<Item> SOLAR_SIGIL_SCROLL = ITEMS.register("solar_sigil_scroll", ItemTransmutationSigilScroll::new);
+    public static DeferredItem<Item> VOID_SIGIL_SCROLL = ITEMS.register("void_sigil_scroll", ItemTransmutationSigilScroll::new);
 
-    public static DeferredItem<Item> TERRESTRIAL_SIGIL_SCROLL = ITEMS.registerSimpleItem("terrestrial_sigil_scroll");
-    public static DeferredItem<Item> ACTIVATED_TERRESTRIAL_SIGIL_SCROLL = ITEMS.registerSimpleItem("activated_terrestrial_sigil_scroll");
-
-    public static DeferredItem<Item> LUNAR_SIGIL_SCROLL = ITEMS.registerSimpleItem("lunar_sigil_scroll");
-    public static DeferredItem<Item> ACTIVATED_LUNAR_SIGIL_SCROLL = ITEMS.registerSimpleItem("activated_lunar_sigil_scroll");
-
-    public static DeferredItem<Item> SOLAR_SIGIL_SCROLL = ITEMS.registerSimpleItem("solar_sigil_scroll");
-    public static DeferredItem<Item> ACTIVATED_SOLAR_SIGIL_SCROLL = ITEMS.registerSimpleItem("activated_solar_sigil_scroll");
-
-    public static DeferredItem<Item> VOID_SIGIL_SCROLL = ITEMS.registerSimpleItem("void_sigil_scroll");
-    public static DeferredItem<Item> ACTIVATED_VOID_SIGIL_SCROLL = ITEMS.registerSimpleItem("activated_void_sigil_scroll");
-
-    public static DeferredItem<Item> TRANSMUTATION_EQUATION_SCROLL = ITEMS.registerSimpleItem("transmutation_equation_scroll");
-    public static DeferredItem<Item> ACTIVATED_TRANSMUTATION_EQUATION_SCROLL = ITEMS.registerSimpleItem("activated_transmutation_equation_scroll");
-
-    public static DeferredItem<Item> TERRESTRIAL_EQUATION_SCROLL = ITEMS.registerSimpleItem("terrestrial_equation_scroll");
-    public static DeferredItem<Item> ACTIVATED_TERRESTRIAL_EQUATION_SCROLL = ITEMS.registerSimpleItem("activated_terrestrial_equation_scroll");
-
-    public static DeferredItem<Item> LUNAR_EQUATION_SCROLL = ITEMS.registerSimpleItem("lunar_equation_scroll");
-    public static DeferredItem<Item> ACTIVATED_LUNAR_EQUATION_SCROLL = ITEMS.registerSimpleItem("activated_lunar_equation_scroll");
-
-    public static DeferredItem<Item> SOLAR_EQUATION_SCROLL = ITEMS.registerSimpleItem("solar_equation_scroll");
-    public static DeferredItem<Item> ACTIVATED_SOLAR_EQUATION_SCROLL = ITEMS.registerSimpleItem("activated_solar_equation_scroll");
-
-    public static DeferredItem<Item> VOID_EQUATION_SCROLL = ITEMS.registerSimpleItem("void_equation_scroll");
-    public static DeferredItem<Item> ACTIVATED_VOID_EQUATION_SCROLL = ITEMS.registerSimpleItem("activated_void_equation_scroll");
+    // ================= [ 卷轴 — 方程（转化） ] =================
+    public static DeferredItem<Item> TRANSMUTATION_EQUATION_SCROLL = ITEMS.register("transmutation_equation_scroll", ItemTransmutationEquationScroll::new);
+    public static DeferredItem<Item> TERRESTRIAL_EQUATION_SCROLL = ITEMS.register("terrestrial_equation_scroll", ItemTransmutationEquationScroll::new);
+    public static DeferredItem<Item> LUNAR_EQUATION_SCROLL = ITEMS.register("lunar_equation_scroll", ItemTransmutationEquationScroll::new);
+    public static DeferredItem<Item> SOLAR_EQUATION_SCROLL = ITEMS.register("solar_equation_scroll", ItemTransmutationEquationScroll::new);
+    public static DeferredItem<Item> VOID_EQUATION_SCROLL = ITEMS.register("void_equation_scroll", ItemTransmutationEquationScroll::new);
 
     public static DeferredItem<Item> essenceMetalRegister(EssenceMetal essenceMetal, int state){
         return ITEMS.register(essenceMetal.getKeyWithPrefix(state),()->new ItemEssenceMetal(essenceMetal, state));
@@ -261,28 +246,19 @@ public class InitItems {
                 output.accept(new ItemStack(RUBEDO_ESSENCE.get()));
                 output.accept(new ItemStack(PHILOSOPHERS_STONE.get()));
 
-                // 卷轴
+                // 卷轴 — 印记
                 output.accept(new ItemStack(TRANSMUTATION_SIGIL_SCROLL.get()));
-                output.accept(new ItemStack(ACTIVATED_TRANSMUTATION_SIGIL_SCROLL.get()));
                 output.accept(new ItemStack(TERRESTRIAL_SIGIL_SCROLL.get()));
-                output.accept(new ItemStack(ACTIVATED_TERRESTRIAL_SIGIL_SCROLL.get()));
                 output.accept(new ItemStack(LUNAR_SIGIL_SCROLL.get()));
-                output.accept(new ItemStack(ACTIVATED_LUNAR_SIGIL_SCROLL.get()));
                 output.accept(new ItemStack(SOLAR_SIGIL_SCROLL.get()));
-                output.accept(new ItemStack(ACTIVATED_SOLAR_SIGIL_SCROLL.get()));
                 output.accept(new ItemStack(VOID_SIGIL_SCROLL.get()));
-                output.accept(new ItemStack(ACTIVATED_VOID_SIGIL_SCROLL.get()));
 
+                // 卷轴 — 方程
                 output.accept(new ItemStack(TRANSMUTATION_EQUATION_SCROLL.get()));
-                output.accept(new ItemStack(ACTIVATED_TRANSMUTATION_EQUATION_SCROLL.get()));
                 output.accept(new ItemStack(TERRESTRIAL_EQUATION_SCROLL.get()));
-                output.accept(new ItemStack(ACTIVATED_TERRESTRIAL_EQUATION_SCROLL.get()));
                 output.accept(new ItemStack(LUNAR_EQUATION_SCROLL.get()));
-                output.accept(new ItemStack(ACTIVATED_LUNAR_EQUATION_SCROLL.get()));
                 output.accept(new ItemStack(SOLAR_EQUATION_SCROLL.get()));
-                output.accept(new ItemStack(ACTIVATED_SOLAR_EQUATION_SCROLL.get()));
                 output.accept(new ItemStack(VOID_EQUATION_SCROLL.get()));
-                output.accept(new ItemStack(ACTIVATED_VOID_EQUATION_SCROLL.get()));
 
             }).build()
     );

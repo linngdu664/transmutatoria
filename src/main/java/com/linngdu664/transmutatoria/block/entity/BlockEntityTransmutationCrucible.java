@@ -1,5 +1,6 @@
 package com.linngdu664.transmutatoria.block.entity;
 
+import com.linngdu664.transmutatoria.gui.MenuTransmutationCrucible;
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.item.ItemEssenceMetal;

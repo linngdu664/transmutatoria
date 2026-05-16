@@ -40,4 +40,9 @@ public class InitDataComponents {
                     "next_expire",
                     builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.LONG)
             );
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> ACTIVATED =
+            DATA_COMPONENTS.registerComponentType(
+                    "activated",
+                    builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+            );
 }

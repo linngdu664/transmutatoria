@@ -21,7 +21,7 @@ public record AlchemicalTransformationRecipe(
     // 定义 Codec 用于 JSON 解析
     public static final Codec<AlchemicalTransformationRecipe> CODEC = RecordCodecBuilder.create(inst -> inst.group(
             SourceType.CODEC.fieldOf("source_type").forGetter(AlchemicalTransformationRecipe::sourceType),
-            Identifier.CODEC.fieldOf("source_id").forGetter(AlchemicalTransformationRecipe::targetId),
+            Identifier.CODEC.fieldOf("source_id").forGetter(AlchemicalTransformationRecipe::sourceId),
             Identifier.CODEC.fieldOf("target_id").forGetter(AlchemicalTransformationRecipe::targetId),
             Codec.BOOL.optionalFieldOf("one_time", false).forGetter(AlchemicalTransformationRecipe::oneTime),
             Codec.INT.optionalFieldOf("min_level", 2).forGetter(AlchemicalTransformationRecipe::minLevel),
@@ -30,11 +30,11 @@ public record AlchemicalTransformationRecipe(
             Codec.INT.optionalFieldOf("max_polarity", 50).forGetter(AlchemicalTransformationRecipe::maxPolarity)
     ).apply(inst, AlchemicalTransformationRecipe::new));
 
-    // 判断某个物品是否匹配该规则
+    // 判断某个物品是否匹配该规则（匹配的是源物品 sourceId）
     public boolean matches(ItemStack stack) {
         return switch (sourceType) {
-            case ITEM -> stack.getItem().builtInRegistryHolder().key().identifier().equals(targetId);
-            case TAG -> stack.is(TagKey.create(Registries.ITEM, targetId));
+            case ITEM -> stack.getItem().builtInRegistryHolder().key().identifier().equals(sourceId);
+            case TAG -> stack.is(TagKey.create(Registries.ITEM, sourceId));
         };
     }
 
