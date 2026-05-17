@@ -105,13 +105,13 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
 
     // todo
     @Override
-    public boolean canPlaceItemThroughFace(int i, ItemStack itemStack, @Nullable Direction direction) {
+    public boolean canPlaceItemThroughFace(int slot, ItemStack itemStack, @Nullable Direction direction) {
         return false;
     }
 
     // todo
     @Override
-    public boolean canTakeItemThroughFace(int i, ItemStack itemStack, Direction direction) {
+    public boolean canTakeItemThroughFace(int slot, ItemStack itemStack, Direction direction) {
         return false;
     }
 
@@ -186,62 +186,109 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
 
     public void entityInside(Level level, BlockPos pos, Entity entity) {
         if (entity instanceof ItemEntity itemEntity && entity.getBoundingBox().move(-pos.getX(), -pos.getY(), -pos.getZ()).intersects(SUCK_AABB)) {
-            boolean b1 = tryAddCatalyst(itemEntity);
-            tryDecomposition(itemEntity);
-            if (b1) {
+            if (tryAddCatalystFromItemEntity(itemEntity) || tryAddInputFromItemEntity(itemEntity) || tryAddEssenceFromItemEntity(itemEntity)) {
                 notifyChanged();
             }
         }
     }
 
-    private boolean tryAddCatalyst(ItemEntity entity) {
-        if (!getCatalyst().isEmpty()) {
+    private boolean tryAddCatalystFromItemEntity(ItemEntity entity) {
+        if (!canAddCatalyst()) {
             return false;
         }
         ItemStack itemStack = entity.getItem();
         if (itemStack.isEmpty()) {
             return false;
         }
-        if (itemStack.is(Items.ENDER_EYE) || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL) || itemStack.getItem() instanceof ItemEssenceMetal || itemStack.getItem() instanceof AbstractItemTransmutationScroll) {
-            ItemStack copy = itemStack.copyWithCount(1);
-            items.set(CATALYST_SLOT, copy);
-            if (itemStack.getCount() == 1) {
-                entity.setItem(ItemStack.EMPTY);
-                entity.discard();
-            } else {
-                itemStack.setCount(itemStack.getCount() - 1);
-            }
+        if (itemStack.is(Items.ENDER_EYE) || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL)
+                || itemStack.getItem() instanceof ItemEssenceMetal
+                || itemStack.getItem() instanceof AbstractItemTransmutationScroll) {
+            trySuckOne(entity, CATALYST_SLOT);
         }
         return true;
     }
 
-    private void tryDecomposition(ItemEntity entity) {
-        if (getCatalyst().getItem() != Items.ENDER_EYE) {
-            return;
+    private boolean tryAddInputFromItemEntity(ItemEntity entity) {
+        if (!canAddInput()) {
+            return false;
         }
-
         ItemStack itemStack = entity.getItem();
         if (itemStack.isEmpty()) {
-            return;
+            return false;
         }
-        if (itemStack.is(InitItems.TRANSMUTATION_CRYSTAL)) {
-            if (itemStack.getCount() == 1) {
-                entity.setItem(ItemStack.EMPTY);
-                entity.discard();
-            } else {
-                itemStack.setCount(itemStack.getCount() - 1);
+        ItemStack catalyst = getCatalyst();
+        if (catalyst.is(Items.ENDER_EYE)) {
+            if (itemStack.is(InitItems.TRANSMUTATION_CRYSTAL)) {
+                trySuckOne(entity, INPUT_SLOT);
+                targetTimer = 10;
+                return true;
             }
+            return false;
+        }
+        if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL) || catalyst.getItem() instanceof ItemEssenceMetal) {
+            return false;
+        }
+        // AbstractItemTransmutationScroll
+        // todo
+        return false;
+    }
 
-            // todo 有多低的概率出无相源金？
-            RandomSource randomSource = level.getRandom();
-            if (randomSource.nextFloat() < 0.01f) {
-                level.addFreshEntity(new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), InitItems.PANDEMONIUM.toStack()));
-            } else {
-                level.addFreshEntity(new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(InitItems.ESSENCE_METAL_ITEMS.length - 1)].toStack()));
-            }
+    private boolean tryAddEssenceFromItemEntity(ItemEntity entity) {
+        if (!canAddEssence()) {
+            return false;
+        }
+        ItemStack itemStack = entity.getItem();
+        if (itemStack.isEmpty()) {
+            return false;
+        }
+        // todo
+        return false;
+    }
+
+    private void trySuckOne(ItemEntity entity, int slot) {
+        ItemStack itemStack = entity.getItem();
+        ItemStack copy = itemStack.copyWithCount(1);
+        items.set(slot, copy);
+        if (itemStack.getCount() == 1) {
+            entity.setItem(ItemStack.EMPTY);
+            entity.discard();
+        } else {
+            itemStack.setCount(itemStack.getCount() - 1);
         }
     }
 
+    public boolean canAddCatalyst() {
+        return !isFinish && getCatalyst().isEmpty();
+    }
+
+    public boolean canAddInput() {
+        return !isFinish && !getCatalyst().isEmpty() && getInput().isEmpty();
+    }
+
+    public boolean canAddEssence() {
+        return !isFinish && (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL) || getCatalyst().getItem() instanceof ItemEssenceMetal || getCatalyst().getItem() instanceof AbstractItemTransmutationScroll);
+    }
+
+    private void clearInputAndSetAllOutput() {
+        if (getCatalyst().is(Items.ENDER_EYE)) {
+            if (getInput().is(InitItems.TRANSMUTATION_CRYSTAL)) {
+                RandomSource randomSource = level.getRandom();
+                if (randomSource.nextFloat() < 0.01f) {
+                    items.set(OUTPUT_SLOT, InitItems.PANDEMONIUM.toStack());
+                } else {
+                    items.set(OUTPUT_SLOT, InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(InitItems.ESSENCE_METAL_ITEMS.length - 1)].toStack());
+                }
+            }
+        } else if (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL)) {
+            // todo
+        } else if (getCatalyst().getItem() instanceof ItemEssenceMetal) {
+            // todo
+        } else {
+            // AbstractItemTransmutationScroll
+            // todo
+        }
+        items.set(INPUT_SLOT, ItemStack.EMPTY);
+    }
 
     /**
      * to be removed
@@ -354,7 +401,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
 
     public void takeEssenceInput(Player player) {
         Inventory inventory = player.getInventory();
-        for (int i = 0; i < ESSENCE_OUTPUT_SLOT; i++) {
+        for (int i = ESSENCE_INPUT_SLOT; i < ESSENCE_OUTPUT_SLOT; i++) {
             if (!items.get(i).isEmpty()) {
                 inventory.placeItemBackInInventory(items.get(i));
                 items.set(i, ItemStack.EMPTY);
@@ -377,10 +424,42 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         notifyChanged();
     }
 
+    public void setSelectedSlot(int selectedSlot) {
+        // todo 需要一个配方等级接口
+        if (selectedSlot >= ESSENCE_INPUT_SLOT && selectedSlot < ESSENCE_OUTPUT_SLOT) {
+            this.selectedSlot = selectedSlot;
+            notifyChanged();
+        }
+    }
+
+    public void addEssence(ItemStack essence) {
+        items.set(selectedSlot, essence.copyWithCount(1));
+        // todo 需要一个配方等级接口
+        if (selectedSlot < ESSENCE_OUTPUT_SLOT - 1) {
+            selectedSlot++;
+        }
+        notifyChanged();
+    }
+
     public void notifyChanged() {
         setChanged();
         if (level != null) {
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        }
+    }
+
+    public static <T> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
+        if (level.isClientSide() || !(blockEntity instanceof BlockEntityTransmutationCrucible crucible)) {
+            return;
+        }
+        if (crucible.targetTimer > 0) {
+            crucible.processTimer++;
+            if (crucible.processTimer >= crucible.targetTimer) {
+                crucible.clearInputAndSetAllOutput();
+                crucible.processTimer = 0;
+                crucible.targetTimer = 0;
+            }
+            crucible.notifyChanged();
         }
     }
 }

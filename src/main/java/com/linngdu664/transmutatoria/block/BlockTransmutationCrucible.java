@@ -1,6 +1,7 @@
 package com.linngdu664.transmutatoria.block;
 
 import com.linngdu664.transmutatoria.block.entity.BlockEntityTransmutationCrucible;
+import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,6 +19,8 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -81,6 +84,11 @@ public class BlockTransmutationCrucible extends HorizontalDirectionalBlock imple
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BlockEntityTransmutationCrucible(pos, state);
+    }
+
+    @Override
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> type) {
+        return type == InitBlocks.TRANSMUTATION_CRUCIBLE_BLOCK_ENTITY.get() ? BlockEntityTransmutationCrucible::tick : null;
     }
 
     @Override
