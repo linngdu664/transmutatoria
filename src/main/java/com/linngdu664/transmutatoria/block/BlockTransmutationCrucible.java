@@ -55,12 +55,23 @@ public class BlockTransmutationCrucible extends HorizontalDirectionalBlock imple
         if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof BlockEntityTransmutationCrucible crucible) {
-                if ((!crucible.getOutput().isEmpty() || player.isShiftKeyDown()) && crucible.hasEssenceMetals()) {
-                    crucible.takeEssenceMetals(player);
+                if (crucible.hasAnyOutput()) {
+                    crucible.takeAllOutput(player);
                     return InteractionResult.SUCCESS_SERVER;
-                } else if (!crucible.hasEssenceMetals() && player.isShiftKeyDown()) {
-                    crucible.takeCatalyst(player);
-                    return InteractionResult.SUCCESS_SERVER;
+                }
+                if (player.isShiftKeyDown()) {
+                    if (crucible.hasInputEssenceMetals()) {
+                        crucible.takeEssenceInput(player);
+                        return InteractionResult.SUCCESS_SERVER;
+                    }
+                    if (crucible.hasInput()) {
+                        crucible.takeInput(player);
+                        return InteractionResult.SUCCESS_SERVER;
+                    }
+                    if (crucible.hasCatalyst()) {
+                        crucible.takeCatalyst(player);
+                        return InteractionResult.SUCCESS_SERVER;
+                    }
                 }
             }
         }
