@@ -1,22 +1,24 @@
 package com.linngdu664.transmutatoria.gui;
 
+import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.init.InitMenuTypes;
 import com.linngdu664.transmutatoria.item.ItemTransmutationEquationScroll;
 import com.linngdu664.transmutatoria.item.ItemTransmutationSigilScroll;
-import io.netty.buffer.Unpooled;
+import com.linngdu664.transmutatoria.recipe.AlchemicalRecipeManager;
+import com.linngdu664.transmutatoria.recipe.AlchemicalTransformationRecipe;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import org.jspecify.annotations.Nullable;
+import net.minecraft.world.level.Level;
 
 public class MenuTransmutationSigilScroll extends AbstractContainerMenu {
     private static final int CONTAINER_SLOTS = 1;
@@ -75,16 +77,20 @@ public class MenuTransmutationSigilScroll extends AbstractContainerMenu {
             }
         }
 
+        @Override
+        public boolean allowModification(Player player) {
+            return !isActive();
+        }
 
         private boolean isActivated() {
             if (scrollStack == null) return false;
-            Boolean v = scrollStack.get(com.linngdu664.transmutatoria.init.InitDataComponents.ACTIVATED.get());
+            Boolean v = scrollStack.get(InitDataComponents.ACTIVATED.get());
             return v != null && v;
         }
 
         @Override
         public void setByPlayer(ItemStack stack) {
-            if (isActivated() || scrollStack == null || stack.isEmpty()) {
+            if (isActivated() || scrollStack == null) {
                 super.setByPlayer(stack);
                 return;
             }
@@ -93,14 +99,20 @@ public class MenuTransmutationSigilScroll extends AbstractContainerMenu {
                 super.setByPlayer(stack);
                 return;
             }
+            if (stack.isEmpty()) {
+                super.setByPlayer(stack);
+                return;
+            }
 
-            // 用单个物品尝试激活
+            // 用单个物品实际激活
             ItemStack single = stack.copyWithCount(1);
-            boolean activated = false;
+            boolean activated;
             if (scrollStack.getItem() instanceof ItemTransmutationSigilScroll) {
                 activated = ItemTransmutationSigilScroll.tryActivate(player.level(), scrollStack, single, container);
             } else if (scrollStack.getItem() instanceof ItemTransmutationEquationScroll) {
                 activated = ItemTransmutationEquationScroll.tryActivate(player.level(), scrollStack, single, container);
+            } else {
+                activated = false;
             }
 
             if (activated) {
@@ -108,12 +120,10 @@ public class MenuTransmutationSigilScroll extends AbstractContainerMenu {
                 if (!stack.isEmpty()) {
                     player.getInventory().placeItemBackInInventory(stack);
                 }
-                // 同步产物到槽位
                 set(container.getItem(0));
                 broadcastChanges();
-            } else {
-                super.setByPlayer(stack);
             }
+            // 未激活：不走默认放置，物品留在手上
         }
     }
 
@@ -134,8 +144,45 @@ public class MenuTransmutationSigilScroll extends AbstractContainerMenu {
     }
 
     @Override
+    public void clicked(int slotIndex, int button, ContainerInput input, Player player) {
+        // 拦截输入槽位的点击：无配方物品不放进去，留在鼠标上
+        if (slotIndex == 0 && scrollStack != null) {
+            Boolean act = scrollStack.get(InitDataComponents.ACTIVATED.get());
+            boolean activated = act != null && act;
+            if (!activated) {
+                ItemStack carried = getCarried();
+                if (!carried.isEmpty()) {
+                    ItemStack single = carried.copyWithCount(1);
+                    boolean matches;
+                    if (scrollStack.getItem() instanceof ItemTransmutationSigilScroll) {
+                        matches = AlchemicalRecipeManager.findMatchRep(player.level(), single) != null;
+                    } else if (scrollStack.getItem() instanceof ItemTransmutationEquationScroll) {
+                        matches = AlchemicalRecipeManager.findMatchTrans(player.level(), single) != null;
+                    } else {
+                        matches = false;
+                    }
+                    if (!matches) {
+                        return; // 不调用 super → 点击无效 → 物品留在手上
+                    }
+                }
+            }
+        }
+        super.clicked(slotIndex, button, input, player);
+    }
+
+    protected boolean moveItemStackToWithMatch(ItemStack itemStack, int startSlot, int endSlot, boolean backwards, Level level) {
+        AlchemicalTransformationRecipe recipe = AlchemicalRecipeManager.findMatchTrans(level, itemStack);
+        if (recipe == null) {
+            return false;
+        }
+        return moveItemStackTo(itemStack,startSlot,endSlot,backwards);
+    }
+
+    @Override
     protected boolean moveItemStackTo(ItemStack itemStack, int startSlot, int endSlot, boolean backwards) {
         boolean anythingChanged = false;
+
+
         int destSlot = startSlot;
         if (backwards) {
             destSlot = endSlot - 1;
@@ -217,24 +264,25 @@ public class MenuTransmutationSigilScroll extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
+        Level level = player.level();
         ItemStack result = ItemStack.EMPTY;
         Slot slot = slots.get(index);
         if (slot.hasItem()) {
             ItemStack stack = slot.getItem();
             result = stack.copy();
             if (index < CONTAINER_SLOTS) {
-                if (!moveItemStackTo(stack, INV_START, TOTAL_SLOTS, true)) {
+                if (!moveItemStackToWithMatch(stack, INV_START, TOTAL_SLOTS, true,level)) {
                     return ItemStack.EMPTY;
                 }
             } else {
-                if (!slots.get(0).hasItem() && moveItemStackTo(stack, 0, 1, false)) {
+                if (!slots.getFirst().hasItem() && moveItemStackToWithMatch(stack, 0, 1, false,level)) {
                     // moved to input slot
                 } else if (index < INV_END) {
-                    if (!moveItemStackTo(stack, HOTBAR_START, TOTAL_SLOTS, false)) {
+                    if (!moveItemStackToWithMatch(stack, HOTBAR_START, TOTAL_SLOTS, false,level)) {
                         return ItemStack.EMPTY;
                     }
                 } else {
-                    if (!moveItemStackTo(stack, INV_START, INV_END, false)) {
+                    if (!moveItemStackToWithMatch(stack, INV_START, INV_END, false,level)) {
                         return ItemStack.EMPTY;
                     }
                 }
