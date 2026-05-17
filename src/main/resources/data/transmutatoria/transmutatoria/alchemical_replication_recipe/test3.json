@@ -1,6 +1,7 @@
 {
-  "target_type": "item",
-  "target_id": "minecraft:diamond",
+  "input_id": "minecraft:air",
+  "output_type": "item",
+  "output_id": "minecraft:diamond",
   "min_level": 5,
   "max_level": 10
 }

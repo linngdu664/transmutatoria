@@ -5,12 +5,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 
 public record AlchemicalReplicationRecipe(
-        TargetType targetType,
-        Identifier targetId,
+        Identifier inputId,
+        AlchemicalIOType outputType,
+        Identifier outputId,
         boolean oneTime,
         int minLevel,
         int maxLevel,
@@ -19,8 +19,9 @@ public record AlchemicalReplicationRecipe(
 ) {
     // 定义 Codec 用于 JSON 解析
     public static final Codec<AlchemicalReplicationRecipe> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            TargetType.CODEC.fieldOf("target_type").forGetter(AlchemicalReplicationRecipe::targetType),
-            Identifier.CODEC.fieldOf("target_id").forGetter(AlchemicalReplicationRecipe::targetId),
+            Identifier.CODEC.fieldOf("input_id").forGetter(AlchemicalReplicationRecipe::inputId),
+            AlchemicalIOType.CODEC.fieldOf("output_type").forGetter(AlchemicalReplicationRecipe::outputType),
+            Identifier.CODEC.fieldOf("output_id").forGetter(AlchemicalReplicationRecipe::outputId),
             Codec.BOOL.optionalFieldOf("one_time", false).forGetter(AlchemicalReplicationRecipe::oneTime),
             Codec.INT.optionalFieldOf("min_level", 2).forGetter(AlchemicalReplicationRecipe::minLevel),
             Codec.INT.optionalFieldOf("max_level", 2).forGetter(AlchemicalReplicationRecipe::maxLevel),
@@ -28,12 +29,12 @@ public record AlchemicalReplicationRecipe(
             Codec.INT.optionalFieldOf("max_polarity", 50).forGetter(AlchemicalReplicationRecipe::maxPolarity)
     ).apply(inst, AlchemicalReplicationRecipe::new));
 
-    // 判断某个物品是否匹配该规则
+    // 判断某个物品是否匹配该规则（匹配的是输出物品 outputId）
     public boolean matches(ItemStack stack) {
-        return switch (targetType) {
-            case ITEM -> stack.getItem().builtInRegistryHolder().key().identifier().equals(targetId);
-            case TAG -> stack.is(TagKey.create(Registries.ITEM, targetId));
-            case NAMESPACE -> stack.getItem().builtInRegistryHolder().key().identifier().getNamespace().equals(targetId.getNamespace());
+        return switch (outputType) {
+            case ITEM -> stack.getItem().builtInRegistryHolder().key().identifier().equals(outputId);
+            case TAG -> stack.is(TagKey.create(Registries.ITEM, outputId));
+            case NAMESPACE -> stack.getItem().builtInRegistryHolder().key().identifier().getNamespace().equals(outputId.getNamespace());
         };
     }
 
@@ -41,25 +42,5 @@ public record AlchemicalReplicationRecipe(
     public boolean isValid() {
         if (minPolarity > maxPolarity) return false;
         return minLevel >= 2 && maxLevel >= 2 && minLevel <= 24 && maxLevel <= 24 && minLevel <= maxLevel;
-    }
-
-    // 目标类型的枚举
-    public enum TargetType implements StringRepresentable {
-        NAMESPACE("namespace"),
-        TAG("tag"),
-        ITEM("item");
-
-        public final String serializedName;
-
-        TargetType(String serializedName) {
-            this.serializedName = serializedName;
-        }
-
-        @Override
-        public String getSerializedName() {
-            return serializedName;
-        }
-
-        public static final Codec<TargetType> CODEC = StringRepresentable.fromEnum(TargetType::values);
     }
 }

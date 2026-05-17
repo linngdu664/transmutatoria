@@ -5,13 +5,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 
 public record AlchemicalTransformationRecipe(
-        SourceType sourceType,
-        Identifier sourceId,
-        Identifier targetId,
+        AlchemicalIOType inputType,
+        Identifier inputId,
+        Identifier outputId,
         boolean oneTime,
         int minLevel,
         int maxLevel,
@@ -20,9 +19,9 @@ public record AlchemicalTransformationRecipe(
 ) {
     // 定义 Codec 用于 JSON 解析
     public static final Codec<AlchemicalTransformationRecipe> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            SourceType.CODEC.fieldOf("source_type").forGetter(AlchemicalTransformationRecipe::sourceType),
-            Identifier.CODEC.fieldOf("source_id").forGetter(AlchemicalTransformationRecipe::sourceId),
-            Identifier.CODEC.fieldOf("target_id").forGetter(AlchemicalTransformationRecipe::targetId),
+            AlchemicalIOType.CODEC.fieldOf("input_type").forGetter(AlchemicalTransformationRecipe::inputType),
+            Identifier.CODEC.fieldOf("input_id").forGetter(AlchemicalTransformationRecipe::inputId),
+            Identifier.CODEC.fieldOf("output_id").forGetter(AlchemicalTransformationRecipe::outputId),
             Codec.BOOL.optionalFieldOf("one_time", false).forGetter(AlchemicalTransformationRecipe::oneTime),
             Codec.INT.optionalFieldOf("min_level", 2).forGetter(AlchemicalTransformationRecipe::minLevel),
             Codec.INT.optionalFieldOf("max_level", 2).forGetter(AlchemicalTransformationRecipe::maxLevel),
@@ -30,11 +29,12 @@ public record AlchemicalTransformationRecipe(
             Codec.INT.optionalFieldOf("max_polarity", 50).forGetter(AlchemicalTransformationRecipe::maxPolarity)
     ).apply(inst, AlchemicalTransformationRecipe::new));
 
-    // 判断某个物品是否匹配该规则（匹配的是源物品 sourceId）
+    // 判断某个物品是否匹配该规则（匹配的是输入物品 inputId）
     public boolean matches(ItemStack stack) {
-        return switch (sourceType) {
-            case ITEM -> stack.getItem().builtInRegistryHolder().key().identifier().equals(sourceId);
-            case TAG -> stack.is(TagKey.create(Registries.ITEM, sourceId));
+        return switch (inputType) {
+            case ITEM -> stack.getItem().builtInRegistryHolder().key().identifier().equals(inputId);
+            case TAG -> stack.is(TagKey.create(Registries.ITEM, inputId));
+            case NAMESPACE -> stack.getItem().builtInRegistryHolder().key().identifier().getNamespace().equals(inputId.getNamespace());
         };
     }
 
@@ -42,24 +42,5 @@ public record AlchemicalTransformationRecipe(
     public boolean isValid() {
         if (minPolarity > maxPolarity) return false;
         return minLevel >= 2 && maxLevel >= 2 && minLevel <= 24 && maxLevel <= 24 && minLevel <= maxLevel;
-    }
-
-    // 源类型的枚举
-    public enum SourceType implements StringRepresentable {
-        TAG("tag"),
-        ITEM("item");
-
-        public final String serializedName;
-
-        SourceType(String serializedName) {
-            this.serializedName = serializedName;
-        }
-
-        @Override
-        public String getSerializedName() {
-            return serializedName;
-        }
-
-        public static final Codec<SourceType> CODEC = StringRepresentable.fromEnum(SourceType::values);
     }
 }

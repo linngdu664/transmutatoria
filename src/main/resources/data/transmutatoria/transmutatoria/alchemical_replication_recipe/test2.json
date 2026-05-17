@@ -1,6 +1,7 @@
 {
-  "target_type": "tag",
-  "target_id": "minecraft:wool",
+  "input_id": "minecraft:air",
+  "output_type": "tag",
+  "output_id": "minecraft:wool",
   "min_level": 4,
   "max_level": 4
 }

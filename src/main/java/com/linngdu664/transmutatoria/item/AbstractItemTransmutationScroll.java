@@ -86,10 +86,12 @@ public class AbstractItemTransmutationScroll extends Item {
 
     @Override
     public void inventoryTick(ItemStack itemStack, ServerLevel level, Entity owner, @Nullable EquipmentSlot slot) {
-        // todo 只有当加载了配方时才 tick？
-        int times = checkAndSetExpire(level, itemStack);
-        if (times > 0) {
-            changeEssence(level, itemStack, times);
-        }
+        // 只有当加载了配方时才 tick
+//        if (itemStack.getOrDefault(InitDataComponents.ACTIVATED, false)) {
+//            int times = checkAndSetExpire(level, itemStack);
+//            if (times > 0) {
+//                changeEssence(level, itemStack, times);
+//            }
+//        }
     }
 }

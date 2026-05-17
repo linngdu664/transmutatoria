@@ -147,8 +147,7 @@ public class MenuTransmutationSigilScroll extends AbstractContainerMenu {
     public void clicked(int slotIndex, int button, ContainerInput input, Player player) {
         // 拦截输入槽位的点击：无配方物品不放进去，留在鼠标上
         if (slotIndex == 0 && scrollStack != null) {
-            Boolean act = scrollStack.get(InitDataComponents.ACTIVATED.get());
-            boolean activated = act != null && act;
+            boolean activated = scrollStack.getOrDefault(InitDataComponents.ACTIVATED.get(), false);
             if (!activated) {
                 ItemStack carried = getCarried();
                 if (!carried.isEmpty()) {

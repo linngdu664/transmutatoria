@@ -1,7 +1,7 @@
 {
-  "source_type": "tag",
-  "source_id": "c:cobblestones",
-  "target_id": "minecraft:gold_ingot",
+  "input_type": "tag",
+  "input_id": "c:cobblestones",
+  "output_id": "minecraft:gold_ingot",
   "min_level": 3,
   "max_level": 3,
   "min_polarity": -10,

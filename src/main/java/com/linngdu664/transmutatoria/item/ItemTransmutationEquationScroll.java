@@ -68,7 +68,7 @@ public class ItemTransmutationEquationScroll extends AbstractItemTransmutationSc
         scrollStack.set(InitDataComponents.ACTIVATED, true);
 
         // 产物图标：方程卷产物为配方目标物品
-        Item outputItem = BuiltInRegistries.ITEM.get(recipe.targetId())
+        Item outputItem = BuiltInRegistries.ITEM.get(recipe.outputId())
                 .map(net.minecraft.core.Holder.Reference::value).orElse(Items.AIR);
         container.setItem(0, outputItem.getDefaultInstance());
 

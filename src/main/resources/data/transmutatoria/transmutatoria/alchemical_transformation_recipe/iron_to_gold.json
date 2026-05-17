@@ -1,7 +1,7 @@
 {
-  "source_type": "tag",
-  "source_id": "c:ingots/iron",
-  "target_id": "minecraft:gold_ingot",
+  "input_type": "tag",
+  "input_id": "c:ingots/iron",
+  "output_id": "minecraft:gold_ingot",
   "min_level": 2,
   "max_level": 2,
   "min_polarity": -10,

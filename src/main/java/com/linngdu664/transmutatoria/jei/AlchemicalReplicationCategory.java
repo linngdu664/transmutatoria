@@ -41,15 +41,10 @@ public class AlchemicalReplicationCategory implements IRecipeCategory<JEIAlchemi
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, JEIAlchemicalReplicationDisplay recipe, IFocusGroup focuses) {
-        ItemStack item = recipe.displayItem();
-
         // 输入槽
-        builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(item);
-
-        // 输出槽 (不消耗输入的复制，数量+1表示产出)
-        ItemStack output = item.copy();
-        output.setCount(output.getCount() + 1);
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(output);
+        builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.displayInputItem());
+        // 输出槽
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.displayOutputItem());
     }
 
     @Override

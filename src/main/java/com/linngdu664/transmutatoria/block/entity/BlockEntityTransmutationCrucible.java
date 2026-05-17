@@ -44,7 +44,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity {
     @Override
     public void saveAdditional(ValueOutput output) {
         ContainerHelper.saveAllItems(output, items, true);
-        IntArrayList list = new IntArrayList();
+        IntArrayList list = new IntArrayList(18);
         for (int i = 0; i < SLOT_COUNT; i++) {
             if (items.get(i).isEmpty()) {
                 list.add(i);
@@ -99,8 +99,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity {
         }
         // todo 更多催化剂
         if (itemStack.is(Items.ENDER_EYE) || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL) || itemStack.getItem() instanceof ItemEssenceMetal) {
-            ItemStack copy = itemStack.copy();
-            copy.setCount(1);
+            ItemStack copy = itemStack.copyWithCount(1);
             setCatalyst(copy);
             if (itemStack.getCount() == 1) {
                 entity.setItem(ItemStack.EMPTY);
@@ -134,7 +133,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity {
             if (randomSource.nextFloat() < 0.01f) {
                 level.addFreshEntity(new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), InitItems.PANDEMONIUM.toStack()));
             } else {
-                level.addFreshEntity(new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(11)].toStack()));
+                level.addFreshEntity(new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(InitItems.ESSENCE_METAL_ITEMS.length - 1)].toStack()));
             }
         }
     }

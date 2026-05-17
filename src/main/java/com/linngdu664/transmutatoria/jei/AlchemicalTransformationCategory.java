@@ -40,9 +40,9 @@ public class AlchemicalTransformationCategory implements IRecipeCategory<JEIAlch
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, JEIAlchemicalTransformationDisplay recipe, IFocusGroup focuses) {
         // 输入槽
-        builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.displaySourceItem());
+        builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.displayInputItem());
         // 输出槽
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.displayTargetItem());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.displayOutputItem());
     }
 
     @Override
