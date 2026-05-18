@@ -4,17 +4,17 @@ import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.item.AbstractItemTransmutationScroll;
 import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
+import com.linngdu664.transmutatoria.network.to_client.CrucibleSetFinishPayload;
+import com.linngdu664.transmutatoria.network.to_client.CrucibleSetItemPayload;
+import com.linngdu664.transmutatoria.network.to_client.CrucibleSetProcessTimerPayload;
+import com.linngdu664.transmutatoria.network.to_client.CrucibleSetTargetTimerPayload;
+import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -22,6 +22,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -29,8 +30,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,6 +55,20 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
 
     public BlockEntityTransmutationCrucible(BlockPos pos, BlockState state) {
         super(InitBlocks.TRANSMUTATION_CRUCIBLE_BLOCK_ENTITY.get(), pos, state);
+    }
+
+    public static <T> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
+        if (level.isClientSide() || !(blockEntity instanceof BlockEntityTransmutationCrucible crucible)) {
+            return;
+        }
+        if (crucible.targetTimer > 0) {
+            // targetTimer > 0 说明正在运行
+            if (crucible.processTimer + 1 >= crucible.targetTimer) {
+                crucible.clearInputAndSetAllOutput();
+            } else {
+                crucible.syncProcessTimer(crucible.processTimer + 1);
+            }
+        }
     }
 
     @Override
@@ -87,14 +104,10 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         isFinish = input.getBooleanOr("isFinish", false);
     }
 
+    // 区块加载时会触发全量更新同步
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return this.saveWithoutMetadata(registries);
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     // todo
@@ -131,7 +144,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
     }
 
     /**
-     * 仅用于提供容器 IO 兼容，不建议在自己的代码中调用该函数
+     * 仅用于提供容器兼容，禁止在自己的代码中调用该函数
      */
     @Override
     public ItemStack getItem(int slot) {
@@ -139,20 +152,26 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
     }
 
     /**
-     * 仅用于提供容器 IO 兼容，不建议在自己的代码中调用该函数
+     * 仅用于提供容器兼容，绝对禁止在自己的代码中调用该函数
      */
     @Override
     public ItemStack removeItem(int slot, int count) {
         ItemStack result = ContainerHelper.removeItem(items, slot, count);
         if (!result.isEmpty()) {
             isFinish = hasAnyOutput();
-            notifyChanged();
+            PacketDistributor.sendToPlayersTrackingChunk(
+                    (ServerLevel) level,
+                    new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                    new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, items.get(slot)))),
+                    new CrucibleSetFinishPayload(getBlockPos(), isFinish)
+            );
+            setChanged();
         }
         return result;
     }
 
     /**
-     * 仅用于提供容器 IO 兼容，不建议在自己的代码中调用该函数
+     * 仅用于提供容器兼容，绝对禁止在自己的代码中调用该函数
      */
     @Override
     public ItemStack removeItemNoUpdate(int slot) {
@@ -160,34 +179,53 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
     }
 
     /**
-     * 仅用于提供容器 IO 兼容，不建议在自己的代码中调用该函数
+     * 仅用于提供容器兼容，绝对禁止在自己的代码中调用该函数
      */
     @Override
     public void setItem(int slot, ItemStack itemStack) {
         items.set(slot, itemStack);
-        notifyChanged();
+        PacketDistributor.sendToPlayersTrackingChunk(
+                (ServerLevel) level,
+                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, itemStack)))
+        );
+        setChanged();
     }
 
+    /**
+     * 仅用于提供容器兼容
+     */
     @Override
     public boolean stillValid(Player player) {
         return Container.stillValidBlockEntity(this, player);
     }
 
     /**
-     * 仅用于提供容器 IO 兼容，禁止在自己的代码中调用该函数
+     * 仅用于提供容器兼容，绝对禁止在自己的代码中调用该函数
      */
     @Override
     public void clearContent() {
         // 神了，由于 items 有默认值，这里的 clear 是重置而不是传统 clear
         items.clear();
         isFinish = false;
-        notifyChanged();
+        ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(SLOT_COUNT);
+        for (int i = 0; i < SLOT_COUNT; i++) {
+            itemStackWithSlots.add(new ItemStackWithSlot(i, ItemStack.EMPTY));
+        }
+        PacketDistributor.sendToPlayersTrackingChunk(
+                (ServerLevel) level,
+                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots),
+                new CrucibleSetFinishPayload(getBlockPos(), false)
+        );
+        setChanged();
     }
 
+    // todo
     public void entityInside(Level level, BlockPos pos, Entity entity) {
         if (entity instanceof ItemEntity itemEntity && entity.getBoundingBox().move(-pos.getX(), -pos.getY(), -pos.getZ()).intersects(SUCK_AABB)) {
             if (tryAddCatalystFromItemEntity(itemEntity) || tryAddInputFromItemEntity(itemEntity) || tryAddEssenceFromItemEntity(itemEntity)) {
-                notifyChanged();
+                setChanged();
             }
         }
     }
@@ -203,7 +241,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         if (itemStack.is(Items.ENDER_EYE) || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL)
                 || itemStack.getItem() instanceof ItemEssenceMetal
                 || itemStack.getItem() instanceof AbstractItemTransmutationScroll) {
-            trySuckOne(entity, CATALYST_SLOT);
+            suckOneAndSync(entity, CATALYST_SLOT);
         }
         return true;
     }
@@ -219,8 +257,8 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         ItemStack catalyst = getCatalyst();
         if (catalyst.is(Items.ENDER_EYE)) {
             if (itemStack.is(InitItems.TRANSMUTATION_CRYSTAL)) {
-                trySuckOne(entity, INPUT_SLOT);
-                targetTimer = 10;
+                suckOneAndSync(entity, INPUT_SLOT);
+                syncTargetTimer(10);
                 return true;
             }
             return false;
@@ -245,16 +283,47 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         return false;
     }
 
-    private void trySuckOne(ItemEntity entity, int slot) {
+    private void suckOneAndSync(ItemEntity entity, int slot) {
         ItemStack itemStack = entity.getItem();
         ItemStack copy = itemStack.copyWithCount(1);
         items.set(slot, copy);
+        // sync
+        PacketDistributor.sendToPlayersTrackingChunk(
+                (ServerLevel) level,
+                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, copy)))
+        );
         if (itemStack.getCount() == 1) {
             entity.setItem(ItemStack.EMPTY);
             entity.discard();
         } else {
             itemStack.setCount(itemStack.getCount() - 1);
         }
+    }
+
+    private void syncProcessTimer(int processTimer) {
+        this.processTimer = processTimer;
+        // sync
+        PacketDistributor.sendToPlayersTrackingChunk(
+                (ServerLevel) level,
+                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                new CrucibleSetProcessTimerPayload(getBlockPos(), processTimer)
+        );
+    }
+
+    private void syncTargetTimer(int targetTimer) {
+        this.targetTimer = targetTimer;
+        // sync
+        PacketDistributor.sendToPlayersTrackingChunk(
+                (ServerLevel) level,
+                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                new CrucibleSetTargetTimerPayload(getBlockPos(), targetTimer)
+        );
+    }
+
+    private void setItemAndRecordChange(int slot, ItemStack itemStack, List<ItemStackWithSlot> itemStackWithSlots) {
+        items.set(slot, itemStack);
+        itemStackWithSlots.add(new ItemStackWithSlot(slot, itemStack));
     }
 
     public boolean canAddCatalyst() {
@@ -270,13 +339,14 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
     }
 
     private void clearInputAndSetAllOutput() {
+        ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate = new ArrayList<>();
         if (getCatalyst().is(Items.ENDER_EYE)) {
             if (getInput().is(InitItems.TRANSMUTATION_CRYSTAL)) {
                 RandomSource randomSource = level.getRandom();
                 if (randomSource.nextFloat() < 0.01f) {
-                    items.set(OUTPUT_SLOT, InitItems.PANDEMONIUM.toStack());
+                    setItemAndRecordChange(OUTPUT_SLOT, InitItems.PANDEMONIUM.toStack(), itemStackWithSlotsUpdate);
                 } else {
-                    items.set(OUTPUT_SLOT, InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(InitItems.ESSENCE_METAL_ITEMS.length - 1)].toStack());
+                    setItemAndRecordChange(OUTPUT_SLOT, InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(InitItems.ESSENCE_METAL_ITEMS.length - 1)].toStack(), itemStackWithSlotsUpdate);
                 }
             }
         } else if (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL)) {
@@ -287,7 +357,18 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
             // AbstractItemTransmutationScroll
             // todo
         }
-        items.set(INPUT_SLOT, ItemStack.EMPTY);
+        setItemAndRecordChange(INPUT_SLOT, ItemStack.EMPTY, itemStackWithSlotsUpdate);
+        isFinish = true;
+        // sync
+        syncProcessTimer(0);
+        syncTargetTimer(0);
+        PacketDistributor.sendToPlayersTrackingChunk(
+                (ServerLevel) level,
+                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlotsUpdate),
+                new CrucibleSetFinishPayload(getBlockPos(), true)
+        );
+        setChanged();
     }
 
     /**
@@ -296,6 +377,46 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
     @Deprecated
     public NonNullList<ItemStack> getItems() {
         return items;
+    }
+
+    /**
+     * 禁止修改 ItemStack，否则未定义行为
+     * @return 催化剂
+     */
+    public ItemStack getCatalyst() {
+        return items.get(CATALYST_SLOT);
+    }
+
+    /**
+     * 禁止修改 ItemStack，否则未定义行为
+     * @return 转化输入
+     */
+    public ItemStack getInput() {
+        return items.get(INPUT_SLOT);
+    }
+
+    /**
+     * 禁止修改 ItemStack，否则未定义行为
+     * @return 转化输出
+     */
+    public ItemStack getOutput() {
+        return items.get(OUTPUT_SLOT);
+    }
+
+    /**
+     * 禁止修改 ItemStack，禁止修改 List，否则未定义行为
+     * @return 源质输入槽的不可变视图
+     */
+    public List<ItemStack> getInputEssences() {
+        return Collections.unmodifiableList(items.subList(ESSENCE_INPUT_SLOT, ESSENCE_OUTPUT_SLOT));
+    }
+
+    /**
+     * 禁止修改 ItemStack，禁止修改 List，否则未定义行为
+     * @return 源质输出槽的不可变视图
+     */
+    public List<ItemStack> getOutputEssences() {
+        return Collections.unmodifiableList(items.subList(ESSENCE_OUTPUT_SLOT, CATALYST_SLOT));
     }
 
     public int getPolarity() {
@@ -347,119 +468,104 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         return false;
     }
 
-    /**
-     * 禁止修改 ItemStack，否则未定义行为
-     * @return 催化剂
-     */
-    public ItemStack getCatalyst() {
-        return items.get(CATALYST_SLOT);
-    }
-
-    /**
-     * 禁止修改 ItemStack，否则未定义行为
-     * @return 转化输入
-     */
-    public ItemStack getInput() {
-        return items.get(INPUT_SLOT);
-    }
-
-    /**
-     * 禁止修改 ItemStack，否则未定义行为
-     * @return 转化输出
-     */
-    public ItemStack getOutput() {
-        return items.get(OUTPUT_SLOT);
-    }
-
-    /**
-     * 禁止修改 ItemStack，禁止修改 List，否则未定义行为
-     * @return 源质输入槽的不可变视图
-     */
-    public List<ItemStack> getInputEssences() {
-        return Collections.unmodifiableList(items.subList(ESSENCE_INPUT_SLOT, ESSENCE_OUTPUT_SLOT));
-    }
-
-    /**
-     * 禁止修改 ItemStack，禁止修改 List，否则未定义行为
-     * @return 源质输出槽的不可变视图
-     */
-    public List<ItemStack> getOutputEssences() {
-        return Collections.unmodifiableList(items.subList(ESSENCE_OUTPUT_SLOT, CATALYST_SLOT));
-    }
-
     public void takeCatalyst(Player player) {
         player.getInventory().placeItemBackInInventory(getCatalyst(), true);
         items.set(CATALYST_SLOT, ItemStack.EMPTY);
-        notifyChanged();
+        // sync
+        PacketDistributor.sendToPlayersTrackingChunk(
+                (ServerLevel) level,
+                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(CATALYST_SLOT, ItemStack.EMPTY)))
+        );
+        setChanged();
     }
 
     public void takeInput(Player player) {
         player.getInventory().placeItemBackInInventory(getInput(), true);
         items.set(INPUT_SLOT, ItemStack.EMPTY);
-        notifyChanged();
+        // sync
+        PacketDistributor.sendToPlayersTrackingChunk(
+                (ServerLevel) level,
+                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(INPUT_SLOT, ItemStack.EMPTY)))
+        );
+        setChanged();
     }
 
     public void takeEssenceInput(Player player) {
         Inventory inventory = player.getInventory();
+        ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(ESSENCE_OUTPUT_SLOT - ESSENCE_INPUT_SLOT);
         for (int i = ESSENCE_INPUT_SLOT; i < ESSENCE_OUTPUT_SLOT; i++) {
             if (!items.get(i).isEmpty()) {
                 inventory.placeItemBackInInventory(items.get(i));
-                items.set(i, ItemStack.EMPTY);
+                setItemAndRecordChange(i, ItemStack.EMPTY, itemStackWithSlots);
             }
         }
-        notifyChanged();
+        // sync
+        PacketDistributor.sendToPlayersTrackingChunk(
+                (ServerLevel) level,
+                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots)
+        );
+        setChanged();
     }
 
     public void takeAllOutput(Player player) {
         Inventory inventory = player.getInventory();
+        ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(CATALYST_SLOT - ESSENCE_OUTPUT_SLOT);
         for (int i = ESSENCE_OUTPUT_SLOT; i < CATALYST_SLOT; i++) {
             if (!items.get(i).isEmpty()) {
                 inventory.placeItemBackInInventory(items.get(i));
-                items.set(i, ItemStack.EMPTY);
+                setItemAndRecordChange(i, ItemStack.EMPTY, itemStackWithSlots);
             }
         }
         inventory.placeItemBackInInventory(getOutput(), true);
-        items.set(OUTPUT_SLOT, ItemStack.EMPTY);
+        setItemAndRecordChange(OUTPUT_SLOT, ItemStack.EMPTY, itemStackWithSlots);
         isFinish = false;
-        notifyChanged();
+        // sync
+        PacketDistributor.sendToPlayersTrackingChunk(
+                (ServerLevel) level,
+                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots),
+                new CrucibleSetFinishPayload(getBlockPos(), false)
+        );
+        setChanged();
     }
 
     public void setSelectedSlot(int selectedSlot) {
         // todo 需要一个配方等级接口
-        if (selectedSlot >= ESSENCE_INPUT_SLOT && selectedSlot < ESSENCE_OUTPUT_SLOT) {
-            this.selectedSlot = selectedSlot;
-            notifyChanged();
-        }
+
     }
 
     public void addEssence(ItemStack essence) {
-        items.set(selectedSlot, essence.copyWithCount(1));
-        // todo 需要一个配方等级接口
-        if (selectedSlot < ESSENCE_OUTPUT_SLOT - 1) {
-            selectedSlot++;
-        }
-        notifyChanged();
+
     }
 
-    public void notifyChanged() {
-        setChanged();
-        if (level != null) {
-            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
-        }
+    // ======================客户端网络同步=========================
+    public void clientSetItem(int slot, ItemStack itemStack) {
+        this.items.set(slot, itemStack);
     }
 
-    public static <T> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
-        if (level.isClientSide() || !(blockEntity instanceof BlockEntityTransmutationCrucible crucible)) {
-            return;
-        }
-        if (crucible.targetTimer > 0) {
-            crucible.processTimer++;
-            if (crucible.processTimer >= crucible.targetTimer) {
-                crucible.clearInputAndSetAllOutput();
-                crucible.processTimer = 0;
-                crucible.targetTimer = 0;
-            }
-            crucible.notifyChanged();
-        }
+    public void clientSetPolarity(int polarity) {
+        this.polarity = polarity;
     }
+
+    public void clientSetProcessTimer(int processTimer) {
+        this.processTimer = processTimer;
+    }
+
+    public void clientSetTargetTimer(int targetTimer) {
+        this.targetTimer = targetTimer;
+    }
+
+    public void clientSetFinish(boolean finish) {
+        this.isFinish = finish;
+    }
+
+//    public void notifyChanged() {
+//        setChanged();
+//        if (level != null) {
+//            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+//        }
+//    }
 }

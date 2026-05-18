@@ -93,9 +93,11 @@ public class BlockTransmutationCrucible extends HorizontalDirectionalBlock imple
 
     @Override
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof BlockEntityTransmutationCrucible crucibleEntity) {
-            crucibleEntity.entityInside(level, pos, entity);
+        if (!level.isClientSide()) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof BlockEntityTransmutationCrucible crucibleEntity) {
+                crucibleEntity.entityInside(level, pos, entity);
+            }
         }
     }
 

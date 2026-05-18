@@ -1,4 +1,4 @@
-package com.linngdu664.transmutatoria.network;
+package com.linngdu664.transmutatoria.network.to_server;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
@@ -16,8 +16,8 @@ public record RotateStorageBoxPayload(int hand, int rotation) implements CustomP
 
     public static final StreamCodec<FriendlyByteBuf, RotateStorageBoxPayload> STREAM_CODEC =
             StreamCodec.composite(
-                    ByteBufCodecs.INT, RotateStorageBoxPayload::hand,
-                    ByteBufCodecs.INT, RotateStorageBoxPayload::rotation,
+                    ByteBufCodecs.VAR_INT, RotateStorageBoxPayload::hand,
+                    ByteBufCodecs.VAR_INT, RotateStorageBoxPayload::rotation,
                     RotateStorageBoxPayload::new
             );
 

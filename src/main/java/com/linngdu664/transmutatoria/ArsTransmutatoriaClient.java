@@ -1,6 +1,5 @@
 package com.linngdu664.transmutatoria;
 
-import com.linngdu664.transmutatoria.gui.ScreenTransmutationCrucible;
 import com.linngdu664.transmutatoria.init.InitMenuTypes;
 import com.linngdu664.transmutatoria.gui.ScreenAlchemistStorageBox;
 import com.linngdu664.transmutatoria.gui.ScreenTransmutationSigilScroll;
@@ -30,7 +29,6 @@ public class ArsTransmutatoriaClient {
 
     @SubscribeEvent
     static void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(InitMenuTypes.TRANSMUTATION_CRUCIBLE_MENU.get(), ScreenTransmutationCrucible::new);
         event.register(InitMenuTypes.ALCHEMIST_STORAGE_BOX_MENU.get(), ScreenAlchemistStorageBox::new);
         event.register(InitMenuTypes.TRANSMUTATION_SIGIL_SCROLL_MENU.get(), ScreenTransmutationSigilScroll::new);
     }

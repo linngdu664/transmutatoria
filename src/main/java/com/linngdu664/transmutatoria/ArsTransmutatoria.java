@@ -1,7 +1,9 @@
 package com.linngdu664.transmutatoria;
 
 import com.linngdu664.transmutatoria.init.*;
-import com.linngdu664.transmutatoria.network.RotateStorageBoxPayload;
+import com.linngdu664.transmutatoria.network.to_client.*;
+import com.linngdu664.transmutatoria.network.to_server.RotateStorageBoxPayload;
+import com.linngdu664.transmutatoria.network.to_client.handler.CrucibleSetHandler;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 
@@ -54,6 +56,42 @@ public class ArsTransmutatoria {
                         RotateStorageBoxPayload.TYPE,
                         RotateStorageBoxPayload.STREAM_CODEC,
                         (payload, context) -> payload.handle(context.player())
+                );
+        event.registrar(MODID)
+                .playToClient(
+                        CrucibleSetItemPayload.TYPE,
+                        CrucibleSetItemPayload.STREAM_CODEC,
+                        (payload, _) -> CrucibleSetHandler.handleItem(payload)
+                );
+        event.registrar(MODID)
+                .playToClient(
+                        CrucibleSetFinishPayload.TYPE,
+                        CrucibleSetFinishPayload.STREAM_CODEC,
+                        (payload, _) -> CrucibleSetHandler.handleFinish(payload)
+                );
+        event.registrar(MODID)
+                .playToClient(
+                        CrucibleSetPolarityPayload.TYPE,
+                        CrucibleSetPolarityPayload.STREAM_CODEC,
+                        (payload, _) -> CrucibleSetHandler.handlePolarity(payload)
+                );
+        event.registrar(MODID)
+                .playToClient(
+                        CrucibleSetSelectedSlotPayload.TYPE,
+                        CrucibleSetSelectedSlotPayload.STREAM_CODEC,
+                        (payload, _) -> CrucibleSetHandler.handleSelectedSlot(payload)
+                );
+        event.registrar(MODID)
+                .playToClient(
+                        CrucibleSetProcessTimerPayload.TYPE,
+                        CrucibleSetProcessTimerPayload.STREAM_CODEC,
+                        (payload, _) -> CrucibleSetHandler.handleProcessTimer(payload)
+                );
+        event.registrar(MODID)
+                .playToClient(
+                        CrucibleSetTargetTimerPayload.TYPE,
+                        CrucibleSetTargetTimerPayload.STREAM_CODEC,
+                        (payload, _) -> CrucibleSetHandler.handleTargetTimer(payload)
                 );
     }
 }

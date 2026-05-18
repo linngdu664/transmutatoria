@@ -4,7 +4,7 @@ import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.block.BlockTransmutationCrucible;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.ItemAlchemistStorageBox;
-import com.linngdu664.transmutatoria.network.RotateStorageBoxPayload;
+import com.linngdu664.transmutatoria.network.to_server.RotateStorageBoxPayload;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
