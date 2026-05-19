@@ -1,11 +1,10 @@
 package com.linngdu664.transmutatoria.gui;
 
 import com.linngdu664.transmutatoria.init.InitMenuTypes;
-import com.linngdu664.transmutatoria.item.EssenceMetal;
+import com.linngdu664.transmutatoria.util.EssenceMetal;
 import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;

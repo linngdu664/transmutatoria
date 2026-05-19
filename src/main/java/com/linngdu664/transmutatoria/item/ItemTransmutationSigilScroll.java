@@ -4,6 +4,7 @@ import com.linngdu664.transmutatoria.gui.MenuTransmutationSigilScroll;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.recipe.AlchemicalRecipeManager;
 import com.linngdu664.transmutatoria.recipe.AlchemicalReplicationRecipe;
+import com.linngdu664.transmutatoria.util.EssenceMetal;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;

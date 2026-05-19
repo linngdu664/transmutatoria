@@ -1,7 +1,7 @@
 package com.linngdu664.transmutatoria.init;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.item.EssenceMetal;
+import com.linngdu664.transmutatoria.util.EssenceMetal;
 import com.linngdu664.transmutatoria.item.component.ExpireInfo;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;

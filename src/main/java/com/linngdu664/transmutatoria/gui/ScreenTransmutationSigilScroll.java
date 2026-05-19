@@ -3,7 +3,7 @@ package com.linngdu664.transmutatoria.gui;
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.AbstractItemTransmutationScroll;
-import com.linngdu664.transmutatoria.item.EssenceMetal;
+import com.linngdu664.transmutatoria.util.EssenceMetal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;

@@ -1,4 +1,4 @@
-package com.linngdu664.transmutatoria.item;
+package com.linngdu664.transmutatoria.util;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.network.FriendlyByteBuf;

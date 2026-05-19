@@ -1,6 +1,6 @@
 package com.linngdu664.transmutatoria.init;
 
-import com.linngdu664.transmutatoria.item.EssenceMetal;
+import com.linngdu664.transmutatoria.util.EssenceMetal;
 import com.linngdu664.transmutatoria.item.ItemAlchemistStorageBox;
 import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
 import com.linngdu664.transmutatoria.item.ItemTransmutationCrucible;

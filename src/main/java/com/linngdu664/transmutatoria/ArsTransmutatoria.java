@@ -2,8 +2,6 @@ package com.linngdu664.transmutatoria;
 
 import com.linngdu664.transmutatoria.init.*;
 import com.linngdu664.transmutatoria.network.to_client.*;
-import com.linngdu664.transmutatoria.network.to_server.RotateStorageBoxPayload;
-import com.linngdu664.transmutatoria.network.to_client.handler.CrucibleSetHandler;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 
@@ -13,7 +11,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(ArsTransmutatoria.MODID)
@@ -46,52 +43,5 @@ public class ArsTransmutatoria {
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-
-        modEventBus.addListener(ArsTransmutatoria::registerPayloads);
-    }
-
-    private static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        event.registrar(MODID)
-                .playToServer(
-                        RotateStorageBoxPayload.TYPE,
-                        RotateStorageBoxPayload.STREAM_CODEC,
-                        (payload, context) -> payload.handle(context.player())
-                );
-        event.registrar(MODID)
-                .playToClient(
-                        CrucibleSetItemPayload.TYPE,
-                        CrucibleSetItemPayload.STREAM_CODEC,
-                        (payload, _) -> CrucibleSetHandler.handleItem(payload)
-                );
-        event.registrar(MODID)
-                .playToClient(
-                        CrucibleSetFinishPayload.TYPE,
-                        CrucibleSetFinishPayload.STREAM_CODEC,
-                        (payload, _) -> CrucibleSetHandler.handleFinish(payload)
-                );
-        event.registrar(MODID)
-                .playToClient(
-                        CrucibleSetPolarityPayload.TYPE,
-                        CrucibleSetPolarityPayload.STREAM_CODEC,
-                        (payload, _) -> CrucibleSetHandler.handlePolarity(payload)
-                );
-        event.registrar(MODID)
-                .playToClient(
-                        CrucibleSetSelectedSlotPayload.TYPE,
-                        CrucibleSetSelectedSlotPayload.STREAM_CODEC,
-                        (payload, _) -> CrucibleSetHandler.handleSelectedSlot(payload)
-                );
-        event.registrar(MODID)
-                .playToClient(
-                        CrucibleSetProcessTimerPayload.TYPE,
-                        CrucibleSetProcessTimerPayload.STREAM_CODEC,
-                        (payload, _) -> CrucibleSetHandler.handleProcessTimer(payload)
-                );
-        event.registrar(MODID)
-                .playToClient(
-                        CrucibleSetTargetTimerPayload.TYPE,
-                        CrucibleSetTargetTimerPayload.STREAM_CODEC,
-                        (payload, _) -> CrucibleSetHandler.handleTargetTimer(payload)
-                );
     }
 }
