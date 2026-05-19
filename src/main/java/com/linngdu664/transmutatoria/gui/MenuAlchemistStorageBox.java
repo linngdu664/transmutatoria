@@ -18,7 +18,7 @@ import net.minecraft.world.item.component.ItemContainerContents;
 import org.jspecify.annotations.Nullable;
 
 public class MenuAlchemistStorageBox extends AbstractContainerMenu {
-    private static final int CONTAINER_SLOTS = 12;
+    public static final int CONTAINER_SLOTS = 12;
     private static final int INV_START = CONTAINER_SLOTS;
     private static final int INV_END = INV_START + 27;
     private static final int HOTBAR_START = INV_END;
@@ -47,16 +47,10 @@ public class MenuAlchemistStorageBox extends AbstractContainerMenu {
 
     private void addSlots(Container container, Inventory playerInventory, int boxState) {
         EssenceMetal[] metals = EssenceMetal.values();
-
-        double centerX = 88;
-        double centerY = 85;
-        double radius = 50;
-
-        for (int i = 0; i < 12; i++) {
-            double angle = Math.toRadians(i * 30.0 - 90.0);
-            int x = (int) (centerX + radius * Mth.cos(angle)) - 9;
-            int y = (int) (centerY + radius * Mth.sin(angle)) - 9;
-            addSlot(new LockedEssenceMetalSlot(container, i, x, y, metals[i], boxState));
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                addSlot(new LockedEssenceMetalSlot(container, j*3+i, 14+i*12+j*36, 56+i*21, metals[j*3+i], boxState));
+            }
         }
     }
 
@@ -110,7 +104,7 @@ public class MenuAlchemistStorageBox extends AbstractContainerMenu {
         return boxStack == null || !boxStack.isEmpty();
     }
 
-    private static class LockedEssenceMetalSlot extends Slot {
+    public static class LockedEssenceMetalSlot extends Slot {
         private final EssenceMetal expectedMetal;
         private final int expectedState;
 

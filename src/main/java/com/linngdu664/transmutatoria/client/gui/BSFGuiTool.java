@@ -14,6 +14,8 @@ import net.minecraft.world.phys.Vec2;
 public class BSFGuiTool {
     public static final GuiTexture SIMPLE_FRAME = new GuiTexture("textures/gui/simple_frame.png", 22, 22);
     public static final GuiImage SIMPLE_FRAME_IMG = new GuiImage(SIMPLE_FRAME, 0, 0, 22, 22);
+    public static final GuiTexture ALCHEMIST_STORAGE_BOX = new GuiTexture("textures/gui/alchemist_storage_box.png", 176, 188);
+    public static final GuiImage ALCHEMIST_STORAGE_BOX_IMG = new GuiImage(ALCHEMIST_STORAGE_BOX, 0, 0, 176, 188);
 
     /**
      * 渲染进度条
