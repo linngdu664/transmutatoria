@@ -1,30 +1,34 @@
 package com.linngdu664.transmutatoria.util;
 
+import com.linngdu664.transmutatoria.init.InitItems;
 import com.mojang.serialization.Codec;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.registries.DeferredItem;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
 public enum EssenceMetal implements StringRepresentable {
-    A("eclipsium"),
-    B("lunargent"),
-    C("astrotite"),
+    A("eclipsium", new DeferredItem[]{InitItems.NIGREDO_TAINTED_ECLIPSIUM, InitItems.ECLIPSIUM, InitItems.ALBEDO_INFUSED_ECLIPSIUM, InitItems.CITRINITAS_INFUSED_ECLIPSIUM}),
+    B("lunargent", new DeferredItem[]{InitItems.NIGREDO_TAINTED_LUNARGENT, InitItems.LUNARGENT, InitItems.ALBEDO_INFUSED_LUNARGENT, InitItems.CITRINITAS_INFUSED_LUNARGENT}),
+    C("astrotite", new DeferredItem[]{InitItems.NIGREDO_TAINTED_ASTROTITE, InitItems.ASTROTITE, InitItems.ALBEDO_INFUSED_ASTROTITE, InitItems.CITRINITAS_INFUSED_ASTROTITE}),
 
-    D("abyssion"),
-    E("animercury"),
-    F("necroplumb"),
+    D("abyssion", new DeferredItem[]{InitItems.NIGREDO_TAINTED_ABYSSION, InitItems.ABYSSION, InitItems.ALBEDO_INFUSED_ABYSSION, InitItems.CITRINITAS_INFUSED_ABYSSION}),
+    E("animercury", new DeferredItem[]{InitItems.NIGREDO_TAINTED_ANIMERCURY, InitItems.ANIMERCURY, InitItems.ALBEDO_INFUSED_ANIMERCURY, InitItems.CITRINITAS_INFUSED_ANIMERCURY}),
+    F("necroplumb", new DeferredItem[]{InitItems.NIGREDO_TAINTED_NECROPLUMB, InitItems.NECROPLUMB, InitItems.ALBEDO_INFUSED_NECROPLUMB, InitItems.CITRINITAS_INFUSED_NECROPLUMB}),
 
-    G("sanguibronze"),
-    H("venotite"),
-    I("ossantimony"),
+    G("sanguibronze", new DeferredItem[]{InitItems.NIGREDO_TAINTED_SANGUIBRONZE, InitItems.SANGUIBRONZE, InitItems.ALBEDO_INFUSED_SANGUIBRONZE, InitItems.CITRINITAS_INFUSED_SANGUIBRONZE}),
+    H("venotite", new DeferredItem[]{InitItems.NIGREDO_TAINTED_VENOTITE, InitItems.VENOTITE, InitItems.ALBEDO_INFUSED_VENOTITE, InitItems.CITRINITAS_INFUSED_VENOTITE}),
+    I("ossantimony", new DeferredItem[]{InitItems.NIGREDO_TAINTED_OSSANTIMONY, InitItems.OSSANTIMONY, InitItems.ALBEDO_INFUSED_OSSANTIMONY, InitItems.CITRINITAS_INFUSED_OSSANTIMONY}),
 
-    J("fulgurzinc"),
-    K("chronoplatinum"),
-    L("pandemonium");
+    J("fulgurzinc", new DeferredItem[]{InitItems.NIGREDO_TAINTED_FULGURZINC, InitItems.FULGURZINC, InitItems.ALBEDO_INFUSED_FULGURZINC, InitItems.CITRINITAS_INFUSED_FULGURZINC}),
+    K("chronoplatinum", new DeferredItem[]{InitItems.NIGREDO_TAINTED_CHRONOPLATINUM, InitItems.CHRONOPLATINUM, InitItems.ALBEDO_INFUSED_CHRONOPLATINUM, InitItems.CITRINITAS_INFUSED_CHRONOPLATINUM}),
+    L("pandemonium", new DeferredItem[]{InitItems.NIGREDO_TAINTED_PANDEMONIUM, InitItems.PANDEMONIUM, InitItems.ALBEDO_INFUSED_PANDEMONIUM, InitItems.CITRINITAS_INFUSED_PANDEMONIUM});
 
     public static final Codec<EssenceMetal> CODEC = StringRepresentable.fromEnum(EssenceMetal::values);
     public static final Codec<List<EssenceMetal>> LIST_CODEC = CODEC.listOf();
@@ -43,6 +47,7 @@ public enum EssenceMetal implements StringRepresentable {
     );
 
     private final String key;
+    private final DeferredItem[] stateItems;
     private Set<EssenceMetal> restrains;
     private Set<EssenceMetal> double_restrains;
     private Set<EssenceMetal> symbiosisWith;
@@ -69,8 +74,9 @@ public enum EssenceMetal implements StringRepresentable {
         L.restrains = EnumSet.of(A,B,C,D,E,F,G,H,I,J,K);
     }
 
-    EssenceMetal(String key) {
+    EssenceMetal(String key, DeferredItem[] stateItems) {
         this.key = key;
+        this.stateItems = stateItems;
     }
 
     public Relation getRelationTo(EssenceMetal other) {
@@ -81,6 +87,16 @@ public enum EssenceMetal implements StringRepresentable {
         if (other.restrains.contains(this)) return this.restrains.contains(other) ? Relation.MUTUAL_RESTRAINED : Relation.BE_RESTRAINED;//被克制或互克
         if (other.double_restrains.contains(this)) return Relation.DOUBLE_BE_RESTRAINED;//双倍被克制
         return Relation.NEUTRAL;//无关
+    }
+
+    public ItemStack getItemStack(int state) {
+        if (state < -1) {
+            return InitItems.ALCHEMICAL_DROSS.toStack();
+        }
+        if (state > 2) {
+            return Items.REDSTONE.getDefaultInstance();
+        }
+        return stateItems[state + 1].toStack();
     }
 
     @Override

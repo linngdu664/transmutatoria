@@ -1,10 +1,11 @@
 package com.linngdu664.transmutatoria.util;
 
+import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
 import com.linngdu664.transmutatoria.util.alchemy_slots.*;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import it.unimi.dsi.fastutil.longs.Long2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -14,8 +15,9 @@ import java.util.List;
 
 public abstract class AbstractAlchemySlot {
     private final EssenceMetal essenceMetal;
-    private final int x;
-    private final int y;
+    // x、y 的方向与屏幕坐标系一致，即：下->y+，右->x+
+    private final int x;    // [-32768, 32767]
+    private final int y;    // [-32768, 32767]
 
     protected AbstractAlchemySlot(EssenceMetal essenceMetal, int x, int y) {
         this.essenceMetal = essenceMetal;
@@ -30,11 +32,22 @@ public abstract class AbstractAlchemySlot {
      * @param inputStack 输入金属的 ItemStack
      * @param outputs 锅的所有输出槽的 ItemStack
      * @param posToOutputSlot 槽位 xy 到 输出槽下标的映射
-     * @param deferTasks 延迟任务列表
-     * @param magicNumber 其实是 方块位置、下一次重置时刻、本对象对应输出槽下标 的哈希
+     * @param deferredTasks 延迟任务列表
+     * @param magicNumber 方块位置、下一次重置时刻、本对象对应输出槽下标 的哈希
+     * @return 对锅的影响
      */
-    protected void react(ItemStack inputStack, List<ItemStack> outputs, Long2IntMap posToOutputSlot, List<Runnable> deferTasks, int magicNumber) {
-
+    public AlchemyReactResult react(ItemStack inputStack, List<ItemStack> outputs, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
+        if (inputStack.getItem() instanceof ItemEssenceMetal inputEssenceMetal) {
+            EssenceMetal.Relation relation = inputEssenceMetal.getRelation(essenceMetal);
+            outputs.set(posToOutputSlot.get(getPackedXY(x, y)), inputEssenceMetal.change(relation.self));
+            return switch (relation) {
+                case DOUBLE_RESTRAIN, DOUBLE_BE_RESTRAINED -> new AlchemyReactResult(2, relation.other, false);
+                case NEUTRAL -> new AlchemyReactResult(0, relation.other, false);
+                case SAME -> new AlchemyReactResult(0, relation.other, true);
+                default -> new AlchemyReactResult(1, relation.other, false);
+            };
+        }
+        return new AlchemyReactResult(0, 0, false);
     }
 
     public EssenceMetal getEssenceMetal() {
@@ -49,8 +62,19 @@ public abstract class AbstractAlchemySlot {
         return y;
     }
 
-    public long getPackedXY() {
-        return (long) x << 32 | y;
+    private int getAdjacentPackedXY(int direction) {
+        return switch (direction) {
+            case 0 -> getPackedXY(x, y - 2);
+            case 1 -> getPackedXY(x + 1, y - 1);
+            case 2 -> getPackedXY(x + 1, y + 1);
+            case 3 -> getPackedXY(x, y + 2);
+            case 4 -> getPackedXY(x - 1, y + 1);
+            default -> getPackedXY(x - 1, y - 1);
+        };
+    }
+
+    private static int getPackedXY(int x, int y) {
+        return (x << 16) | (y & 0xFFFF);
     }
 
     public static AbstractAlchemySlot create(SlotType type, EssenceMetal essenceMetal, int x, int y) {
