@@ -14,10 +14,10 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 public abstract class AbstractAlchemySlot {
-    private final EssenceMetal essenceMetal;
+    protected EssenceMetal essenceMetal;
     // x、y 的方向与屏幕坐标系一致，即：下->y+，右->x+
-    private final int x;    // [-32768, 32767]
-    private final int y;    // [-32768, 32767]
+    protected int x;    // [-32768, 32767]
+    protected int y;    // [-32768, 32767]
 
     protected AbstractAlchemySlot(EssenceMetal essenceMetal, int x, int y) {
         this.essenceMetal = essenceMetal;
@@ -28,26 +28,58 @@ public abstract class AbstractAlchemySlot {
     protected abstract SlotType getType();
 
     /**
-     * 本槽位发生的炼金反应
-     * @param inputStack 输入金属的 ItemStack
+     * 本槽位的炼金反应，总方法，不可被重写
+     * @param scroll 卷轴 ItemStack
+     * @param input 对应输入槽的 ItemStack
      * @param outputs 锅的所有输出槽的 ItemStack
+     * @param inhibitionStates 输出槽位的抑制状态
      * @param posToOutputSlot 槽位 xy 到 输出槽下标的映射
      * @param deferredTasks 延迟任务列表
      * @param magicNumber 方块位置、下一次重置时刻、本对象对应输出槽下标 的哈希
-     * @return 对锅的影响
+     * @return 最终反应结果
      */
-    public AlchemyReactResult react(ItemStack inputStack, List<ItemStack> outputs, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
-        if (inputStack.getItem() instanceof ItemEssenceMetal inputEssenceMetal) {
-            EssenceMetal.Relation relation = inputEssenceMetal.getRelation(essenceMetal);
-            outputs.set(posToOutputSlot.get(getPackedXY(x, y)), inputEssenceMetal.change(relation.self));
-            return switch (relation) {
-                case DOUBLE_RESTRAIN, DOUBLE_BE_RESTRAINED -> new AlchemyReactResult(2, relation.other, false);
-                case NEUTRAL -> new AlchemyReactResult(0, relation.other, false);
-                case SAME -> new AlchemyReactResult(0, relation.other, true);
-                default -> new AlchemyReactResult(1, relation.other, false);
-            };
+    public final AlchemyReactResult react(ItemStack scroll, ItemStack input, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
+        if (!(input.getItem() instanceof ItemEssenceMetal inputEssenceMetal)) {
+            return new AlchemyReactResult(0, 0, 0, false, false);
         }
-        return new AlchemyReactResult(0, 0, false);
+
+        AlchemyReactResult result = internalReact(scroll, inputEssenceMetal, outputs, inhibitionStates, posToOutputSlot, deferredTasks, magicNumber);
+        int slot = posToOutputSlot.get(getPackedXY(x, y));
+
+        // 如果本槽位被标记为抑制，强制把状态变化设成 0
+        if (inhibitionStates[slot]) {
+            result.setEssenceStateIncrease(0);
+            result.setPolarityIncrease(0);
+            result.setEntropyIncrease(0);
+        }
+
+        // 如果不清空物品，则设置物品（清空物品与触发损毁计算已经解耦）
+        if (!result.isClearItemStack()) {
+            outputs.set(slot, inputEssenceMetal.change(result.getEssenceStateIncrease()));
+        }
+
+        return result;
+    }
+
+    /**
+     * 本槽位的内部炼金反应，可被重写
+     * @param scroll 卷轴
+     * @param inputEssence 输入的源质金属 Item
+     * @param outputs 锅的所有输出槽的 ItemStack
+     * @param inhibitionStates 输出槽位的抑制状态
+     * @param posToOutputSlot 槽位 xy 到 输出槽下标的映射
+     * @param deferredTasks 延迟任务列表
+     * @param magicNumber 方块位置、下一次重置时刻、本对象对应输出槽下标 的哈希
+     * @return 中间反应结果，可被调整
+     */
+    protected AlchemyReactResult internalReact(ItemStack scroll, ItemEssenceMetal inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
+        EssenceMetal.Relation relation = inputEssence.getRelation(essenceMetal);
+        return switch (relation) {
+            case DOUBLE_RESTRAIN, DOUBLE_BE_RESTRAINED -> new AlchemyReactResult(relation.self, relation.other, 2, false, false);
+            case NEUTRAL -> new AlchemyReactResult(relation.self, relation.other, 0, false, false);
+            case SAME -> new AlchemyReactResult(relation.self, relation.other, 0, true, true);
+            default -> new AlchemyReactResult(relation.self, relation.other, 1, false, false);
+        };
     }
 
     public EssenceMetal getEssenceMetal() {
@@ -62,7 +94,21 @@ public abstract class AbstractAlchemySlot {
         return y;
     }
 
-    private int getAdjacentPackedXY(int direction) {
+    public void swapPropertyExceptForType(AbstractAlchemySlot other) {
+        int x1 = other.x;
+        int y1 = other.y;
+        EssenceMetal essenceMetal1 = other.essenceMetal;
+
+        other.x = this.x;
+        other.y = this.y;
+        other.essenceMetal = this.essenceMetal;
+
+        this.x = x1;
+        this.y = y1;
+        this.essenceMetal = essenceMetal1;
+    }
+
+    protected int getAdjacentPackedXY(int direction) {
         return switch (direction) {
             case 0 -> getPackedXY(x, y - 2);
             case 1 -> getPackedXY(x + 1, y - 1);
@@ -73,7 +119,7 @@ public abstract class AbstractAlchemySlot {
         };
     }
 
-    private static int getPackedXY(int x, int y) {
+    protected static int getPackedXY(int x, int y) {
         return (x << 16) | (y & 0xFFFF);
     }
 

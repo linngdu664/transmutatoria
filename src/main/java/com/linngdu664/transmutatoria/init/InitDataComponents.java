@@ -1,6 +1,7 @@
 package com.linngdu664.transmutatoria.init;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
+import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 import com.linngdu664.transmutatoria.item.component.ExpireInfo;
 import com.mojang.serialization.Codec;
@@ -44,5 +45,10 @@ public class InitDataComponents {
             DATA_COMPONENTS.registerComponentType(
                     "activated",
                     builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+            );
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<AbstractAlchemySlot>>> ALCHEMY_SLOTS =
+            DATA_COMPONENTS.registerComponentType(
+                    "alchemy_slots",
+                    builder -> builder.persistent(AbstractAlchemySlot.LIST_CODEC).networkSynchronized(AbstractAlchemySlot.LIST_STREAM_CODEC)
             );
 }
