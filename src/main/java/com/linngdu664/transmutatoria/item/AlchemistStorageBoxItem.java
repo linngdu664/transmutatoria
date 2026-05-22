@@ -1,6 +1,6 @@
 package com.linngdu664.transmutatoria.item;
 
-import com.linngdu664.transmutatoria.gui.MenuAlchemistStorageBox;
+import com.linngdu664.transmutatoria.inventory.AlchemistStorageBoxMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -12,10 +12,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class ItemAlchemistStorageBox extends Item {
+public class AlchemistStorageBoxItem extends Item {
     private final int state;
 
-    public ItemAlchemistStorageBox(Identifier id, int state) {
+    public AlchemistStorageBoxItem(Identifier id, int state) {
         super(new Item.Properties()
                 .setId(ResourceKey.create(Registries.ITEM, id))
                 .stacksTo(1));
@@ -32,7 +32,7 @@ public class ItemAlchemistStorageBox extends Item {
         if (!level.isClientSide()) {
             player.openMenu(new SimpleMenuProvider(
                     (containerId, playerInventory, p) ->
-                            new MenuAlchemistStorageBox(containerId, playerInventory, stack, state),
+                            new AlchemistStorageBoxMenu(containerId, playerInventory, stack, state),
                     stack.getHoverName()));
         }
         return InteractionResult.SUCCESS;

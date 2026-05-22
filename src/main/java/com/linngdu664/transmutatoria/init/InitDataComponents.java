@@ -1,6 +1,7 @@
 package com.linngdu664.transmutatoria.init;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
+import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 import com.linngdu664.transmutatoria.item.component.ExpireInfo;
@@ -16,6 +17,8 @@ import java.util.List;
 public class InitDataComponents {
     public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, ArsTransmutatoria.MODID);
 
+    /**被 ALCHEMY_SLOTS 取代*/
+    @Deprecated(forRemoval = true)
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<EssenceMetal>>> ESSENCES =
             DATA_COMPONENTS.registerComponentType(
                     "essences",
@@ -41,10 +44,10 @@ public class InitDataComponents {
                     "next_expire",
                     builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.LONG)
             );
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> ACTIVATED =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<RecipeConditions>> RECIPE_CONDITIONS =
             DATA_COMPONENTS.registerComponentType(
-                    "activated",
-                    builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+                    "recipe_conditions",
+                    builder -> builder.persistent(RecipeConditions.CODEC).networkSynchronized(RecipeConditions.STREAM_CODEC)
             );
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<AbstractAlchemySlot>>> ALCHEMY_SLOTS =
             DATA_COMPONENTS.registerComponentType(

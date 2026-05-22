@@ -1,6 +1,6 @@
 package com.linngdu664.transmutatoria.block;
 
-import com.linngdu664.transmutatoria.block.entity.BlockEntityTransmutationCrucible;
+import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -32,14 +32,14 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-public class BlockTransmutationCrucible extends HorizontalDirectionalBlock implements EntityBlock {
+public class TransmutationCrucibleBlock extends HorizontalDirectionalBlock implements EntityBlock {
     protected static final VoxelShape NORTH_AABB = makeShape();
     protected static final VoxelShape SOUTH_AABB = rotateShape(Direction.SOUTH, Direction.NORTH, NORTH_AABB);
     protected static final VoxelShape EAST_AABB = rotateShape(Direction.SOUTH, Direction.EAST, NORTH_AABB);
     protected static final VoxelShape WEST_AABB = rotateShape(Direction.NORTH, Direction.EAST, NORTH_AABB);
-    protected static final MapCodec<BlockTransmutationCrucible> CODEC = simpleCodec(BlockTransmutationCrucible::new);
+    protected static final MapCodec<TransmutationCrucibleBlock> CODEC = simpleCodec(TransmutationCrucibleBlock::new);
 
-    public BlockTransmutationCrucible(Identifier id) {
+    public TransmutationCrucibleBlock(Identifier id) {
         super(BlockBehaviour.Properties.of()
                 .setId(ResourceKey.create(Registries.BLOCK, id))
                 .sound(SoundType.WOOD)
@@ -49,7 +49,7 @@ public class BlockTransmutationCrucible extends HorizontalDirectionalBlock imple
                 .setValue(FACING, Direction.NORTH));
     }
 
-    public BlockTransmutationCrucible(Properties properties) {
+    public TransmutationCrucibleBlock(Properties properties) {
         super(properties);
     }
 
@@ -57,7 +57,7 @@ public class BlockTransmutationCrucible extends HorizontalDirectionalBlock imple
     protected @NonNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof BlockEntityTransmutationCrucible crucible) {
+            if (blockEntity instanceof TransmutationCrucibleBlockEntity crucible) {
                 if (crucible.hasAnyOutput()) {
                     crucible.takeAllOutput(player);
                     return InteractionResult.SUCCESS_SERVER;
@@ -83,19 +83,19 @@ public class BlockTransmutationCrucible extends HorizontalDirectionalBlock imple
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new BlockEntityTransmutationCrucible(pos, state);
+        return new TransmutationCrucibleBlockEntity(pos, state);
     }
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> type) {
-        return type == InitBlocks.TRANSMUTATION_CRUCIBLE_BLOCK_ENTITY.get() ? BlockEntityTransmutationCrucible::tick : null;
+        return type == InitBlocks.TRANSMUTATION_CRUCIBLE_BLOCK_ENTITY.get() ? TransmutationCrucibleBlockEntity::tick : null;
     }
 
     @Override
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof BlockEntityTransmutationCrucible crucibleEntity) {
+            if (blockEntity instanceof TransmutationCrucibleBlockEntity crucibleEntity) {
                 crucibleEntity.entityInside(level, pos, entity);
             }
         }

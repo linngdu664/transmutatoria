@@ -1,6 +1,6 @@
 package com.linngdu664.transmutatoria.util;
 
-import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
+import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.alchemy_slots.*;
 
 import com.mojang.serialization.Codec;
@@ -39,7 +39,7 @@ public abstract class AbstractAlchemySlot {
      * @return 最终反应结果
      */
     public final AlchemyReactResult react(ItemStack scroll, ItemStack input, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
-        if (!(input.getItem() instanceof ItemEssenceMetal inputEssenceMetal)) {
+        if (!(input.getItem() instanceof EssenceMetalItem inputEssenceMetal)) {
             return new AlchemyReactResult(0, 0, 0, false, false);
         }
 
@@ -72,7 +72,7 @@ public abstract class AbstractAlchemySlot {
      * @param magicNumber 方块位置、下一次重置时刻、本对象对应输出槽下标 的哈希
      * @return 中间反应结果，可被调整
      */
-    protected AlchemyReactResult internalReact(ItemStack scroll, ItemEssenceMetal inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
+    protected AlchemyReactResult internalReact(ItemStack scroll, EssenceMetalItem inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
         EssenceMetal.Relation relation = inputEssence.getRelation(essenceMetal);
         return switch (relation) {
             case DOUBLE_RESTRAIN, DOUBLE_BE_RESTRAINED -> new AlchemyReactResult(relation.self, relation.other, 2, false, false);

@@ -1,11 +1,8 @@
 package com.linngdu664.transmutatoria.init;
 
+import com.linngdu664.transmutatoria.item.*;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
-import com.linngdu664.transmutatoria.item.ItemAlchemistStorageBox;
-import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
-import com.linngdu664.transmutatoria.item.ItemTransmutationCrucible;
-import com.linngdu664.transmutatoria.item.ItemTransmutationEquationScroll;
-import com.linngdu664.transmutatoria.item.ItemTransmutationSigilScroll;
+import com.linngdu664.transmutatoria.item.TransmutationSigilScrollItem;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -24,17 +21,17 @@ public class InitItems {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     // ================= [ 方块/特殊物品示例 ] =================
-    public static DeferredItem<Item> TRANSMUTATION_CRUCIBLE = ITEMS.register("transmutation_crucible", ItemTransmutationCrucible::new);
+    public static DeferredItem<Item> TRANSMUTATION_CRUCIBLE = ITEMS.register("transmutation_crucible", TransmutationCrucibleItem::new);
 
     // ================= [ 炼金术士储物盒 ] =================
     public static DeferredItem<Item> ALCHEMIST_STORAGE_BOX = ITEMS.register("alchemist_storage_box",
-            (id) -> new ItemAlchemistStorageBox(id, 0));
+            (id) -> new AlchemistStorageBoxItem(id, 0));
     public static DeferredItem<Item> NIGREDO_ALCHEMIST_STORAGE_BOX = ITEMS.register("nigredo_alchemist_storage_box",
-            (id) -> new ItemAlchemistStorageBox(id, -1));
+            (id) -> new AlchemistStorageBoxItem(id, -1));
     public static DeferredItem<Item> ALBEDO_ALCHEMIST_STORAGE_BOX = ITEMS.register("albedo_alchemist_storage_box",
-            (id) -> new ItemAlchemistStorageBox(id, 1));
+            (id) -> new AlchemistStorageBoxItem(id, 1));
     public static DeferredItem<Item> CITRINITAS_ALCHEMIST_STORAGE_BOX = ITEMS.register("citrinitas_alchemist_storage_box",
-            (id) -> new ItemAlchemistStorageBox(id, 2));
+            (id) -> new AlchemistStorageBoxItem(id, 2));
 
     // ================= [ 基础物品 ] =================
     public static DeferredItem<Item> TRANSMUTATION_CRYSTAL = ITEMS.registerSimpleItem("transmutation_crystal");
@@ -125,21 +122,21 @@ public class InitItems {
     public static DeferredItem<Item> PHILOSOPHERS_STONE = ITEMS.registerSimpleItem("philosophers_stone");
 
     // ================= [ 卷轴 — 印记（复制） ] =================
-    public static DeferredItem<Item> TRANSMUTATION_SIGIL_SCROLL = ITEMS.register("transmutation_sigil_scroll", ItemTransmutationSigilScroll::new);
-    public static DeferredItem<Item> TERRESTRIAL_SIGIL_SCROLL = ITEMS.register("terrestrial_sigil_scroll", ItemTransmutationSigilScroll::new);
-    public static DeferredItem<Item> LUNAR_SIGIL_SCROLL = ITEMS.register("lunar_sigil_scroll", ItemTransmutationSigilScroll::new);
-    public static DeferredItem<Item> SOLAR_SIGIL_SCROLL = ITEMS.register("solar_sigil_scroll", ItemTransmutationSigilScroll::new);
-    public static DeferredItem<Item> VOID_SIGIL_SCROLL = ITEMS.register("void_sigil_scroll", ItemTransmutationSigilScroll::new);
+    public static DeferredItem<Item> TRANSMUTATION_SIGIL_SCROLL = ITEMS.register("transmutation_sigil_scroll", TransmutationSigilScrollItem::new);
+    public static DeferredItem<Item> TERRESTRIAL_SIGIL_SCROLL = ITEMS.register("terrestrial_sigil_scroll", TransmutationSigilScrollItem::new);
+    public static DeferredItem<Item> LUNAR_SIGIL_SCROLL = ITEMS.register("lunar_sigil_scroll", TransmutationSigilScrollItem::new);
+    public static DeferredItem<Item> SOLAR_SIGIL_SCROLL = ITEMS.register("solar_sigil_scroll", TransmutationSigilScrollItem::new);
+    public static DeferredItem<Item> VOID_SIGIL_SCROLL = ITEMS.register("void_sigil_scroll", TransmutationSigilScrollItem::new);
 
     // ================= [ 卷轴 — 方程（转化） ] =================
-    public static DeferredItem<Item> TRANSMUTATION_EQUATION_SCROLL = ITEMS.register("transmutation_equation_scroll", ItemTransmutationEquationScroll::new);
-    public static DeferredItem<Item> TERRESTRIAL_EQUATION_SCROLL = ITEMS.register("terrestrial_equation_scroll", ItemTransmutationEquationScroll::new);
-    public static DeferredItem<Item> LUNAR_EQUATION_SCROLL = ITEMS.register("lunar_equation_scroll", ItemTransmutationEquationScroll::new);
-    public static DeferredItem<Item> SOLAR_EQUATION_SCROLL = ITEMS.register("solar_equation_scroll", ItemTransmutationEquationScroll::new);
-    public static DeferredItem<Item> VOID_EQUATION_SCROLL = ITEMS.register("void_equation_scroll", ItemTransmutationEquationScroll::new);
+    public static DeferredItem<Item> TRANSMUTATION_EQUATION_SCROLL = ITEMS.register("transmutation_equation_scroll", TransmutationEquationScrollItem::new);
+    public static DeferredItem<Item> TERRESTRIAL_EQUATION_SCROLL = ITEMS.register("terrestrial_equation_scroll", TransmutationEquationScrollItem::new);
+    public static DeferredItem<Item> LUNAR_EQUATION_SCROLL = ITEMS.register("lunar_equation_scroll", TransmutationEquationScrollItem::new);
+    public static DeferredItem<Item> SOLAR_EQUATION_SCROLL = ITEMS.register("solar_equation_scroll", TransmutationEquationScrollItem::new);
+    public static DeferredItem<Item> VOID_EQUATION_SCROLL = ITEMS.register("void_equation_scroll", TransmutationEquationScrollItem::new);
 
     public static DeferredItem<Item> essenceMetalRegister(EssenceMetal essenceMetal, int state){
-        return ITEMS.register(essenceMetal.getKeyWithPrefix(state),()->new ItemEssenceMetal(essenceMetal, state));
+        return ITEMS.register(essenceMetal.getKeyWithPrefix(state),() -> new EssenceMetalItem(essenceMetal, state));
     }
 
 

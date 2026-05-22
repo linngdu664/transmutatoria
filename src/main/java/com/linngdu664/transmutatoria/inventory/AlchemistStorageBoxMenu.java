@@ -1,8 +1,8 @@
-package com.linngdu664.transmutatoria.gui;
+package com.linngdu664.transmutatoria.inventory;
 
 import com.linngdu664.transmutatoria.init.InitMenuTypes;
+import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
-import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.Container;
@@ -16,7 +16,7 @@ import net.minecraft.world.item.component.ItemContainerContents;
 
 import org.jspecify.annotations.Nullable;
 
-public class MenuAlchemistStorageBox extends AbstractContainerMenu {
+public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
     public static final int CONTAINER_SLOTS = 12;
     private static final int INV_START = CONTAINER_SLOTS;
     private static final int INV_END = INV_START + 27;
@@ -28,16 +28,16 @@ public class MenuAlchemistStorageBox extends AbstractContainerMenu {
     private final ItemStack boxStack;
 
     // Client-side constructor
-    public MenuAlchemistStorageBox(int containerId, Inventory playerInventory) {
+    public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory) {
         this(containerId, playerInventory, new SimpleContainer(CONTAINER_SLOTS), 0, null);
     }
 
     // Server-side constructor
-    public MenuAlchemistStorageBox(int containerId, Inventory playerInventory, ItemStack boxStack, int boxState) {
+    public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory, ItemStack boxStack, int boxState) {
         this(containerId, playerInventory, new StorageBoxContainer(boxStack), boxState, boxStack);
     }
 
-    private MenuAlchemistStorageBox(int containerId, Inventory playerInventory, Container container, int boxState, @Nullable ItemStack boxStack) {
+    private AlchemistStorageBoxMenu(int containerId, Inventory playerInventory, Container container, int boxState, @Nullable ItemStack boxStack) {
         super(InitMenuTypes.ALCHEMIST_STORAGE_BOX_MENU.get(), containerId);
         this.boxStack = boxStack;
         addSlots(container, playerInventory, boxState);
@@ -115,7 +115,7 @@ public class MenuAlchemistStorageBox extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            if (stack.getItem() instanceof ItemEssenceMetal metalItem) {
+            if (stack.getItem() instanceof EssenceMetalItem metalItem) {
                 return metalItem.getEssenceMetal() == expectedMetal && metalItem.getState() == expectedState;
             }
             return false;

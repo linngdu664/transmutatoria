@@ -2,6 +2,8 @@ package com.linngdu664.transmutatoria.item;
 
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.component.ExpireInfo;
+import com.linngdu664.transmutatoria.item.component.RecipeConditions;
+import com.linngdu664.transmutatoria.recipe.IAlchemicalRecipe;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -18,15 +20,30 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractItemTransmutationScroll extends Item {
+public abstract class AbstractTransmutationScrollItem extends Item {
     // 不会过期的卷轴
-    protected AbstractItemTransmutationScroll(Identifier id) {
+    protected AbstractTransmutationScrollItem(Identifier id) {
         super(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id)).stacksTo(1));
     }
 
     // 会过期的卷轴
-    protected AbstractItemTransmutationScroll(Identifier id, ExpireInfo expireInfo) {
+    protected AbstractTransmutationScrollItem(Identifier id, ExpireInfo expireInfo) {
         super(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id)).stacksTo(1).component(InitDataComponents.EXPIRE_INFO, expireInfo));
+    }
+
+    /**
+     * 获取物品关联的配方
+     * @return 如有关联则返回配方，否则返回 null
+     */
+    public abstract IAlchemicalRecipe getRecipe(Level level, ItemStack itemStack);
+
+    /**
+     * 初次激活卷轴，设置相关数据
+     * @param itemStack 卷轴 ItemStack
+     */
+    public static void activate(ItemStack itemStack, IAlchemicalRecipe recipe) {
+        itemStack.set(InitDataComponents.RECIPE_CONDITIONS, new RecipeConditions(recipe.oneTime(), recipe.minPolarity(), recipe.maxPolarity()));
+        // todo 设置源质槽
     }
 
     /**
@@ -35,6 +52,7 @@ public class AbstractItemTransmutationScroll extends Item {
      * @param stack Stack of scroll
      * @param times change times
      */
+    @Deprecated(forRemoval = true)
     public static void changeEssence(Level level, ItemStack stack, int times) {
         List<EssenceMetal> essences = stack.get(InitDataComponents.ESSENCES);
         if (essences == null) {

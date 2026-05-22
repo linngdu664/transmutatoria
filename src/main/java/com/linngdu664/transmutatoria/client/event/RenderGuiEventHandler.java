@@ -1,13 +1,15 @@
-package com.linngdu664.transmutatoria.client.gui;
+package com.linngdu664.transmutatoria.client.event;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
+import com.linngdu664.transmutatoria.client.gui.GuiHandler;
 import com.linngdu664.transmutatoria.init.InitBlocks;
-import com.linngdu664.transmutatoria.item.ItemAlchemistStorageBox;
+import com.linngdu664.transmutatoria.item.AlchemistStorageBoxItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -39,9 +41,9 @@ public class RenderGuiEventHandler {
         ItemStack mainHand = player.getMainHandItem();
         ItemStack offHand = player.getOffhandItem();
 
-        if (mainHand.getItem() instanceof ItemAlchemistStorageBox) {
+        if (mainHand.getItem() instanceof AlchemistStorageBoxItem) {
             boxStack = mainHand;
-        } else if (offHand.getItem() instanceof ItemAlchemistStorageBox) {
+        } else if (offHand.getItem() instanceof AlchemistStorageBoxItem) {
             boxStack = offHand;
         }
 
@@ -49,9 +51,10 @@ public class RenderGuiEventHandler {
         if (hit != null && hit.getType() == HitResult.Type.BLOCK) {
             BlockHitResult blockHit = (BlockHitResult) hit;
             BlockPos blockPos = blockHit.getBlockPos();
+            Level level = player.level();
 
-            if (player.level().getBlockState(blockPos).getBlock() == InitBlocks.TRANSMUTATION_CRUCIBLE.get()) {
-                BlockEntity be = player.level().getBlockEntity(blockPos);
+            if (level.getBlockState(blockPos).getBlock() == InitBlocks.TRANSMUTATION_CRUCIBLE.get()) {
+                BlockEntity be = level.getBlockEntity(blockPos);
                 if (boxStack != null) {
                     GuiHandler.renderCrucibleStorageBoxHud(guiGraphics, boxStack, event.getPartialTick());
                 }

@@ -1,6 +1,6 @@
 package com.linngdu664.transmutatoria.client.gui;
 
-import com.linngdu664.transmutatoria.block.entity.BlockEntityTransmutationCrucible;
+import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.DeltaTracker;
@@ -113,7 +113,7 @@ public class GuiHandler {
     }
 
     public static void renderCrucibleCommonHud(GuiGraphicsExtractor guiGraphics, BlockEntity be) {
-        if (be instanceof BlockEntityTransmutationCrucible crucible) {
+        if (be instanceof TransmutationCrucibleBlockEntity crucible) {
             Minecraft mc = Minecraft.getInstance();
             // catalyst
             Window window = mc.getWindow();

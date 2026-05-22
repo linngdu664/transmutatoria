@@ -7,11 +7,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemEssenceMetal extends Item {
+public class EssenceMetalItem extends Item {
     private final EssenceMetal essenceMetal;
     private final int state;
 
-    public ItemEssenceMetal(EssenceMetal essenceMetal, int state) {
+    public EssenceMetalItem(EssenceMetal essenceMetal, int state) {
         this.essenceMetal = essenceMetal;
         this.state = state;
         super(new Item.Properties()

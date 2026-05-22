@@ -1,9 +1,9 @@
 package com.linngdu664.transmutatoria.client.event;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.block.BlockTransmutationCrucible;
+import com.linngdu664.transmutatoria.block.TransmutationCrucibleBlock;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
-import com.linngdu664.transmutatoria.item.ItemAlchemistStorageBox;
+import com.linngdu664.transmutatoria.item.AlchemistStorageBoxItem;
 import com.linngdu664.transmutatoria.network.to_server.RotateStorageBoxPayload;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
@@ -15,6 +15,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 // 处理手持炼金术士储物盒对准炼金锅时的滚轮事件，旋转外圈刻度
@@ -33,10 +34,9 @@ public class InputEventHandler {
         ItemStack boxStack = null;
         int hand = 0;
 
-        if (player.getMainHandItem().getItem() instanceof ItemAlchemistStorageBox) {
+        if (player.getMainHandItem().getItem() instanceof AlchemistStorageBoxItem) {
             boxStack = player.getMainHandItem();
-            hand = 0;
-        } else if (player.getOffhandItem().getItem() instanceof ItemAlchemistStorageBox) {
+        } else if (player.getOffhandItem().getItem() instanceof AlchemistStorageBoxItem) {
             boxStack = player.getOffhandItem();
             hand = 1;
         }
@@ -48,7 +48,7 @@ public class InputEventHandler {
         // 必须指向炼金锅
         HitResult hit = mc.hitResult;
         if (!(hit instanceof BlockHitResult blockHit
-                && player.level().getBlockState(blockHit.getBlockPos()).getBlock() instanceof BlockTransmutationCrucible)) {
+                && player.level().getBlockState(blockHit.getBlockPos()).getBlock() instanceof TransmutationCrucibleBlock)) {
             return;
         }
 
@@ -68,9 +68,6 @@ public class InputEventHandler {
 
         // 更新客户端 ItemStack 组件，并同步到服务端
         boxStack.set(InitDataComponents.ROTATION, newRotation);
-
-        if (mc.getConnection() != null) {
-            mc.getConnection().send(new RotateStorageBoxPayload(hand, newRotation).toVanillaServerbound());
-        }
+        ClientPacketDistributor.sendToServer(new RotateStorageBoxPayload(hand, newRotation));
     }
 }

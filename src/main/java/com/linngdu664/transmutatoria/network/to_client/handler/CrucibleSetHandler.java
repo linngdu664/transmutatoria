@@ -1,6 +1,6 @@
 package com.linngdu664.transmutatoria.network.to_client.handler;
 
-import com.linngdu664.transmutatoria.block.entity.BlockEntityTransmutationCrucible;
+import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
 import com.linngdu664.transmutatoria.network.to_client.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -11,7 +11,7 @@ public class CrucibleSetHandler {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
         BlockPos blockPos = payload.blockPos();
-        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof BlockEntityTransmutationCrucible crucible) {
+        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof TransmutationCrucibleBlockEntity crucible) {
             for (var stackWithSlot : payload.itemStackWithSlots()) {
                 crucible.clientSetItem(stackWithSlot.slot(), stackWithSlot.stack());
             }
@@ -22,7 +22,7 @@ public class CrucibleSetHandler {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
         BlockPos blockPos = payload.blockPos();
-        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof BlockEntityTransmutationCrucible crucible) {
+        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof TransmutationCrucibleBlockEntity crucible) {
             crucible.setSelectedSlot(payload.selectedSlot());
         }
     }
@@ -31,7 +31,7 @@ public class CrucibleSetHandler {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
         BlockPos blockPos = payload.blockPos();
-        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof BlockEntityTransmutationCrucible crucible) {
+        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof TransmutationCrucibleBlockEntity crucible) {
             crucible.clientSetPolarity(payload.polarity());
         }
     }
@@ -40,7 +40,7 @@ public class CrucibleSetHandler {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
         BlockPos blockPos = payload.blockPos();
-        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof BlockEntityTransmutationCrucible crucible) {
+        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof TransmutationCrucibleBlockEntity crucible) {
             crucible.clientSetProcessTimer(payload.processTimer());
         }
     }
@@ -49,7 +49,7 @@ public class CrucibleSetHandler {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
         BlockPos blockPos = payload.blockPos();
-        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof BlockEntityTransmutationCrucible crucible) {
+        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof TransmutationCrucibleBlockEntity crucible) {
             crucible.clientSetTargetTimer(payload.targetTimer());
         }
     }
@@ -58,7 +58,7 @@ public class CrucibleSetHandler {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
         BlockPos blockPos = payload.blockPos();
-        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof BlockEntityTransmutationCrucible crucible) {
+        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof TransmutationCrucibleBlockEntity crucible) {
             crucible.clientSetFinish(payload.isFinish());
         }
     }

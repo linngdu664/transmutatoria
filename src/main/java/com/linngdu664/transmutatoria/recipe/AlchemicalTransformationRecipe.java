@@ -2,10 +2,13 @@ package com.linngdu664.transmutatoria.recipe;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public record AlchemicalTransformationRecipe(
         AlchemicalIOType inputType,
@@ -16,7 +19,7 @@ public record AlchemicalTransformationRecipe(
         int maxLevel,
         int minPolarity,
         int maxPolarity
-) {
+) implements IAlchemicalRecipe {
     // 定义 Codec 用于 JSON 解析
     public static final Codec<AlchemicalTransformationRecipe> CODEC = RecordCodecBuilder.create(inst -> inst.group(
             AlchemicalIOType.CODEC.fieldOf("input_type").forGetter(AlchemicalTransformationRecipe::inputType),
@@ -28,6 +31,11 @@ public record AlchemicalTransformationRecipe(
             Codec.INT.optionalFieldOf("min_polarity", -50).forGetter(AlchemicalTransformationRecipe::minPolarity),
             Codec.INT.optionalFieldOf("max_polarity", 50).forGetter(AlchemicalTransformationRecipe::maxPolarity)
     ).apply(inst, AlchemicalTransformationRecipe::new));
+
+    @Override
+    public ItemStack getOtherSideItemStack() {
+        return BuiltInRegistries.ITEM.get(outputId).map(Holder.Reference::value).orElse(Items.AIR).getDefaultInstance();
+    }
 
     // 判断某个物品是否匹配该规则（匹配的是输入物品 inputId）
     public boolean matches(ItemStack stack) {

@@ -1,6 +1,6 @@
 package com.linngdu664.transmutatoria.util.alchemy_slots;
 
-import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
+import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.AlchemyReactResult;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
@@ -16,11 +16,11 @@ public class ResonanceSlot extends AbstractAlchemySlot {
     }
 
     @Override
-    protected AlchemyReactResult internalReact(ItemStack scroll, ItemEssenceMetal inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
+    protected AlchemyReactResult internalReact(ItemStack scroll, EssenceMetalItem inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
         AlchemyReactResult result = super.internalReact(scroll, inputEssence, outputs, inhibitionStates, posToOutputSlot, deferredTasks, magicNumber);
         for (int i = 0; i < 6; i++) {
             int slot = posToOutputSlot.getOrDefault(getAdjacentPackedXY(i), -1);
-            if (slot >= 0 && outputs.get(slot).getItem() instanceof ItemEssenceMetal outEssenceMetal) {
+            if (slot >= 0 && outputs.get(slot).getItem() instanceof EssenceMetalItem outEssenceMetal) {
                 result.setEssenceStateIncrease(result.getEssenceStateIncrease() + outEssenceMetal.getState());
             }
         }

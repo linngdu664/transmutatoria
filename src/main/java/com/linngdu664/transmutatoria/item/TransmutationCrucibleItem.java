@@ -7,8 +7,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 
-public class ItemTransmutationCrucible extends BlockItem {
-    public ItemTransmutationCrucible(Identifier id) {
+public class TransmutationCrucibleItem extends BlockItem {
+    public TransmutationCrucibleItem(Identifier id) {
         super(InitBlocks.TRANSMUTATION_CRUCIBLE.get(), new Item.Properties()
                 .setId(ResourceKey.create(Registries.ITEM, id)));
     }

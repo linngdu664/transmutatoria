@@ -2,8 +2,8 @@ package com.linngdu664.transmutatoria.block.entity;
 
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.init.InitItems;
-import com.linngdu664.transmutatoria.item.AbstractItemTransmutationScroll;
-import com.linngdu664.transmutatoria.item.ItemEssenceMetal;
+import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
+import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.network.to_client.CrucibleSetFinishPayload;
 import com.linngdu664.transmutatoria.network.to_client.CrucibleSetItemPayload;
 import com.linngdu664.transmutatoria.network.to_client.CrucibleSetProcessTimerPayload;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BlockEntityTransmutationCrucible extends BlockEntity implements WorldlyContainer {
+public class TransmutationCrucibleBlockEntity extends BlockEntity implements WorldlyContainer {
     private static final AABB SUCK_AABB = Block.column(16.0F, 11.0F, 32.0F).toAabbs().get(0);
     private static final int ESSENCE_INPUT_SLOT = 0;
     private static final int ESSENCE_OUTPUT_SLOT = 24;
@@ -53,12 +53,12 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
     private int targetTimer;
     private boolean isFinish;
 
-    public BlockEntityTransmutationCrucible(BlockPos pos, BlockState state) {
+    public TransmutationCrucibleBlockEntity(BlockPos pos, BlockState state) {
         super(InitBlocks.TRANSMUTATION_CRUCIBLE_BLOCK_ENTITY.get(), pos, state);
     }
 
     public static <T> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
-        if (level.isClientSide() || !(blockEntity instanceof BlockEntityTransmutationCrucible crucible)) {
+        if (level.isClientSide() || !(blockEntity instanceof TransmutationCrucibleBlockEntity crucible)) {
             return;
         }
         if (crucible.targetTimer > 0) {
@@ -74,13 +74,13 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
     @Override
     public void saveAdditional(ValueOutput output) {
         ContainerHelper.saveAllItems(output, items, true);
-        long bitMap = 0;
-        for (int i = 0; i < SLOT_COUNT; i++) {
-            if (items.get(i).isEmpty()) {
-                bitMap |= (1L << i);
-            }
-        }
-        output.putLong("EmptySlots", bitMap);
+//        long bitMap = 0;
+//        for (int i = 0; i < SLOT_COUNT; i++) {
+//            if (items.get(i).isEmpty()) {
+//                bitMap |= (1L << i);
+//            }
+//        }
+//        output.putLong("EmptySlots", bitMap);
         output.putInt("Polarity", polarity);
         output.putInt("SelectedSlot", selectedSlot);
         output.putInt("ProcessTimer", processTimer);
@@ -91,12 +91,12 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
     @Override
     public void loadAdditional(ValueInput input) {
         ContainerHelper.loadAllItems(input, items);
-        long bitMap = input.getLongOr("EmptySlots", 0L);
-        for (int i = 0; i < SLOT_COUNT; i++) {
-            if (((bitMap >> i) & 1) != 0) {
-                items.set(i, ItemStack.EMPTY);
-            }
-        }
+//        long bitMap = input.getLongOr("EmptySlots", 0L);
+//        for (int i = 0; i < SLOT_COUNT; i++) {
+//            if (((bitMap >> i) & 1) != 0) {
+//                items.set(i, ItemStack.EMPTY);
+//            }
+//        }
         polarity = input.getIntOr("Polarity", 0);
         selectedSlot = input.getIntOr("SelectedSlot", 0);
         processTimer = input.getIntOr("ProcessTimer", 0);
@@ -104,7 +104,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         isFinish = input.getBooleanOr("isFinish", false);
     }
 
-    // 区块加载时会触发全量更新同步
+    // 区块加载时会自动触发全量更新同步
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return this.saveWithoutMetadata(registries);
@@ -161,7 +161,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
             isFinish = hasAnyOutput();
             PacketDistributor.sendToPlayersTrackingChunk(
                     (ServerLevel) level,
-                    new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                    getChunkPos(),
                     new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, items.get(slot)))),
                     new CrucibleSetFinishPayload(getBlockPos(), isFinish)
             );
@@ -186,7 +186,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         items.set(slot, itemStack);
         PacketDistributor.sendToPlayersTrackingChunk(
                 (ServerLevel) level,
-                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                getChunkPos(),
                 new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, itemStack)))
         );
         setChanged();
@@ -205,7 +205,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
      */
     @Override
     public void clearContent() {
-        // 神了，由于 items 有默认值，这里的 clear 是重置而不是传统 clear
+        // 由于 items 有默认值，这里的 clear 是重置而不是传统 clear
         items.clear();
         isFinish = false;
         ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(SLOT_COUNT);
@@ -214,7 +214,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         }
         PacketDistributor.sendToPlayersTrackingChunk(
                 (ServerLevel) level,
-                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                getChunkPos(),
                 new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots),
                 new CrucibleSetFinishPayload(getBlockPos(), false)
         );
@@ -238,9 +238,9 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         if (itemStack.isEmpty()) {
             return false;
         }
-        if (itemStack.is(Items.ENDER_EYE) || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL)
-                || itemStack.getItem() instanceof ItemEssenceMetal
-                || itemStack.getItem() instanceof AbstractItemTransmutationScroll) {
+        if (itemStack.is(Items.ENDER_EYE) || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL) || itemStack.is(InitItems.PHILOSOPHERS_STONE)
+                || itemStack.getItem() instanceof EssenceMetalItem
+                || itemStack.getItem() instanceof AbstractTransmutationScrollItem) {
             suckOneAndSync(entity, CATALYST_SLOT);
         }
         return true;
@@ -263,7 +263,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
             }
             return false;
         }
-        if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL) || catalyst.getItem() instanceof ItemEssenceMetal) {
+        if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL) || catalyst.getItem() instanceof EssenceMetalItem) {
             return false;
         }
         // AbstractItemTransmutationScroll
@@ -290,7 +290,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         // sync
         PacketDistributor.sendToPlayersTrackingChunk(
                 (ServerLevel) level,
-                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                getChunkPos(),
                 new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, copy)))
         );
         if (itemStack.getCount() == 1) {
@@ -306,7 +306,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         // sync
         PacketDistributor.sendToPlayersTrackingChunk(
                 (ServerLevel) level,
-                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                getChunkPos(),
                 new CrucibleSetProcessTimerPayload(getBlockPos(), processTimer)
         );
     }
@@ -316,7 +316,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         // sync
         PacketDistributor.sendToPlayersTrackingChunk(
                 (ServerLevel) level,
-                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                getChunkPos(),
                 new CrucibleSetTargetTimerPayload(getBlockPos(), targetTimer)
         );
     }
@@ -324,6 +324,10 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
     private void setItemAndRecordChange(int slot, ItemStack itemStack, List<ItemStackWithSlot> itemStackWithSlots) {
         items.set(slot, itemStack);
         itemStackWithSlots.add(new ItemStackWithSlot(slot, itemStack));
+    }
+
+    private ChunkPos getChunkPos() {
+        return new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ()));
     }
 
     public boolean canAddCatalyst() {
@@ -335,7 +339,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
     }
 
     public boolean canAddEssence() {
-        return !isFinish && (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL) || getCatalyst().getItem() instanceof ItemEssenceMetal || getCatalyst().getItem() instanceof AbstractItemTransmutationScroll);
+        return !isFinish && (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL) || getCatalyst().getItem() instanceof EssenceMetalItem || getCatalyst().getItem() instanceof AbstractTransmutationScrollItem);
     }
 
     private void clearInputAndSetAllOutput() {
@@ -351,7 +355,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
             }
         } else if (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL)) {
             // todo
-        } else if (getCatalyst().getItem() instanceof ItemEssenceMetal) {
+        } else if (getCatalyst().getItem() instanceof EssenceMetalItem) {
             // todo
         } else {
             // AbstractItemTransmutationScroll
@@ -364,7 +368,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         syncTargetTimer(0);
         PacketDistributor.sendToPlayersTrackingChunk(
                 (ServerLevel) level,
-                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                getChunkPos(),
                 new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlotsUpdate),
                 new CrucibleSetFinishPayload(getBlockPos(), true)
         );
@@ -474,7 +478,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         // sync
         PacketDistributor.sendToPlayersTrackingChunk(
                 (ServerLevel) level,
-                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                getChunkPos(),
                 new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(CATALYST_SLOT, ItemStack.EMPTY)))
         );
         setChanged();
@@ -486,7 +490,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         // sync
         PacketDistributor.sendToPlayersTrackingChunk(
                 (ServerLevel) level,
-                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                getChunkPos(),
                 new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(INPUT_SLOT, ItemStack.EMPTY)))
         );
         setChanged();
@@ -504,7 +508,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         // sync
         PacketDistributor.sendToPlayersTrackingChunk(
                 (ServerLevel) level,
-                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                getChunkPos(),
                 new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots)
         );
         setChanged();
@@ -525,7 +529,7 @@ public class BlockEntityTransmutationCrucible extends BlockEntity implements Wor
         // sync
         PacketDistributor.sendToPlayersTrackingChunk(
                 (ServerLevel) level,
-                new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ())),
+                getChunkPos(),
                 new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots),
                 new CrucibleSetFinishPayload(getBlockPos(), false)
         );
