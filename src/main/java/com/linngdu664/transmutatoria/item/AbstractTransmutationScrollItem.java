@@ -4,7 +4,9 @@ import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.component.ExpireInfo;
 import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.recipe.IAlchemicalRecipe;
+import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
+import com.linngdu664.transmutatoria.util.SlotType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -18,7 +20,10 @@ import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class AbstractTransmutationScrollItem extends Item {
     // 不会过期的卷轴
@@ -38,40 +43,109 @@ public abstract class AbstractTransmutationScrollItem extends Item {
     public abstract IAlchemicalRecipe getRecipe(Level level, ItemStack itemStack);
 
     /**
-     * 初次激活卷轴，设置相关数据
+     * 初次激活卷轴，设置配方条件并生成随机的连通六边形炼金槽位
+     * @param level  用于获取 RandomSource
      * @param itemStack 卷轴 ItemStack
+     * @param recipe 关联的配方
      */
-    public static void activate(ItemStack itemStack, IAlchemicalRecipe recipe) {
+    public static void activate(Level level, ItemStack itemStack, IAlchemicalRecipe recipe) {
         itemStack.set(InitDataComponents.RECIPE_CONDITIONS, new RecipeConditions(recipe.oneTime(), recipe.minPolarity(), recipe.maxPolarity()));
-        // todo 设置源质槽
+
+        RandomSource random = level.getRandom();
+        int minLevel = recipe.minLevel();
+        int maxLevel = recipe.maxLevel();
+        int count = minLevel + random.nextInt(maxLevel - minLevel + 1);
+
+        List<HexPos> positions = generateConnectedHexPositions(count, random);
+        List<AbstractAlchemySlot> slots = new ArrayList<>(count);
+        EssenceMetal[] allMetals = EssenceMetal.values();
+
+        for (HexPos pos : positions) {
+            slots.add(AbstractAlchemySlot.create(
+                    pickSlotType(count, random),
+                    allMetals[random.nextInt(allMetals.length)],
+                    pos.x, pos.y
+            ));
+        }
+
+        itemStack.set(InitDataComponents.ALCHEMY_SLOTS, slots);
     }
 
+    // region 连通六边形槽位生成
+
+    private static final int[][] HEX_OFFSETS = {
+            {0, -2}, {1, -1}, {1, 1}, {0, 2}, {-1, 1}, {-1, -1}
+    };
+
+    private static final SlotType[] SPECIAL_TYPES = Arrays.stream(SlotType.values())
+            .filter(t -> t != SlotType.NORMAL)
+            .toArray(SlotType[]::new);
+
+    private record HexPos(int x, int y) {}
+
     /**
-     * 随机突变源质序列，若需重写，可去掉 static
-     * @param level Level
-     * @param stack Stack of scroll
-     * @param times change times
+     * 用 frontier 扩张算法生成 count 个连通的六边形坐标，从 (0,0) 开始
      */
-    @Deprecated(forRemoval = true)
+    private static List<HexPos> generateConnectedHexPositions(int count, RandomSource random) {
+        Set<HexPos> placed = new HashSet<>();
+        List<HexPos> frontier = new ArrayList<>();
+
+        HexPos origin = new HexPos(0, 0);
+        placed.add(origin);
+        addFrontier(origin, placed, frontier);
+
+        while (placed.size() < count && !frontier.isEmpty()) {
+            int idx = random.nextInt(frontier.size());
+            HexPos pos = frontier.remove(idx);
+            if (placed.add(pos)) {
+                addFrontier(pos, placed, frontier);
+            }
+        }
+
+        return new ArrayList<>(placed);
+    }
+
+    private static void addFrontier(HexPos pos, Set<HexPos> placed, List<HexPos> frontier) {
+        for (int[] off : HEX_OFFSETS) {
+            HexPos neighbor = new HexPos(pos.x + off[0], pos.y + off[1]);
+            if (!placed.contains(neighbor) && !frontier.contains(neighbor)) {
+                frontier.add(neighbor);
+            }
+        }
+    }
+
+    private static SlotType pickSlotType(int slotCount, RandomSource random) {
+        if (slotCount <= 8) return SlotType.NORMAL;
+        if (random.nextFloat() < 0.75f) return SlotType.NORMAL;
+        return SPECIAL_TYPES[random.nextInt(SPECIAL_TYPES.length)];
+    }
+
+    // endregion
+
+    /**
+     * 随机突变炼金槽位中的源质金属，不改变槽位坐标、类型或数量。
+     * @param level 用于获取 RandomSource
+     * @param stack 卷轴 ItemStack
+     * @param times 突变次数
+     */
     public static void changeEssence(Level level, ItemStack stack, int times) {
-        List<EssenceMetal> essences = stack.get(InitDataComponents.ESSENCES);
-        if (essences == null) {
+        List<AbstractAlchemySlot> slots = stack.get(InitDataComponents.ALCHEMY_SLOTS);
+        if (slots == null || slots.isEmpty()) {
             return;
         }
-        // todo 先定死概率，后续可能可以在配置文件里改？
-        for (int i = 0; i <= times; i++) {
-            ArrayList<EssenceMetal> newEssences = new ArrayList<>();
-            RandomSource randomSource = level.getRandom();
-            for (EssenceMetal essence : essences) {
-                if (randomSource.nextFloat() < 0.8F) {
-                    newEssences.add(EssenceMetal.values()[randomSource.nextInt(EssenceMetal.values().length)]);
-                } else {
-                    newEssences.add(essence);
+
+        RandomSource random = level.getRandom();
+        EssenceMetal[] allMetals = EssenceMetal.values();
+
+        for (int i = 0; i < times; i++) {
+            for (AbstractAlchemySlot slot : slots) {
+                if (random.nextFloat() < 0.8F) {
+                    slot.setEssenceMetal(allMetals[random.nextInt(allMetals.length)]);
                 }
             }
-            essences = newEssences;
         }
-        stack.set(InitDataComponents.ESSENCES, essences);
+
+        stack.set(InitDataComponents.ALCHEMY_SLOTS, slots);
     }
 
     /**

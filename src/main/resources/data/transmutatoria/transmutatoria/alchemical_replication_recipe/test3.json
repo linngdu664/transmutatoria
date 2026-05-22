@@ -2,6 +2,6 @@
   "input_id": "minecraft:air",
   "output_type": "item",
   "output_id": "minecraft:diamond",
-  "min_level": 5,
-  "max_level": 10
+  "min_level": 9,
+  "max_level": 24
 }

@@ -178,9 +178,9 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
                 player.getInventory().placeItemBackInInventory(stack);
             }
             set(single);
-            int resultSlot = 1 - inputSlotIndex;
-            container.setItem(resultSlot, recipe.getOtherSideItemStack());
-            AbstractTransmutationScrollItem.activate(scrollStack, recipe);
+            int otherSlot = 1 - inputSlotIndex;
+            container.setItem(otherSlot, recipe.getOtherSideItemStack());
+            AbstractTransmutationScrollItem.activate(level, scrollStack, recipe);
             broadcastChanges();
         }
 

@@ -86,6 +86,10 @@ public abstract class AbstractAlchemySlot {
         return essenceMetal;
     }
 
+    public void setEssenceMetal(EssenceMetal essenceMetal) {
+        this.essenceMetal = essenceMetal;
+    }
+
     public int getX() {
         return x;
     }
@@ -108,7 +112,7 @@ public abstract class AbstractAlchemySlot {
         this.essenceMetal = essenceMetal1;
     }
 
-    protected int getAdjacentPackedXY(int direction) {
+    public int getAdjacentPackedXY(int direction) {
         return switch (direction) {
             case 0 -> getPackedXY(x, y - 2);
             case 1 -> getPackedXY(x + 1, y - 1);
