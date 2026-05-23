@@ -23,7 +23,7 @@ public class CrucibleSetHandler {
         ClientLevel level = mc.level;
         BlockPos blockPos = payload.blockPos();
         if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof TransmutationCrucibleBlockEntity crucible) {
-            crucible.setSelectedSlot(payload.selectedSlot());
+            crucible.clientSetSelectedSlot(payload.selectedSlot());
         }
     }
 

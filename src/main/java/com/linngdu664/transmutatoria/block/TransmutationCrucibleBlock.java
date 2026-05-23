@@ -96,7 +96,7 @@ public class TransmutationCrucibleBlock extends HorizontalDirectionalBlock imple
         if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof TransmutationCrucibleBlockEntity crucibleEntity) {
-                crucibleEntity.entityInside(level, pos, entity);
+                crucibleEntity.entityInside(entity);
             }
         }
     }

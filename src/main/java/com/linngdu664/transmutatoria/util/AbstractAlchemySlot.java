@@ -98,6 +98,10 @@ public abstract class AbstractAlchemySlot {
         return y;
     }
 
+    public int getPackedXY() {
+        return getPackedXY(x, y);
+    }
+
     public void swapPropertyExceptForType(AbstractAlchemySlot other) {
         int x1 = other.x;
         int y1 = other.y;

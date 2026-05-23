@@ -20,4 +20,6 @@ public record RecipeConditions(boolean oneTime, int minPolarity, int maxPolarity
             ByteBufCodecs.VAR_INT, RecipeConditions::maxPolarity,
             RecipeConditions::new
     );
+
+    public static final RecipeConditions DEFAULT = new RecipeConditions(false, -50, 50);
 }

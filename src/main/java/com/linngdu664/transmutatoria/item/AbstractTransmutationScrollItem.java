@@ -163,18 +163,21 @@ public abstract class AbstractTransmutationScrollItem extends Item {
         long gameTime = level.getGameTime();
         long currentOffset = gameTime % expireInfo.period();
         long currentPeriod = gameTime / expireInfo.period();
-        long nextExpire = stack.getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE);
-
+        long currentNextExpire = stack.getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE);
         // 无论何种情况，下一次过期时间都可由该式计算
-        stack.set(InitDataComponents.NEXT_EXPIRE, (currentPeriod + (currentOffset >= expireInfo.offset() ? 1 : 0)) * expireInfo.period() + expireInfo.offset());
+        long nextExpire = (currentPeriod + (currentOffset >= expireInfo.offset() ? 1 : 0)) * expireInfo.period() + expireInfo.offset();
 
-        // 当前时间未超出过期时间，只看对周期取余后偏移量有没有超，没超则不重置，超了则重置一次（防止玩家 time set）
-        if (gameTime < nextExpire) {
-            return (currentOffset >= expireInfo.offset() ? 1 : 0);
+        if (currentNextExpire != nextExpire) {
+            stack.set(InitDataComponents.NEXT_EXPIRE, nextExpire);
         }
 
-        // 当前时间超出过期时间，直接正常计算
-        return (int) ((gameTime - nextExpire) / expireInfo.period()) + 1;
+        // 当前时间未超出过期时间，不重置。即使玩家 time set，NEXT_EXPIRE 组件也会被正确设置，无须担心
+        if (gameTime < currentNextExpire) {
+            return 0;
+        }
+
+        // 当前时间超出过期时间，正常计算
+        return (int) ((gameTime - currentNextExpire) / expireInfo.period()) + 1;
     }
 
     @Override

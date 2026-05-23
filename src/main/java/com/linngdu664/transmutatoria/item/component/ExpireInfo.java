@@ -18,6 +18,10 @@ public record ExpireInfo(int period, int offset) {
             ByteBufCodecs.VAR_INT, ExpireInfo::offset,
             ExpireInfo::new
     );
+
+    // 每天 12:00 过期
     public static final ExpireInfo DEFAULT = new ExpireInfo(24000, 6000);
+
+    // 新月 0:00 过期
     public static final ExpireInfo MOON = new ExpireInfo(192000, 114000);
 }
