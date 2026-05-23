@@ -7,6 +7,8 @@ import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.network.to_client.*;
+import com.linngdu664.transmutatoria.recipe.AlchemicalRecipeManager;
+import com.linngdu664.transmutatoria.recipe.IAlchemicalRecipe;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.AlchemyReactResult;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
@@ -50,7 +52,22 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     private static final int CATALYST_SLOT = 48;
     private static final int INPUT_SLOT = 49;
     private static final int OUTPUT_SLOT = 50;
-    public static final int SLOT_COUNT = 51;
+    private static final int SLOT_COUNT = 51;
+    private static final int[] UP_SLOTS = {CATALYST_SLOT, INPUT_SLOT};
+    private static final int[] SIDE_SLOTS;
+    private static final int[] DOWN_SLOTS;
+    static {
+        SIDE_SLOTS = new int[ESSENCE_OUTPUT_SLOT - ESSENCE_INPUT_SLOT];
+        for (int i = 0; i < SIDE_SLOTS.length; i++) {
+            SIDE_SLOTS[i] = ESSENCE_INPUT_SLOT + i;
+        }
+        DOWN_SLOTS = new int[CATALYST_SLOT - ESSENCE_OUTPUT_SLOT + 1];
+        for (int i = 0; i < DOWN_SLOTS.length - 1; i++) {
+            DOWN_SLOTS[i] = ESSENCE_OUTPUT_SLOT + i;
+        }
+        DOWN_SLOTS[DOWN_SLOTS.length - 1] = OUTPUT_SLOT;
+    }
+
     // 源质输入 - 源质输出 - 催化剂 - 转化输入 - 转化输出
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
     private int polarity;
@@ -111,21 +128,34 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         return this.saveWithoutMetadata(registries);
     }
 
-    // todo
     @Override
     public int[] getSlotsForFace(Direction direction) {
-        return new int[0];
+        return switch (direction) {
+            case UP -> UP_SLOTS;
+            case DOWN -> DOWN_SLOTS;
+            default -> SIDE_SLOTS;
+        };
     }
 
-    // todo
     @Override
     public boolean canPlaceItemThroughFace(int slot, ItemStack itemStack, @Nullable Direction direction) {
-        return false;
+        if (direction == null) return false;
+        return switch (direction) {
+            case UP -> {
+                if (slot == CATALYST_SLOT) yield canAddCatalyst(itemStack);
+                if (slot == INPUT_SLOT) yield canAddInput(itemStack);
+                yield false;
+            }
+            case DOWN -> false;
+            default -> canAddEssence(slot, itemStack);
+        };
     }
 
-    // todo
     @Override
     public boolean canTakeItemThroughFace(int slot, ItemStack itemStack, Direction direction) {
+        if (!isFinish || direction != Direction.DOWN) return false;
+        if (slot == OUTPUT_SLOT) return !items.get(OUTPUT_SLOT).isEmpty();
+        if (slot >= ESSENCE_OUTPUT_SLOT && slot < CATALYST_SLOT) return !items.get(slot).isEmpty();
         return false;
     }
 
@@ -160,13 +190,14 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     public ItemStack removeItem(int slot, int count) {
         ItemStack result = ContainerHelper.removeItem(items, slot, count);
         if (!result.isEmpty()) {
-            isFinish = hasAnyOutput();
-            PacketDistributor.sendToPlayersTrackingChunk(
-                    (ServerLevel) level,
-                    getChunkPos(),
-                    new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, items.get(slot)))),
-                    new CrucibleSetFinishPayload(getBlockPos(), isFinish)
-            );
+            ServerLevel serverLevel = (ServerLevel) level;
+            ChunkPos chunkPos = getChunkPos();
+            PacketDistributor.sendToPlayersTrackingChunk(serverLevel, chunkPos, new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, items.get(slot)))));
+            boolean isFinish1 = hasAnyOutput();
+            if (isFinish1 != isFinish) {
+                isFinish = isFinish1;
+                PacketDistributor.sendToPlayersTrackingChunk(serverLevel, chunkPos, new CrucibleSetFinishPayload(getBlockPos(), isFinish1));
+            }
             setChanged();
         }
         return result;
@@ -185,15 +216,15 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
      * 仅用于提供容器兼容，绝对禁止在自己的代码中调用该函数
      * 只能放置输入槽，在 getSlotsForFace 里设置？
      */
-    // todo 这里需要设置加入顺序
     @Override
     public void setItem(int slot, ItemStack itemStack) {
         items.set(slot, itemStack);
-        PacketDistributor.sendToPlayersTrackingChunk(
-                (ServerLevel) level,
-                getChunkPos(),
-                new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, itemStack)))
-        );
+        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, itemStack))));
+        if (slot == INPUT_SLOT) {
+            tryReactAfterAddInput();
+        } else if (slot >= ESSENCE_INPUT_SLOT && slot < ESSENCE_OUTPUT_SLOT) {
+            tryReactAfterAddEssence();
+        }
         setChanged();
     }
 
@@ -210,18 +241,26 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
      */
     @Override
     public void clearContent() {
-        // 由于 items 有默认值，这里的 clear 是重置而不是传统 clear
-        items.clear();
-        isFinish = false;
         ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(SLOT_COUNT);
         for (int i = 0; i < SLOT_COUNT; i++) {
             itemStackWithSlots.add(new ItemStackWithSlot(i, ItemStack.EMPTY));
         }
+        items.clear();  // 由于 items 有默认值，这里的 clear 是重置而不是传统 clear
+        isFinish = false;
+        processTimer = 0;
+        targetTimer = 0;
+        selectedSlot = 0;
+        inputOrder.clear();
+        BlockPos blockPos = getBlockPos();
         PacketDistributor.sendToPlayersTrackingChunk(
                 (ServerLevel) level,
                 getChunkPos(),
-                new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots),
-                new CrucibleSetFinishPayload(getBlockPos(), false)
+                new CrucibleSetItemPayload(blockPos, itemStackWithSlots),
+                new CrucibleSetFinishPayload(blockPos, false),
+                new CrucibleSetPolarityPayload(blockPos, polarity),
+                new CrucibleSetSelectedSlotPayload(blockPos, 0),
+                new CrucibleSetProcessTimerPayload(blockPos, 0),
+                new CrucibleSetTargetTimerPayload(blockPos, 0)
         );
         setChanged();
     }
@@ -248,72 +287,28 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         if (!canAddInput(itemStack)) {
             return false;
         }
-
-        ItemStack catalyst = getCatalyst();
-        if (catalyst.is(Items.ENDER_EYE)) {
-            if (itemStack.is(InitItems.TRANSMUTATION_CRYSTAL)) {
-                suckOneAndSync(entity, INPUT_SLOT);
-                syncTargetTimer(10);    // 直接开始反应
-                return true;
-            }
-            return false;
-        }
-        if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
-            // todo
-            return false;
-        }
-        // AbstractItemTransmutationScroll
-        ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-        if (container.getSlots() <= 0 || itemStack.getItem() != container.getStackInSlot(0).getItem()) {
-            return false;
-        }
         suckOneAndSync(entity, INPUT_SLOT);
+        tryReactAfterAddInput();
         return true;
     }
 
     private boolean tryAddEssenceFromItemEntity(ItemEntity entity) {
         ItemStack itemStack = entity.getItem();
-        if (!canAddEssence(itemStack)) {
+        if (!canAddEssence(selectedSlot, itemStack)) {
             return false;
         }
-
-        ItemStack catalyst = getCatalyst();
-        if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
-            // todo
-            return false;
-        }
-
-        if (catalyst.getItem() instanceof EssenceMetalItem) {
-            // todo
-            return false;
-        }
-
-        // AbstractItemTransmutationScroll
-        // 检查输入物正确
-        ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-        if (container.getSlots() <= 0 || items.get(INPUT_SLOT).getItem() != container.getStackInSlot(0).getItem()) {
-            return false;
-        }
-
-        // 检查有槽位物品组件
-        List<AbstractAlchemySlot> alchemySlots = catalyst.get(InitDataComponents.ALCHEMY_SLOTS);
-        if (alchemySlots == null || alchemySlots.isEmpty()) {
-            return false;
-        }
-
         // 吸入源质金属并记录加入顺序
         suckOneAndSync(entity, selectedSlot);
         inputOrder.add(selectedSlot);
-        if (selectedSlot >= alchemySlots.size() - 1) {
+        int maxSlot = tryReactAfterAddEssence();
+
+        // 公共逻辑：自动指向下一个槽位
+        if (selectedSlot >= maxSlot - 1) {
             syncSelectedSlot(0);
         } else {
             syncSelectedSlot(selectedSlot + 1);
         }
 
-        if (inputOrder.size() == alchemySlots.size()) {
-            // 源质加入完毕，开始反应
-            syncTargetTimer(10 * alchemySlots.size());
-        }
         return true;
     }
 
@@ -360,46 +355,141 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public boolean canAddCatalyst(ItemStack itemStack) {
-        return !isFinish && getCatalyst().isEmpty()
+        return targetTimer == 0 && !isFinish && getCatalyst().isEmpty()
                 && (itemStack.is(Items.ENDER_EYE) || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL)
                 || itemStack.is(InitItems.PHILOSOPHERS_STONE) || itemStack.getItem() instanceof EssenceMetalItem
                 || (itemStack.getItem() instanceof AbstractTransmutationScrollItem && itemStack.has(InitDataComponents.ALCHEMY_SLOTS) && itemStack.has(InitDataComponents.RECIPE_CONDITIONS)));
     }
 
     public boolean canAddInput(ItemStack itemStack) {
-        return !isFinish && getInput().isEmpty() && !itemStack.isEmpty()
-                && (getCatalyst().is(Items.ENDER_EYE) || getCatalyst().is(InitItems.PHILOSOPHERS_STONE) || getCatalyst().getItem() instanceof AbstractTransmutationScrollItem);
+        if (targetTimer != 0 || isFinish || !getInput().isEmpty() || itemStack.isEmpty()) {
+            return false;
+        }
+        ItemStack catalyst = getCatalyst();
+
+        if (catalyst.is(Items.ENDER_EYE)) {
+            // 嬗变分解：转化输入是嬗变结晶
+            return itemStack.is(InitItems.TRANSMUTATION_CRYSTAL);
+        }
+
+        if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
+            // 炼金复制/炼金合成：转化输入从卷轴读取
+            ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+            return container.getSlots() > 0 && itemStack.getItem() == container.getStackInSlot(0).getItem();
+        }
+
+        if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
+            // 混沌分解：该物品需要可被炼金复制合成
+            return AlchemicalRecipeManager.findMatchRep(level, itemStack) != null;
+        }
+
+        // 其他的催化剂不接受转化输入
+        return false;
     }
 
-    public boolean canAddEssence(ItemStack itemStack) {
-        return !isFinish && itemStack.getItem() instanceof EssenceMetalItem && items.get(selectedSlot).isEmpty()
-                && (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL) || getCatalyst().getItem() instanceof EssenceMetalItem || getCatalyst().getItem() instanceof AbstractTransmutationScrollItem);
+    public boolean canAddEssence(int slot, ItemStack itemStack) {
+        if (targetTimer != 0 || isFinish || !(itemStack.getItem() instanceof EssenceMetalItem) || slot < ESSENCE_INPUT_SLOT || !items.get(slot).isEmpty()) {
+            return false;
+        }
+        ItemStack catalyst = getCatalyst();
+
+        if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
+            // 炼金复制/炼金合成：输入符合且槽位不越界
+            ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+            List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
+            return container.getSlots() > 0 && getInput().getItem() == container.getStackInSlot(0).getItem()
+                    && !alchemySlots.isEmpty() && slot - ESSENCE_INPUT_SLOT < alchemySlots.size();
+        }
+
+        if (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL)) {
+            // 源质反应：槽位只能是 0 或 1
+            return slot - ESSENCE_INPUT_SLOT < 2;
+        }
+
+        if (getCatalyst().getItem() instanceof EssenceMetalItem essenceMetalItem) {
+            // 源质融合：槽位不越界
+            return slot - ESSENCE_INPUT_SLOT < essenceMetalItem.getEssenceMetal().getBeRestrainedOrBeDoubleRestrained().size();
+        }
+
+        // 其他的催化剂不接受源质金属输入
+        return false;
+    }
+
+    private void tryReactAfterAddInput() {
+        ItemStack catalyst = getCatalyst();
+        if (catalyst.is(Items.ENDER_EYE)) {
+            // 嬗变分解：无须源质金属，直接开始反应
+            syncTargetTimer(10);
+        } else if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
+            // 混沌分解：无须源质金属，直接开始反应
+            IAlchemicalRecipe recipe = AlchemicalRecipeManager.findMatchRep(level, getInput());
+            if (recipe != null) {
+                syncTargetTimer(5 * (recipe.minLevel() + recipe.maxLevel()));
+            }
+        }
+    }
+
+    private int tryReactAfterAddEssence() {
+        ItemStack catalyst = getCatalyst();
+        // 显然嬗变分解、混沌分解不会调用这个函数
+        if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
+            // 炼金复制/炼金合成：加够了
+            List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
+            if (inputOrder.size() == alchemySlots.size()) {
+                syncTargetTimer(10 * alchemySlots.size());
+            }
+            return alchemySlots.size();
+        } else if (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL)) {
+            // 源质反应：两个槽都有金属了
+            if (!items.get(ESSENCE_INPUT_SLOT).isEmpty() && !items.get(ESSENCE_INPUT_SLOT + 1).isEmpty()) {
+                syncTargetTimer(20);
+            }
+            return 2;
+        } else if (getCatalyst().getItem() instanceof EssenceMetalItem essenceMetalItem) {
+            // 源质融合：加够了且覆盖所有被克制
+            // todo
+            return 0;
+        }
+        return 0;
     }
 
     private void clearInputAndSetAllOutput() {
         ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate = new ArrayList<>();
         ItemStack catalyst = getCatalyst();
         if (catalyst.is(Items.ENDER_EYE)) {
-            handleEnderEyeReaction(itemStackWithSlotsUpdate);
+            handleEnderEyeReaction(itemStackWithSlotsUpdate);   // 嬗变分解的反应结果
         } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
-            // todo
+            // todo 源质反应的反应结果
         } else if (catalyst.getItem() instanceof EssenceMetalItem) {
-            // todo
+            // todo 源质融合的反应结果
         } else if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
-            // todo
+            // todo 混沌分解的反应结果
         } else {
-            // AbstractItemTransmutationScroll
-            handleScrollReaction(catalyst, itemStackWithSlotsUpdate);
+            handleScrollReaction(catalyst, itemStackWithSlotsUpdate);   // 炼金复制/炼金转化的反应结果
         }
 
-
-        // 检查锅的极性有没有爆
+        // 检查锅的极性，超过了就爆掉
         if (polarity > 50) {
             level.setBlock(getBlockPos(), Blocks.REDSTONE_BLOCK.defaultBlockState(), 3);
         } else if (polarity < -50) {
             level.setBlock(getBlockPos(), InitBlocks.ALCHEMICAL_DROSS_BLOCK.get().defaultBlockState(), 3);
         } else {
-            setAndSyncStatesAfterReaction(itemStackWithSlotsUpdate);
+            isFinish = true;
+            processTimer = 0;
+            targetTimer = 0;
+            selectedSlot = 0;
+            inputOrder.clear();
+            BlockPos blockPos = getBlockPos();
+            PacketDistributor.sendToPlayersTrackingChunk(
+                    (ServerLevel) level,
+                    getChunkPos(),
+                    new CrucibleSetItemPayload(blockPos, itemStackWithSlotsUpdate),
+                    new CrucibleSetFinishPayload(blockPos, true),
+                    new CrucibleSetPolarityPayload(blockPos, polarity),
+                    new CrucibleSetSelectedSlotPayload(blockPos, 0),
+                    new CrucibleSetProcessTimerPayload(blockPos, 0),
+                    new CrucibleSetTargetTimerPayload(blockPos, 0)
+            );
         }
     }
 
@@ -418,7 +508,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     private void handleScrollReaction(ItemStack catalyst, ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate) {
         List<AbstractAlchemySlot> alchemySlots = catalyst.get(InitDataComponents.ALCHEMY_SLOTS);
         if (alchemySlots != null && !alchemySlots.isEmpty() && inputOrder.size() == alchemySlots.size()) {
-            // 预处理
+            // 反应前预先做的事
             boolean[] inhibitionStates = new boolean[alchemySlots.size()];
             Int2IntOpenHashMap posToOutputSlot = new Int2IntOpenHashMap();
             ArrayList<Runnable> deferredTasks = new ArrayList<>();
@@ -427,12 +517,23 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
                 posToOutputSlot.put(slot.getPackedXY(), i);
                 i++;
             }
+            int hashValue = 31 + Long.hashCode(getBlockPos().asLong());
+            hashValue = 31 * hashValue + Long.hashCode(catalyst.getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE));
+            hashValue = 31 * hashValue;
 
             // 反应
             int annihilationCnt = 0;
             int entropy = catalyst.getOrDefault(InitDataComponents.ENTROPY, 0);
             for (int slot : inputOrder) {
-                AlchemyReactResult result = alchemySlots.get(slot).react(catalyst, items.get(slot), items.subList(ESSENCE_OUTPUT_SLOT, CATALYST_SLOT), inhibitionStates, posToOutputSlot, deferredTasks, 0);
+                AlchemyReactResult result = alchemySlots.get(slot).react(
+                        catalyst,
+                        items.get(slot),
+                        items.subList(ESSENCE_OUTPUT_SLOT, CATALYST_SLOT),
+                        inhibitionStates,
+                        posToOutputSlot,
+                        deferredTasks,
+                        hashValue + slot
+                );
                 polarity += result.getPolarityIncrease();
                 entropy += result.getEntropyIncrease();
                 if (result.isTriggerDamage()) {
@@ -463,25 +564,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
             }
             recordItemChange(CATALYST_SLOT, itemStackWithSlotsUpdate);
         }
-    }
-
-    private void setAndSyncStatesAfterReaction(ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate) {
-        isFinish = true;
-        processTimer = 0;
-        targetTimer = 0;
-        selectedSlot = 0;
-        inputOrder.clear();
-        BlockPos blockPos = getBlockPos();
-        PacketDistributor.sendToPlayersTrackingChunk(
-                (ServerLevel) level,
-                getChunkPos(),
-                new CrucibleSetItemPayload(blockPos, itemStackWithSlotsUpdate),
-                new CrucibleSetFinishPayload(blockPos, true),
-                new CrucibleSetPolarityPayload(blockPos, polarity),
-                new CrucibleSetSelectedSlotPayload(blockPos, 0),
-                new CrucibleSetProcessTimerPayload(blockPos, 0),
-                new CrucibleSetTargetTimerPayload(blockPos, 0)
-        );
     }
 
     private void setItemAndRecordChange(int slot, ItemStack itemStack, List<ItemStackWithSlot> itemStackWithSlots) {
@@ -605,8 +687,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
                 setItemAndRecordChange(i, ItemStack.EMPTY, itemStackWithSlots);
             }
         }
-        playerCancelSync(itemStackWithSlots);
         inputOrder.clear();
+        playerCancelSync(itemStackWithSlots);
         setChanged();
     }
 
@@ -621,9 +703,11 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         if (targetTimer > 0) {
             processTimer = 0;
             targetTimer = 0;
+            selectedSlot = 0;
             PacketDistributor.sendToPlayersTrackingChunk(
                     (ServerLevel) level,
                     chunkPos,
+                    new CrucibleSetSelectedSlotPayload(blockPos, 0),
                     new CrucibleSetProcessTimerPayload(blockPos, 0),
                     new CrucibleSetTargetTimerPayload(blockPos, 0)
             );
@@ -652,22 +736,32 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         setChanged();
     }
 
-    public void serverSetSelectedSlot(int selectedSlot) {
+    public void serverScrollSelectedSlot(boolean isIncrease) {
         ItemStack catalyst = getCatalyst();
         if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
-            if (selectedSlot == 0 || selectedSlot == 1) {
-                syncSelectedSlot(selectedSlot);
+            if (selectedSlot == 0) {
+                syncSelectedSlot(1);
+            } else {
+                syncSelectedSlot(0);
             }
-            return;
-        }
-        if (getCatalyst().getItem() instanceof EssenceMetalItem essenceMetalItem) {
+        } else if (getCatalyst().getItem() instanceof EssenceMetalItem essenceMetalItem) {
             // todo
-            return;
-        }
-        if (getCatalyst().getItem() instanceof AbstractTransmutationScrollItem) {
-            List<AbstractAlchemySlot> alchemySlots = catalyst.get(InitDataComponents.ALCHEMY_SLOTS);
-            if (alchemySlots != null && !alchemySlots.isEmpty() && selectedSlot > 0 && selectedSlot < alchemySlots.size()) {
-                syncSelectedSlot(selectedSlot);
+        } else if (getCatalyst().getItem() instanceof AbstractTransmutationScrollItem) {
+            List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
+            if (!alchemySlots.isEmpty()) {
+                if (isIncrease) {
+                    if (selectedSlot == alchemySlots.size() - 1) {
+                        syncSelectedSlot(0);
+                    } else {
+                        syncSelectedSlot(selectedSlot + 1);
+                    }
+                } else {
+                    if (selectedSlot == 0) {
+                        syncSelectedSlot(alchemySlots.size() - 1);
+                    } else {
+                        syncSelectedSlot(selectedSlot - 1);
+                    }
+                }
             }
         }
     }
