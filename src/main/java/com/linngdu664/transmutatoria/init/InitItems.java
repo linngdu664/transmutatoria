@@ -42,67 +42,67 @@ public class InitItems {
     // 【星火】 蚀日金 (A) / 泣月银 (B) / 灾星钛 (C)
 //    public static DeferredItem<Item> ECLIPSIUM = ITEMS.register(EssenceMetal.A.getKeyWithPrefix(0),()->new ItemEssenceMetal(EssenceMetal.A, 0));
     public static DeferredItem<Item> ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, 0);
-    public static DeferredItem<Item> NIGREDO_TAINTED_ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, -1);
-    public static DeferredItem<Item> ALBEDO_INFUSED_ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, 1);
-    public static DeferredItem<Item> CITRINITAS_INFUSED_ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, 2);
+    public static DeferredItem<Item> NIGREDO_ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, -1);
+    public static DeferredItem<Item> ALBEDO_ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, 1);
+    public static DeferredItem<Item> CITRINITAS_ECLIPSIUM = essenceMetalRegister(EssenceMetal.A, 2);
 
     public static DeferredItem<Item> LUNARGENT = essenceMetalRegister(EssenceMetal.B, 0);
-    public static DeferredItem<Item> NIGREDO_TAINTED_LUNARGENT = essenceMetalRegister(EssenceMetal.B, -1);
-    public static DeferredItem<Item> ALBEDO_INFUSED_LUNARGENT = essenceMetalRegister(EssenceMetal.B, 1);
-    public static DeferredItem<Item> CITRINITAS_INFUSED_LUNARGENT = essenceMetalRegister(EssenceMetal.B, 2);
+    public static DeferredItem<Item> NIGREDO_LUNARGENT = essenceMetalRegister(EssenceMetal.B, -1);
+    public static DeferredItem<Item> ALBEDO_LUNARGENT = essenceMetalRegister(EssenceMetal.B, 1);
+    public static DeferredItem<Item> CITRINITAS_LUNARGENT = essenceMetalRegister(EssenceMetal.B, 2);
 
     public static DeferredItem<Item> ASTROTITE = essenceMetalRegister(EssenceMetal.C, 0);
-    public static DeferredItem<Item> NIGREDO_TAINTED_ASTROTITE = essenceMetalRegister(EssenceMetal.C, -1);
-    public static DeferredItem<Item> ALBEDO_INFUSED_ASTROTITE = essenceMetalRegister(EssenceMetal.C, 1);
-    public static DeferredItem<Item> CITRINITAS_INFUSED_ASTROTITE = essenceMetalRegister(EssenceMetal.C, 2);
+    public static DeferredItem<Item> NIGREDO_ASTROTITE = essenceMetalRegister(EssenceMetal.C, -1);
+    public static DeferredItem<Item> ALBEDO_ASTROTITE = essenceMetalRegister(EssenceMetal.C, 1);
+    public static DeferredItem<Item> CITRINITAS_ASTROTITE = essenceMetalRegister(EssenceMetal.C, 2);
 
     //  【渊水】 渊海钢 (D) / 幻魂汞 (E) / 冥沼铅 (F)
     public static DeferredItem<Item> ABYSSION = essenceMetalRegister(EssenceMetal.D, 0);
-    public static DeferredItem<Item> NIGREDO_TAINTED_ABYSSION = essenceMetalRegister(EssenceMetal.D, -1);
-    public static DeferredItem<Item> ALBEDO_INFUSED_ABYSSION = essenceMetalRegister(EssenceMetal.D, 1);
-    public static DeferredItem<Item> CITRINITAS_INFUSED_ABYSSION = essenceMetalRegister(EssenceMetal.D, 2);
+    public static DeferredItem<Item> NIGREDO_ABYSSION = essenceMetalRegister(EssenceMetal.D, -1);
+    public static DeferredItem<Item> ALBEDO_ABYSSION = essenceMetalRegister(EssenceMetal.D, 1);
+    public static DeferredItem<Item> CITRINITAS_ABYSSION = essenceMetalRegister(EssenceMetal.D, 2);
 
     public static DeferredItem<Item> ANIMERCURY = essenceMetalRegister(EssenceMetal.E, 0);
-    public static DeferredItem<Item> NIGREDO_TAINTED_ANIMERCURY = essenceMetalRegister(EssenceMetal.E, -1);
-    public static DeferredItem<Item> ALBEDO_INFUSED_ANIMERCURY = essenceMetalRegister(EssenceMetal.E, 1);
-    public static DeferredItem<Item> CITRINITAS_INFUSED_ANIMERCURY = essenceMetalRegister(EssenceMetal.E, 2);
+    public static DeferredItem<Item> NIGREDO_ANIMERCURY = essenceMetalRegister(EssenceMetal.E, -1);
+    public static DeferredItem<Item> ALBEDO_ANIMERCURY = essenceMetalRegister(EssenceMetal.E, 1);
+    public static DeferredItem<Item> CITRINITAS_ANIMERCURY = essenceMetalRegister(EssenceMetal.E, 2);
 
     public static DeferredItem<Item> NECROPLUMB = essenceMetalRegister(EssenceMetal.F, 0);
-    public static DeferredItem<Item> NIGREDO_TAINTED_NECROPLUMB = essenceMetalRegister(EssenceMetal.F, -1);
-    public static DeferredItem<Item> ALBEDO_INFUSED_NECROPLUMB = essenceMetalRegister(EssenceMetal.F, 1);
-    public static DeferredItem<Item> CITRINITAS_INFUSED_NECROPLUMB = essenceMetalRegister(EssenceMetal.F, 2);
+    public static DeferredItem<Item> NIGREDO_NECROPLUMB = essenceMetalRegister(EssenceMetal.F, -1);
+    public static DeferredItem<Item> ALBEDO_NECROPLUMB = essenceMetalRegister(EssenceMetal.F, 1);
+    public static DeferredItem<Item> CITRINITAS_NECROPLUMB = essenceMetalRegister(EssenceMetal.F, 2);
 
     // 【腐土】 棘血铜 (G) / 鸩林锡 (H) / 骸骨锑 (I)
     public static DeferredItem<Item> SANGUIBRONZE = essenceMetalRegister(EssenceMetal.G, 0);
-    public static DeferredItem<Item> NIGREDO_TAINTED_SANGUIBRONZE = essenceMetalRegister(EssenceMetal.G, -1);
-    public static DeferredItem<Item> ALBEDO_INFUSED_SANGUIBRONZE = essenceMetalRegister(EssenceMetal.G, 1);
-    public static DeferredItem<Item> CITRINITAS_INFUSED_SANGUIBRONZE = essenceMetalRegister(EssenceMetal.G, 2);
+    public static DeferredItem<Item> NIGREDO_SANGUIBRONZE = essenceMetalRegister(EssenceMetal.G, -1);
+    public static DeferredItem<Item> ALBEDO_SANGUIBRONZE = essenceMetalRegister(EssenceMetal.G, 1);
+    public static DeferredItem<Item> CITRINITAS_SANGUIBRONZE = essenceMetalRegister(EssenceMetal.G, 2);
 
     public static DeferredItem<Item> VENOTITE = essenceMetalRegister(EssenceMetal.H, 0);
-    public static DeferredItem<Item> NIGREDO_TAINTED_VENOTITE = essenceMetalRegister(EssenceMetal.H, -1);
-    public static DeferredItem<Item> ALBEDO_INFUSED_VENOTITE = essenceMetalRegister(EssenceMetal.H, 1);
-    public static DeferredItem<Item> CITRINITAS_INFUSED_VENOTITE = essenceMetalRegister(EssenceMetal.H, 2);
+    public static DeferredItem<Item> NIGREDO_VENOTITE = essenceMetalRegister(EssenceMetal.H, -1);
+    public static DeferredItem<Item> ALBEDO_VENOTITE = essenceMetalRegister(EssenceMetal.H, 1);
+    public static DeferredItem<Item> CITRINITAS_VENOTITE = essenceMetalRegister(EssenceMetal.H, 2);
 
     public static DeferredItem<Item> OSSANTIMONY = essenceMetalRegister(EssenceMetal.I, 0);
-    public static DeferredItem<Item> NIGREDO_TAINTED_OSSANTIMONY = essenceMetalRegister(EssenceMetal.I, -1);
-    public static DeferredItem<Item> ALBEDO_INFUSED_OSSANTIMONY = essenceMetalRegister(EssenceMetal.I, 1);
-    public static DeferredItem<Item> CITRINITAS_INFUSED_OSSANTIMONY = essenceMetalRegister(EssenceMetal.I, 2);
+    public static DeferredItem<Item> NIGREDO_OSSANTIMONY = essenceMetalRegister(EssenceMetal.I, -1);
+    public static DeferredItem<Item> ALBEDO_OSSANTIMONY = essenceMetalRegister(EssenceMetal.I, 1);
+    public static DeferredItem<Item> CITRINITAS_OSSANTIMONY = essenceMetalRegister(EssenceMetal.I, 2);
 
     // 【劫风】 怒雷锌 (J) / 凝时铂 (K) / 无相源金 (L)
     public static DeferredItem<Item> FULGURZINC = essenceMetalRegister(EssenceMetal.J, 0);
-    public static DeferredItem<Item> NIGREDO_TAINTED_FULGURZINC = essenceMetalRegister(EssenceMetal.J, -1);
-    public static DeferredItem<Item> ALBEDO_INFUSED_FULGURZINC = essenceMetalRegister(EssenceMetal.J, 1);
-    public static DeferredItem<Item> CITRINITAS_INFUSED_FULGURZINC = essenceMetalRegister(EssenceMetal.J, 2);
+    public static DeferredItem<Item> NIGREDO_FULGURZINC = essenceMetalRegister(EssenceMetal.J, -1);
+    public static DeferredItem<Item> ALBEDO_FULGURZINC = essenceMetalRegister(EssenceMetal.J, 1);
+    public static DeferredItem<Item> CITRINITAS_FULGURZINC = essenceMetalRegister(EssenceMetal.J, 2);
 
     public static DeferredItem<Item> CHRONOPLATINUM = essenceMetalRegister(EssenceMetal.K, 0);
-    public static DeferredItem<Item> NIGREDO_TAINTED_CHRONOPLATINUM = essenceMetalRegister(EssenceMetal.K, -1);
-    public static DeferredItem<Item> ALBEDO_INFUSED_CHRONOPLATINUM = essenceMetalRegister(EssenceMetal.K, 1);
-    public static DeferredItem<Item> CITRINITAS_INFUSED_CHRONOPLATINUM = essenceMetalRegister(EssenceMetal.K, 2);
+    public static DeferredItem<Item> NIGREDO_CHRONOPLATINUM = essenceMetalRegister(EssenceMetal.K, -1);
+    public static DeferredItem<Item> ALBEDO_CHRONOPLATINUM = essenceMetalRegister(EssenceMetal.K, 1);
+    public static DeferredItem<Item> CITRINITAS_CHRONOPLATINUM = essenceMetalRegister(EssenceMetal.K, 2);
 
     public static DeferredItem<Item> PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, 0);
-    public static DeferredItem<Item> NIGREDO_TAINTED_PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, -1);
-    public static DeferredItem<Item> ALBEDO_INFUSED_PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, 1);
-    public static DeferredItem<Item> CITRINITAS_INFUSED_PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, 2);
+    public static DeferredItem<Item> NIGREDO_PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, -1);
+    public static DeferredItem<Item> ALBEDO_PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, 1);
+    public static DeferredItem<Item> CITRINITAS_PANDEMONIUM = essenceMetalRegister(EssenceMetal.L, 2);
 
     public static DeferredItem<Item>[] ESSENCE_METAL_ITEMS = new DeferredItem[]{
         ECLIPSIUM, LUNARGENT, ASTROTITE, ABYSSION, ANIMERCURY, NECROPLUMB, SANGUIBRONZE, VENOTITE, OSSANTIMONY, FULGURZINC, CHRONOPLATINUM, PANDEMONIUM
@@ -160,75 +160,75 @@ public class InitItems {
 
                 // 金属 - 蚀日金系
                 output.accept(new ItemStack(ECLIPSIUM.get()));
-                output.accept(new ItemStack(NIGREDO_TAINTED_ECLIPSIUM.get()));
-                output.accept(new ItemStack(ALBEDO_INFUSED_ECLIPSIUM.get()));
-                output.accept(new ItemStack(CITRINITAS_INFUSED_ECLIPSIUM.get()));
+                output.accept(new ItemStack(NIGREDO_ECLIPSIUM.get()));
+                output.accept(new ItemStack(ALBEDO_ECLIPSIUM.get()));
+                output.accept(new ItemStack(CITRINITAS_ECLIPSIUM.get()));
 
                 // 金属 - 泣月银系
                 output.accept(new ItemStack(LUNARGENT.get()));
-                output.accept(new ItemStack(NIGREDO_TAINTED_LUNARGENT.get()));
-                output.accept(new ItemStack(ALBEDO_INFUSED_LUNARGENT.get()));
-                output.accept(new ItemStack(CITRINITAS_INFUSED_LUNARGENT.get()));
+                output.accept(new ItemStack(NIGREDO_LUNARGENT.get()));
+                output.accept(new ItemStack(ALBEDO_LUNARGENT.get()));
+                output.accept(new ItemStack(CITRINITAS_LUNARGENT.get()));
 
                 // 金属 - 灾星钛系
                 output.accept(new ItemStack(ASTROTITE.get()));
-                output.accept(new ItemStack(NIGREDO_TAINTED_ASTROTITE.get()));
-                output.accept(new ItemStack(ALBEDO_INFUSED_ASTROTITE.get()));
-                output.accept(new ItemStack(CITRINITAS_INFUSED_ASTROTITE.get()));
+                output.accept(new ItemStack(NIGREDO_ASTROTITE.get()));
+                output.accept(new ItemStack(ALBEDO_ASTROTITE.get()));
+                output.accept(new ItemStack(CITRINITAS_ASTROTITE.get()));
 
                 // 金属 - 渊海钢系
                 output.accept(new ItemStack(ABYSSION.get()));
-                output.accept(new ItemStack(NIGREDO_TAINTED_ABYSSION.get()));
-                output.accept(new ItemStack(ALBEDO_INFUSED_ABYSSION.get()));
-                output.accept(new ItemStack(CITRINITAS_INFUSED_ABYSSION.get()));
+                output.accept(new ItemStack(NIGREDO_ABYSSION.get()));
+                output.accept(new ItemStack(ALBEDO_ABYSSION.get()));
+                output.accept(new ItemStack(CITRINITAS_ABYSSION.get()));
 
                 // 金属 - 幻魂汞系
                 output.accept(new ItemStack(ANIMERCURY.get()));
-                output.accept(new ItemStack(NIGREDO_TAINTED_ANIMERCURY.get()));
-                output.accept(new ItemStack(ALBEDO_INFUSED_ANIMERCURY.get()));
-                output.accept(new ItemStack(CITRINITAS_INFUSED_ANIMERCURY.get()));
+                output.accept(new ItemStack(NIGREDO_ANIMERCURY.get()));
+                output.accept(new ItemStack(ALBEDO_ANIMERCURY.get()));
+                output.accept(new ItemStack(CITRINITAS_ANIMERCURY.get()));
 
                 // 金属 - 冥沼铅系
                 output.accept(new ItemStack(NECROPLUMB.get()));
-                output.accept(new ItemStack(NIGREDO_TAINTED_NECROPLUMB.get()));
-                output.accept(new ItemStack(ALBEDO_INFUSED_NECROPLUMB.get()));
-                output.accept(new ItemStack(CITRINITAS_INFUSED_NECROPLUMB.get()));
+                output.accept(new ItemStack(NIGREDO_NECROPLUMB.get()));
+                output.accept(new ItemStack(ALBEDO_NECROPLUMB.get()));
+                output.accept(new ItemStack(CITRINITAS_NECROPLUMB.get()));
 
                 // 金属 - 棘血铜系
                 output.accept(new ItemStack(SANGUIBRONZE.get()));
-                output.accept(new ItemStack(NIGREDO_TAINTED_SANGUIBRONZE.get()));
-                output.accept(new ItemStack(ALBEDO_INFUSED_SANGUIBRONZE.get()));
-                output.accept(new ItemStack(CITRINITAS_INFUSED_SANGUIBRONZE.get()));
+                output.accept(new ItemStack(NIGREDO_SANGUIBRONZE.get()));
+                output.accept(new ItemStack(ALBEDO_SANGUIBRONZE.get()));
+                output.accept(new ItemStack(CITRINITAS_SANGUIBRONZE.get()));
 
                 // 金属 - 鸩林锡系
                 output.accept(new ItemStack(VENOTITE.get()));
-                output.accept(new ItemStack(NIGREDO_TAINTED_VENOTITE.get()));
-                output.accept(new ItemStack(ALBEDO_INFUSED_VENOTITE.get()));
-                output.accept(new ItemStack(CITRINITAS_INFUSED_VENOTITE.get()));
+                output.accept(new ItemStack(NIGREDO_VENOTITE.get()));
+                output.accept(new ItemStack(ALBEDO_VENOTITE.get()));
+                output.accept(new ItemStack(CITRINITAS_VENOTITE.get()));
 
                 // 金属 - 骸骨锑系
                 output.accept(new ItemStack(OSSANTIMONY.get()));
-                output.accept(new ItemStack(NIGREDO_TAINTED_OSSANTIMONY.get()));
-                output.accept(new ItemStack(ALBEDO_INFUSED_OSSANTIMONY.get()));
-                output.accept(new ItemStack(CITRINITAS_INFUSED_OSSANTIMONY.get()));
+                output.accept(new ItemStack(NIGREDO_OSSANTIMONY.get()));
+                output.accept(new ItemStack(ALBEDO_OSSANTIMONY.get()));
+                output.accept(new ItemStack(CITRINITAS_OSSANTIMONY.get()));
 
                 // 金属 - 怒雷锌系
                 output.accept(new ItemStack(FULGURZINC.get()));
-                output.accept(new ItemStack(NIGREDO_TAINTED_FULGURZINC.get()));
-                output.accept(new ItemStack(ALBEDO_INFUSED_FULGURZINC.get()));
-                output.accept(new ItemStack(CITRINITAS_INFUSED_FULGURZINC.get()));
+                output.accept(new ItemStack(NIGREDO_FULGURZINC.get()));
+                output.accept(new ItemStack(ALBEDO_FULGURZINC.get()));
+                output.accept(new ItemStack(CITRINITAS_FULGURZINC.get()));
 
                 // 金属 - 凝时铂系
                 output.accept(new ItemStack(CHRONOPLATINUM.get()));
-                output.accept(new ItemStack(NIGREDO_TAINTED_CHRONOPLATINUM.get()));
-                output.accept(new ItemStack(ALBEDO_INFUSED_CHRONOPLATINUM.get()));
-                output.accept(new ItemStack(CITRINITAS_INFUSED_CHRONOPLATINUM.get()));
+                output.accept(new ItemStack(NIGREDO_CHRONOPLATINUM.get()));
+                output.accept(new ItemStack(ALBEDO_CHRONOPLATINUM.get()));
+                output.accept(new ItemStack(CITRINITAS_CHRONOPLATINUM.get()));
 
                 // 金属 - 无相源金系
                 output.accept(new ItemStack(PANDEMONIUM.get()));
-                output.accept(new ItemStack(NIGREDO_TAINTED_PANDEMONIUM.get()));
-                output.accept(new ItemStack(ALBEDO_INFUSED_PANDEMONIUM.get()));
-                output.accept(new ItemStack(CITRINITAS_INFUSED_PANDEMONIUM.get()));
+                output.accept(new ItemStack(NIGREDO_PANDEMONIUM.get()));
+                output.accept(new ItemStack(ALBEDO_PANDEMONIUM.get()));
+                output.accept(new ItemStack(CITRINITAS_PANDEMONIUM.get()));
 
                 // 炼金基质
                 output.accept(new ItemStack(SALIC_MATRIX.get()));

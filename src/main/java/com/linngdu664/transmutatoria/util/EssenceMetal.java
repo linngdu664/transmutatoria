@@ -122,9 +122,9 @@ public enum EssenceMetal implements StringRepresentable {
 
     public String getKeyWithPrefix(int state) {
         return switch (state) {
-            case -1 -> "nigredo_tainted_" + key;
-            case 1 -> "albedo_infused_" + key;
-            case 2 -> "citrinitas_infused_" + key;
+            case -1 -> "nigredo_" + key;
+            case 1 -> "albedo_" + key;
+            case 2 -> "citrinitas_" + key;
             default -> key;
         };
     }

@@ -17,6 +17,15 @@ public class InitMenuTypes {
     public static final DeferredHolder<MenuType<?>, MenuType<AlchemistStorageBoxMenu>> ALCHEMIST_STORAGE_BOX_MENU =
             MENU_TYPES.register("alchemist_storage_box",
                     () -> new MenuType<>(AlchemistStorageBoxMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    public static final DeferredHolder<MenuType<?>, MenuType<AlchemistStorageBoxMenu>> NIGREDO_ALCHEMIST_STORAGE_BOX_MENU =
+            MENU_TYPES.register("nigredo_alchemist_storage_box",
+                    () -> new MenuType<>((containerId, inv) -> new AlchemistStorageBoxMenu(containerId, inv, -1), FeatureFlags.DEFAULT_FLAGS));
+    public static final DeferredHolder<MenuType<?>, MenuType<AlchemistStorageBoxMenu>> ALBEDO_ALCHEMIST_STORAGE_BOX_MENU =
+            MENU_TYPES.register("albedo_alchemist_storage_box",
+                    () -> new MenuType<>((containerId, inv) -> new AlchemistStorageBoxMenu(containerId, inv, 1), FeatureFlags.DEFAULT_FLAGS));
+    public static final DeferredHolder<MenuType<?>, MenuType<AlchemistStorageBoxMenu>> CITRINITAS_ALCHEMIST_STORAGE_BOX_MENU =
+            MENU_TYPES.register("citrinitas_alchemist_storage_box",
+                    () -> new MenuType<>((containerId, inv) -> new AlchemistStorageBoxMenu(containerId, inv, 2), FeatureFlags.DEFAULT_FLAGS));
 
     public static final DeferredHolder<MenuType<?>, MenuType<TransmutationSigilScrollMenu>> TRANSMUTATION_SIGIL_SCROLL_MENU =
             MENU_TYPES.register("transmutation_sigil_scroll",

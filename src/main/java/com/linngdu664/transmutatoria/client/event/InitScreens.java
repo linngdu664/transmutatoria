@@ -14,6 +14,9 @@ public class InitScreens {
     @SubscribeEvent
     static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(InitMenuTypes.ALCHEMIST_STORAGE_BOX_MENU.get(), ScreenAlchemistStorageBox::new);
+        event.register(InitMenuTypes.NIGREDO_ALCHEMIST_STORAGE_BOX_MENU.get(), ScreenAlchemistStorageBox::new);
+        event.register(InitMenuTypes.ALBEDO_ALCHEMIST_STORAGE_BOX_MENU.get(), ScreenAlchemistStorageBox::new);
+        event.register(InitMenuTypes.CITRINITAS_ALCHEMIST_STORAGE_BOX_MENU.get(), ScreenAlchemistStorageBox::new);
         event.register(InitMenuTypes.TRANSMUTATION_SIGIL_SCROLL_MENU.get(), ScreenTransmutationScroll::new);
         event.register(InitMenuTypes.TRANSMUTATION_EQUATION_SCROLL_MENU.get(), ScreenTransmutationScroll::new);
     }
