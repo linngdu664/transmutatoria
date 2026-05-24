@@ -12,10 +12,8 @@ import net.minecraft.world.phys.Vec2;
  * Note: Text and item floating coords should use pose translate and methods in GuiGraphicsExtractor
  */
 public class BSFGuiTool {
-    public static final GuiTexture SIMPLE_FRAME = new GuiTexture("textures/gui/simple_frame.png", 22, 22);
-    public static final GuiImage SIMPLE_FRAME_IMG = new GuiImage(SIMPLE_FRAME, 0, 0, 22, 22);
-    public static final GuiTexture ALCHEMIST_STORAGE_BOX = new GuiTexture("textures/gui/alchemist_storage_box.png", 176, 188);
-    public static final GuiImage ALCHEMIST_STORAGE_BOX_IMG = new GuiImage(ALCHEMIST_STORAGE_BOX, 0, 0, 176, 188);
+    public static final GuiSprite SIMPLE_FRAME = new GuiSprite("simple_frame", 22, 22);
+    public static final GuiSpriteImage SIMPLE_FRAME_IMG = new GuiSpriteImage(SIMPLE_FRAME, 0, 0, 22, 22);
 
     /**
      * 渲染进度条
@@ -102,6 +100,55 @@ public class BSFGuiTool {
 
         public V2I render(GuiGraphicsExtractor guiGraphics, int x, int y) {
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA, guiTexture.texture, x, y, widthOffset, heightOffset, width, height, guiTexture.wholeWidth, guiTexture.wholeHeight);
+            return new V2I(x, y);
+        }
+
+        public V2I renderCenterVertically(GuiGraphicsExtractor guiGraphics, Window window, int x) {
+            return render(guiGraphics, x, GuiUtil.heightFrameCenter(window, this.height));
+        }
+
+        public V2I renderCenterHorizontally(GuiGraphicsExtractor guiGraphics, Window window, int y) {
+            return render(guiGraphics, GuiUtil.widthFrameCenter(window, this.width), y);
+        }
+
+        public V2I renderRatio(GuiGraphicsExtractor guiGraphics, Window window, double widthRatio, double heightRatio) {
+            return renderRatio(guiGraphics, window, widthRatio, heightRatio, 0, 0);
+        }
+
+        public V2I renderRatio(GuiGraphicsExtractor guiGraphics, Window window, double widthRatio, double heightRatio, int xOffset, int yOffset) {
+            return render(guiGraphics, GuiUtil.widthFrameRatio(window, this.width, widthRatio) + xOffset, GuiUtil.heightFrameRatio(window, this.height, heightRatio) + yOffset);
+        }
+    }
+
+    public static class GuiSprite {
+        public Identifier sprite;
+        public int spriteWidth;
+        public int spriteHeight;
+
+        public GuiSprite(String path, int spriteWidth, int spriteHeight) {
+            this.sprite = ArsTransmutatoria.makeMyIdentifier(path);
+            this.spriteWidth = spriteWidth;
+            this.spriteHeight = spriteHeight;
+        }
+    }
+
+    public static class GuiSpriteImage {
+        public GuiSprite guiSprite;
+        public int textureX;
+        public int textureY;
+        public int width;
+        public int height;
+
+        public GuiSpriteImage(GuiSprite guiSprite, int textureX, int textureY, int width, int height) {
+            this.guiSprite = guiSprite;
+            this.textureX = textureX;
+            this.textureY = textureY;
+            this.width = width;
+            this.height = height;
+        }
+
+        public V2I render(GuiGraphicsExtractor guiGraphics, int x, int y) {
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA, guiSprite.sprite, guiSprite.spriteWidth, guiSprite.spriteHeight, textureX, textureY, x, y, width, height);
             return new V2I(x, y);
         }
 

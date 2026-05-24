@@ -7,18 +7,18 @@ import net.minecraft.util.StringRepresentable;
 
 public enum SlotType implements StringRepresentable {
     NORMAL("normal"),
-    DETERIORATION("deterioration"),
-    ACTIVATION("activation"),
-    INVERSION("inversion"),
-    DIFFUSION("diffusion"),
-    INHIBITION("inhibition"),
-    PURGE("purge"),
-    RESTORATION("restoration"),
-    RESONANCE("resonance"),
-    ACTIVITY("activity"),
-    EXCHANGE("exchange"),
-    SPIN("spin"),
-    UNSTABLE("unstable");
+    DETERIORATION("deterioration"),//劣化
+    ACTIVATION("activation"),//活化
+    INVERSION("inversion"),//反转
+    DIFFUSION("diffusion"),//扩散
+    INHIBITION("inhibition"),//抑制
+    PURGE("purge"),//清理
+    RESTORATION("restoration"),//还原
+    RESONANCE("resonance"),//共振
+    ACTIVITY("activity"),//活动
+    EXCHANGE("exchange"),//交换
+    SPIN("spin"),//自旋
+    UNSTABLE("unstable");//不稳
 
     private final String key;
 

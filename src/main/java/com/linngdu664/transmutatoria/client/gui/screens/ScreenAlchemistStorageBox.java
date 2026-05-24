@@ -1,12 +1,14 @@
 package com.linngdu664.transmutatoria.client.gui.screens;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
+import com.linngdu664.transmutatoria.client.gui.BSFGuiTool;
 import com.linngdu664.transmutatoria.inventory.AlchemistStorageBoxMenu;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenAlchemistStorageBox extends AbstractContainerScreen<AlchemistStorageBoxMenu> {
@@ -16,6 +18,8 @@ public class ScreenAlchemistStorageBox extends AbstractContainerScreen<Alchemist
     private static final Identifier INVENTORY_BG_CITRINITAS = ArsTransmutatoria.makeMyIdentifier("textures/gui/citrinitas_alchemist_storage_box.png");
     private static final Identifier HEXAGON_SLOT_HIGHLIGHT_BACK_SPRITE = ArsTransmutatoria.makeMyIdentifier("container/hexagon_slot_highlight_back");
     private static final Identifier HEXAGON_SLOT_HIGHLIGHT_FRONT_SPRITE = ArsTransmutatoria.makeMyIdentifier("container/hexagon_slot_highlight_front");
+    private static final BSFGuiTool.GuiSprite TEST_SPRITE = new BSFGuiTool.GuiSprite("container/test", 16, 16);
+    private static final BSFGuiTool.GuiSpriteImage TEST = new BSFGuiTool.GuiSpriteImage(TEST_SPRITE, 0, 0, 16, 16);
 
     private final int boxState;
 
@@ -45,7 +49,18 @@ public class ScreenAlchemistStorageBox extends AbstractContainerScreen<Alchemist
             default -> INVENTORY_BG;
         };
         graphics.blit(RenderPipelines.GUI_TEXTURED, backGround, xo, yo + 32, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 256, 256);
-
+        TEST.render(graphics, 100, 100);
+    }
+    @Override
+    protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {
+        int color = switch (boxState){
+            case -1 -> ARGB.color(200,200,200);
+            case 1 -> ARGB.color(230,230,230);
+            case 2 -> ARGB.color(240,240,240);
+            default -> ARGB.color(220,220,220);
+        };
+        graphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY, color, true);
+        graphics.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, color, true);
     }
 
     @Override
