@@ -1,7 +1,7 @@
 package com.linngdu664.transmutatoria.client.event;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.block.TransmutationCrucibleBlock;
+import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.AlchemistStorageBoxItem;
 import com.linngdu664.transmutatoria.network.to_server.RotateStorageBoxPayload;
@@ -47,8 +47,11 @@ public class InputEventHandler {
 
         // 必须指向炼金锅
         HitResult hit = mc.hitResult;
-        if (!(hit instanceof BlockHitResult blockHit
-                && player.level().getBlockState(blockHit.getBlockPos()).getBlock() instanceof TransmutationCrucibleBlock)) {
+        if (hit == null || hit.getType() != HitResult.Type.BLOCK) {
+            return;
+        }
+        BlockHitResult blockHit = (BlockHitResult) hit;
+        if (!(player.level().getBlockState(blockHit.getBlockPos()).is(InitBlocks.TRANSMUTATION_CRUCIBLE))) {
             return;
         }
 

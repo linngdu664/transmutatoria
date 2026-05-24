@@ -64,12 +64,12 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
             HashMap<Item, JEIAlchemicalTransformationDisplay> itemToTransDisplay = new HashMap<>();
             // 顺序遍历所有数据包配方
             transLookup.listElements().map(Holder.Reference::value).forEach(recipe -> {
-                Item outputItem = BuiltInRegistries.ITEM.get(recipe.outputId()).map(Holder.Reference::value).orElse(Items.AIR);
+                Item outputItem = BuiltInRegistries.ITEM.getValue(recipe.outputId());
                 // 不允许输出空气
                 if (outputItem != Items.AIR) {
                     switch (recipe.inputType()) {
                         case ITEM -> {
-                            Item item = BuiltInRegistries.ITEM.get(recipe.inputId()).map(Holder.Reference::value).orElse(Items.AIR);
+                            Item item = BuiltInRegistries.ITEM.getValue(recipe.inputId());
                             if (item != Items.AIR) {
                                 if (recipe.isValid()) {
                                     itemToTransDisplay.put(item, new JEIAlchemicalTransformationDisplay(recipe, item.getDefaultInstance(), outputItem.getDefaultInstance()));
@@ -115,11 +115,11 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
             HashMap<Item, JEIAlchemicalReplicationDisplay> itemToRepDisplay = new HashMap<>();
             // 顺序遍历所有数据包配方
             repLookup.listElements().map(Holder.Reference::value).forEach(recipe -> {
-                Item inputItem = BuiltInRegistries.ITEM.get(recipe.inputId()).map(Holder.Reference::value).orElse(Items.AIR);
+                Item inputItem = BuiltInRegistries.ITEM.getValue(recipe.inputId());
                 // 炼金复制允许输入空气
                 switch (recipe.outputType()) {
                     case ITEM -> {
-                        Item item = BuiltInRegistries.ITEM.get(recipe.outputId()).map(Holder.Reference::value).orElse(Items.AIR);
+                        Item item = BuiltInRegistries.ITEM.getValue(recipe.outputId());
                         if (item != Items.AIR) {
                             if (recipe.isValid()) {
                                 itemToRepDisplay.put(item, new JEIAlchemicalReplicationDisplay(recipe, inputItem.getDefaultInstance(), item.getDefaultInstance()));

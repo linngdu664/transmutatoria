@@ -2,13 +2,11 @@ package com.linngdu664.transmutatoria.recipe;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 public record AlchemicalReplicationRecipe(
         Identifier inputId,
@@ -20,6 +18,17 @@ public record AlchemicalReplicationRecipe(
         int minPolarity,
         int maxPolarity
 ) implements IAlchemicalRecipe {
+    public static final AlchemicalReplicationRecipe EMPTY_MARKER = new AlchemicalReplicationRecipe(
+            Identifier.fromNamespaceAndPath("minecraft", "air"),
+            AlchemicalIOType.ITEM,
+            Identifier.fromNamespaceAndPath("minecraft", "air"),
+            false,
+            0,
+            0,
+            0,
+            0
+    );
+
     // 定义 Codec 用于 JSON 解析
     public static final Codec<AlchemicalReplicationRecipe> CODEC = RecordCodecBuilder.create(inst -> inst.group(
             Identifier.CODEC.fieldOf("input_id").forGetter(AlchemicalReplicationRecipe::inputId),
@@ -34,7 +43,7 @@ public record AlchemicalReplicationRecipe(
 
     @Override
     public ItemStack getOtherSideItemStack() {
-        return BuiltInRegistries.ITEM.get(inputId).map(Holder.Reference::value).orElse(Items.AIR).getDefaultInstance();
+        return BuiltInRegistries.ITEM.getValue(inputId).getDefaultInstance();
     }
 
     // 判断某个物品是否匹配该规则（匹配的是输出物品 outputId）
