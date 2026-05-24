@@ -49,5 +49,10 @@ public class InitNetworks {
                 CrucibleSetTargetTimerPayload.STREAM_CODEC,
                 (payload, _) -> CrucibleSetHandler.handleTargetTimer(payload)
         );
+        registrar.playToClient(
+                CrucibleResetPayload.TYPE,
+                CrucibleResetPayload.STREAM_CODEC,
+                (payload, _) -> CrucibleSetHandler.handleReset(payload)
+        );
     }
 }

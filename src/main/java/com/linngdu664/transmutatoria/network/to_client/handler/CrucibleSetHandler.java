@@ -62,4 +62,17 @@ public class CrucibleSetHandler {
             crucible.clientSetFinish(payload.isFinish());
         }
     }
+
+    public static void handleReset(CrucibleResetPayload payload) {
+        Minecraft mc = Minecraft.getInstance();
+        ClientLevel level = mc.level;
+        BlockPos blockPos = payload.blockPos();
+        if (level.hasChunkAt(blockPos) && level.getBlockEntity(blockPos) instanceof TransmutationCrucibleBlockEntity crucible) {
+            crucible.clientSetFinish(payload.isFinish());
+            crucible.clientSetPolarity(payload.polarity());
+            crucible.clientSetSelectedSlot(0);
+            crucible.clientSetTargetTimer(0);
+            crucible.clientSetProcessTimer(0);
+        }
+    }
 }

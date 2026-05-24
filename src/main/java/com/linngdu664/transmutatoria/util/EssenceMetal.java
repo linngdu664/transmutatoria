@@ -49,7 +49,7 @@ public enum EssenceMetal implements StringRepresentable {
     private Set<EssenceMetal> restrains = Set.of();
     private Set<EssenceMetal> doubleRestrains = Set.of();
     private Set<EssenceMetal> symbiosisWith = Set.of();
-    private final Set<EssenceMetal> beRestrainedOrBeDoubleRestrained = new HashSet<>();
+//    private final Set<EssenceMetal> beRestrainedOrBeDoubleRestrained = new HashSet<>();
 
     // 静态初始化逻辑
     static {
@@ -73,14 +73,14 @@ public enum EssenceMetal implements StringRepresentable {
         K.restrains = EnumSet.of(G,H,I,C);
         L.restrains = EnumSet.of(A,B,C,D,E,F,G,H,I,J,K);
 
-        for (EssenceMetal essence : values()) {
-            for (EssenceMetal essence2 : essence.restrains) {
-                essence2.beRestrainedOrBeDoubleRestrained.add(essence);
-            }
-            for (EssenceMetal essence2 : essence.doubleRestrains) {
-                essence2.beRestrainedOrBeDoubleRestrained.add(essence);
-            }
-        }
+//        for (EssenceMetal essence : values()) {
+//            for (EssenceMetal essence2 : essence.restrains) {
+//                essence2.beRestrainedOrBeDoubleRestrained.add(essence);
+//            }
+//            for (EssenceMetal essence2 : essence.doubleRestrains) {
+//                essence2.beRestrainedOrBeDoubleRestrained.add(essence);
+//            }
+//        }
     }
 
     EssenceMetal(String key) {
@@ -97,8 +97,10 @@ public enum EssenceMetal implements StringRepresentable {
         return Relation.NEUTRAL;//无关
     }
 
-    public Set<EssenceMetal> getBeRestrainedOrBeDoubleRestrained() {
-        return beRestrainedOrBeDoubleRestrained;
+    public Set<EssenceMetal> getRestrainsAndDoubleRestrains() {
+        EnumSet<EssenceMetal> merged = EnumSet.copyOf(restrains);
+        merged.addAll(doubleRestrains);
+        return merged;
     }
 
     public ItemStack getItemStack(int state) {
