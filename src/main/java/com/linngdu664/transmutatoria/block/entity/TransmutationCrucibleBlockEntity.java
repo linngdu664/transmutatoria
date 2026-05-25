@@ -574,7 +574,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     /**
-     * 禁止修改 ItemStack，否则未定义行为
+     * 外部禁止修改 ItemStack，否则未定义行为
      * @return 催化剂
      */
     public ItemStack getCatalyst() {
@@ -582,7 +582,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     /**
-     * 禁止修改 ItemStack，否则未定义行为
+     * 外部禁止修改 ItemStack，否则未定义行为
      * @return 转化输入
      */
     public ItemStack getInput() {
@@ -590,7 +590,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     /**
-     * 禁止修改 ItemStack，否则未定义行为
+     * 外部禁止修改 ItemStack，否则未定义行为
      * @return 转化输出
      */
     public ItemStack getOutput() {
@@ -598,7 +598,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     /**
-     * 禁止修改 ItemStack，禁止修改 List，否则未定义行为
+     * 外部禁止修改 ItemStack，禁止修改 List，否则未定义行为
      * @return 源质输入槽的不可变视图
      */
     public List<ItemStack> getInputEssences() {
@@ -606,7 +606,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     /**
-     * 禁止修改 ItemStack，禁止修改 List，否则未定义行为
+     * 外部禁止修改 ItemStack，禁止修改 List，否则未定义行为
      * @return 源质输出槽的不可变视图
      */
     public List<ItemStack> getOutputEssences() {

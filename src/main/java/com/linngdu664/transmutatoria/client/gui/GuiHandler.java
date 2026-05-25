@@ -1,7 +1,14 @@
 package com.linngdu664.transmutatoria.client.gui;
 
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
+import com.linngdu664.transmutatoria.client.gui.util.GuiSprite;
+import com.linngdu664.transmutatoria.client.gui.util.GuiSubSprite;
+import com.linngdu664.transmutatoria.client.gui.util.TextureOption;
+import com.linngdu664.transmutatoria.client.gui.util.V2I;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
+import com.linngdu664.transmutatoria.init.InitItems;
+import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
+import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -14,11 +21,20 @@ import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class GuiHandler {
-    private static final int FRAME_SIZE = 22;
-    private static final float RADIUS_RATE_X = 0.78f;
-    private static final float RADIUS_RATE_Y = 0.52f;
+    private static final GuiSprite SLOTS_SPRITE = new GuiSprite("hud/slots", 189, 61);
+    private static final GuiSubSprite NORMAL_SLOT = new GuiSubSprite(SLOTS_SPRITE, 0, 0, 27, 27);
+    public static final GuiSprite SIMPLE_FRAME = new GuiSprite("hud/simple_frame", 22, 22);
+
+    private static final int FRAME_SIZE = SIMPLE_FRAME.getHeight();
+    private static final float RADIUS_RATE_X = 0.4f;
+    private static final float RADIUS_RATE_Y = 0.0f;
     // 平滑旋转速度，值越小动画越慢（指数衰减系数，单位: 1/tick）
     private static final float LERP_SPEED = 1.2f;
+    // 近大远小缩放范围
+    private static final float MIN_SCALE = 0.5f;
+    private static final float MAX_SCALE = 1.3f;
+    // 深度遮罩最大透明度（12点钟最暗），不达到 0xFF
+    private static final int MAX_OVERLAY_ALPHA = 0xc0;
 
     // 渲染用的连续旋转值，指数衰减插值逼近 unboundedTarget
     private static float smoothRotation = 0;
@@ -28,6 +44,7 @@ public class GuiHandler {
     private static int lastComponentRotation = 0;
     private static boolean initialized = false;
 
+    // todo 如果后续确定椭圆短轴恒为0，可进一步优化
     public static void renderCrucibleStorageBoxHud(GuiGraphicsExtractor guiGraphics, ItemStack boxStack, DeltaTracker delta) {
         Minecraft mc = Minecraft.getInstance();
 
@@ -70,64 +87,98 @@ public class GuiHandler {
         int screenW = mc.getWindow().getGuiScaledWidth();
         int screenH = mc.getWindow().getGuiScaledHeight();
 
-        int centerX = (int) (screenW * 0.5);
-        int centerY = (int) (screenH * 0.3);
-        int radiusX = (int) (screenH * 0.5 * RADIUS_RATE_X);
-        int radiusY = (int) (screenH * 0.5 * RADIUS_RATE_Y);
+        int centerX = (int) (screenW * 0.5f);
+        int centerY = (int) (screenH * 0.1f);
+        int radiusX = (int) (screenW * 0.5f * RADIUS_RATE_X);
+        int radiusY = (int) (screenH * 0.5f * RADIUS_RATE_Y);
 
         ItemContainerContents contents = boxStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
         NonNullList<ItemStack> items = NonNullList.withSize(12, ItemStack.EMPTY);
         contents.copyInto(items);
 
-        // 底部槽位（6点钟方向）放大1.3倍作为选中效果
-        int bottomSlot = Math.floorMod(6 + Math.round(smoothRotation), 12);
+        // 第一阶段：预计算所有槽位的位置和缩放
+        int[] slotXs = new int[12];
+        int[] slotYs = new int[12];
+        float[] scales = new float[12];
+        float[] depths = new float[12];
 
         for (int i = 0; i < 12; i++) {
-            double angle = Math.toRadians((i - smoothRotation) * 30.0 - 90.0);
-            int slotX = (int) (centerX + radiusX * Mth.cos(angle));
-            int slotY = (int) (centerY + radiusY * Mth.sin(angle));
+            float angle = ((i - smoothRotation) * 30.0f - 90.0f) * Mth.DEG_TO_RAD;
+            slotXs[i] = (int) (centerX + radiusX * Mth.cos(angle));
+            slotYs[i] = (int) (centerY + radiusY * Mth.sin(angle));
+            // sin(angle): -1 at 12 o'clock (far), +1 at 6 o'clock (near)
+            depths[i] = (Mth.sin(angle) + 1.0f) / 2.0f;
+            scales[i] = MIN_SCALE + (MAX_SCALE - MIN_SCALE) * depths[i];
+        }
 
-            boolean isBottom = i == bottomSlot;
-            if (isBottom) {
-                guiGraphics.pose().pushMatrix();
-                guiGraphics.pose().translate(slotX, slotY);
-                guiGraphics.pose().scale(1.3f, 1.3f);
-            }
+        // 第二阶段：直接生成渲染顺序（远→近，二渲三），无需排序
+        int centerIdx = Math.floorMod(Math.round(smoothRotation), 12);
+        int[] renderOrder = new int[12];
+        int ri = 0;
+        renderOrder[ri++] = centerIdx; // 12点钟（最远）
+        for (int offset = 1; offset <= 5; offset++) {
+            renderOrder[ri++] = Math.floorMod(centerIdx + offset, 12);
+            renderOrder[ri++] = Math.floorMod(centerIdx - offset, 12);
+        }
+        renderOrder[ri] = Math.floorMod(centerIdx + 6, 12); // 6点钟（最近）
 
-            int frameX = (isBottom ? -FRAME_SIZE / 2 : slotX - FRAME_SIZE / 2);
-            int frameY = (isBottom ? -FRAME_SIZE / 2 : slotY - FRAME_SIZE / 2);
-            BSFGuiTool.SIMPLE_FRAME_IMG.render(guiGraphics, frameX, frameY);
+        // 第三阶段：按生成顺序渲染，每个槽位统一透视变换
+        for (int idx = 0; idx < 12; idx++) {
+            int i = renderOrder[idx];
+            int slotX = slotXs[i];
+            int slotY = slotYs[i];
+            float scale = scales[i];
+
+            guiGraphics.pose().pushMatrix();
+            guiGraphics.pose().translate(slotX, slotY);
+            guiGraphics.pose().scale(scale, scale);
+
+            SIMPLE_FRAME.render(guiGraphics, TextureOption.DEFAULT, -FRAME_SIZE / 2, -FRAME_SIZE / 2);
 
             ItemStack stack = items.get(i);
             if (!stack.isEmpty()) {
-                int itemX = isBottom ? -8 : slotX - 8;
-                int itemY = isBottom ? -8 : slotY - 8;
-                guiGraphics.item(stack, itemX, itemY);
-                guiGraphics.itemDecorations(mc.font, stack, itemX, itemY);
+                guiGraphics.item(stack, -8, -8);
+                guiGraphics.itemDecorations(mc.font, stack, -8, -8);
             }
 
-            if (isBottom) {
-                guiGraphics.pose().popMatrix();
-            }
+            // 最近深度为1，最远深度为0
+            int overlayAlpha = (int) (MAX_OVERLAY_ALPHA * (1 - depths[i]));
+            guiGraphics.fill(-FRAME_SIZE / 2, -FRAME_SIZE / 2, FRAME_SIZE / 2, FRAME_SIZE / 2, overlayAlpha << 24);
+
+            guiGraphics.pose().popMatrix();
         }
     }
 
     public static void renderCrucibleCommonHud(GuiGraphicsExtractor guiGraphics, BlockEntity be) {
         if (be instanceof TransmutationCrucibleBlockEntity crucible) {
             Minecraft mc = Minecraft.getInstance();
-            // catalyst
             Window window = mc.getWindow();
-            V2I pos = BSFGuiTool.SIMPLE_FRAME_IMG.renderRatio(guiGraphics, window, 0.1, 0.2);
-            guiGraphics.item(crucible.getCatalyst(), pos.x() + 3, pos.y() + 3);
+
+            // catalyst
+            ItemStack catalyst = crucible.getCatalyst();
+            V2I pos = SIMPLE_FRAME.renderRatio(guiGraphics, TextureOption.TRANSLUCENT, window, 0.1, 0.2);
+            guiGraphics.item(catalyst, pos.x() + 3, pos.y() + 3);
 
             // output
-            pos = BSFGuiTool.SIMPLE_FRAME_IMG.renderRatio(guiGraphics, window, 0.1, 0.8);
+            pos = SIMPLE_FRAME.renderRatio(guiGraphics, TextureOption.TRANSLUCENT, window, 0.1, 0.8);
             guiGraphics.item(crucible.getOutput(), pos.x() + 3, pos.y() + 3);
 
             // input
-            pos = BSFGuiTool.SIMPLE_FRAME_IMG.renderRatio(guiGraphics, window, 0.9, 0.8);
+            pos = SIMPLE_FRAME.renderRatio(guiGraphics, TextureOption.TRANSLUCENT, window, 0.9, 0.8);
             guiGraphics.item(crucible.getInput(), pos.x() + 3, pos.y() + 3);
-        }
 
+            // essence slots
+            // todo
+            if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
+                // 源质融合的源质槽位
+            } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
+                // 源质反应的源质槽位
+                int y = GuiUtil.heightFrameRatio(window, NORMAL_SLOT.height(), 0.7);
+                NORMAL_SLOT.renderCenterHorizontally(guiGraphics, TextureOption.DEFAULT, window, y);
+                NORMAL_SLOT.renderCenterHorizontally(guiGraphics, TextureOption.DEFAULT, window, y + 24);
+            } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
+                // 炼金复制/炼金分解的源质槽位
+            }
+        }
     }
 }

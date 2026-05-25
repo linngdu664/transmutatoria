@@ -14,19 +14,16 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
-import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.client.event.RenderGuiEvent;
 
 @EventBusSubscriber(modid = ArsTransmutatoria.MODID, value = Dist.CLIENT)
 public class RenderGuiEventHandler {
-    @SubscribeEvent
-    public static void onRenderGuiLayer(RenderGuiLayerEvent.Post event) {
-        if (!event.getName().equals(VanillaGuiLayers.HOTBAR)) {
-            return;
-        }
-
+    // 是 jade 不讲武德在先的
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onRenderGuiPost(RenderGuiEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.options.hideGui) {
             return;
@@ -35,12 +32,10 @@ public class RenderGuiEventHandler {
         if (player == null) {
             return;
         }
-        GuiGraphicsExtractor guiGraphics = event.getGuiGraphics();
 
         ItemStack boxStack = null;
         ItemStack mainHand = player.getMainHandItem();
         ItemStack offHand = player.getOffhandItem();
-
         if (mainHand.getItem() instanceof AlchemistStorageBoxItem) {
             boxStack = mainHand;
         } else if (offHand.getItem() instanceof AlchemistStorageBoxItem) {
@@ -49,10 +44,10 @@ public class RenderGuiEventHandler {
 
         HitResult hit = mc.hitResult;
         if (hit != null && hit.getType() == HitResult.Type.BLOCK) {
+            GuiGraphicsExtractor guiGraphics = event.getGuiGraphics();
             BlockHitResult blockHit = (BlockHitResult) hit;
             BlockPos blockPos = blockHit.getBlockPos();
             Level level = player.level();
-
             if (level.getBlockState(blockPos).getBlock() == InitBlocks.TRANSMUTATION_CRUCIBLE.get()) {
                 BlockEntity be = level.getBlockEntity(blockPos);
                 if (boxStack != null) {

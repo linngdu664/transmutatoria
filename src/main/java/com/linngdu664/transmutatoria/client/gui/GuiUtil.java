@@ -1,5 +1,6 @@
 package com.linngdu664.transmutatoria.client.gui;
 
+import com.linngdu664.transmutatoria.client.gui.util.V2I;
 import com.linngdu664.transmutatoria.client.renderer.state.gui.FloatBlitRenderState;
 import com.linngdu664.transmutatoria.client.renderer.state.gui.FloatColoredQuadRenderState;
 import com.linngdu664.transmutatoria.client.renderer.state.gui.FloatColoredRectangleRenderState;

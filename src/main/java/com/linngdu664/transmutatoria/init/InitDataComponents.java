@@ -3,7 +3,6 @@ package com.linngdu664.transmutatoria.init;
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
-import com.linngdu664.transmutatoria.util.EssenceMetal;
 import com.linngdu664.transmutatoria.item.component.ExpireInfo;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
@@ -17,13 +16,6 @@ import java.util.List;
 public class InitDataComponents {
     public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, ArsTransmutatoria.MODID);
 
-    /**被 ALCHEMY_SLOTS 取代*/
-    @Deprecated(forRemoval = true)
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<EssenceMetal>>> ESSENCES =
-            DATA_COMPONENTS.registerComponentType(
-                    "essences",
-                    builder -> builder.persistent(EssenceMetal.LIST_CODEC).networkSynchronized(EssenceMetal.LIST_STREAM_CODEC)
-            );
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ENTROPY =
             DATA_COMPONENTS.registerComponentType(
                     "entropy",
