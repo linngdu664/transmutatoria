@@ -9,6 +9,7 @@ import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
+import com.linngdu664.transmutatoria.util.EssenceMetal;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -20,10 +21,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import java.util.List;
+import java.util.Set;
+
 public class GuiHandler {
     // ===========贴图=============
     private static final GuiSprite SLOTS_SPRITE = new GuiSprite("hud/slots", 189, 61);
     private static final GuiSubSprite NORMAL_SLOT = new GuiSubSprite(SLOTS_SPRITE, 0, 0, 27, 27);
+    private static final GuiSprite SLOT_SELECTED = new GuiSprite("hud/slot_selected", 29, 29);
     public static final GuiSprite SIMPLE_FRAME = new GuiSprite("hud/simple_frame", 22, 22);
 
 
@@ -173,16 +178,58 @@ public class GuiHandler {
             guiGraphics.item(crucible.getOutput(), pos.x() + 3, pos.y() + 3);
 
             // essence slots
-            // todo
             if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
                 // 源质融合的源质槽位
+                Set<EssenceMetal> essences = essenceMetalItem.getEssenceMetal().getRestrainsAndDoubleRestrains();
+                int size = essences.size();
+
+                // 先画普通槽
+                int initX = GuiUtil.widthFrameCenter(window, NORMAL_SLOT.width()) - 10 * (size - 1);
+                int initY = GuiUtil.heightFrameRatio(window, 0, 0.6);
+                int x = initX;
+                int y = initY;
+                for (int i = 0; i < size; i++) {
+                    NORMAL_SLOT.render(guiGraphics, TextureOption.DEFAULT, x, y);
+                    x += 20;
+                    y += ((i & 1) == 0) ? 12 : -12;
+                }
+
+                // 画高亮槽
+                int selectedSlot = crucible.getSelectedSlot();
+                SLOT_SELECTED.render(guiGraphics, TextureOption.DEFAULT, initX - 1 + 20 * selectedSlot, ((selectedSlot & 1) == 0) ? initY - 1 : initY + 11);
+
+                // 再画源质
+                x = initX;
+                y = initY;
+                List<ItemStack> inputEssences = crucible.getInputEssences();
+                for (int i = 0; i < size; i++) {
+                    ItemStack inputEssence = inputEssences.get(i);
+                    if (!inputEssence.isEmpty()) {
+                        guiGraphics.item(inputEssence, x + 6, y + 5);
+                    } else {
+                        // todo 画个虚的物品贴图上去
+                    }
+                    x += 20;
+                    y += ((i & 1) == 0) ? 12 : -12;
+                }
             } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
                 // 源质反应的源质槽位
                 int y = GuiUtil.heightFrameRatio(window, NORMAL_SLOT.height(), 0.7);
-                NORMAL_SLOT.renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, y);
-                NORMAL_SLOT.renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, y + 24);
+                // 先画普通槽
+                V2I pos1 = NORMAL_SLOT.renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, y);
+                V2I pos2 = NORMAL_SLOT.renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, y + 24);
+
+                // 画高亮槽
+                int selectedSlot = crucible.getSelectedSlot();
+                SLOT_SELECTED.renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, selectedSlot == 0 ? y - 1 : y + 23);
+
+                // 再画源质
+                List<ItemStack> inputEssences = crucible.isFinish() ? crucible.getOutputEssences() : crucible.getInputEssences();
+                guiGraphics.item(inputEssences.get(0), pos1.x() + 6, pos1.y() + 5);
+                guiGraphics.item(inputEssences.get(1), pos2.x() + 6, pos2.y() + 5);
             } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
                 // 炼金复制/炼金分解的源质槽位
+                // todo 重头戏
             }
         }
     }

@@ -618,7 +618,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public int getSelectedSlot() {
-        return selectedSlot;
+        return selectedSlot - ESSENCE_INPUT_SLOT;
     }
 
     public int getProcessTimer() {
