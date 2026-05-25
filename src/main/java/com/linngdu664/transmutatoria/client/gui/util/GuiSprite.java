@@ -16,12 +16,12 @@ public record GuiSprite(Identifier identifier, int wholeWidth, int wholeHeight) 
     }
 
     @Override
-    public int getWidth() {
+    public int width() {
         return wholeWidth;
     }
 
     @Override
-    public int getHeight() {
+    public int height() {
         return wholeHeight;
     }
 }

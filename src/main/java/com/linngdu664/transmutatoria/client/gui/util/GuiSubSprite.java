@@ -8,14 +8,4 @@ public record GuiSubSprite(GuiSprite fullSprite, int xOffset, int yOffset, int w
         guiGraphics.blitSprite(option.renderPipeline(), fullSprite.identifier(), fullSprite.wholeWidth(), fullSprite.wholeHeight(), xOffset, yOffset, x, y, width, height, option.color());
         return new V2I(x, y);
     }
-
-    @Override
-    public int getWidth() {
-        return width;
-    }
-
-    @Override
-    public int getHeight() {
-        return height;
-    }
 }

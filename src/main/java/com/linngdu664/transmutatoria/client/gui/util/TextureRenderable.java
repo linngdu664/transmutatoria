@@ -7,16 +7,16 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 public interface TextureRenderable {
     V2I render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y);
 
-    int getWidth();
+    int width();
 
-    int getHeight();
+    int height();
 
-    default V2I renderCenterVertically(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, int x) {
-        return render(guiGraphics, option, x, GuiUtil.heightFrameCenter(window, getHeight()));
+    default V2I renderVerticalCenter(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, int x) {
+        return render(guiGraphics, option, x, GuiUtil.heightFrameCenter(window, height()));
     }
 
-    default V2I renderCenterHorizontally(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, int y) {
-        return render(guiGraphics, option, GuiUtil.widthFrameCenter(window, getWidth()), y);
+    default V2I renderHorizontalCenter(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, int y) {
+        return render(guiGraphics, option, GuiUtil.widthFrameCenter(window, width()), y);
     }
 
     default V2I renderRatio(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, double widthRatio, double heightRatio) {
@@ -24,6 +24,6 @@ public interface TextureRenderable {
     }
 
     default V2I renderRatio(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, double widthRatio, double heightRatio, int xOffset, int yOffset) {
-        return render(guiGraphics, option, GuiUtil.widthFrameRatio(window, getWidth(), widthRatio) + xOffset, GuiUtil.heightFrameRatio(window, getHeight(), heightRatio) + yOffset);
+        return render(guiGraphics, option, GuiUtil.widthFrameRatio(window, width(), widthRatio) + xOffset, GuiUtil.heightFrameRatio(window, height(), heightRatio) + yOffset);
     }
 }

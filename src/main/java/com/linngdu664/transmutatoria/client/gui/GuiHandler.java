@@ -21,11 +21,14 @@ import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class GuiHandler {
+    // ===========贴图=============
     private static final GuiSprite SLOTS_SPRITE = new GuiSprite("hud/slots", 189, 61);
     private static final GuiSubSprite NORMAL_SLOT = new GuiSubSprite(SLOTS_SPRITE, 0, 0, 27, 27);
     public static final GuiSprite SIMPLE_FRAME = new GuiSprite("hud/simple_frame", 22, 22);
 
-    private static final int FRAME_SIZE = SIMPLE_FRAME.getHeight();
+
+    // =============源质选择器参数==============
+    private static final int FRAME_SIZE = SIMPLE_FRAME.height();
     private static final float RADIUS_RATE_X = 0.4f;
     private static final float RADIUS_RATE_Y = 0.0f;
     // 平滑旋转速度，值越小动画越慢（指数衰减系数，单位: 1/tick）
@@ -107,7 +110,7 @@ public class GuiHandler {
             slotXs[i] = (int) (centerX + radiusX * Mth.cos(angle));
             slotYs[i] = (int) (centerY + radiusY * Mth.sin(angle));
             // sin(angle): -1 at 12 o'clock (far), +1 at 6 o'clock (near)
-            depths[i] = (Mth.sin(angle) + 1.0f) / 2.0f;
+            depths[i] = (Mth.sin(angle) + 1.0f) / 2.0f; // 最近深度为 1，最远深度为 0
             scales[i] = MIN_SCALE + (MAX_SCALE - MIN_SCALE) * depths[i];
         }
 
@@ -133,15 +136,17 @@ public class GuiHandler {
             guiGraphics.pose().translate(slotX, slotY);
             guiGraphics.pose().scale(scale, scale);
 
+            // 槽位
             SIMPLE_FRAME.render(guiGraphics, TextureOption.DEFAULT, -FRAME_SIZE / 2, -FRAME_SIZE / 2);
 
+            // 物品
             ItemStack stack = items.get(i);
             if (!stack.isEmpty()) {
                 guiGraphics.item(stack, -8, -8);
                 guiGraphics.itemDecorations(mc.font, stack, -8, -8);
             }
 
-            // 最近深度为1，最远深度为0
+            // 蒙版
             int overlayAlpha = (int) (MAX_OVERLAY_ALPHA * (1 - depths[i]));
             guiGraphics.fill(-FRAME_SIZE / 2, -FRAME_SIZE / 2, FRAME_SIZE / 2, FRAME_SIZE / 2, overlayAlpha << 24);
 
@@ -156,16 +161,16 @@ public class GuiHandler {
 
             // catalyst
             ItemStack catalyst = crucible.getCatalyst();
-            V2I pos = SIMPLE_FRAME.renderRatio(guiGraphics, TextureOption.TRANSLUCENT, window, 0.1, 0.2);
+            V2I pos = SIMPLE_FRAME.renderRatio(guiGraphics, TextureOption.DEFAULT, window, 0.1, 0.2);
             guiGraphics.item(catalyst, pos.x() + 3, pos.y() + 3);
 
-            // output
-            pos = SIMPLE_FRAME.renderRatio(guiGraphics, TextureOption.TRANSLUCENT, window, 0.1, 0.8);
-            guiGraphics.item(crucible.getOutput(), pos.x() + 3, pos.y() + 3);
-
             // input
-            pos = SIMPLE_FRAME.renderRatio(guiGraphics, TextureOption.TRANSLUCENT, window, 0.9, 0.8);
+            pos = SIMPLE_FRAME.render(guiGraphics, TextureOption.DEFAULT, pos.x() + SIMPLE_FRAME.width(), pos.y());
             guiGraphics.item(crucible.getInput(), pos.x() + 3, pos.y() + 3);
+
+            // output
+            pos = SIMPLE_FRAME.renderRatio(guiGraphics, TextureOption.DEFAULT, window, 0.1, 0.8);
+            guiGraphics.item(crucible.getOutput(), pos.x() + 3, pos.y() + 3);
 
             // essence slots
             // todo
@@ -174,8 +179,8 @@ public class GuiHandler {
             } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
                 // 源质反应的源质槽位
                 int y = GuiUtil.heightFrameRatio(window, NORMAL_SLOT.height(), 0.7);
-                NORMAL_SLOT.renderCenterHorizontally(guiGraphics, TextureOption.DEFAULT, window, y);
-                NORMAL_SLOT.renderCenterHorizontally(guiGraphics, TextureOption.DEFAULT, window, y + 24);
+                NORMAL_SLOT.renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, y);
+                NORMAL_SLOT.renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, y + 24);
             } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
                 // 炼金复制/炼金分解的源质槽位
             }
