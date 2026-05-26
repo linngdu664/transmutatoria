@@ -69,24 +69,24 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
         }
     }
 
-    @Override
-    public void clicked(int slotIndex, int button, ContainerInput input, Player player) {
-        if (slotIndex >= INV_START) {
-            super.clicked(slotIndex, button, input, player);
-            return;
-        }
-        if (slotIndex == inputSlotIndex) {
-            // 输入槽：激活时拿不动，未激活时拦截无效物品
-            if (scrollStack.get(InitDataComponents.RECIPE_CONDITIONS) != null) {
-                return;
-            }
-            ItemStack carried = getCarried();
-            if (carried.isEmpty() || (scrollStack.getItem() instanceof AbstractTransmutationScrollItem scrollItem && scrollItem.getRecipe(player.level(), carried) != null)) {
-                super.clicked(slotIndex, button, input, player);
-            }
-        }
-        // 另一个槽：拿不动
-    }
+//    @Override
+//    public void clicked(int slotIndex, int button, ContainerInput input, Player player) {
+//        if (slotIndex >= INV_START) {
+//            super.clicked(slotIndex, button, input, player);
+//            return;
+//        }
+//        if (slotIndex == inputSlotIndex) {
+//            // 输入槽：激活时拿不动，未激活时拦截无效物品
+//            if (scrollStack.get(InitDataComponents.RECIPE_CONDITIONS) != null) {
+//                return;
+//            }
+//            ItemStack carried = getCarried();
+//            if (carried.isEmpty() || (scrollStack.getItem() instanceof AbstractTransmutationScrollItem scrollItem && scrollItem.getRecipe(player.level(), carried) != null)) {
+//                super.clicked(slotIndex, button, input, player);
+//            }
+//        }
+//        // 另一个槽：拿不动
+//    }
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
@@ -134,7 +134,7 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            if (isActivated() || scrollStack.isEmpty() || !(scrollStack.getItem() instanceof AbstractTransmutationScrollItem scrollItem)) return false;
+            if (!isActive()||isActivated() || scrollStack.isEmpty() || !(scrollStack.getItem() instanceof AbstractTransmutationScrollItem scrollItem)) return false;
             return scrollItem.getRecipe(playerInventory.player.level(), stack) != null;
         }
 
@@ -145,8 +145,7 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
 
         @Override
         public boolean isActive() {
-            Slot slot = slots.get(index);
-            return !slot.hasItem();
+            return !this.hasItem();
         }
 
         @Override
@@ -216,6 +215,11 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
             contents.copyInto(items);
         }
 
+        @Override
+        public int getMaxStackSize() {
+            return 1;
+        }
+
         private void saveToStack() {
             stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items));
         }
@@ -237,12 +241,6 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
 
         @Override
         public ItemStack removeItem(int slot, int amount) {
-            ItemStack s = items.get(slot);
-            if (!s.isEmpty()) {
-                ItemStack result = s.split(amount);
-                saveToStack();
-                return result;
-            }
             return ItemStack.EMPTY;
         }
 
