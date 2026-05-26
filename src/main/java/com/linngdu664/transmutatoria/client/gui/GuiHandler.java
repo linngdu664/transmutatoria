@@ -225,6 +225,7 @@ public class GuiHandler {
                 guiGraphics.item(inputEssences.get(0), pos1.x() + 6, pos1.y() + 5);
                 guiGraphics.item(inputEssences.get(1), pos2.x() + 6, pos2.y() + 5);
             } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
+                Textures.ALCHEMY_ARRAYS[Math.floorMod(catalyst.hashCode(), Textures.ALCHEMY_ARRAYS.length)].renderRatio(guiGraphics, TextureOption.DEFAULT, window, 0.5, 0.5);
                 // 炼金复制/炼金分解的源质槽位
                 List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
                 if (alchemySlots.isEmpty()) {
@@ -262,6 +263,10 @@ public class GuiHandler {
                     i++;
                 }
 
+                // 画高亮槽
+                long selectedPacked = slotXYs[crucible.getSelectedSlot()];
+                Textures.SLOT_SELECTED.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(selectedPacked) - 1, getYFromPacked(selectedPacked) - 1);
+
                 // 画可能的箭头
                 i = 0;
                 int crucibleMagicNumber = crucible.getCrucibleMagicNumber();
@@ -276,10 +281,6 @@ public class GuiHandler {
                     }
                     i++;
                 }
-
-                // 画高亮槽
-                long selectedPacked = slotXYs[crucible.getSelectedSlot()];
-                Textures.SLOT_SELECTED.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(selectedPacked) - 1, getYFromPacked(selectedPacked) - 1);
 
                 // 再画源质
                 i = 0;

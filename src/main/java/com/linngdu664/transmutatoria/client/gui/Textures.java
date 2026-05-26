@@ -43,4 +43,18 @@ public class Textures {
     public static final GuiTexture PANDEMONIUM = new GuiTexture("textures/item/pandemonium.png", 16, 16);
     public static final GuiTexture SANGUIBRONZE = new GuiTexture("textures/item/sanguibronze.png", 16, 16);
     public static final GuiTexture VENOTITE = new GuiTexture("textures/item/venotite.png", 16, 16);
+
+    public static final GuiTexture ALCHEMY_ARRAY_1 = new GuiTexture("textures/gui/alchemy_array1.png", 256, 256);
+    public static final GuiTexture ALCHEMY_ARRAY_2 = new GuiTexture("textures/gui/alchemy_array2.png", 256, 256);
+    public static final GuiTexture ALCHEMY_ARRAY_3 = new GuiTexture("textures/gui/alchemy_array3.png", 256, 256);
+    public static final GuiTexture ALCHEMY_ARRAY_4 = new GuiTexture("textures/gui/alchemy_array4.png", 256, 256);
+    public static final GuiTexture ALCHEMY_ARRAY_5 = new GuiTexture("textures/gui/alchemy_array5.png", 256, 256);
+    public static final GuiTexture ALCHEMY_ARRAY_6 = new GuiTexture("textures/gui/alchemy_array6.png", 256, 256);
+    public static final GuiTexture ALCHEMY_ARRAY_7 = new GuiTexture("textures/gui/alchemy_array7.png", 256, 256);
+    public static final GuiTexture ALCHEMY_ARRAY_8 = new GuiTexture("textures/gui/alchemy_array8.png", 256, 256);
+
+    public static final GuiTexture[] ALCHEMY_ARRAYS = {
+        ALCHEMY_ARRAY_1, ALCHEMY_ARRAY_2, ALCHEMY_ARRAY_3, ALCHEMY_ARRAY_4,
+        ALCHEMY_ARRAY_5, ALCHEMY_ARRAY_6, ALCHEMY_ARRAY_7, ALCHEMY_ARRAY_8
+    };
 }
