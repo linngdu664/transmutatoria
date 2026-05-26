@@ -53,7 +53,7 @@ public class RenderGuiEventHandler {
                 if (boxStack != null) {
                     GuiHandler.renderCrucibleStorageBoxHud(guiGraphics, boxStack, event.getPartialTick());
                 }
-                GuiHandler.renderCrucibleCommonHud(guiGraphics, be);
+                GuiHandler.renderCrucibleCommonHud(guiGraphics, be, event.getPartialTick());
             }
         }
     }

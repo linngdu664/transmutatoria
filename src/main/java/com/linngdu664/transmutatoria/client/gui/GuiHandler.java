@@ -45,6 +45,13 @@ public class GuiHandler {
     private static int lastComponentRotation = 0;
     private static boolean initialized = false;
 
+    // 选中槽位高亮平滑漂移动画
+    private static float smoothHighlightX = 0;
+    private static float smoothHighlightY = 0;
+    private static float targetHighlightX = 0;
+    private static float targetHighlightY = 0;
+    private static boolean highlightInitialized = false;
+
     // todo 如果后续确定椭圆短轴恒为0，可进一步优化
     public static void renderCrucibleStorageBoxHud(GuiGraphicsExtractor guiGraphics, ItemStack boxStack, DeltaTracker delta) {
         Minecraft mc = Minecraft.getInstance();
@@ -151,7 +158,7 @@ public class GuiHandler {
         }
     }
 
-    public static void renderCrucibleCommonHud(GuiGraphicsExtractor guiGraphics, BlockEntity be) {
+    public static void renderCrucibleCommonHud(GuiGraphicsExtractor guiGraphics, BlockEntity be, DeltaTracker delta) {
         if (be instanceof TransmutationCrucibleBlockEntity crucible) {
             Minecraft mc = Minecraft.getInstance();
             Window window = mc.getWindow();
@@ -191,10 +198,6 @@ public class GuiHandler {
                     y += ((i & 1) == 0) ? 12 : -12;
                 }
 
-                // 画高亮槽
-                int selectedSlot = crucible.getSelectedSlot();
-                Textures.SLOT_SELECTED.render(guiGraphics, TextureOption.DEFAULT, initX - 1 + 20 * selectedSlot, ((selectedSlot & 1) == 0) ? initY - 1 : initY + 11);
-
                 // 再画源质
                 x = initX;
                 y = initY;
@@ -209,6 +212,12 @@ public class GuiHandler {
                     x += 20;
                     y += ((i & 1) == 0) ? 12 : -12;
                 }
+
+                // 画高亮槽（平滑漂移）
+                int selectedSlot = crucible.getSelectedSlot();
+                float targetX = initX - 1 + 20 * selectedSlot;
+                float targetY = ((selectedSlot & 1) == 0) ? initY - 1 : initY + 11;
+                renderSmoothSelectedSlot(guiGraphics, targetX, targetY, delta);
             } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
                 // 源质反应的源质槽位
                 int y = GuiUtil.heightFrameRatio(window, Textures.NORMAL_SLOT.height(), 0.7);
@@ -216,14 +225,16 @@ public class GuiHandler {
                 V2I pos1 = Textures.NORMAL_SLOT.renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, y);
                 V2I pos2 = Textures.NORMAL_SLOT.renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, y + 24);
 
-                // 画高亮槽
-                int selectedSlot = crucible.getSelectedSlot();
-                Textures.SLOT_SELECTED.renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, selectedSlot == 0 ? y - 1 : y + 23);
-
                 // 再画源质
                 List<ItemStack> inputEssences = crucible.isFinish() ? crucible.getOutputEssences() : crucible.getInputEssences();
                 guiGraphics.item(inputEssences.get(0), pos1.x() + 6, pos1.y() + 5);
                 guiGraphics.item(inputEssences.get(1), pos2.x() + 6, pos2.y() + 5);
+
+                // 画高亮槽（平滑漂移）
+                int selectedSlot = crucible.getSelectedSlot();
+                float targetX = GuiUtil.widthFrameCenter(window, Textures.SLOT_SELECTED.width());
+                float targetY = selectedSlot == 0 ? y - 1 : y + 23;
+                renderSmoothSelectedSlot(guiGraphics, targetX, targetY, delta);
             } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
                 Textures.ALCHEMY_ARRAYS[Math.floorMod(catalyst.hashCode(), Textures.ALCHEMY_ARRAYS.length)].renderRatio(guiGraphics, TextureOption.DEFAULT, window, 0.5, 0.5);
                 // 炼金复制/炼金分解的源质槽位
@@ -263,9 +274,23 @@ public class GuiHandler {
                     i++;
                 }
 
-                // 画高亮槽
+                // 再画源质
+                i = 0;
+                List<ItemStack> essencesInCrucible = crucible.isFinish() ? crucible.getOutputEssences() : crucible.getInputEssences();
+                for (AbstractAlchemySlot alchemySlot : alchemySlots) {
+                    ItemStack essence = essencesInCrucible.get(i);
+                    if (!essence.isEmpty()) {
+                        guiGraphics.item(essence, getXFromPacked(slotXYs[i]) + 6, getYFromPacked(slotXYs[i]) + 5);
+                    } else if (alchemySlot.isShowEssence()) {
+                        alchemySlot.getEssenceMetal().getDefaultTexture().render(guiGraphics, VIRTUAL_ITEM, getXFromPacked(slotXYs[i]) + 6, getYFromPacked(slotXYs[i]) + 5);
+                    }
+                    i++;
+                }
+                // 画高亮槽（平滑漂移）
                 long selectedPacked = slotXYs[crucible.getSelectedSlot()];
-                Textures.SLOT_SELECTED.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(selectedPacked) - 1, getYFromPacked(selectedPacked) - 1);
+                float targetX = getXFromPacked(selectedPacked) - 1;
+                float targetY = getYFromPacked(selectedPacked) - 1;
+                renderSmoothSelectedSlot(guiGraphics, targetX, targetY, delta);
 
                 // 画可能的箭头
                 i = 0;
@@ -278,19 +303,6 @@ public class GuiHandler {
                         case 3 -> Textures.DOWN_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(slotXYs[i]) + 11, getYFromPacked(slotXYs[i]) + 24);
                         case 4 -> Textures.DOWNLEFT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(slotXYs[i]) + 1, getYFromPacked(slotXYs[i]) + 17);
                         case 5 -> Textures.UPLEFT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(slotXYs[i]) + 1, getYFromPacked(slotXYs[i]) + 5);
-                    }
-                    i++;
-                }
-
-                // 再画源质
-                i = 0;
-                List<ItemStack> essencesInCrucible = crucible.isFinish() ? crucible.getOutputEssences() : crucible.getInputEssences();
-                for (AbstractAlchemySlot alchemySlot : alchemySlots) {
-                    ItemStack essence = essencesInCrucible.get(i);
-                    if (!essence.isEmpty()) {
-                        guiGraphics.item(essence, getXFromPacked(slotXYs[i]) + 6, getYFromPacked(slotXYs[i]) + 5);
-                    } else if (alchemySlot.isShowEssence()) {
-                        alchemySlot.getEssenceMetal().getDefaultTexture().render(guiGraphics, VIRTUAL_ITEM, getXFromPacked(slotXYs[i]) + 6, getYFromPacked(slotXYs[i]) + 5);
                     }
                     i++;
                 }
@@ -308,5 +320,29 @@ public class GuiHandler {
 
     private static int getYFromPacked(long packed) {
         return (int) (packed >> 32);
+    }
+
+    private static void renderSmoothSelectedSlot(GuiGraphicsExtractor guiGraphics, float targetX, float targetY, DeltaTracker delta) {
+        if (!highlightInitialized) {
+            smoothHighlightX = targetX;
+            smoothHighlightY = targetY;
+            targetHighlightX = targetX;
+            targetHighlightY = targetY;
+            highlightInitialized = true;
+        }
+
+        targetHighlightX = targetX;
+        targetHighlightY = targetY;
+
+        float dt = delta.getGameTimeDeltaTicks();
+        float diffX = targetHighlightX - smoothHighlightX;
+        float diffY = targetHighlightY - smoothHighlightY;
+        if (Math.abs(diffX) > 0.01f || Math.abs(diffY) > 0.01f) {
+            float t = 1f - (float) Math.exp(-LERP_SPEED * dt);
+            smoothHighlightX += diffX * t;
+            smoothHighlightY += diffY * t;
+        }
+
+        Textures.SLOT_SELECTED.render(guiGraphics, TextureOption.DEFAULT, Math.round(smoothHighlightX), Math.round(smoothHighlightY));
     }
 }
