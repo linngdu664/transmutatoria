@@ -57,7 +57,7 @@ public class AlchemistStorageBoxItem extends Item {
         if (blockState.is(InitBlocks.TRANSMUTATION_CRUCIBLE)) {
             ItemStack stack = context.getItemInHand();
             if (!level.isClientSide()) {
-                int rotation = stack.getOrDefault(InitDataComponents.ROTATION, 0);
+                int rotation = (stack.getOrDefault(InitDataComponents.ROTATION, 0) + 6) % 12;
                 ItemContainerContents container = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
                 if (rotation < container.getSlots()) {
                     ItemStack slotStack = container.getStackInSlot(rotation);
