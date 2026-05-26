@@ -5,18 +5,22 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public interface TextureRenderable {
-    V2I render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y);
+    void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y);
 
     int width();
 
     int height();
 
     default V2I renderVerticalCenter(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, int x) {
-        return render(guiGraphics, option, x, GuiUtil.heightFrameCenter(window, height()));
+        int y = GuiUtil.heightFrameCenter(window, height());
+        render(guiGraphics, option, x, y);
+        return new V2I(x, y);
     }
 
     default V2I renderHorizontalCenter(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, int y) {
-        return render(guiGraphics, option, GuiUtil.widthFrameCenter(window, width()), y);
+        int x = GuiUtil.widthFrameCenter(window, width());
+        render(guiGraphics, option, x, y);
+        return new V2I(x, y);
     }
 
     default V2I renderRatio(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, double widthRatio, double heightRatio) {
@@ -24,6 +28,9 @@ public interface TextureRenderable {
     }
 
     default V2I renderRatio(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, double widthRatio, double heightRatio, int xOffset, int yOffset) {
-        return render(guiGraphics, option, GuiUtil.widthFrameRatio(window, width(), widthRatio) + xOffset, GuiUtil.heightFrameRatio(window, height(), heightRatio) + yOffset);
+        int x = GuiUtil.widthFrameRatio(window, width(), widthRatio) + xOffset;
+        int y = GuiUtil.heightFrameRatio(window, height(), heightRatio) + yOffset;
+        render(guiGraphics, option, x, y);
+        return new V2I(x, y);
     }
 }

@@ -499,8 +499,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
 
     private void handleScrollReaction(ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate) {
         ItemStack catalyst = getCatalyst();
-        List<AbstractAlchemySlot> alchemySlots = catalyst.get(InitDataComponents.ALCHEMY_SLOTS);
-        if (alchemySlots != null && !alchemySlots.isEmpty() && inputOrder.size() == alchemySlots.size()) {
+        List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
+        if (!alchemySlots.isEmpty() && inputOrder.size() == alchemySlots.size()) {
             // 反应前预先做的事
             boolean[] inhibitionStates = new boolean[alchemySlots.size()];
             Int2IntOpenHashMap posToOutputSlot = new Int2IntOpenHashMap();
@@ -510,9 +510,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
                 posToOutputSlot.put(slot.getPackedXY(), i);
                 i++;
             }
-            int hashValue = 31 + Long.hashCode(getBlockPos().asLong());
-            hashValue = 31 * hashValue + Long.hashCode(catalyst.getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE));
-            hashValue = 31 * hashValue;
+            int hashValue = getCrucibleMagicNumber();
 
             // 反应
             int annihilationCnt = 0;
@@ -525,7 +523,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
                         inhibitionStates,
                         posToOutputSlot,
                         deferredTasks,
-                        hashValue + slot
+                        AbstractAlchemySlot.getSlotMagicNumber(hashValue, slot)
                 );
                 polarity += result.getPolarityIncrease();
                 entropy += result.getEntropyIncrease();
@@ -534,6 +532,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
                     annihilationCnt++;
                 }
             }
+            catalyst.set(InitDataComponents.ALCHEMY_SLOTS, alchemySlots);
             catalyst.set(InitDataComponents.ENTROPY, entropy);
 
             // 如果全湮灭则消耗输入，如果极性满足条件则产出输出
@@ -627,6 +626,12 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
 
     public int getTargetTimer() {
         return targetTimer;
+    }
+
+    public int getCrucibleMagicNumber() {
+        int hashValue = 31 * 17 + Long.hashCode(getBlockPos().asLong());
+        hashValue = 31 * hashValue + Long.hashCode(getCatalyst().getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE));
+        return 31 * hashValue;
     }
 
     public boolean isFinish() {

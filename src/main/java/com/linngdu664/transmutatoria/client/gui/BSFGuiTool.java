@@ -1,12 +1,7 @@
 package com.linngdu664.transmutatoria.client.gui;
 
-import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.client.gui.util.GuiSprite;
 import com.linngdu664.transmutatoria.client.gui.util.V2I;
-import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec2;
 
 /**
@@ -14,9 +9,6 @@ import net.minecraft.world.phys.Vec2;
  * Note: Text and item floating coords should use pose translate and methods in GuiGraphicsExtractor
  */
 public class BSFGuiTool {
-
-//    public static final GuiSubSprite SIMPLE_FRAME_IMG = new GuiSubSprite(SIMPLE_FRAME, 0, 0, 22, 22);
-
     /**
      * 渲染进度条
      *

@@ -64,7 +64,7 @@ public abstract class AbstractTransmutationScrollItem extends Item {
             slots.add(AbstractAlchemySlot.create(
                     pickSlotType(count, random),
                     allMetals[random.nextInt(allMetals.length)],
-                    pos.x, pos.y
+                    pos.x, pos.y, true
             ));
         }
 
@@ -141,6 +141,7 @@ public abstract class AbstractTransmutationScrollItem extends Item {
             for (AbstractAlchemySlot slot : slots) {
                 if (random.nextFloat() < 0.8F) {
                     slot.setEssenceMetal(allMetals[random.nextInt(allMetals.length)]);
+                    slot.setShowEssence(false);
                 }
             }
         }

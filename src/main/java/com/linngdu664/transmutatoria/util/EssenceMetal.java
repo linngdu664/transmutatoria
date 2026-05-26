@@ -1,6 +1,8 @@
 package com.linngdu664.transmutatoria.util;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
+import com.linngdu664.transmutatoria.client.gui.Textures;
+import com.linngdu664.transmutatoria.client.gui.util.TextureRenderable;
 import com.linngdu664.transmutatoria.init.InitItems;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,21 +15,21 @@ import net.minecraft.world.item.Items;
 import java.util.*;
 
 public enum EssenceMetal implements StringRepresentable {
-    A("eclipsium"),
-    B("lunargent"),
-    C("astrotite"),
+    A("eclipsium", Textures.ECLIPSIUM),
+    B("lunargent", Textures.LUNARGENT),
+    C("astrotite",  Textures.ASTROTITE),
 
-    D("abyssion"),
-    E("animercury"),
-    F("necroplumb"),
+    D("abyssion", Textures.ABYSSION),
+    E("animercury", Textures.ANIMERCURY),
+    F("necroplumb", Textures.NECROPLUMB),
 
-    G("sanguibronze"),
-    H("venotite"),
-    I("ossantimony"),
+    G("sanguibronze", Textures.SANGUIBRONZE),
+    H("venotite", Textures.VENOTITE),
+    I("ossantimony", Textures.OSSANTIMONY),
 
-    J("fulgurzinc"),
-    K("chronoplatinum"),
-    L("pandemonium");
+    J("fulgurzinc", Textures.FULGURZINC),
+    K("chronoplatinum", Textures.CHRONOPLATINUM),
+    L("pandemonium", Textures.PANDEMONIUM),;
 
     public static final Codec<EssenceMetal> CODEC = StringRepresentable.fromEnum(EssenceMetal::values);
     public static final Codec<List<EssenceMetal>> LIST_CODEC = CODEC.listOf();
@@ -46,6 +48,7 @@ public enum EssenceMetal implements StringRepresentable {
     );
 
     private final String key;
+    private final TextureRenderable defaultTexture;
     private Set<EssenceMetal> restrains = Set.of();
     private Set<EssenceMetal> doubleRestrains = Set.of();
     private Set<EssenceMetal> symbiosisWith = Set.of();
@@ -83,8 +86,9 @@ public enum EssenceMetal implements StringRepresentable {
 //        }
     }
 
-    EssenceMetal(String key) {
+    EssenceMetal(String key, TextureRenderable defaultTexture) {
         this.key = key;
+        this.defaultTexture = defaultTexture;
     }
 
     public Relation getRelationTo(EssenceMetal other) {
@@ -120,6 +124,10 @@ public enum EssenceMetal implements StringRepresentable {
 
     public String getKey() {
         return key;
+    }
+
+    public TextureRenderable getDefaultTexture() {
+        return defaultTexture;
     }
 
     public String getKeyWithPrefix(int state) {

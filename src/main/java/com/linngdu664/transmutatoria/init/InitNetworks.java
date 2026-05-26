@@ -3,6 +3,7 @@ package com.linngdu664.transmutatoria.init;
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.network.to_client.*;
 import com.linngdu664.transmutatoria.network.to_client.handler.CrucibleSetHandler;
+import com.linngdu664.transmutatoria.network.to_server.ChangeCrucibleSelectedSlotPayload;
 import com.linngdu664.transmutatoria.network.to_server.RotateStorageBoxPayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -17,6 +18,11 @@ public class InitNetworks {
         registrar.playToServer(
                 RotateStorageBoxPayload.TYPE,
                 RotateStorageBoxPayload.STREAM_CODEC,
+                (payload, context) -> payload.handle(context.player())
+        );
+        registrar.playToServer(
+                ChangeCrucibleSelectedSlotPayload.TYPE,
+                ChangeCrucibleSelectedSlotPayload.STREAM_CODEC,
                 (payload, context) -> payload.handle(context.player())
         );
         registrar.playToClient(

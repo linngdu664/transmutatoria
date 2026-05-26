@@ -1,5 +1,7 @@
 package com.linngdu664.transmutatoria.util.alchemy_slots;
 
+import com.linngdu664.transmutatoria.client.gui.Textures;
+import com.linngdu664.transmutatoria.client.gui.util.TextureRenderable;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.AlchemyReactResult;
@@ -11,14 +13,19 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 public class ExchangeSlot extends AbstractAlchemySlot {
-    public ExchangeSlot(EssenceMetal essenceMetal, int x, int y) {
-        super(essenceMetal, x, y);
+    public ExchangeSlot(EssenceMetal essenceMetal, int x, int y, boolean hideType, boolean showEssence) {
+        super(essenceMetal, x, y, hideType, showEssence);
+    }
+
+    @Override
+    public boolean hasDirection() {
+        return true;
     }
 
     @Override
     protected AlchemyReactResult internalReact(ItemStack scroll, EssenceMetalItem inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
         AlchemyReactResult result = super.internalReact(scroll, inputEssence, outputs, inhibitionStates, posToOutputSlot, deferredTasks, magicNumber);
-        int slot = posToOutputSlot.getOrDefault(getAdjacentPackedXY(magicNumber % 6), -1);
+        int slot = posToOutputSlot.getOrDefault(getAdjacentPackedXY(Math.floorMod(magicNumber, 6)), -1);
         if (slot >= 0 && !outputs.get(slot).isEmpty()) {
             int thisSlot = posToOutputSlot.get(getPackedXY(x, y));
             ItemStack itemStack = outputs.get(thisSlot);
@@ -29,7 +36,12 @@ public class ExchangeSlot extends AbstractAlchemySlot {
     }
 
     @Override
-    protected SlotType getType() {
+    public SlotType getType() {
         return SlotType.EXCHANGE;
+    }
+
+    @Override
+    public TextureRenderable getRealTexture() {
+        return Textures.EXCHANGE_SLOT;
     }
 }

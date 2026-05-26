@@ -10,9 +10,8 @@ public record GuiSprite(Identifier identifier, int wholeWidth, int wholeHeight) 
     }
 
     @Override
-    public V2I render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y) {
+    public void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y) {
         guiGraphics.blitSprite(option.renderPipeline(), identifier, x, y, wholeWidth, wholeHeight, option.color());
-        return new V2I(x, y);
     }
 
     @Override

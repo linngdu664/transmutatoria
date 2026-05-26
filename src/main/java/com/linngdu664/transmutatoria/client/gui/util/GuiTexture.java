@@ -10,9 +10,8 @@ public record GuiTexture(Identifier identifier, int wholeWidth, int wholeHeight)
     }
 
     @Override
-    public V2I render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y) {
+    public void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y) {
         guiGraphics.blit(option.renderPipeline(), identifier, x, y, 0, 0, wholeWidth, wholeHeight, wholeWidth, wholeHeight, option.color());
-        return new V2I(x, y);
     }
 
     @Override

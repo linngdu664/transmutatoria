@@ -1,5 +1,7 @@
 package com.linngdu664.transmutatoria.util.alchemy_slots;
 
+import com.linngdu664.transmutatoria.client.gui.Textures;
+import com.linngdu664.transmutatoria.client.gui.util.TextureRenderable;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.AlchemyReactResult;
@@ -11,8 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 public class ResonanceSlot extends AbstractAlchemySlot {
-    public ResonanceSlot(EssenceMetal essenceMetal, int x, int y) {
-        super(essenceMetal, x, y);
+    public ResonanceSlot(EssenceMetal essenceMetal, int x, int y, boolean hideType, boolean showEssence) {
+        super(essenceMetal, x, y, hideType, showEssence);
     }
 
     @Override
@@ -28,7 +30,12 @@ public class ResonanceSlot extends AbstractAlchemySlot {
     }
 
     @Override
-    protected SlotType getType() {
+    public SlotType getType() {
         return SlotType.RESONANCE;
+    }
+
+    @Override
+    public TextureRenderable getRealTexture() {
+        return Textures.RESONANCE_SLOT;
     }
 }

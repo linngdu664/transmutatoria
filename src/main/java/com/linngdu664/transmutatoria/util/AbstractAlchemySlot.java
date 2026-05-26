@@ -1,5 +1,7 @@
 package com.linngdu664.transmutatoria.util;
 
+import com.linngdu664.transmutatoria.client.gui.Textures;
+import com.linngdu664.transmutatoria.client.gui.util.TextureRenderable;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.alchemy_slots.*;
 
@@ -18,14 +20,38 @@ public abstract class AbstractAlchemySlot {
     // x、y 的方向与屏幕坐标系一致，即：下->y+，右->x+
     protected int x;    // [-32768, 32767]
     protected int y;    // [-32768, 32767]
+    private boolean isShowType;
+    private boolean isShowEssence;
 
-    protected AbstractAlchemySlot(EssenceMetal essenceMetal, int x, int y) {
+    protected AbstractAlchemySlot(EssenceMetal essenceMetal, int x, int y, boolean showType, boolean showEssence) {
         this.essenceMetal = essenceMetal;
         this.x = x;
         this.y = y;
+        this.isShowType = showType;
+        this.isShowEssence = showEssence;
     }
 
-    protected abstract SlotType getType();
+    public abstract SlotType getType();
+
+    public abstract TextureRenderable getRealTexture();
+
+    public boolean hasDirection() {
+        return false;
+    }
+
+    public final int getDirection(int magicNumber) {
+        if (!hasDirection()) {
+            return -1;
+        }
+        return isShowType ? Math.floorMod(magicNumber, 6) : -1;
+    }
+
+    public final TextureRenderable getTexture() {
+        if (isShowType) {
+            return getRealTexture();
+        }
+        return Textures.NORMAL_SLOT;
+    }
 
     /**
      * 本槽位的炼金反应，总方法，不可被重写
@@ -58,6 +84,11 @@ public abstract class AbstractAlchemySlot {
             outputs.set(slot, inputEssenceMetal.change(result.getEssenceStateIncrease()));
         }
 
+        if (result.isTriggerDamage()) {
+            isShowType = true;
+            isShowEssence = true;
+        }
+
         return result;
     }
 
@@ -86,10 +117,6 @@ public abstract class AbstractAlchemySlot {
         return essenceMetal;
     }
 
-    public void setEssenceMetal(EssenceMetal essenceMetal) {
-        this.essenceMetal = essenceMetal;
-    }
-
     public int getX() {
         return x;
     }
@@ -98,22 +125,44 @@ public abstract class AbstractAlchemySlot {
         return y;
     }
 
+    public boolean isShowType() {
+        return isShowType;
+    }
+
+    public boolean isShowEssence() {
+        return isShowEssence;
+    }
+
     public int getPackedXY() {
         return getPackedXY(x, y);
+    }
+
+    public void setEssenceMetal(EssenceMetal essenceMetal) {
+        this.essenceMetal = essenceMetal;
+    }
+
+    public void setShowEssence(boolean showEssence) {
+        this.isShowEssence = showEssence;
     }
 
     public void swapPropertyExceptForType(AbstractAlchemySlot other) {
         int x1 = other.x;
         int y1 = other.y;
         EssenceMetal essenceMetal1 = other.essenceMetal;
+        boolean isShowType1 = other.isShowType;
+        boolean isShowEssence1 = other.isShowEssence;
 
         other.x = this.x;
         other.y = this.y;
         other.essenceMetal = this.essenceMetal;
+        other.isShowType = this.isShowType;
+        other.isShowEssence = this.isShowEssence;
 
         this.x = x1;
         this.y = y1;
         this.essenceMetal = essenceMetal1;
+        this.isShowType = isShowType1;
+        this.isShowEssence = isShowEssence1;
     }
 
     public int getAdjacentPackedXY(int direction) {
@@ -128,24 +177,35 @@ public abstract class AbstractAlchemySlot {
     }
 
     protected static int getPackedXY(int x, int y) {
-        return (x << 16) | (y & 0xFFFF);
+        return (y << 16) | (x & 0xffff);
     }
 
-    public static AbstractAlchemySlot create(SlotType type, EssenceMetal essenceMetal, int x, int y) {
+    public static int getSlotMagicNumber(int crucibleMagicNumber, int slot) {
+        return 31 * (crucibleMagicNumber + slot);
+    }
+
+    /**
+     * 对外暴露的工厂函数，创建出来默认不显示源质
+     */
+    public static AbstractAlchemySlot create(SlotType type, EssenceMetal essenceMetal, int x, int y, boolean isShowType) {
+        return create(type, essenceMetal, x, y, isShowType, false);
+    }
+
+    private static AbstractAlchemySlot create(SlotType type, EssenceMetal essenceMetal, int x, int y, boolean isShowType, boolean isShowEssence) {
         return switch (type) {
-            case NORMAL -> new NormalSlot(essenceMetal, x, y);
-            case DETERIORATION -> new DeteriorationSlot(essenceMetal, x, y);
-            case ACTIVATION -> new ActivationSlot(essenceMetal, x, y);
-            case INVERSION -> new InversionSlot(essenceMetal, x, y);
-            case DIFFUSION -> new DiffusionSlot(essenceMetal, x, y);
-            case INHIBITION -> new InhibitionSlot(essenceMetal, x, y);
-            case PURGE -> new PurgeSlot(essenceMetal, x, y);
-            case RESTORATION -> new RestorationSlot(essenceMetal, x, y);
-            case RESONANCE -> new ResonanceSlot(essenceMetal, x, y);
-            case ACTIVITY -> new ActivitySlot(essenceMetal, x, y);
-            case EXCHANGE -> new ExchangeSlot(essenceMetal, x, y);
-            case SPIN -> new SpinSlot(essenceMetal, x, y);
-            case UNSTABLE -> new UnstableSlot(essenceMetal, x, y);
+            case NORMAL -> new NormalSlot(essenceMetal, x, y, isShowType, isShowEssence);
+            case DETERIORATION -> new DeteriorationSlot(essenceMetal, x, y, isShowType, isShowEssence);
+            case ACTIVATION -> new ActivationSlot(essenceMetal, x, y, isShowType, isShowEssence);
+            case INVERSION -> new InversionSlot(essenceMetal, x, y, isShowType, isShowEssence);
+            case DIFFUSION -> new DiffusionSlot(essenceMetal, x, y, isShowType, isShowEssence);
+            case INHIBITION -> new InhibitionSlot(essenceMetal, x, y, isShowType, isShowEssence);
+            case PURGE -> new PurgeSlot(essenceMetal, x, y, isShowType, isShowEssence);
+            case RESTORATION -> new RestorationSlot(essenceMetal, x, y, isShowType, isShowEssence);
+            case RESONANCE -> new ResonanceSlot(essenceMetal, x, y, isShowType, isShowEssence);
+            case ACTIVITY -> new ActivitySlot(essenceMetal, x, y, isShowType, isShowEssence);
+            case EXCHANGE -> new ExchangeSlot(essenceMetal, x, y, isShowType, isShowEssence);
+            case SPIN -> new SpinSlot(essenceMetal, x, y, isShowType, isShowEssence);
+            case UNSTABLE -> new UnstableSlot(essenceMetal, x, y, isShowType, isShowEssence);
         };
     }
 
@@ -153,7 +213,9 @@ public abstract class AbstractAlchemySlot {
             SlotType.CODEC.fieldOf("type").forGetter(AbstractAlchemySlot::getType),
             EssenceMetal.CODEC.fieldOf("essence_metal").forGetter(AbstractAlchemySlot::getEssenceMetal),
             Codec.INT.fieldOf("x").forGetter(AbstractAlchemySlot::getX),
-            Codec.INT.fieldOf("y").forGetter(AbstractAlchemySlot::getY)
+            Codec.INT.fieldOf("y").forGetter(AbstractAlchemySlot::getY),
+            Codec.BOOL.fieldOf("is_show_type").forGetter(AbstractAlchemySlot::isShowType),
+            Codec.BOOL.fieldOf("is_show_essence").forGetter(AbstractAlchemySlot::isShowEssence)
     ).apply(instance, AbstractAlchemySlot::create));
 
     public static final Codec<List<AbstractAlchemySlot>> LIST_CODEC = CODEC.listOf();
@@ -161,15 +223,19 @@ public abstract class AbstractAlchemySlot {
     public static final StreamCodec<FriendlyByteBuf, AbstractAlchemySlot> STREAM_CODEC = StreamCodec.of(
             (buf, slot) -> {
                 SlotType.STREAM_CODEC.encode(buf, slot.getType());
-                EssenceMetal.STREAM_CODEC.encode(buf, slot.getEssenceMetal());
-                ByteBufCodecs.VAR_INT.encode(buf, slot.getX());
-                ByteBufCodecs.VAR_INT.encode(buf, slot.getY());
+                EssenceMetal.STREAM_CODEC.encode(buf, slot.essenceMetal);
+                ByteBufCodecs.VAR_INT.encode(buf, slot.x);
+                ByteBufCodecs.VAR_INT.encode(buf, slot.y);
+                ByteBufCodecs.BOOL.encode(buf, slot.isShowType);
+                ByteBufCodecs.BOOL.encode(buf, slot.isShowEssence);
             },
             buf -> create(
                     SlotType.STREAM_CODEC.decode(buf),
                     EssenceMetal.STREAM_CODEC.decode(buf),
                     ByteBufCodecs.VAR_INT.decode(buf),
-                    ByteBufCodecs.VAR_INT.decode(buf)
+                    ByteBufCodecs.VAR_INT.decode(buf),
+                    ByteBufCodecs.BOOL.decode(buf),
+                    ByteBufCodecs.BOOL.decode(buf)
             )
     );
 
@@ -177,4 +243,16 @@ public abstract class AbstractAlchemySlot {
             (buf, list) -> buf.writeCollection(list, STREAM_CODEC),
             buf -> buf.readList(STREAM_CODEC)
     );
+
+    @Override
+    public String toString() {
+        return "AlchemySlot{" +
+                "type=" + getType() +
+                ", essenceMetal=" + essenceMetal +
+                ", x=" + x +
+                ", y=" + y +
+                ", isShowType=" + isShowType +
+                ", isShowEssence=" + isShowEssence +
+                '}';
+    }
 }

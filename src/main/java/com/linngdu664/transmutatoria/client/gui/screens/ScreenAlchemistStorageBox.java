@@ -19,8 +19,6 @@ public class ScreenAlchemistStorageBox extends AbstractContainerScreen<Alchemist
     private static final Identifier INVENTORY_BG_CITRINITAS = ArsTransmutatoria.makeMyIdentifier("textures/gui/citrinitas_alchemist_storage_box.png");
     private static final Identifier HEXAGON_SLOT_HIGHLIGHT_BACK_SPRITE = ArsTransmutatoria.makeMyIdentifier("container/hexagon_slot_highlight_back");
     private static final Identifier HEXAGON_SLOT_HIGHLIGHT_FRONT_SPRITE = ArsTransmutatoria.makeMyIdentifier("container/hexagon_slot_highlight_front");
-    private static final GuiSprite TEST_SPRITE = new GuiSprite("container/test", 16, 16);
-//    private static final GuiSubSprite TEST = new GuiSubSprite(TEST_SPRITE, 0, 0, 16, 16);
 
     private final int boxState;
 
@@ -50,8 +48,8 @@ public class ScreenAlchemistStorageBox extends AbstractContainerScreen<Alchemist
             default -> INVENTORY_BG;
         };
         graphics.blit(RenderPipelines.GUI_TEXTURED, backGround, xo, yo + 32, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 256, 256);
-        TEST_SPRITE.render(graphics, TextureOption.DEFAULT, 100, 100);
     }
+
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {
         int color = switch (boxState){

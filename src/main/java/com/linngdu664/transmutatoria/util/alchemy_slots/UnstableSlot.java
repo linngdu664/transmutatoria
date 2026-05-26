@@ -1,5 +1,7 @@
 package com.linngdu664.transmutatoria.util.alchemy_slots;
 
+import com.linngdu664.transmutatoria.client.gui.Textures;
+import com.linngdu664.transmutatoria.client.gui.util.TextureRenderable;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
@@ -13,8 +15,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class UnstableSlot extends AbstractAlchemySlot {
-    public UnstableSlot(EssenceMetal essenceMetal, int x, int y) {
-        super(essenceMetal, x, y);
+    public UnstableSlot(EssenceMetal essenceMetal, int x, int y, boolean hideType, boolean showEssence) {
+        super(essenceMetal, x, y, hideType, showEssence);
     }
 
     @Override
@@ -26,7 +28,7 @@ public class UnstableSlot extends AbstractAlchemySlot {
                 // 通常来说不可能为 null
                 if (slotsInScroll != null) {
                     int thisSlot = posToOutputSlot.get(getPackedXY(x, y));
-                    int targetSlot = magicNumber % (slotsInScroll.size() - 1);
+                    int targetSlot = Math.floorMod(magicNumber, slotsInScroll.size() - 1);
                     if (targetSlot >= thisSlot) {
                         targetSlot++;
                     }
@@ -43,7 +45,12 @@ public class UnstableSlot extends AbstractAlchemySlot {
     }
 
     @Override
-    protected SlotType getType() {
+    public SlotType getType() {
         return SlotType.UNSTABLE;
+    }
+
+    @Override
+    public TextureRenderable getRealTexture() {
+        return Textures.UNSTABLE_SLOT;
     }
 }

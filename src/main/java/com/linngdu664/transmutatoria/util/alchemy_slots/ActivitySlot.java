@@ -1,5 +1,7 @@
 package com.linngdu664.transmutatoria.util.alchemy_slots;
 
+import com.linngdu664.transmutatoria.client.gui.Textures;
+import com.linngdu664.transmutatoria.client.gui.util.TextureRenderable;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.AlchemyReactResult;
@@ -11,8 +13,13 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 public class ActivitySlot extends AbstractAlchemySlot {
-    public ActivitySlot(EssenceMetal essenceMetal, int x, int y) {
-        super(essenceMetal, x, y);
+    public ActivitySlot(EssenceMetal essenceMetal, int x, int y, boolean hideType, boolean showEssence) {
+        super(essenceMetal, x, y, hideType, showEssence);
+    }
+
+    @Override
+    public boolean hasDirection() {
+        return true;
     }
 
     @Override
@@ -20,7 +27,7 @@ public class ActivitySlot extends AbstractAlchemySlot {
         AlchemyReactResult result = super.internalReact(scroll, inputEssence, outputs, inhibitionStates, posToOutputSlot, deferredTasks, magicNumber);
         // 如果基础反应已经湮灭则不触发高级反应
         if (!result.isClearItemStack()) {
-            int slot = posToOutputSlot.getOrDefault(getAdjacentPackedXY(magicNumber % 6), -1);
+            int slot = posToOutputSlot.getOrDefault(getAdjacentPackedXY(Math.floorMod(magicNumber, 6)), -1);
             if (slot >= 0 && outputs.get(slot).getItem() instanceof EssenceMetalItem outEssenceMetal) {
                 EssenceMetal.Relation relation = inputEssence.getRelation(outEssenceMetal.getEssenceMetal());
                 if (relation == EssenceMetal.Relation.SAME) {
@@ -39,7 +46,12 @@ public class ActivitySlot extends AbstractAlchemySlot {
     }
 
     @Override
-    protected SlotType getType() {
+    public SlotType getType() {
         return SlotType.ACTIVITY;
+    }
+
+    @Override
+    public TextureRenderable getRealTexture() {
+        return Textures.ACTIVITY_SLOT;
     }
 }

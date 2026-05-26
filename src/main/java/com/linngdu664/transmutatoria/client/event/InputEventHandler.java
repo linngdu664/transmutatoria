@@ -4,8 +4,8 @@ import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.AlchemistStorageBoxItem;
+import com.linngdu664.transmutatoria.network.to_server.ChangeCrucibleSelectedSlotPayload;
 import com.linngdu664.transmutatoria.network.to_server.RotateStorageBoxPayload;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +16,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import org.lwjgl.glfw.GLFW;
 
 // 处理手持炼金术士储物盒对准炼金锅时的滚轮事件，旋转外圈刻度
 @EventBusSubscriber(modid = ArsTransmutatoria.MODID, value = Dist.CLIENT)
@@ -30,6 +29,24 @@ public class InputEventHandler {
 
         Player player = mc.player;
 
+        // 必须指向炼金锅
+        HitResult hit = mc.hitResult;
+        if (hit == null || hit.getType() != HitResult.Type.BLOCK) {
+            return;
+        }
+        BlockHitResult blockHit = (BlockHitResult) hit;
+        if (!(player.level().getBlockState(blockHit.getBlockPos()).is(InitBlocks.TRANSMUTATION_CRUCIBLE))) {
+            return;
+        }
+
+        if (player.isShiftKeyDown()) {
+            ClientPacketDistributor.sendToServer(new ChangeCrucibleSelectedSlotPayload(blockHit.getBlockPos(), event.getScrollDeltaY() < 0));
+
+            // 取消原版滚轮事件（切换快捷栏）
+            event.setCanceled(true);
+            return;
+        }
+
         // 确定玩家哪只手持有炼金术士储物盒
         ItemStack boxStack = null;
         int hand = 0;
@@ -42,22 +59,6 @@ public class InputEventHandler {
         }
 
         if (boxStack == null) {
-            return;
-        }
-
-        // 必须指向炼金锅
-        HitResult hit = mc.hitResult;
-        if (hit == null || hit.getType() != HitResult.Type.BLOCK) {
-            return;
-        }
-        BlockHitResult blockHit = (BlockHitResult) hit;
-        if (!(player.level().getBlockState(blockHit.getBlockPos()).is(InitBlocks.TRANSMUTATION_CRUCIBLE))) {
-            return;
-        }
-
-        // 按住 Shift 时留给内圈旋转，不处理外圈
-        if (InputConstants.isKeyDown(mc.getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT)
-                || InputConstants.isKeyDown(mc.getWindow(), GLFW.GLFW_KEY_RIGHT_SHIFT)) {
             return;
         }
 
