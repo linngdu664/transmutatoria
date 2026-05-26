@@ -528,7 +528,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
                 polarity += result.getPolarityIncrease();
                 entropy += result.getEntropyIncrease();
                 if (result.isTriggerDamage()) {
-                    catalyst.hurtAndBreak(entropy, (ServerLevel) level, null, _ -> {});
+                    catalyst.hurtAndBreak(1 + entropy, (ServerLevel) level, null, _ -> {});
                     annihilationCnt++;
                 }
             }

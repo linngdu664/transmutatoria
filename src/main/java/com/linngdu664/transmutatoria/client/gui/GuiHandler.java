@@ -169,6 +169,10 @@ public class GuiHandler {
             pos = Textures.SIMPLE_FRAME.renderRatio(guiGraphics, TextureOption.DEFAULT, window, 0.1, 0.8);
             guiGraphics.item(crucible.getOutput(), pos.x() + 3, pos.y() + 3);
 
+            // 临时的极性显示
+            V2I polarityPos = GuiUtil.v2IRatio(window, 0.8, 0.2);
+            guiGraphics.text(mc.font, String.valueOf(crucible.getPolarity()), polarityPos.x(), polarityPos.y(), 0xffffffff);
+
             // essence slots
             // todo 数字
             if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
@@ -223,6 +227,9 @@ public class GuiHandler {
             } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
                 // 炼金复制/炼金分解的源质槽位
                 List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
+                if (alchemySlots.isEmpty()) {
+                    return;
+                }
                 int size = alchemySlots.size();
 
                 // 确定 XY 范围
