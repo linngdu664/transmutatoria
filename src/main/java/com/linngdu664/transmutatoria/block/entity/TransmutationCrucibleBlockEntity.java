@@ -629,7 +629,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public int getCrucibleMagicNumber() {
-        int hashValue = 31 * 17 + Long.hashCode(getBlockPos().asLong());
+        int hashValue = 31 * 17 + getBlockPos().hashCode();
         hashValue = 31 * hashValue + Long.hashCode(getCatalyst().getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE));
         return 31 * hashValue;
     }

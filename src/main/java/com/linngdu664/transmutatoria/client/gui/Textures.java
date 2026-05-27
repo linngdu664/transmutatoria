@@ -5,7 +5,7 @@ import com.linngdu664.transmutatoria.client.gui.util.GuiSubSprite;
 import com.linngdu664.transmutatoria.client.gui.util.GuiTexture;
 
 public class Textures {
-    public static final GuiSprite SLOTS_FULL_SPRITE = new GuiSprite("hud/slots", 189, 61);
+    private static final GuiSprite SLOTS_FULL_SPRITE = new GuiSprite("hud/slots", 189, 61);
     public static final GuiSubSprite NORMAL_SLOT = new GuiSubSprite(SLOTS_FULL_SPRITE, 27 * 0, 0, 27, 27);
     public static final GuiSubSprite DETERIORATION_SLOT = new GuiSubSprite(SLOTS_FULL_SPRITE, 27 * 1, 0, 27, 27);
     public static final GuiSubSprite ACTIVATION_SLOT = new GuiSubSprite(SLOTS_FULL_SPRITE, 27 * 2, 0, 27, 27);
@@ -57,4 +57,13 @@ public class Textures {
         ALCHEMY_ARRAY_1, ALCHEMY_ARRAY_2, ALCHEMY_ARRAY_3, ALCHEMY_ARRAY_4,
         ALCHEMY_ARRAY_5, ALCHEMY_ARRAY_6, ALCHEMY_ARRAY_7, ALCHEMY_ARRAY_8
     };
+
+    public static final GuiSubSprite[] ROMAN_NUMBERS = new GuiSubSprite[24];
+
+    static {
+        GuiSprite roman124 = new GuiSprite("hud/roman1-24", 13, 192);
+        for (int i = 0; i < ROMAN_NUMBERS.length; i++) {
+            ROMAN_NUMBERS[i] = new GuiSubSprite(roman124, 0, i * 8, 13, 8);
+        }
+    }
 }

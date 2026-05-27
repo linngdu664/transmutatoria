@@ -2,6 +2,7 @@ package com.linngdu664.transmutatoria.client.gui;
 
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
 import com.linngdu664.transmutatoria.client.gui.util.TextureOption;
+import com.linngdu664.transmutatoria.client.gui.util.TextureRenderable;
 import com.linngdu664.transmutatoria.client.gui.util.V2I;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.init.InitItems;
@@ -10,12 +11,15 @@ import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 import com.mojang.blaze3d.platform.Window;
+import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -48,7 +52,7 @@ public class GuiHandler {
     // 选中槽位高亮平滑漂移动画
     private static float smoothHighlightX = 0;
     private static float smoothHighlightY = 0;
-    private static float targetHighlightX = 0;
+    private static float targetHighlightX = 0;  // todo 字段可以被转换为一个局部变量？
     private static float targetHighlightY = 0;
     private static boolean highlightInitialized = false;
 
@@ -115,7 +119,7 @@ public class GuiHandler {
             int slotY = (int) (centerY + radiusY * Mth.sin(angle));
             slotXYs[i] = packXY(slotX, slotY);
             // sin(angle): -1 at 12 o'clock (far), +1 at 6 o'clock (near)
-            depths[i] = (Mth.sin(angle) + 1.0f) / 2.0f; // 最近深度为 1，最远深度为 0
+            depths[i] = (Mth.sin(angle) + 1.0f) / 2.0f; // 因此最近深度为 1，最远深度为 0
             scales[i] = MIN_SCALE + (MAX_SCALE - MIN_SCALE) * depths[i];
         }
 
@@ -180,149 +184,130 @@ public class GuiHandler {
             V2I polarityPos = GuiUtil.v2IRatio(window, 0.8, 0.2);
             guiGraphics.text(mc.font, String.valueOf(crucible.getPolarity()), polarityPos.x(), polarityPos.y(), 0xffffffff);
 
-            // essence slots
-            // todo 数字
+            long[] xys = null;
             if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
                 // 源质融合的源质槽位
                 List<EssenceMetal> essences = essenceMetalItem.getEssenceMetal().getRestrainsAndDoubleRestrains().stream().toList();
-                int size = essences.size();
-
-                // 先画普通槽
-                int initX = GuiUtil.widthFrameCenter(window, Textures.NORMAL_SLOT.width()) - 10 * (size - 1);
-                int initY = GuiUtil.heightFrameRatio(window, 0, 0.6);
-                int x = initX;
-                int y = initY;
-                for (int i = 0; i < size; i++) {
-                    Textures.NORMAL_SLOT.render(guiGraphics, TextureOption.DEFAULT, x, y);
-                    x += 20;
-                    y += ((i & 1) == 0) ? 12 : -12;
-                }
-
-                // 再画源质
-                x = initX;
-                y = initY;
                 List<ItemStack> inputEssences = crucible.getInputEssences();
-                for (int i = 0; i < size; i++) {
-                    ItemStack inputEssence = inputEssences.get(i);
-                    if (!inputEssence.isEmpty()) {
-                        guiGraphics.item(inputEssence, x + 6, y + 5);
-                    } else {
-                        essences.get(i).getDefaultTexture().render(guiGraphics, VIRTUAL_ITEM, x + 6, y + 5);
-                    }
-                    x += 20;
-                    y += ((i & 1) == 0) ? 12 : -12;
-                }
-
-                // 画高亮槽（平滑漂移）
-                int selectedSlot = crucible.getSelectedSlot();
-                float targetX = initX - 1 + 20 * selectedSlot;
-                float targetY = ((selectedSlot & 1) == 0) ? initY - 1 : initY + 11;
-                renderSmoothSelectedSlot(guiGraphics, targetX, targetY, delta);
+                xys = calcPosEssenceMetal(window, essences.size());
+                drawEssenceSlots(guiGraphics, xys, _ -> Textures.NORMAL_SLOT);
+                drawEssences(guiGraphics, xys, slotIdx -> {
+                    ItemStack inputEssence = inputEssences.get(slotIdx);
+                    return inputEssence.isEmpty() ? essences.get(slotIdx).getDefaultTexture() : inputEssence;
+                });
+                drawSelectedSlot(guiGraphics, xys, crucible.getSelectedSlot(), delta);
             } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
                 // 源质反应的源质槽位
-                int y = GuiUtil.heightFrameRatio(window, Textures.NORMAL_SLOT.height(), 0.7);
-                // 先画普通槽
-                V2I pos1 = Textures.NORMAL_SLOT.renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, y);
-                V2I pos2 = Textures.NORMAL_SLOT.renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, y + 24);
-
-                // 再画源质
-                List<ItemStack> inputEssences = crucible.isFinish() ? crucible.getOutputEssences() : crucible.getInputEssences();
-                guiGraphics.item(inputEssences.get(0), pos1.x() + 6, pos1.y() + 5);
-                guiGraphics.item(inputEssences.get(1), pos2.x() + 6, pos2.y() + 5);
-
-                // 画高亮槽（平滑漂移）
-                int selectedSlot = crucible.getSelectedSlot();
-                float targetX = GuiUtil.widthFrameCenter(window, Textures.SLOT_SELECTED.width());
-                float targetY = selectedSlot == 0 ? y - 1 : y + 23;
-                renderSmoothSelectedSlot(guiGraphics, targetX, targetY, delta);
+                List<ItemStack> essencesInCrucible = crucible.isFinish() ? crucible.getOutputEssences() : crucible.getInputEssences();
+                xys = calcPosCrystal(window);
+                drawEssenceSlots(guiGraphics, xys, _ -> Textures.NORMAL_SLOT);
+                drawEssences(guiGraphics, xys, essencesInCrucible::get);
+                drawSelectedSlot(guiGraphics, xys, crucible.getSelectedSlot(), delta);
             } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
-                Textures.ALCHEMY_ARRAYS[Math.floorMod(catalyst.hashCode(), Textures.ALCHEMY_ARRAYS.length)].renderRatio(guiGraphics, TextureOption.DEFAULT, window, 0.5, 0.5);
                 // 炼金复制/炼金分解的源质槽位
                 List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
-                if (alchemySlots.isEmpty()) {
-                    return;
-                }
-                int size = alchemySlots.size();
-
-                // 确定 XY 范围
-                int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
-                for (AbstractAlchemySlot slot : alchemySlots) {
-                    minX = Math.min(slot.getX(), minX);
-                    maxX = Math.max(slot.getX(), maxX);
-                    minY = Math.min(slot.getY(), minY);
-                    maxY = Math.max(slot.getY(), maxY);
-                }
-                V2I origin = GuiUtil.v2IRatio(window, Textures.NORMAL_SLOT.width(), Textures.NORMAL_SLOT.height(), 0.5, 0.6);
-                int initX = origin.x() - 10 * (maxX - minX);
-                int initY = origin.y() - 6 * (maxY - minY);
-
-                // 先算坐标
-                long[] slotXYs = new long[size];
-                int i = 0;
-                for (AbstractAlchemySlot alchemySlot : alchemySlots) {
-                    int x = initX + 20 * (alchemySlot.getX() - minX);
-                    int y = initY + 12 * (alchemySlot.getY() - minY);
-                    slotXYs[i] = packXY(x, y);
-                    i++;
-                }
-
-                // 先画普通槽
-                i = 0;
-                for (AbstractAlchemySlot alchemySlot : alchemySlots) {
-                    long packed = slotXYs[i];
-                    alchemySlot.getTexture().render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(packed), getYFromPacked(packed));
-                    i++;
-                }
-
-                // 再画源质
-                i = 0;
+                if (alchemySlots.isEmpty()) return; // 预防措施，即使有东西搞炸了，也不要把客户端崩了
                 List<ItemStack> essencesInCrucible = crucible.isFinish() ? crucible.getOutputEssences() : crucible.getInputEssences();
-                for (AbstractAlchemySlot alchemySlot : alchemySlots) {
-                    ItemStack essence = essencesInCrucible.get(i);
-                    if (!essence.isEmpty()) {
-                        guiGraphics.item(essence, getXFromPacked(slotXYs[i]) + 6, getYFromPacked(slotXYs[i]) + 5);
-                    } else if (alchemySlot.isShowEssence()) {
-                        alchemySlot.getEssenceMetal().getDefaultTexture().render(guiGraphics, VIRTUAL_ITEM, getXFromPacked(slotXYs[i]) + 6, getYFromPacked(slotXYs[i]) + 5);
-                    }
-                    i++;
-                }
-                // 画高亮槽（平滑漂移）
-                long selectedPacked = slotXYs[crucible.getSelectedSlot()];
-                float targetX = getXFromPacked(selectedPacked) - 1;
-                float targetY = getYFromPacked(selectedPacked) - 1;
-                renderSmoothSelectedSlot(guiGraphics, targetX, targetY, delta);
+
+                xys = calcPosScroll(window, alchemySlots);
+                drawEssenceSlots(guiGraphics, xys, slotIdx -> alchemySlots.get(slotIdx).getTexture());
+                drawEssences(guiGraphics, xys, slotIdx -> {
+                    ItemStack essence = essencesInCrucible.get(slotIdx);
+                    if (!essence.isEmpty()) return essence;
+                    AbstractAlchemySlot alchemySlot = alchemySlots.get(slotIdx);
+                    return alchemySlot.isShowEssence() ? alchemySlot.getEssenceMetal().getDefaultTexture() : null;
+                });
+                drawSelectedSlot(guiGraphics, xys, crucible.getSelectedSlot(), delta);
 
                 // 画可能的箭头
-                i = 0;
                 int crucibleMagicNumber = crucible.getCrucibleMagicNumber();
-                for (AbstractAlchemySlot alchemySlot : alchemySlots) {
-                    switch (alchemySlot.getDirection(AbstractAlchemySlot.getSlotMagicNumber(crucibleMagicNumber, i))) {
-                        case 0 -> Textures.UP_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(slotXYs[i]) + 11, getYFromPacked(slotXYs[i]) - 2);
-                        case 1 -> Textures.UPRIGHT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(slotXYs[i]) + 21, getYFromPacked(slotXYs[i]) + 5);
-                        case 2 -> Textures.DOWNRIGHT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(slotXYs[i]) + 21, getYFromPacked(slotXYs[i]) + 17);
-                        case 3 -> Textures.DOWN_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(slotXYs[i]) + 11, getYFromPacked(slotXYs[i]) + 24);
-                        case 4 -> Textures.DOWNLEFT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(slotXYs[i]) + 1, getYFromPacked(slotXYs[i]) + 17);
-                        case 5 -> Textures.UPLEFT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(slotXYs[i]) + 1, getYFromPacked(slotXYs[i]) + 5);
+                for (int i = 0, size = alchemySlots.size(); i < size; i++) {
+                    switch (alchemySlots.get(i).getDirection(AbstractAlchemySlot.getSlotMagicNumber(crucibleMagicNumber, i))) {
+                        case 0 -> Textures.UP_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 11, getYFromPacked(xys[i]) - 2);
+                        case 1 -> Textures.UPRIGHT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 21, getYFromPacked(xys[i]) + 5);
+                        case 2 -> Textures.DOWNRIGHT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 21, getYFromPacked(xys[i]) + 17);
+                        case 3 -> Textures.DOWN_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 11, getYFromPacked(xys[i]) + 24);
+                        case 4 -> Textures.DOWNLEFT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 1, getYFromPacked(xys[i]) + 17);
+                        case 5 -> Textures.UPLEFT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 1, getYFromPacked(xys[i]) + 5);
                     }
-                    i++;
                 }
+            }
+
+            // 画数字
+            Player player = mc.player;
+            if (xys != null && player != null && player.isShiftKeyDown()) {
+                drawNumbers(guiGraphics, mc.font, xys);
             }
         }
     }
 
-    private static long packXY(int x, int y) {
-        return ((long) y << 32) | (x & 0xffffffffL);
+    private static long[] calcPosEssenceMetal(Window window, int size) {
+        long[] xys = new long[size];
+        int x = GuiUtil.widthFrameCenter(window, Textures.NORMAL_SLOT.width()) - 10 * (size - 1);
+        int y = GuiUtil.heightFrameRatio(window, 0, 0.6);
+        for (int i = 0; i < size; i++) {
+            xys[i] = packXY(x, y);
+            x += 20;
+            y += ((i & 1) == 0) ? 12 : -12;
+        }
+        return xys;
     }
 
-    private static int getXFromPacked(long packed) {
-        return (int) (packed & 0xffffffffL);
+    private static long[] calcPosCrystal(Window window) {
+        int x = GuiUtil.widthFrameCenter(window, Textures.NORMAL_SLOT.width());
+        int y = GuiUtil.heightFrameRatio(window, Textures.NORMAL_SLOT.height(), 0.6);
+        return new long[]{packXY(x, y), packXY(x, y + 24)};
     }
 
-    private static int getYFromPacked(long packed) {
-        return (int) (packed >> 32);
+    private static long[] calcPosScroll(Window window, List<AbstractAlchemySlot> alchemySlots) {
+        // 确定 XY 范围
+        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
+        for (AbstractAlchemySlot slot : alchemySlots) {
+            minX = Math.min(slot.getX(), minX);
+            maxX = Math.max(slot.getX(), maxX);
+            minY = Math.min(slot.getY(), minY);
+            maxY = Math.max(slot.getY(), maxY);
+        }
+        V2I origin = GuiUtil.v2IRatio(window, Textures.NORMAL_SLOT.width(), Textures.NORMAL_SLOT.height(), 0.5, 0.6);
+        int initX = origin.x() - 10 * (maxX - minX);
+        int initY = origin.y() - 6 * (maxY - minY);
+
+        // 计算并平移坐标
+        long[] xys = new long[alchemySlots.size()];
+        int i = 0;
+        for (AbstractAlchemySlot alchemySlot : alchemySlots) {
+            int x = initX + 20 * (alchemySlot.getX() - minX);
+            int y = initY + 12 * (alchemySlot.getY() - minY);
+            xys[i] = packXY(x, y);
+            i++;
+        }
+        return xys;
     }
 
-    private static void renderSmoothSelectedSlot(GuiGraphicsExtractor guiGraphics, float targetX, float targetY, DeltaTracker delta) {
+    private static void drawEssenceSlots(GuiGraphicsExtractor guiGraphics, long[] xys, Int2ObjectFunction<TextureRenderable> textureGetter) {
+        for (int i = 0; i < xys.length; i++) {
+            long packed = xys[i];
+            textureGetter.get(i).render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(packed), getYFromPacked(packed));
+        }
+    }
+
+    private static void drawEssences(GuiGraphicsExtractor guiGraphics, long[] xys, Int2ObjectFunction<Object> itemGetter) {
+        for (int i = 0; i < xys.length; i++) {
+            long packed = xys[i];
+            Object itemDraw = itemGetter.get(i);
+            if (itemDraw instanceof ItemStack itemStack) {
+                guiGraphics.item(itemStack, getXFromPacked(packed) + 6, getYFromPacked(packed) + 5);
+            } else if (itemDraw instanceof TextureRenderable texture) {
+                texture.render(guiGraphics, VIRTUAL_ITEM, getXFromPacked(packed) + 6, getYFromPacked(packed) + 5);
+            }
+        }
+    }
+
+    private static void drawSelectedSlot(GuiGraphicsExtractor guiGraphics, long[] xys, int selectedSlotIndex, DeltaTracker delta) {
+        long packed = xys[selectedSlotIndex];
+        float targetX = getXFromPacked(packed) - 1;
+        float targetY = getYFromPacked(packed) - 1;
+
         if (!highlightInitialized) {
             smoothHighlightX = targetX;
             smoothHighlightY = targetY;
@@ -344,5 +329,25 @@ public class GuiHandler {
         }
 
         Textures.SLOT_SELECTED.render(guiGraphics, TextureOption.DEFAULT, Math.round(smoothHighlightX), Math.round(smoothHighlightY));
+    }
+
+    private static void drawNumbers(GuiGraphicsExtractor guiGraphics, Font font, long[] xys) {
+        for (int i = 0; i < xys.length; i++) {
+            long packed = xys[i];
+            String str = String.valueOf(i + 1);
+            guiGraphics.text(font, str, getXFromPacked(packed) + 14 - font.width(str) / 2, getYFromPacked(packed) + 10, 0xffffffff, true);
+        }
+    }
+
+    private static long packXY(int x, int y) {
+        return ((long) y << 32) | (x & 0xffffffffL);
+    }
+
+    private static int getXFromPacked(long packed) {
+        return (int) (packed & 0xffffffffL);
+    }
+
+    private static int getYFromPacked(long packed) {
+        return (int) (packed >> 32);
     }
 }
