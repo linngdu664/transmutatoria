@@ -184,6 +184,8 @@ public class GuiHandler {
             V2I polarityPos = GuiUtil.v2IRatio(window, 0.8, 0.2);
             guiGraphics.text(mc.font, String.valueOf(crucible.getPolarity()), polarityPos.x(), polarityPos.y(), 0xffffffff);
 
+            drawBackground(guiGraphics,window,catalyst);
+
             long[] xys = null;
             if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
                 // 源质融合的源质槽位
@@ -283,6 +285,10 @@ public class GuiHandler {
         }
         return xys;
     }
+    private static void drawBackground(GuiGraphicsExtractor guiGraphics,Window window,ItemStack catalyst) {
+        Textures.ALCHEMY_ARRAYS[Math.floorMod(catalyst.hashCode(), Textures.ALCHEMY_ARRAYS.length)].renderRatio(guiGraphics, TextureOption.DEFAULT, window, 0.5, 0.5);
+    }
+
 
     private static void drawEssenceSlots(GuiGraphicsExtractor guiGraphics, long[] xys, Int2ObjectFunction<TextureRenderable> textureGetter) {
         for (int i = 0; i < xys.length; i++) {
