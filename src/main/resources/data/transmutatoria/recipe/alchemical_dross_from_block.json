@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "transmutatoria:alchemical_dross_block"
+  ],
+  "result": {
+    "id": "transmutatoria:alchemical_dross",
+    "count": 9
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "AAA",
+    "AAA",
+    "AAA"
+  ],
+  "key": {
+    "A": "transmutatoria:alchemical_dross"
+  },
+  "result": {
+    "id": "transmutatoria:alchemical_dross_block",
+    "count": 1
+  }
+}
