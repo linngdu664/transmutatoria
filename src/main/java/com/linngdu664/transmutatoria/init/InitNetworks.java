@@ -2,7 +2,6 @@ package com.linngdu664.transmutatoria.init;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.network.to_client.*;
-import com.linngdu664.transmutatoria.network.to_client.handler.CrucibleSetHandler;
 import com.linngdu664.transmutatoria.network.to_server.ChangeCrucibleSelectedSlotPayload;
 import com.linngdu664.transmutatoria.network.to_server.RotateStorageBoxPayload;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -28,37 +27,27 @@ public class InitNetworks {
         registrar.playToClient(
                 CrucibleSetItemPayload.TYPE,
                 CrucibleSetItemPayload.STREAM_CODEC,
-                (payload, context) -> context.enqueueWork(() -> CrucibleSetHandler.handleItem(payload))
-        );
-        registrar.playToClient(
-                CrucibleSetFinishPayload.TYPE,
-                CrucibleSetFinishPayload.STREAM_CODEC,
-                (payload, context) -> context.enqueueWork(() -> CrucibleSetHandler.handleFinish(payload))
-        );
-        registrar.playToClient(
-                CrucibleSetPolarityPayload.TYPE,
-                CrucibleSetPolarityPayload.STREAM_CODEC,
-                (payload, context) -> context.enqueueWork(() -> CrucibleSetHandler.handlePolarity(payload))
+                (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
         );
         registrar.playToClient(
                 CrucibleSetSelectedSlotPayload.TYPE,
                 CrucibleSetSelectedSlotPayload.STREAM_CODEC,
-                (payload, context) -> context.enqueueWork(() -> CrucibleSetHandler.handleSelectedSlot(payload))
+                (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
         );
         registrar.playToClient(
                 CrucibleSetProcessTimerPayload.TYPE,
                 CrucibleSetProcessTimerPayload.STREAM_CODEC,
-                (payload, context) -> context.enqueueWork(() -> CrucibleSetHandler.handleProcessTimer(payload))
+                (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
         );
         registrar.playToClient(
                 CrucibleSetTargetTimerPayload.TYPE,
                 CrucibleSetTargetTimerPayload.STREAM_CODEC,
-                (payload, context) -> context.enqueueWork(() -> CrucibleSetHandler.handleTargetTimer(payload))
+                (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
         );
         registrar.playToClient(
                 CrucibleResetPayload.TYPE,
                 CrucibleResetPayload.STREAM_CODEC,
-                (payload, context) -> context.enqueueWork(() -> CrucibleSetHandler.handleReset(payload))
+                (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
         );
     }
 }
