@@ -1,8 +1,14 @@
 package com.linngdu664.transmutatoria.client.gui.screens;
 
+import com.linngdu664.transmutatoria.ArsTransmutatoria;
+import com.linngdu664.transmutatoria.client.gui.Textures;
+import com.linngdu664.transmutatoria.client.gui.util.TextureOption;
 import com.linngdu664.transmutatoria.inventory.AbstractTransmutationScrollMenu;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
+import com.linngdu664.transmutatoria.item.TransmutationEquationScrollItem;
+import com.linngdu664.transmutatoria.recipe.IAlchemicalRecipe;
+import com.linngdu664.transmutatoria.util.SafeInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -12,17 +18,18 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+import org.graalvm.collections.Pair;
 
 import java.util.List;
 
 public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractTransmutationScrollMenu> {
-    private static final Identifier INVENTORY_BG =
-            Identifier.withDefaultNamespace("textures/gui/container/crafter.png");
+    private static final Identifier INVENTORY_BG = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll.png");
 
     public ScreenTransmutationScroll(AbstractTransmutationScrollMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title, 176, 166);
+        super(menu, playerInventory, title, 188, 216);
     }
 
     @Override
@@ -37,43 +44,69 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-
         int xo = (this.width - this.imageWidth) / 2;
         int yo = (this.height - this.imageHeight) / 2;
-        graphics.blit(RenderPipelines.GUI_TEXTURED, INVENTORY_BG, xo, yo, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, INVENTORY_BG, xo, yo, 34F, 40F, this.imageWidth, this.imageHeight, 256, 256);
     }
 
     @Override
     public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractContents(graphics, mouseX, mouseY, partialTick);
-
+        Minecraft mc = SafeInstance.getMC();
         // 从玩家手上获取卷轴（客户端菜单没有 scrollStack）
-        ItemStack scrollStack = getScrollFromPlayer();
-        if (scrollStack == null || scrollStack.get(InitDataComponents.RECIPE_CONDITIONS) == null) return;
+        ItemStack scrollStack = getScrollFromPlayer(mc.player);
+//        if (scrollStack == null || scrollStack.get(InitDataComponents.RECIPE_CONDITIONS) == null) return;
+        if (scrollStack == null) return;
+
+        int xo = 30 + (this.width - this.imageWidth) / 2;
+        int yo = -4 + (this.height - this.imageHeight) / 2;
+        boolean isEquationScroll = scrollStack.getItem() instanceof TransmutationEquationScrollItem;
+        if (isEquationScroll) {
+            Textures.SCROLL_ARR_EQ_BASE.render(graphics, TextureOption.DEFAULT, xo, yo);
+        } else {
+            Textures.SCROLL_ARR_SG_BASE.render(graphics, TextureOption.DEFAULT, xo, yo);
+        }
 
         // 渲染配方物品（从 CONTAINER 组件读取）
-
         ItemContainerContents container = scrollStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
         var items = NonNullList.withSize(2, ItemStack.EMPTY);
         container.copyInto(items);
         ItemStack leftStack = items.getFirst();
         if (!leftStack.isEmpty()) {
-            int px = leftPos + AbstractTransmutationScrollMenu.SLOT0_X;
-            int py = topPos + AbstractTransmutationScrollMenu.SLOT0_Y;
-            graphics.item(leftStack, px, py);
-            graphics.itemDecorations(font, leftStack, px, py);
-            if (mouseX >= px && mouseX < px + 16 && mouseY >= py && mouseY < py + 16) {
+            Pair<Integer, Integer> p = renderSlotItem(graphics, leftStack, true, true);
+            if (mouseX >= p.getLeft() && mouseX < p.getLeft() + 16 && mouseY >= p.getRight() && mouseY < p.getRight() + 16) {
                 graphics.setComponentTooltipForNextFrame(font, List.of(leftStack.getHoverName()), mouseX, mouseY);
             }
         }
         ItemStack rightStack = items.getLast();
-        if (!rightStack.isEmpty()) {
-            int px = leftPos + AbstractTransmutationScrollMenu.SLOT1_X;
-            int py = topPos + AbstractTransmutationScrollMenu.SLOT1_Y;
-            graphics.item(rightStack, px, py);
-            graphics.itemDecorations(font, rightStack, px, py);
-            if (mouseX >= px && mouseX < px + 16 && mouseY >= py && mouseY < py + 16) {
+        if (!rightStack.isEmpty()) {//只要右边有东西那就是激活了
+            Pair<Integer, Integer> p = renderSlotItem(graphics, rightStack, false, true);
+            if (mouseX >= p.getLeft() && mouseX < p.getLeft() + 16 && mouseY >= p.getRight() && mouseY < p.getRight() + 16) {
                 graphics.setComponentTooltipForNextFrame(font, List.of(rightStack.getHoverName()), mouseX, mouseY);
+            }
+            if (isEquationScroll){
+                Textures.SCROLL_ARR_EQ_LIGHT.render(graphics, TextureOption.DEFAULT, xo, yo);
+            }else{
+                Textures.SCROLL_ARR_SG_LIGHT.render(graphics, TextureOption.DEFAULT, xo, yo);
+            }
+        }else if (this.hoveredSlot != null && this.hoveredSlot.hasItem()) {//右边没东西那就是没激活，判断鼠标所在物品是否可以激活
+            ItemStack item = this.hoveredSlot.getItem();
+            IAlchemicalRecipe recipe = ((AbstractTransmutationScrollItem)scrollStack.getItem()).getRecipe(mc.level, item);
+            if (recipe != null) {
+                if (isEquationScroll){
+                    ItemStack visualRightStack = recipe.getOtherSideItemStack();
+                    renderSlotItem(graphics, visualRightStack, false, false);
+                    renderSlotItem(graphics, item, true, false);
+                    Textures.SCROLL_ARR_EQ_LIGHT.render(graphics, TextureOption.DEFAULT, xo, yo);
+                    Textures.SCROLL_ARR_EQ_SHINE.render(graphics, TextureOption.DEFAULT, xo, yo);
+                }else{
+                    ItemStack visualLeftStack = recipe.getOtherSideItemStack();
+                    renderSlotItem(graphics, visualLeftStack, true, false);
+                    renderSlotItem(graphics, item, false, false);
+                    Textures.SCROLL_ARR_SG_LIGHT.render(graphics, TextureOption.DEFAULT, xo, yo);
+                    Textures.SCROLL_ARR_SG_SHINE.render(graphics, TextureOption.DEFAULT, xo, yo);
+                }
+
             }
         }
 
@@ -106,8 +139,17 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         }*/
     }
 
-    private static ItemStack getScrollFromPlayer() {
-        var player = Minecraft.getInstance().player;
+    private Pair<Integer, Integer> renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDec){
+        int px = leftPos + (isLeft?AbstractTransmutationScrollMenu.SLOT0_X:AbstractTransmutationScrollMenu.SLOT1_X);
+        int py = topPos + (isLeft?AbstractTransmutationScrollMenu.SLOT0_Y:AbstractTransmutationScrollMenu.SLOT1_Y);
+        graphics.item(item, px, py);
+        if (needDec) {
+            graphics.itemDecorations(font, item, px, py);
+        }
+        return Pair.create(px,py);
+    }
+
+    private static ItemStack getScrollFromPlayer(Player player) {
         if (player == null) return null;
         for (ItemStack stack : List.of(player.getMainHandItem(), player.getOffhandItem())) {
             if (stack.getItem() instanceof AbstractTransmutationScrollItem) {

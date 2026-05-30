@@ -10,6 +10,7 @@ import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
+import com.linngdu664.transmutatoria.util.SafeInstance;
 import com.mojang.blaze3d.platform.Window;
 import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import net.minecraft.client.DeltaTracker;
@@ -58,7 +59,7 @@ public class GuiHandler {
 
     // todo 如果后续确定椭圆短轴恒为0，可进一步优化
     public static void renderCrucibleStorageBoxHud(GuiGraphicsExtractor guiGraphics, ItemStack boxStack, DeltaTracker delta) {
-        Minecraft mc = Minecraft.getInstance();
+        Minecraft mc = SafeInstance.getMC();
 
         int componentRotation = boxStack.getOrDefault(InitDataComponents.ROTATION, 0);
 
@@ -164,7 +165,7 @@ public class GuiHandler {
 
     public static void renderCrucibleCommonHud(GuiGraphicsExtractor guiGraphics, BlockEntity be, DeltaTracker delta) {
         if (be instanceof TransmutationCrucibleBlockEntity crucible) {
-            Minecraft mc = Minecraft.getInstance();
+            Minecraft mc = SafeInstance.getMC();
             Window window = mc.getWindow();
 
             // catalyst

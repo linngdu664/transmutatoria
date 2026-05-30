@@ -26,10 +26,10 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
     private static final int HOTBAR_END = HOTBAR_START + 9;
     private static final int TOTAL_SLOTS = HOTBAR_END;
 
-    public static final int SLOT0_X = 60;
-    public static final int SLOT0_Y = 18;
-    public static final int SLOT1_X = 100;
-    public static final int SLOT1_Y = 18;
+    public static final int SLOT0_X = 26;
+    public static final int SLOT0_Y = 52;
+    public static final int SLOT1_X = 145;
+    public static final int SLOT1_Y = 52;
 
     @NotNull
     private final ItemStack scrollStack;
@@ -59,13 +59,15 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
     abstract protected int addScrollInventory(Container container);
 
     private void addPlayerInventory(Inventory playerInventory) {
+//        int x0 = 6;
+//        int y0 = 50;
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
+                addSlot(new Slot(playerInventory, col + row * 9 + 9, 14 + col * 18, 134 + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
-            addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
+            addSlot(new Slot(playerInventory, col, 14 + col * 18, 192));
         }
     }
 

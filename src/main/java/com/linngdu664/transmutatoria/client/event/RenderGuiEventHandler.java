@@ -4,6 +4,7 @@ import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.client.gui.GuiHandler;
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.item.AlchemistStorageBoxItem;
+import com.linngdu664.transmutatoria.util.SafeInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
@@ -24,7 +25,7 @@ public class RenderGuiEventHandler {
     // 是 jade 不讲武德在先的
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderGuiPost(RenderGuiEvent.Post event) {
-        Minecraft mc = Minecraft.getInstance();
+        Minecraft mc = SafeInstance.getMC();
         if (mc.options.hideGui) {
             return;
         }

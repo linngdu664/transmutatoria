@@ -3,6 +3,7 @@ package com.linngdu664.transmutatoria.jei;
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.init.InitDatapacks;
 import com.linngdu664.transmutatoria.recipe.CatalystShapelessRecipe;
+import com.linngdu664.transmutatoria.util.SafeInstance;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -43,7 +44,7 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        Level level = Minecraft.getInstance().level;
+        Level level = SafeInstance.getMC().level;
         if (level == null) return;
 
         // 缓存
