@@ -9,6 +9,7 @@ import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.TransmutationEquationScrollItem;
 import com.linngdu664.transmutatoria.recipe.IAlchemicalRecipe;
 import com.linngdu664.transmutatoria.util.SafeInstance;
+import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -21,7 +22,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
-import org.graalvm.collections.Pair;
 
 import java.util.List;
 
@@ -73,15 +73,15 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         container.copyInto(items);
         ItemStack leftStack = items.getFirst();
         if (!leftStack.isEmpty()) {
-            Pair<Integer, Integer> p = renderSlotItem(graphics, leftStack, true, true);
-            if (mouseX >= p.getLeft() && mouseX < p.getLeft() + 16 && mouseY >= p.getRight() && mouseY < p.getRight() + 16) {
+            IntIntImmutablePair p = renderSlotItem(graphics, leftStack, true, true);
+            if (mouseX >= p.leftInt() && mouseX < p.leftInt() + 16 && mouseY >= p.rightInt() && mouseY < p.rightInt() + 16) {
                 graphics.setComponentTooltipForNextFrame(font, List.of(leftStack.getHoverName()), mouseX, mouseY);
             }
         }
         ItemStack rightStack = items.getLast();
         if (!rightStack.isEmpty()) {//只要右边有东西那就是激活了
-            Pair<Integer, Integer> p = renderSlotItem(graphics, rightStack, false, true);
-            if (mouseX >= p.getLeft() && mouseX < p.getLeft() + 16 && mouseY >= p.getRight() && mouseY < p.getRight() + 16) {
+            IntIntImmutablePair p  = renderSlotItem(graphics, rightStack, false, true);
+            if (mouseX >= p.leftInt() && mouseX < p.leftInt() + 16 && mouseY >= p.rightInt() && mouseY < p.rightInt() + 16) {
                 graphics.setComponentTooltipForNextFrame(font, List.of(rightStack.getHoverName()), mouseX, mouseY);
             }
             if (isEquationScroll){
@@ -139,14 +139,14 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         }*/
     }
 
-    private Pair<Integer, Integer> renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDec){
+    private IntIntImmutablePair renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDec){
         int px = leftPos + (isLeft?AbstractTransmutationScrollMenu.SLOT0_X:AbstractTransmutationScrollMenu.SLOT1_X);
         int py = topPos + (isLeft?AbstractTransmutationScrollMenu.SLOT0_Y:AbstractTransmutationScrollMenu.SLOT1_Y);
         graphics.item(item, px, py);
         if (needDec) {
             graphics.itemDecorations(font, item, px, py);
         }
-        return Pair.create(px,py);
+        return new IntIntImmutablePair(px, py);
     }
 
     private static ItemStack getScrollFromPlayer(Player player) {
