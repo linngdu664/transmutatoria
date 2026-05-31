@@ -8,6 +8,7 @@ import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.TransmutationEquationScrollItem;
 import com.linngdu664.transmutatoria.recipe.IAlchemicalRecipe;
+import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.SafeInstance;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.client.Minecraft;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 
+import java.awt.*;
 import java.util.List;
 
 public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractTransmutationScrollMenu> {
@@ -112,31 +114,36 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
 
 
         // 渲染配方源质
-        // todo 重构
-        /*
-        List<EssenceMetal> essences = scrollStack.getOrDefault(InitDataComponents.ESSENCES, List.of());
-        if (essences.isEmpty()) return;
+        List<AbstractAlchemySlot> alchemySlots = scrollStack.get(InitDataComponents.ALCHEMY_SLOTS);
+        if (alchemySlots != null && !alchemySlots.isEmpty()) {
+            int centerX = leftPos + 2 + (AbstractTransmutationScrollMenu.SLOT0_X + 16 + AbstractTransmutationScrollMenu.SLOT1_X) / 2;
+            int centerY = topPos + AbstractTransmutationScrollMenu.SLOT0_Y + 8;
+            int radius = 37;
 
-        int startX = leftPos + imageWidth / 2 - essences.size() * 10;
-        int slotY = topPos + 38;
+            for (int i = 0; i < alchemySlots.size(); i++) {
+                double angle = 2 * Math.PI * i / alchemySlots.size() - Math.PI / 2;
+                int x = (int) (centerX + radius * Math.cos(angle)) - 8;
+                int y = (int) (centerY + radius * Math.sin(angle)) - 8;
 
-        for (int i = 0; i < essences.size(); i++) {
-            EssenceMetal em = essences.get(i);
-            Identifier id = ArsTransmutatoria.makeMyIdentifier(em.getKeyWithPrefix(0));
-            Item item = BuiltInRegistries.ITEM.get(id).map(Holder.Reference::value).orElse(Items.AIR);
-            if (item != Items.AIR) {
-                ItemStack icon = new ItemStack(item);
-                int itemX = startX + i * 20;
-                graphics.item(icon, itemX, slotY);
-                graphics.itemDecorations(font, icon, itemX, slotY);
+                AbstractAlchemySlot slot = alchemySlots.get(i);
+                boolean unlocked = slot.isShowEssence();
 
-                // 鼠标悬停时显示源质名称
-                if (mouseX >= itemX && mouseX < itemX + 16 && mouseY >= slotY && mouseY < slotY + 16) {
-                    graphics.setComponentTooltipForNextFrame(font,
-                            List.of(icon.getHoverName()), mouseX, mouseY);
+                if (unlocked) {
+                    slot.getEssenceMetal().getDefaultTexture().render(graphics, TextureOption.DEFAULT, x, y);
+                } else {
+                    Textures.UNKNOWN_ESSENCE.render(graphics, TextureOption.DEFAULT, x, y);
+                }
+
+                if (mouseX >= x && mouseX < x + 16 && mouseY >= y && mouseY < y + 16) {
+                    Component tooltip = unlocked
+                            ? Component.translatable("item.transmutatoria." + slot.getEssenceMetal().getKey())
+                            : Component.translatable("item.transmutatoria.unknown_essence");
+                    graphics.setComponentTooltipForNextFrame(font, List.of(tooltip), mouseX, mouseY);
                 }
             }
-        }*/
+            graphics.text(this.font, String.valueOf(alchemySlots.size()), centerX, centerY, -12566464,false);
+        }
+
     }
 
     private IntIntImmutablePair renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDec){
