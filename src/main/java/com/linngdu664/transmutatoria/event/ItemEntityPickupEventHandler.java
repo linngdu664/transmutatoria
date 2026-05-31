@@ -50,13 +50,19 @@ public class ItemEntityPickupEventHandler {
                 NonNullList<ItemStack> items = NonNullList.withSize(24, ItemStack.EMPTY);
                 contents.copyInto(items);
                 ItemStack itemStack = items.get(targetSlot);
-                int realAdded = Math.min(count, metal.getMaxStackSize(itemStack) - itemStack.getCount());
+                boolean changed = false;
+                if (itemStack.isEmpty()) {
+                    itemStack = metal.getDefaultInstance();
+                    items.set(targetSlot, itemStack);
+                    count--;
+                    changed = true;
+                }
+                int realAdded = Math.min(count, itemStack.getMaxStackSize() - itemStack.getCount());
                 if (realAdded > 0) {
-                    if (itemStack.isEmpty()) {
-                        items.set(targetSlot, new ItemStack(metal, realAdded));
-                    } else {
-                        itemStack.setCount(itemStack.getCount() + realAdded);
-                    }
+                    itemStack.setCount(itemStack.getCount() + realAdded);
+                    changed = true;
+                }
+                if (changed) {
                     tryStack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items));
                 }
                 return count - realAdded;

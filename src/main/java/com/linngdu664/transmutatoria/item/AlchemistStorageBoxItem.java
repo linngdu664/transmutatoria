@@ -28,6 +28,7 @@ public class AlchemistStorageBoxItem extends Item {
     public AlchemistStorageBoxItem(Identifier id, int state) {
         super(new Item.Properties()
                 .setId(ResourceKey.create(Registries.ITEM, id))
+                .component(DataComponents.CONTAINER, ItemContainerContents.fromItems(NonNullList.withSize(24, ItemStack.EMPTY)))
                 .stacksTo(1));
         this.state = state;
     }
