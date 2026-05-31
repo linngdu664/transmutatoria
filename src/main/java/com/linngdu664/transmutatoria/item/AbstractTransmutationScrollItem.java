@@ -57,12 +57,12 @@ public abstract class AbstractTransmutationScrollItem extends Item {
         int count = minLevel + random.nextInt(maxLevel - minLevel + 1);
 
         List<HexPos> positions = generateConnectedHexPositions(count, random);
-        List<AbstractAlchemySlot> slots = new ArrayList<>(count);
+        List<AbstractAlchemySlot> slots = new ArrayList<>(positions.size());
         EssenceMetal[] allMetals = EssenceMetal.values();
 
         for (HexPos pos : positions) {
             slots.add(AbstractAlchemySlot.create(
-                    pickSlotType(count, random),
+                    pickSlotType(positions.size(), random),
                     allMetals[random.nextInt(allMetals.length)],
                     pos.x, pos.y, true
             ));
@@ -83,8 +83,11 @@ public abstract class AbstractTransmutationScrollItem extends Item {
 
     private record HexPos(int x, int y) {}
 
+    private static final int MAX_GRID_EXTENT = 12;
+
     /**
-     * 用 frontier 扩张算法生成 count 个连通的六边形坐标，从 (0,0) 开始
+     * 用 frontier 扩张算法生成 count 个连通的六边形坐标，从 (0,0) 开始。
+     * 约束生成区域的总宽度和总高度均不超过 {@value MAX_GRID_EXTENT}。
      */
     private static List<HexPos> generateConnectedHexPositions(int count, RandomSource random) {
         Set<HexPos> placed = new HashSet<>();
@@ -92,14 +95,29 @@ public abstract class AbstractTransmutationScrollItem extends Item {
 
         HexPos origin = new HexPos(0, 0);
         placed.add(origin);
+        int minX = origin.x, maxX = origin.x;
+        int minY = origin.y, maxY = origin.y;
         addFrontier(origin, placed, frontier);
 
         while (placed.size() < count && !frontier.isEmpty()) {
             int idx = random.nextInt(frontier.size());
             HexPos pos = frontier.remove(idx);
-            if (placed.add(pos)) {
-                addFrontier(pos, placed, frontier);
+            if (placed.contains(pos)) {
+                continue;
             }
+            int newMinX = Math.min(minX, pos.x);
+            int newMaxX = Math.max(maxX, pos.x);
+            int newMinY = Math.min(minY, pos.y);
+            int newMaxY = Math.max(maxY, pos.y);
+            if (newMaxX - newMinX >= MAX_GRID_EXTENT || newMaxY - newMinY >= MAX_GRID_EXTENT) {
+                continue;
+            }
+            placed.add(pos);
+            minX = newMinX;
+            maxX = newMaxX;
+            minY = newMinY;
+            maxY = newMaxY;
+            addFrontier(pos, placed, frontier);
         }
 
         return new ArrayList<>(placed);
@@ -114,6 +132,7 @@ public abstract class AbstractTransmutationScrollItem extends Item {
         }
     }
 
+    // todo 后续可能在配置文件中加入特殊槽位概率？
     private static SlotType pickSlotType(int slotCount, RandomSource random) {
         if (slotCount <= 8) return SlotType.NORMAL;
         if (random.nextFloat() < 0.75f) return SlotType.NORMAL;
@@ -136,13 +155,12 @@ public abstract class AbstractTransmutationScrollItem extends Item {
 
         RandomSource random = level.getRandom();
         EssenceMetal[] allMetals = EssenceMetal.values();
+        float mutationChance = 1.0f - (float) Math.pow(0.2f, times);
 
-        for (int i = 0; i < times; i++) {
-            for (AbstractAlchemySlot slot : slots) {
-                if (random.nextFloat() < 0.8F) {
-                    slot.setEssenceMetal(allMetals[random.nextInt(allMetals.length)]);
-                    slot.setShowEssence(false);
-                }
+        for (AbstractAlchemySlot slot : slots) {
+            if (random.nextFloat() < mutationChance) {
+                slot.setEssenceMetal(allMetals[random.nextInt(allMetals.length)]);
+                slot.setShowEssence(false);
             }
         }
 
