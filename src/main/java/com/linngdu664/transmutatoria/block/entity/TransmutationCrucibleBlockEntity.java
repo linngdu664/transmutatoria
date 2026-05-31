@@ -450,6 +450,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
             handleScrollReaction(itemStackWithSlotsUpdate);   // 炼金复制/炼金转化的反应结果
         }
+        clearInputEssencesAndRecordChange(itemStackWithSlotsUpdate);    // 无论何种反应，输入的源质都得清空
 
         // 检查锅的极性，超过了就爆掉
         if (polarity > 50) {
@@ -457,12 +458,12 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         } else if (polarity < -50) {
             level.setBlock(getBlockPos(), InitBlocks.ALCHEMICAL_DROSS_BLOCK.get().defaultBlockState(), 3);
         } else {
-            clearInputEssencesAndRecordChange(itemStackWithSlotsUpdate);    // 无论何种反应，输入的源质都得清空
             PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlotsUpdate));
             syncReset(hasAnyOutput());
         }
     }
 
+    // todo 概率要在配置文件里调吗？
     private void handleEnderEyeReaction(ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate) {
         if (getInput().is(InitItems.TRANSMUTATION_CRYSTAL)) {
             RandomSource randomSource = level.getRandom();
@@ -510,7 +511,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
                 posToOutputSlot.put(slot.getPackedXY(), i);
                 i++;
             }
-            int hashValue = getCrucibleMagicNumber();
+            int crucibleMagicNumber = getCrucibleMagicNumber();
 
             // 反应
             int annihilationCnt = 0;
@@ -523,7 +524,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
                         inhibitionStates,
                         posToOutputSlot,
                         deferredTasks,
-                        AbstractAlchemySlot.getSlotMagicNumber(hashValue, slot)
+                        AbstractAlchemySlot.getSlotMagicNumber(crucibleMagicNumber, slot)
                 );
                 polarity += result.getPolarityIncrease();
                 entropy += result.getEntropyIncrease();
@@ -668,28 +669,30 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public void takeCatalyst(Player player) {
-        player.getInventory().placeItemBackInInventory(getCatalyst(), true);
+        ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getCatalyst());
         items.set(CATALYST_SLOT, ItemStack.EMPTY);
+        level.addFreshEntity(itemEntity);
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(CATALYST_SLOT, ItemStack.EMPTY))));
         syncReset(false);
         setChanged();
     }
 
     public void takeInput(Player player) {
-        player.getInventory().placeItemBackInInventory(getInput(), true);
+        ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getInput());
         items.set(INPUT_SLOT, ItemStack.EMPTY);
+        level.addFreshEntity(itemEntity);
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(INPUT_SLOT, ItemStack.EMPTY))));
         syncReset(false);
         setChanged();
     }
 
     public void takeEssenceInput(Player player) {
-        Inventory inventory = player.getInventory();
         ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(ESSENCE_OUTPUT_SLOT - ESSENCE_INPUT_SLOT);
         for (int i = ESSENCE_INPUT_SLOT; i < ESSENCE_OUTPUT_SLOT; i++) {
             if (!items.get(i).isEmpty()) {
-                inventory.placeItemBackInInventory(items.get(i));
+                ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), items.get(i));
                 setItemAndRecordChange(i, ItemStack.EMPTY, itemStackWithSlots);
+                level.addFreshEntity(itemEntity);
             }
         }
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots));
@@ -698,16 +701,17 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public void takeAllOutput(Player player) {
-        Inventory inventory = player.getInventory();
         ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(CATALYST_SLOT - ESSENCE_OUTPUT_SLOT);
         for (int i = ESSENCE_OUTPUT_SLOT; i < CATALYST_SLOT; i++) {
             if (!items.get(i).isEmpty()) {
-                inventory.placeItemBackInInventory(items.get(i));
+                ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), items.get(i));
                 setItemAndRecordChange(i, ItemStack.EMPTY, itemStackWithSlots);
+                level.addFreshEntity(itemEntity);
             }
         }
-        inventory.placeItemBackInInventory(getOutput(), true);
+        ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getOutput());
         setItemAndRecordChange(OUTPUT_SLOT, ItemStack.EMPTY, itemStackWithSlots);
+        level.addFreshEntity(itemEntity);
 
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots));
         syncReset(false);
