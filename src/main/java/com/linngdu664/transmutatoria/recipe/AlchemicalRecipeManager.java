@@ -10,13 +10,13 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AlchemicalRecipeManager {
-    // 为了保险，用 volatile + ConcurrentHashMap
-    private static volatile ConcurrentHashMap<Item, AlchemicalReplicationRecipe> repCache = new ConcurrentHashMap<>();
-    private static volatile ConcurrentHashMap<Item, AlchemicalTransformationRecipe> transCache = new ConcurrentHashMap<>();
+    // 为了保险，用 ConcurrentHashMap
+    private static final ConcurrentHashMap<Item, AlchemicalReplicationRecipe> repCache = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Item, AlchemicalTransformationRecipe> transCache = new ConcurrentHashMap<>();
 
     public static void invalidateCache() {
-        repCache = new ConcurrentHashMap<>();
-        transCache = new ConcurrentHashMap<>();
+        repCache.clear();
+        transCache.clear();
     }
 
     public static AlchemicalReplicationRecipe findMatchRep(Level level, ItemStack outputStack) {

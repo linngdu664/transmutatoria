@@ -54,8 +54,8 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
 
     private void addSlots(Container container, Inventory playerInventory, int boxState) {
         EssenceMetal[] metals = EssenceMetal.values();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 4; j++) {
+        for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < 3; i++) {
                 addSlot(new LockedEssenceMetalSlot(container, j*3+i, 14+i*12+j*36, 56+i*21, metals[j*3+i], boxState));
             }
         }
