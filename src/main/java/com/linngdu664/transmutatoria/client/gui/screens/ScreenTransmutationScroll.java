@@ -19,6 +19,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +30,7 @@ import java.util.List;
 
 public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractTransmutationScrollMenu> {
     private static final Identifier INVENTORY_BG = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll.png");
+    private static final float ESSENCE_METAL_RADIUS = 37;
 
     public ScreenTransmutationScroll(AbstractTransmutationScrollMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title, 188, 216);
@@ -118,12 +120,11 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         if (alchemySlots != null && !alchemySlots.isEmpty()) {
             int centerX = leftPos + 2 + (AbstractTransmutationScrollMenu.SLOT0_X + 16 + AbstractTransmutationScrollMenu.SLOT1_X) / 2;
             int centerY = topPos + AbstractTransmutationScrollMenu.SLOT0_Y + 8;
-            int radius = 37;
 
-            for (int i = 0; i < alchemySlots.size(); i++) {
-                double angle = 2 * Math.PI * i / alchemySlots.size() - Math.PI / 2;
-                int x = (int) (centerX + radius * Math.cos(angle)) - 8;
-                int y = (int) (centerY + radius * Math.sin(angle)) - 8;
+            for (int i = 0, size = alchemySlots.size(); i < size; i++) {
+                float angle = Mth.TWO_PI * i / size - Mth.HALF_PI;
+                int x = centerX + Math.round(ESSENCE_METAL_RADIUS * Mth.cos(angle)) - 8;
+                int y = centerY + Math.round(ESSENCE_METAL_RADIUS * Mth.sin(angle)) - 8;
 
                 AbstractAlchemySlot slot = alchemySlots.get(i);
                 boolean unlocked = slot.isShowEssence();

@@ -4,7 +4,6 @@ import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.client.gui.util.GuiSprite;
 import com.linngdu664.transmutatoria.client.gui.util.GuiSubSprite;
 import com.linngdu664.transmutatoria.client.gui.util.GuiTexture;
-import net.minecraft.resources.Identifier;
 
 public class Textures {
     private static final GuiSprite SLOTS_FULL_SPRITE = new GuiSprite("hud/slots", 189, 61);
@@ -45,7 +44,7 @@ public class Textures {
     public static final GuiTexture PANDEMONIUM = new GuiTexture("textures/item/pandemonium.png", 16, 16);
     public static final GuiTexture SANGUIBRONZE = new GuiTexture("textures/item/sanguibronze.png", 16, 16);
     public static final GuiTexture VENOTITE = new GuiTexture("textures/item/venotite.png", 16, 16);
-    public static final GuiTexture UNKNOWN_ESSENCE = new GuiTexture("textures/item/unknown_essences.png", 16, 16);
+    public static final GuiSprite UNKNOWN_ESSENCE = new GuiSprite("scroll/unknown_essences", 16, 16);
 
     public static final GuiTexture ALCHEMY_ARRAY_1 = new GuiTexture("textures/gui/alchemy_array1.png", 256, 256);
     public static final GuiTexture ALCHEMY_ARRAY_2 = new GuiTexture("textures/gui/alchemy_array2.png", 256, 256);

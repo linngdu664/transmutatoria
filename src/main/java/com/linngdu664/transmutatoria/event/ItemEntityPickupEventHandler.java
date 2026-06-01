@@ -5,6 +5,8 @@ import com.linngdu664.transmutatoria.item.AlchemistStorageBoxItem;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.TriState;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -21,21 +23,31 @@ public class ItemEntityPickupEventHandler {
         ItemEntity itemEntity = event.getItemEntity();
         ItemStack itemStack = itemEntity.getItem();
         if (itemStack.getItem() instanceof EssenceMetalItem item && !itemEntity.hasPickUpDelay()) {
-            int remaining = tryStore(event.getPlayer(), item, itemStack.count());
-            itemEntity.getItem().setCount(remaining);
+            Player player = event.getPlayer();
+            int originalCount = itemStack.getCount();
+            int remainingCount = tryStore(player, item, originalCount);
+            int orgCount = originalCount - remainingCount;
+            player.take(itemEntity, orgCount);  // 调用原版轮子发包，给客户端放音效和动画
+            player.awardStat(Stats.ITEM_PICKED_UP.get(item), orgCount);
+            player.onItemPickup(itemEntity);
+            if (remainingCount == 0) {
+                event.setCanPickup(TriState.FALSE);
+                itemEntity.discard();
+            }
+            itemStack.setCount(remainingCount);
         }
     }
 
     private static int tryStore(Player player, EssenceMetalItem metal, int count) {
         int targetSlot = metal.getEssenceMetal().ordinal();
         AlchemistStorageBoxItem box = metal.getBox();
-        int remaining = tryAddToBox(metal, count, targetSlot, player.getOffhandItem(), box);
+        int remaining = tryAddToBoxSlot(metal, count, targetSlot, player.getOffhandItem(), box);
         if (remaining <= 0) {
             return remaining;
         }
         Inventory inventory = player.getInventory();
         for (int i = 0; i < Inventory.INVENTORY_SIZE; i++) {
-            remaining = tryAddToBox(metal, remaining, targetSlot, inventory.getItem(i), box);
+            remaining = tryAddToBoxSlot(metal, remaining, targetSlot, inventory.getItem(i), box);
             if (remaining <= 0) {
                 return remaining;
             }
@@ -43,9 +55,9 @@ public class ItemEntityPickupEventHandler {
         return remaining;
     }
 
-    private static int tryAddToBox(EssenceMetalItem metal, int count, int targetSlot, ItemStack tryStack, AlchemistStorageBoxItem box) {
-        if (tryStack.is(box)) {
-            ItemContainerContents contents = tryStack.get(DataComponents.CONTAINER);
+    private static int tryAddToBoxSlot(EssenceMetalItem metal, int count, int targetSlot, ItemStack boxStack, AlchemistStorageBoxItem boxItem) {
+        if (boxStack.is(boxItem)) {
+            ItemContainerContents contents = boxStack.get(DataComponents.CONTAINER);
             if (contents != null) {
                 NonNullList<ItemStack> items = NonNullList.withSize(24, ItemStack.EMPTY);
                 contents.copyInto(items);
@@ -63,7 +75,7 @@ public class ItemEntityPickupEventHandler {
                     changed = true;
                 }
                 if (changed) {
-                    tryStack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items));
+                    boxStack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items));
                 }
                 return count - realAdded;
             }
