@@ -115,7 +115,11 @@ public class TransmutationCrucibleBlock extends HorizontalDirectionalBlock imple
 
     private static VoxelShape makeShape() {
         VoxelShape shape = Shapes.empty();
-        shape = Shapes.join(shape, Block.box(3, 0, 3, 13, 9, 13), BooleanOp.OR);
+        shape = Shapes.join(shape, Block.box(0, 0, 0, 2, 15, 16), BooleanOp.OR);
+        shape = Shapes.join(shape, Block.box(2, 0, 0, 16, 15, 2), BooleanOp.OR);
+        shape = Shapes.join(shape, Block.box(14, 0, 0, 16, 15, 16), BooleanOp.OR);
+        shape = Shapes.join(shape, Block.box(2, 0, 14, 14, 15, 16), BooleanOp.OR);
+        shape = Shapes.join(shape, Block.box(2, 0, 2, 14, 5, 14), BooleanOp.OR);
         return shape;
     }
 
