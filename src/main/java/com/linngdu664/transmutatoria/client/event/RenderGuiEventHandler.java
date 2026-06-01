@@ -44,17 +44,25 @@ public class RenderGuiEventHandler {
         }
 
         HitResult hit = mc.hitResult;
+        boolean isLookingAtCrucible = false;
+        BlockEntity crucibleBe = null;
         if (hit != null && hit.getType() == HitResult.Type.BLOCK) {
-            GuiGraphicsExtractor guiGraphics = event.getGuiGraphics();
             BlockHitResult blockHit = (BlockHitResult) hit;
             BlockPos blockPos = blockHit.getBlockPos();
             Level level = player.level();
             if (level.getBlockState(blockPos).getBlock() == InitBlocks.TRANSMUTATION_CRUCIBLE.get()) {
-                BlockEntity be = level.getBlockEntity(blockPos);
-                if (boxStack != null) {
-                    GuiHandler.renderCrucibleStorageBoxHud(guiGraphics, boxStack, event.getPartialTick());
-                }
-                GuiHandler.renderCrucibleCommonHud(guiGraphics, be, event.getPartialTick());
+                isLookingAtCrucible = true;
+                crucibleBe = level.getBlockEntity(blockPos);
+            }
+        }
+
+        GuiHandler.updateHudAnimation(isLookingAtCrucible, event.getPartialTick());
+
+        if (isLookingAtCrucible && crucibleBe != null) {
+            GuiGraphicsExtractor guiGraphics = event.getGuiGraphics();
+            GuiHandler.renderCrucibleCommonHud(guiGraphics, crucibleBe, event.getPartialTick());
+            if (boxStack != null) {
+                GuiHandler.renderCrucibleStorageBoxHud(guiGraphics, boxStack, event.getPartialTick());
             }
         }
     }

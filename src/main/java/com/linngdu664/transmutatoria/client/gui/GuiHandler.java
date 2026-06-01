@@ -57,6 +57,28 @@ public class GuiHandler {
     private static float targetHighlightY = 0;
     private static boolean highlightInitialized = false;
 
+    // HUD入场动画
+    private static float animationProgress = 0.0f;
+    private static boolean animInitialized = false;
+
+    public static void updateHudAnimation(boolean isVisible, DeltaTracker delta) {
+        if (!animInitialized) {
+            animationProgress = isVisible ? 1.0f : 0.0f;
+            animInitialized = true;
+            return;
+        }
+        float target = isVisible ? 1.0f : 0.0f;
+        float diff = target - animationProgress;
+        if (Math.abs(diff) > 0.001f) {
+            float dt = delta.getGameTimeDeltaTicks();
+            float t = 1f - (float) Math.exp(-LERP_SPEED * dt);
+            animationProgress += diff * t;
+            if (Math.abs(animationProgress - target) < 0.005f) {
+                animationProgress = target;
+            }
+        }
+    }
+
     // todo 如果后续确定椭圆短轴恒为0，可进一步优化
     public static void renderCrucibleStorageBoxHud(GuiGraphicsExtractor guiGraphics, ItemStack boxStack, DeltaTracker delta) {
         Minecraft mc = SafeInstance.getMC();
@@ -168,6 +190,16 @@ public class GuiHandler {
             Minecraft mc = SafeInstance.getMC();
             Window window = mc.getWindow();
 
+            // 入场缩放动画
+            if (animationProgress < 0.995f) {
+                int sw = window.getGuiScaledWidth();
+                int sh = window.getGuiScaledHeight();
+                guiGraphics.pose().pushMatrix();
+                guiGraphics.pose().translate(sw / 2f, sh / 2f);
+                guiGraphics.pose().scale(animationProgress, animationProgress);
+                guiGraphics.pose().translate(-sw / 2f, -sh / 2f);
+            }
+
             // catalyst
             ItemStack catalyst = crucible.getCatalyst();
             V2I pos = Textures.SIMPLE_FRAME.renderRatio(guiGraphics, TextureOption.DEFAULT, window, 0.1, 0.2);
@@ -240,6 +272,10 @@ public class GuiHandler {
             Player player = mc.player;
             if (xys != null && player != null && player.isShiftKeyDown()) {
                 drawNumbers(guiGraphics, mc.font, xys);
+            }
+
+            if (animationProgress < 0.995f) {
+                guiGraphics.pose().popMatrix();
             }
         }
     }
