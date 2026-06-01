@@ -32,6 +32,9 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
     private static final Identifier INVENTORY_BG = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll.png");
     private static final float ESSENCE_METAL_RADIUS = 37;
 
+    // 源质圆环扩散动画
+    private float ringAnimProgress = 0.0f;
+
     public ScreenTransmutationScroll(AbstractTransmutationScrollMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title, 188, 216);
     }
@@ -39,6 +42,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
     @Override
     protected void init() {
         super.init();
+        ringAnimProgress = 0.0f;
         titleLabelX = (imageWidth - font.width(title)) / 2;
         titleLabelY = 6;
         inventoryLabelX = 8;
@@ -114,37 +118,58 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
             }
         }
 
+        // 更新动画
+        if (ringAnimProgress < 0.995f) {
+            ringAnimProgress += (1.0f - ringAnimProgress) * 0.15f;
+            if (ringAnimProgress > 0.995f) ringAnimProgress = 1.0f;
+        }
 
-        // 渲染配方源质
+        // 渲染配方源质——从圆心扩散到圆环
         List<AbstractAlchemySlot> alchemySlots = scrollStack.get(InitDataComponents.ALCHEMY_SLOTS);
         if (alchemySlots != null && !alchemySlots.isEmpty()) {
             int centerX = leftPos + 2 + (AbstractTransmutationScrollMenu.SLOT0_X + 16 + AbstractTransmutationScrollMenu.SLOT1_X) / 2;
             int centerY = topPos + AbstractTransmutationScrollMenu.SLOT0_Y + 8;
+            int size = alchemySlots.size();
 
-            for (int i = 0, size = alchemySlots.size(); i < size; i++) {
+            for (int i = 0; i < size; i++) {
                 float angle = Mth.TWO_PI * i / size - Mth.HALF_PI;
-                int x = centerX + Math.round(ESSENCE_METAL_RADIUS * Mth.cos(angle)) - 8;
-                int y = centerY + Math.round(ESSENCE_METAL_RADIUS * Mth.sin(angle)) - 8;
+                float offsetX = ESSENCE_METAL_RADIUS * Mth.cos(angle);
+                float offsetY = ESSENCE_METAL_RADIUS * Mth.sin(angle);
+
+                float targetX = centerX + offsetX - 8;
+                float targetY = centerY + offsetY - 8;
+                float curX = centerX - 8 + offsetX * ringAnimProgress;
+                float curY = centerY - 8 + offsetY * ringAnimProgress;
 
                 AbstractAlchemySlot slot = alchemySlots.get(i);
                 boolean unlocked = slot.isShowEssence();
 
+                graphics.pose().pushMatrix();
+                graphics.pose().translate(curX + 8, curY + 8);
+                graphics.pose().scale(ringAnimProgress, ringAnimProgress);
+                graphics.pose().translate(-8, -8);
+
                 if (unlocked) {
-                    slot.getEssenceMetal().getDefaultTexture().render(graphics, TextureOption.DEFAULT, x, y);
+                    slot.getEssenceMetal().getDefaultTexture().render(graphics, TextureOption.DEFAULT, 0, 0);
                 } else {
-                    Textures.UNKNOWN_ESSENCE.render(graphics, TextureOption.DEFAULT, x, y);
+                    Textures.UNKNOWN_ESSENCE.render(graphics, TextureOption.DEFAULT, 0, 0);
                 }
 
-                if (mouseX >= x && mouseX < x + 16 && mouseY >= y && mouseY < y + 16) {
+                graphics.pose().popMatrix();
+
+                // 鼠标检测用动画后的位置和大小
+                int slotSize = Math.round(16 * ringAnimProgress);
+                int hitX = Math.round(curX);
+                int hitY = Math.round(curY);
+                if (mouseX >= hitX && mouseX < hitX + slotSize && mouseY >= hitY && mouseY < hitY + slotSize) {
                     Component tooltip = unlocked
                             ? Component.translatable("item.transmutatoria." + slot.getEssenceMetal().getKey())
                             : Component.translatable("item.transmutatoria.unknown_essence");
                     graphics.setComponentTooltipForNextFrame(font, List.of(tooltip), mouseX, mouseY);
                 }
             }
-            graphics.text(this.font, String.valueOf(alchemySlots.size()), centerX, centerY, -12566464,false);
+            graphics.text(this.font, String.valueOf(size), centerX, centerY, -12566464,false);
         }
-
     }
 
     private IntIntImmutablePair renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDec){
