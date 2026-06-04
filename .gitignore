@@ -40,3 +40,5 @@ repo/
 !**/src/**/repo/
 
 .claude/
+/.codex/
+/AGENTS.md
