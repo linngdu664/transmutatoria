@@ -158,76 +158,60 @@ public class InitItems {
                 output.accept(new ItemStack(ALCHEMICAL_DROSS.get()));
                 output.accept(new ItemStack(ALCHEMICAL_DROSS_BLOCK.get()));
 
-                // 金属 - 蚀日金系
+                // 普通金属
                 output.accept(new ItemStack(ECLIPSIUM.get()));
-                output.accept(new ItemStack(NIGREDO_ECLIPSIUM.get()));
-                output.accept(new ItemStack(ALBEDO_ECLIPSIUM.get()));
-                output.accept(new ItemStack(CITRINITAS_ECLIPSIUM.get()));
-
-                // 金属 - 泣月银系
                 output.accept(new ItemStack(LUNARGENT.get()));
-                output.accept(new ItemStack(NIGREDO_LUNARGENT.get()));
-                output.accept(new ItemStack(ALBEDO_LUNARGENT.get()));
-                output.accept(new ItemStack(CITRINITAS_LUNARGENT.get()));
-
-                // 金属 - 灾星钛系
                 output.accept(new ItemStack(ASTROTITE.get()));
-                output.accept(new ItemStack(NIGREDO_ASTROTITE.get()));
-                output.accept(new ItemStack(ALBEDO_ASTROTITE.get()));
-                output.accept(new ItemStack(CITRINITAS_ASTROTITE.get()));
-
-                // 金属 - 渊海钢系
                 output.accept(new ItemStack(ABYSSION.get()));
-                output.accept(new ItemStack(NIGREDO_ABYSSION.get()));
-                output.accept(new ItemStack(ALBEDO_ABYSSION.get()));
-                output.accept(new ItemStack(CITRINITAS_ABYSSION.get()));
-
-                // 金属 - 幻魂汞系
                 output.accept(new ItemStack(ANIMERCURY.get()));
-                output.accept(new ItemStack(NIGREDO_ANIMERCURY.get()));
-                output.accept(new ItemStack(ALBEDO_ANIMERCURY.get()));
-                output.accept(new ItemStack(CITRINITAS_ANIMERCURY.get()));
-
-                // 金属 - 冥沼铅系
                 output.accept(new ItemStack(NECROPLUMB.get()));
-                output.accept(new ItemStack(NIGREDO_NECROPLUMB.get()));
-                output.accept(new ItemStack(ALBEDO_NECROPLUMB.get()));
-                output.accept(new ItemStack(CITRINITAS_NECROPLUMB.get()));
-
-                // 金属 - 棘血铜系
                 output.accept(new ItemStack(SANGUIBRONZE.get()));
-                output.accept(new ItemStack(NIGREDO_SANGUIBRONZE.get()));
-                output.accept(new ItemStack(ALBEDO_SANGUIBRONZE.get()));
-                output.accept(new ItemStack(CITRINITAS_SANGUIBRONZE.get()));
-
-                // 金属 - 鸩林锡系
                 output.accept(new ItemStack(VENOTITE.get()));
-                output.accept(new ItemStack(NIGREDO_VENOTITE.get()));
-                output.accept(new ItemStack(ALBEDO_VENOTITE.get()));
-                output.accept(new ItemStack(CITRINITAS_VENOTITE.get()));
-
-                // 金属 - 骸骨锑系
                 output.accept(new ItemStack(OSSANTIMONY.get()));
-                output.accept(new ItemStack(NIGREDO_OSSANTIMONY.get()));
-                output.accept(new ItemStack(ALBEDO_OSSANTIMONY.get()));
-                output.accept(new ItemStack(CITRINITAS_OSSANTIMONY.get()));
-
-                // 金属 - 怒雷锌系
                 output.accept(new ItemStack(FULGURZINC.get()));
-                output.accept(new ItemStack(NIGREDO_FULGURZINC.get()));
-                output.accept(new ItemStack(ALBEDO_FULGURZINC.get()));
-                output.accept(new ItemStack(CITRINITAS_FULGURZINC.get()));
-
-                // 金属 - 凝时铂系
                 output.accept(new ItemStack(CHRONOPLATINUM.get()));
-                output.accept(new ItemStack(NIGREDO_CHRONOPLATINUM.get()));
-                output.accept(new ItemStack(ALBEDO_CHRONOPLATINUM.get()));
-                output.accept(new ItemStack(CITRINITAS_CHRONOPLATINUM.get()));
-
-                // 金属 - 无相源金系
                 output.accept(new ItemStack(PANDEMONIUM.get()));
+
+                // 黑化金属
+                output.accept(new ItemStack(NIGREDO_ECLIPSIUM.get()));
+                output.accept(new ItemStack(NIGREDO_LUNARGENT.get()));
+                output.accept(new ItemStack(NIGREDO_ASTROTITE.get()));
+                output.accept(new ItemStack(NIGREDO_ABYSSION.get()));
+                output.accept(new ItemStack(NIGREDO_ANIMERCURY.get()));
+                output.accept(new ItemStack(NIGREDO_NECROPLUMB.get()));
+                output.accept(new ItemStack(NIGREDO_SANGUIBRONZE.get()));
+                output.accept(new ItemStack(NIGREDO_VENOTITE.get()));
+                output.accept(new ItemStack(NIGREDO_OSSANTIMONY.get()));
+                output.accept(new ItemStack(NIGREDO_FULGURZINC.get()));
+                output.accept(new ItemStack(NIGREDO_CHRONOPLATINUM.get()));
                 output.accept(new ItemStack(NIGREDO_PANDEMONIUM.get()));
+
+                // 白化金属
+                output.accept(new ItemStack(ALBEDO_ECLIPSIUM.get()));
+                output.accept(new ItemStack(ALBEDO_LUNARGENT.get()));
+                output.accept(new ItemStack(ALBEDO_ASTROTITE.get()));
+                output.accept(new ItemStack(ALBEDO_ABYSSION.get()));
+                output.accept(new ItemStack(ALBEDO_ANIMERCURY.get()));
+                output.accept(new ItemStack(ALBEDO_NECROPLUMB.get()));
+                output.accept(new ItemStack(ALBEDO_SANGUIBRONZE.get()));
+                output.accept(new ItemStack(ALBEDO_VENOTITE.get()));
+                output.accept(new ItemStack(ALBEDO_OSSANTIMONY.get()));
+                output.accept(new ItemStack(ALBEDO_FULGURZINC.get()));
+                output.accept(new ItemStack(ALBEDO_CHRONOPLATINUM.get()));
                 output.accept(new ItemStack(ALBEDO_PANDEMONIUM.get()));
+
+                // 黄化金属
+                output.accept(new ItemStack(CITRINITAS_ECLIPSIUM.get()));
+                output.accept(new ItemStack(CITRINITAS_LUNARGENT.get()));
+                output.accept(new ItemStack(CITRINITAS_ASTROTITE.get()));
+                output.accept(new ItemStack(CITRINITAS_ABYSSION.get()));
+                output.accept(new ItemStack(CITRINITAS_ANIMERCURY.get()));
+                output.accept(new ItemStack(CITRINITAS_NECROPLUMB.get()));
+                output.accept(new ItemStack(CITRINITAS_SANGUIBRONZE.get()));
+                output.accept(new ItemStack(CITRINITAS_VENOTITE.get()));
+                output.accept(new ItemStack(CITRINITAS_OSSANTIMONY.get()));
+                output.accept(new ItemStack(CITRINITAS_FULGURZINC.get()));
+                output.accept(new ItemStack(CITRINITAS_CHRONOPLATINUM.get()));
                 output.accept(new ItemStack(CITRINITAS_PANDEMONIUM.get()));
 
                 // 炼金基质
