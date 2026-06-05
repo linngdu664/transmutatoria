@@ -15,8 +15,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 
-import org.jspecify.annotations.Nullable;
-
 public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
     public static final int CONTAINER_SLOTS = 12;
     private static final int INV_START = CONTAINER_SLOTS;
@@ -25,29 +23,30 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
     private static final int HOTBAR_END = HOTBAR_START + 9;
     private static final int TOTAL_SLOTS = HOTBAR_END;
 
-    @Nullable
-    private final ItemStack boxStack;
+    private final Container container;
     public final int boxState;
 
     // Client-side constructor
     public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory) {
-        this(containerId, playerInventory, new SimpleContainer(CONTAINER_SLOTS), 0, null);
+        this(containerId, playerInventory, new SimpleContainer(CONTAINER_SLOTS), 0);
     }
 
     // Client-side constructor with boxState
     public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory, int boxState) {
-        this(containerId, playerInventory, new SimpleContainer(CONTAINER_SLOTS), boxState, null);
+        this(containerId, playerInventory, new SimpleContainer(CONTAINER_SLOTS), boxState);
     }
 
     // Server-side constructor
     public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory, ItemStack boxStack, int boxState) {
-        this(containerId, playerInventory, new StorageBoxContainer(boxStack), boxState, boxStack);
+        this(containerId, playerInventory, new StorageBoxContainer(boxStack), boxState);
     }
 
-    private AlchemistStorageBoxMenu(int containerId, Inventory playerInventory, Container container, int boxState, @Nullable ItemStack boxStack) {
+    public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory, Container container, int boxState) {
         super(getMenuType(boxState), containerId);
-        this.boxStack = boxStack;
+        checkContainerSize(container, CONTAINER_SLOTS);
+        this.container = container;
         this.boxState = boxState;
+        container.startOpen(playerInventory.player);
         addSlots(container, playerInventory, boxState);
         addPlayerInventory(playerInventory);
     }
@@ -117,7 +116,17 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return boxStack == null || !boxStack.isEmpty();
+        return container.stillValid(player);
+    }
+
+    public boolean isContainer(Container container) {
+        return this.container == container;
+    }
+
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+        container.stopOpen(player);
     }
 
     public static class LockedEssenceMetalSlot extends Slot {

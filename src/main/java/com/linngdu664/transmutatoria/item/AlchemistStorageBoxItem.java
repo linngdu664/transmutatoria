@@ -14,21 +14,23 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-public class AlchemistStorageBoxItem extends Item {
+public class AlchemistStorageBoxItem extends BlockItem {
     private final int state;
 
-    public AlchemistStorageBoxItem(Identifier id, int state) {
-        super(new Item.Properties()
+    public AlchemistStorageBoxItem(Identifier id, Block block, int state) {
+        super(block, new Properties()
                 .setId(ResourceKey.create(Registries.ITEM, id))
-                .component(DataComponents.CONTAINER, ItemContainerContents.fromItems(NonNullList.withSize(24, ItemStack.EMPTY)))
+                .component(DataComponents.CONTAINER, ItemContainerContents.fromItems(
+                        NonNullList.withSize(AlchemistStorageBoxMenu.CONTAINER_SLOTS, ItemStack.EMPTY)))
                 .stacksTo(1));
         this.state = state;
     }
@@ -78,6 +80,6 @@ public class AlchemistStorageBoxItem extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        return use(level, context.getPlayer(), context.getHand());
+        return super.useOn(context);
     }
 }

@@ -25,13 +25,13 @@ public class InitItems {
 
     // ================= [ 炼金术士储物盒 ] =================
     public static DeferredItem<Item> ALCHEMIST_STORAGE_BOX = ITEMS.register("alchemist_storage_box",
-            (id) -> new AlchemistStorageBoxItem(id, 0));
+            (id) -> new AlchemistStorageBoxItem(id, InitBlocks.ALCHEMIST_STORAGE_BOX.get(), 0));
     public static DeferredItem<Item> NIGREDO_ALCHEMIST_STORAGE_BOX = ITEMS.register("nigredo_alchemist_storage_box",
-            (id) -> new AlchemistStorageBoxItem(id, -1));
+            (id) -> new AlchemistStorageBoxItem(id, InitBlocks.NIGREDO_ALCHEMIST_STORAGE_BOX.get(), -1));
     public static DeferredItem<Item> ALBEDO_ALCHEMIST_STORAGE_BOX = ITEMS.register("albedo_alchemist_storage_box",
-            (id) -> new AlchemistStorageBoxItem(id, 1));
+            (id) -> new AlchemistStorageBoxItem(id, InitBlocks.ALBEDO_ALCHEMIST_STORAGE_BOX.get(), 1));
     public static DeferredItem<Item> CITRINITAS_ALCHEMIST_STORAGE_BOX = ITEMS.register("citrinitas_alchemist_storage_box",
-            (id) -> new AlchemistStorageBoxItem(id, 2));
+            (id) -> new AlchemistStorageBoxItem(id, InitBlocks.CITRINITAS_ALCHEMIST_STORAGE_BOX.get(), 2));
 
     // ================= [ 基础物品 ] =================
     public static DeferredItem<Item> TRANSMUTATION_CRYSTAL = ITEMS.registerSimpleItem("transmutation_crystal");

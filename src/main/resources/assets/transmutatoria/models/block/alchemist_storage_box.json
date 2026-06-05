@@ -1,5 +1,4 @@
 {
-  "parent": "minecraft:item/template_shulker_box",
   "textures": {
     "particle": "transmutatoria:item/model/alchemist_storage_box"
   }

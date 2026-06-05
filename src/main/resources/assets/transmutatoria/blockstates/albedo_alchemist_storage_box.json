@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+      "model": "transmutatoria:block/alchemist_storage_box"
+      }
+    }
+  ]
+}
