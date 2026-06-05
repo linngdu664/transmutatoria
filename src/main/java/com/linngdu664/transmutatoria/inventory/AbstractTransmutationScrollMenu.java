@@ -2,14 +2,13 @@ package com.linngdu664.transmutatoria.inventory;
 
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
-import com.linngdu664.transmutatoria.recipe.IAlchemicalRecipe;
+import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -168,7 +167,7 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
             }
 
             // 尝试激活卷轴
-            IAlchemicalRecipe recipe = scrollItem.getRecipe(level, stack);
+            CrucibleRecipe recipe = scrollItem.getRecipe(level, stack);
             if (recipe == null) {
                 return; // 配方不匹配，物品留在手上
             }
@@ -181,7 +180,7 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
             set(single);
             int otherSlot = 1 - inputSlotIndex;
             container.setItem(otherSlot, recipe.getOtherSideItemStack());
-            AbstractTransmutationScrollItem.activate(level, scrollStack, recipe);
+            scrollItem.activate(level, scrollStack, single, recipe);
             broadcastChanges();
         }
 

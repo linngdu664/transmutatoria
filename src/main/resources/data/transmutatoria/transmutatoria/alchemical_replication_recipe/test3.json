@@ -1,7 +1,8 @@
 {
-  "input_id": "minecraft:air",
-  "output_type": "item",
-  "output_id": "minecraft:diamond",
-  "min_level": 9,
-  "max_level": 24
+  "output_items": "minecraft:diamond",
+  "level": {
+    "type": "transmutatoria:fixed",
+    "min": 9,
+    "max": 24
+  }
 }

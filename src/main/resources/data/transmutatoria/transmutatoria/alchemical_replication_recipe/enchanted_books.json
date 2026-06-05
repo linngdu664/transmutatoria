@@ -1,0 +1,11 @@
+{
+  "input": "minecraft:book",
+  "output_items": "minecraft:enchanted_book",
+  "level": {
+    "type": "transmutatoria:enchantment",
+    "base_min": 2,
+    "base_max": 3,
+    "scale_min": 3.0,
+    "scale_max": 4.0
+  }
+}

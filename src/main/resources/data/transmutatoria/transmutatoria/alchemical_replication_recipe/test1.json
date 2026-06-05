@@ -1,7 +1,8 @@
 {
-  "input_id": "minecraft:air",
-  "output_type": "tag",
-  "output_id": "c:ingots/gold",
-  "min_level": 4,
-  "max_level": 4
+  "output_items": "#c:ingots/gold",
+  "level": {
+    "type": "transmutatoria:fixed",
+    "min": 4,
+    "max": 4
+  }
 }

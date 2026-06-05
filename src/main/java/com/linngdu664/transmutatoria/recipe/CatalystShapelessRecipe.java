@@ -16,20 +16,21 @@ import net.minecraft.world.level.Level;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CatalystShapelessRecipe implements CraftingRecipe {
-    private final String group;
-    private final CraftingBookCategory category;
-    private final ItemStackTemplate result;
-    private final NonNullList<Ingredient> ingredients;
-    private final NonNullList<Ingredient> catalysts;
-
-    public CatalystShapelessRecipe(String group, CraftingBookCategory category, ItemStackTemplate result,
-                                   List<Ingredient> ingredients, List<Ingredient> catalysts) {
-        this.group = group;
-        this.category = category;
-        this.result = result;
-        this.ingredients = NonNullList.copyOf(ingredients);
-        this.catalysts = NonNullList.copyOf(catalysts);
+public record CatalystShapelessRecipe(
+        String group,
+        CraftingBookCategory category,
+        ItemStackTemplate result,
+        NonNullList<Ingredient> ingredients,
+        NonNullList<Ingredient> catalysts
+) implements CraftingRecipe {
+    public CatalystShapelessRecipe(
+            String group,
+            CraftingBookCategory category,
+            ItemStackTemplate result,
+            List<Ingredient> ingredients,
+            List<Ingredient> catalysts
+    ) {
+        this(group, category, result, NonNullList.copyOf(ingredients), NonNullList.copyOf(catalysts));
     }
 
     @Override
@@ -97,18 +98,6 @@ public class CatalystShapelessRecipe implements CraftingRecipe {
         return result.create();
     }
 
-    public ItemStackTemplate getResult() {
-        return result;
-    }
-
-    public NonNullList<Ingredient> getIngredients() {
-        return ingredients;
-    }
-
-    public NonNullList<Ingredient> getCatalysts() {
-        return catalysts;
-    }
-
     @Override
     public boolean isSpecial() {
         return false;
@@ -120,11 +109,6 @@ public class CatalystShapelessRecipe implements CraftingRecipe {
     }
 
     @Override
-    public String group() {
-        return group;
-    }
-
-    @Override
     public RecipeSerializer<CatalystShapelessRecipe> getSerializer() {
         return InitRecipes.CATALYST_SHAPELESS_SERIALIZER.get();
     }
@@ -132,11 +116,6 @@ public class CatalystShapelessRecipe implements CraftingRecipe {
     @Override
     public RecipeType<CraftingRecipe> getType() {
         return RecipeType.CRAFTING;
-    }
-
-    @Override
-    public CraftingBookCategory category() {
-        return category;
     }
 
     @Override

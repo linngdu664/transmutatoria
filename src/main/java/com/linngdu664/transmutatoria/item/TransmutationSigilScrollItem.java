@@ -1,9 +1,14 @@
 package com.linngdu664.transmutatoria.item;
 
+import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.inventory.TransmutationSigilScrollMenu;
-import com.linngdu664.transmutatoria.recipe.AlchemicalRecipeManager;
-import com.linngdu664.transmutatoria.recipe.IAlchemicalRecipe;
+import com.linngdu664.transmutatoria.item.component.RecipeConditions;
+import com.linngdu664.transmutatoria.recipe.CrucibleRecipeManager;
+import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
+import com.linngdu664.transmutatoria.util.AlchemySlotGenerator;
+import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
@@ -29,7 +34,17 @@ public class TransmutationSigilScrollItem extends AbstractTransmutationScrollIte
     }
 
     @Override
-    public IAlchemicalRecipe getRecipe(Level level, ItemStack itemStack) {
-        return AlchemicalRecipeManager.findMatchRep(level, itemStack);
+    public void activate(Level level, ItemStack scrollStack, ItemStack inputStack, CrucibleRecipe recipe) {
+        scrollStack.set(InitDataComponents.RECIPE_CONDITIONS, new RecipeConditions(recipe.oneTime(), recipe.minPolarity(), recipe.maxPolarity()));
+        RandomSource random = level.getRandom();
+        IntIntImmutablePair minMaxLevel = recipe.level().getMinMax(level, inputStack);
+        System.out.println("minMaxLevel: " + minMaxLevel);
+        int count = random.nextInt(minMaxLevel.leftInt(), minMaxLevel.rightInt() + 1);
+        AlchemySlotGenerator.generate(scrollStack, count, random);
+    }
+
+    @Override
+    public CrucibleRecipe getRecipe(Level level, ItemStack itemStack) {
+        return CrucibleRecipeManager.findMatchRep(level, itemStack);
     }
 }

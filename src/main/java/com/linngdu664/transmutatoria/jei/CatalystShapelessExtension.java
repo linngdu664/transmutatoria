@@ -20,10 +20,10 @@ public class CatalystShapelessExtension implements ICraftingCategoryExtension<Ca
     public List<SlotDisplay> getIngredients(RecipeHolder<CatalystShapelessRecipe> recipeHolder) {
         CatalystShapelessRecipe recipe = recipeHolder.value();
         List<SlotDisplay> displays = new ArrayList<>();
-        for (Ingredient ingredient : recipe.getIngredients()) {
+        for (Ingredient ingredient : recipe.ingredients()) {
             displays.add(ingredient.display());
         }
-        for (Ingredient catalyst : recipe.getCatalysts()) {
+        for (Ingredient catalyst : recipe.catalysts()) {
             displays.add(catalyst.display());
         }
         return displays;
@@ -33,8 +33,8 @@ public class CatalystShapelessExtension implements ICraftingCategoryExtension<Ca
     public void setRecipe(RecipeHolder<CatalystShapelessRecipe> recipeHolder, IRecipeLayoutBuilder builder,
                           ICraftingGridHelper craftingGridHelper, IFocusGroup focuses) {
         CatalystShapelessRecipe recipe = recipeHolder.value();
-        List<Ingredient> ingredients = recipe.getIngredients();
-        List<Ingredient> catalysts = recipe.getCatalysts();
+        List<Ingredient> ingredients = recipe.ingredients();
+        List<Ingredient> catalysts = recipe.catalysts();
         int ingCount = ingredients.size();
         int catCount = catalysts.size();
         int ingRows = ingCount > 0 ? (ingCount - 1) / 3 + 1 : 0;
@@ -58,7 +58,7 @@ public class CatalystShapelessExtension implements ICraftingCategoryExtension<Ca
         int resultX = 95;
         int resultY = 27; // centered in the default 72-height area
         builder.addSlot(RecipeIngredientRole.OUTPUT, resultX, resultY)
-                .add(recipe.getResult())
+                .add(recipe.result())
                 .setOutputSlotBackground();
 
         builder.setShapeless();
@@ -68,9 +68,9 @@ public class CatalystShapelessExtension implements ICraftingCategoryExtension<Ca
     public void drawInfo(RecipeHolder<CatalystShapelessRecipe> recipeHolder, int recipeWidth, int recipeHeight,
                          GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
         CatalystShapelessRecipe recipe = recipeHolder.value();
-        int ingCount = recipe.getIngredients().size();
+        int ingCount = recipe.ingredients().size();
         int ingRows = ingCount > 0 ? (ingCount - 1) / 3 + 1 : 0;
-        if (ingCount > 0 && recipe.getCatalysts().size() > 0) {
+        if (ingCount > 0 && !recipe.catalysts().isEmpty()) {
             int lineY = 2 + ingRows * 18;
             guiGraphics.fill(1, lineY, 55, lineY + 1, 0xFF9E9E9E);
         }

@@ -1,7 +1,8 @@
 {
-  "input_id": "minecraft:air",
-  "output_type": "tag",
-  "output_id": "minecraft:wool",
-  "min_level": 4,
-  "max_level": 4
+  "output_items": "#minecraft:wool",
+  "level": {
+    "type": "transmutatoria:fixed",
+    "min": 4,
+    "max": 4
+  }
 }

@@ -1,9 +1,11 @@
 {
-  "input_type": "tag",
-  "input_id": "c:cobblestones",
-  "output_id": "minecraft:gold_ingot",
-  "min_level": 3,
-  "max_level": 3,
+  "input_items": "#c:cobblestones",
+  "output": "minecraft:gold_ingot",
+  "level": {
+    "type": "transmutatoria:fixed",
+    "min": 5,
+    "max": 5
+  },
   "min_polarity": -10,
   "max_polarity": 50
 }

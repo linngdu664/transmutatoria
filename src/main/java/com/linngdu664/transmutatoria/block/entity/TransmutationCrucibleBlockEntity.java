@@ -7,13 +7,14 @@ import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.network.to_client.*;
-import com.linngdu664.transmutatoria.recipe.AlchemicalRecipeManager;
-import com.linngdu664.transmutatoria.recipe.IAlchemicalRecipe;
+import com.linngdu664.transmutatoria.recipe.CrucibleRecipeManager;
+import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.AlchemyReactResult;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +26,6 @@ import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -350,7 +350,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
 
         if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
             // 混沌分解：该物品需要可被炼金复制合成
-            return AlchemicalRecipeManager.findMatchRep(level, itemStack) != null;
+            return CrucibleRecipeManager.findMatchRep(level, itemStack) != null;
         }
 
         // 其他的催化剂不接受转化输入
@@ -393,9 +393,10 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
             syncTargetTimer(10);
         } else if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
             // 混沌分解
-            IAlchemicalRecipe recipe = AlchemicalRecipeManager.findMatchRep(level, getInput());
+            CrucibleRecipe recipe = CrucibleRecipeManager.findMatchRep(level, getInput());
             if (recipe != null) {
-                syncTargetTimer(5 * (recipe.minLevel() + recipe.maxLevel()));
+                IntIntImmutablePair minMax = recipe.level().getMinMax(level, getInput());
+                syncTargetTimer(5 * (minMax.leftInt() + minMax.rightInt()));
             }
         }
     }
@@ -486,10 +487,11 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     private void handlePhilosophersStoneReaction(ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate) {
-        IAlchemicalRecipe recipe = AlchemicalRecipeManager.findMatchRep(level, getInput());
+        CrucibleRecipe recipe = CrucibleRecipeManager.findMatchRep(level, getInput());
         if (recipe != null) {
             RandomSource randomSource = level.getRandom();
-            int essenceCnt = randomSource.nextInt(recipe.minLevel(), recipe.maxLevel() + 1);
+            IntIntImmutablePair minMax = recipe.level().getMinMax(level, getInput());
+            int essenceCnt = randomSource.nextInt(minMax.leftInt(), minMax.rightInt() + 1);
             int len = InitItems.ESSENCE_METAL_ITEMS.length;
             for (int i = 0; i < essenceCnt; i++) {
                 setItemAndRecordChange(ESSENCE_OUTPUT_SLOT + i, InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(len)].toStack(), itemStackWithSlotsUpdate);

@@ -7,7 +7,7 @@ import com.linngdu664.transmutatoria.inventory.AbstractTransmutationScrollMenu;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.TransmutationEquationScrollItem;
-import com.linngdu664.transmutatoria.recipe.IAlchemicalRecipe;
+import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.SafeInstance;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
@@ -25,7 +25,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 
-import java.awt.*;
 import java.util.List;
 
 public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractTransmutationScrollMenu> {
@@ -99,7 +98,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
             }
         }else if (this.hoveredSlot != null && this.hoveredSlot.hasItem()) {//右边没东西那就是没激活，判断鼠标所在物品是否可以激活
             ItemStack item = this.hoveredSlot.getItem();
-            IAlchemicalRecipe recipe = ((AbstractTransmutationScrollItem)scrollStack.getItem()).getRecipe(mc.level, item);
+            CrucibleRecipe recipe = ((AbstractTransmutationScrollItem)scrollStack.getItem()).getRecipe(mc.level, item);
             if (recipe != null) {
                 if (isEquationScroll){
                     ItemStack visualRightStack = recipe.getOtherSideItemStack();

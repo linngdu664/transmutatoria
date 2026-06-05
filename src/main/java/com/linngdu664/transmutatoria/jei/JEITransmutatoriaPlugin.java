@@ -11,11 +11,14 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
@@ -48,25 +51,74 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
         if (level == null) return;
 
         // 缓存
-        HashMap<TagKey<Item>, ArrayList<Item>> tagToItems = new HashMap<>();
+//        HashMap<TagKey<Item>, ArrayList<Item>> tagToItems = new HashMap<>();
         HashMap<String, ArrayList<Item>> namespaceToItems = new HashMap<>();
         for (Item item : BuiltInRegistries.ITEM) {
             if (item != Items.AIR) {
-                item.builtInRegistryHolder().tags().forEach(tag -> tagToItems.computeIfAbsent(tag, _ -> new ArrayList<>()).add(item));
+//                item.builtInRegistryHolder().tags().forEach(tag -> tagToItems.computeIfAbsent(tag, _ -> new ArrayList<>()).add(item));
                 namespaceToItems.computeIfAbsent(BuiltInRegistries.ITEM.getKey(item).getNamespace(),  _ -> new ArrayList<>()).add(item);
             }
         }
 //        System.out.println(tagToItems);
 
         RegistryAccess registryAccess = level.registryAccess();
+
         // 以下为炼金转化
+        // 精确配方
+        registryAccess.lookup(InitDatapacks.ALCHEMICAL_TRANSFORMATION_PRECISE_KEY).ifPresent(transLookup -> {
+            HashMap<ItemStackTemplate, JEIAlchemicalTransformationDisplay> itemStackToTransDisplay = new HashMap<>();
+            // 顺序遍历所有数据包配方
+            transLookup.listElements().map(Holder.Reference::value).forEach(recipe -> {
+                ItemStack outputItemStack = recipe.getOtherSideItemStack();
+                // 不允许输出空气
+                if (!outputItemStack.isEmpty()) {
+                    if (recipe.isValid()) {
+                        itemStackToTransDisplay.put(recipe.input(), new JEIAlchemicalTransformationDisplay(recipe, recipe.input().create(), outputItemStack));
+                    } else {
+                        itemStackToTransDisplay.remove(recipe.input());
+                    }
+                }
+            });
+            registration.addRecipes(AlchemicalJeiTypes.ALCHEMICAL_TRANSFORMATION, itemStackToTransDisplay.values().stream().sorted().toList());
+        });
+
+        // 非精确配方
         registryAccess.lookup(InitDatapacks.ALCHEMICAL_TRANSFORMATION_KEY).ifPresent(transLookup -> {
             // 用 map 来进行配方覆盖和取消
             HashMap<Item, JEIAlchemicalTransformationDisplay> itemToTransDisplay = new HashMap<>();
             // 顺序遍历所有数据包配方
             transLookup.listElements().map(Holder.Reference::value).forEach(recipe -> {
-                Item outputItem = BuiltInRegistries.ITEM.getValue(recipe.outputId());
+                ItemStack outputItemStack = recipe.getOtherSideItemStack();
                 // 不允许输出空气
+                if (!outputItemStack.isEmpty()) {
+                    if (recipe.inputItems().isPresent()) {
+                        if (recipe.isValid()) {
+                            for (Holder<Item> itemHolder : recipe.inputItems().get().getValues()) {
+                                Item item = itemHolder.value();
+                                itemToTransDisplay.put(item, new JEIAlchemicalTransformationDisplay(recipe, item.getDefaultInstance(), outputItemStack));
+                            }
+                        } else {
+                            for (Holder<Item> itemHolder : recipe.inputItems().get().getValues()) {
+                                Item item = itemHolder.value();
+                                itemToTransDisplay.remove(item);
+                            }
+                        }
+                    } else if (recipe.inputNamespace().isPresent()) {
+                        String namespace = recipe.inputNamespace().get();
+                        if (recipe.isValid()) {
+                            for (Item item : namespaceToItems.getOrDefault(namespace, new ArrayList<>())) {
+                                itemToTransDisplay.put(item, new JEIAlchemicalTransformationDisplay(recipe, item.getDefaultInstance(), outputItemStack));
+                            }
+                        } else {
+                            for (Item item : namespaceToItems.getOrDefault(namespace, new ArrayList<>())) {
+                                itemToTransDisplay.remove(item);
+                            }
+                        }
+                    }
+                }
+
+                /*
+                Item outputItem = BuiltInRegistries.ITEM.getValue(recipe.outputId());
                 if (outputItem != Items.AIR) {
                     switch (recipe.inputType()) {
                         case ITEM -> {
@@ -104,20 +156,62 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
                             }
                         }
                     }
-                }
+                }*/
             });
             // 注册展开后的列表
             registration.addRecipes(AlchemicalJeiTypes.ALCHEMICAL_TRANSFORMATION, itemToTransDisplay.values().stream().sorted().toList());
         });
 
+
         // 以下为炼金复制
+        // 精确配方
+        registryAccess.lookup(InitDatapacks.ALCHEMICAL_REPLICATION_PRECISE_KEY).ifPresent(repLookup -> {
+            HashMap<ItemStackTemplate, JEIAlchemicalReplicationDisplay> itemStackToRepDisplay = new HashMap<>();
+            // 顺序遍历所有数据包配方
+            repLookup.listElements().map(Holder.Reference::value).forEach(recipe -> {
+                if (recipe.isValid()) {
+                    itemStackToRepDisplay.put(recipe.output(), new JEIAlchemicalReplicationDisplay(recipe, recipe.getOtherSideItemStack(), recipe.output().create()));
+                } else {
+                    itemStackToRepDisplay.remove(recipe.output());
+                }
+            });
+            registration.addRecipes(AlchemicalJeiTypes.ALCHEMICAL_REPLICATION, itemStackToRepDisplay.values().stream().sorted().toList());
+        });
+
+        // 非精确配方
         registryAccess.lookup(InitDatapacks.ALCHEMICAL_REPLICATION_KEY).ifPresent(repLookup -> {
             // 用 map 来进行配方覆盖和取消
             HashMap<Item, JEIAlchemicalReplicationDisplay> itemToRepDisplay = new HashMap<>();
             // 顺序遍历所有数据包配方
             repLookup.listElements().map(Holder.Reference::value).forEach(recipe -> {
-                Item inputItem = BuiltInRegistries.ITEM.getValue(recipe.inputId());
                 // 炼金复制允许输入空气
+                ItemStack inputItemStack = recipe.getOtherSideItemStack();
+                if (recipe.outputItems().isPresent()) {
+                    if (recipe.isValid()) {
+                        for (Holder<Item> itemHolder : recipe.outputItems().get().getValues()) {
+                            Item item = itemHolder.value();
+                            itemToRepDisplay.put(item, new JEIAlchemicalReplicationDisplay(recipe, inputItemStack, item.getDefaultInstance()));
+                        }
+                    } else {
+                        for (Holder<Item> itemHolder : recipe.outputItems().get().getValues()) {
+                            Item item = itemHolder.value();
+                            itemToRepDisplay.remove(item);
+                        }
+                    }
+                } else if (recipe.outputNamespace().isPresent()) {
+                    String namespace = recipe.outputNamespace().get();
+                    if (recipe.isValid()) {
+                        for (Item item : namespaceToItems.getOrDefault(namespace, new ArrayList<>())) {
+                            itemToRepDisplay.put(item, new JEIAlchemicalReplicationDisplay(recipe, inputItemStack, item.getDefaultInstance()));
+                        }
+                    } else {
+                        for (Item item : namespaceToItems.getOrDefault(namespace, new ArrayList<>())) {
+                            itemToRepDisplay.remove(item);
+                        }
+                    }
+                }
+                /*
+                Item inputItem = BuiltInRegistries.ITEM.getValue(recipe.inputId());
                 switch (recipe.outputType()) {
                     case ITEM -> {
                         Item item = BuiltInRegistries.ITEM.getValue(recipe.outputId());
@@ -153,7 +247,7 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
                             }
                         }
                     }
-                }
+                }*/
             });
             // 注册展开后的列表
             registration.addRecipes(AlchemicalJeiTypes.ALCHEMICAL_REPLICATION, itemToRepDisplay.values().stream().sorted().toList());

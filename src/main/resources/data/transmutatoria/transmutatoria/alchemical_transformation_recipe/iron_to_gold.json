@@ -1,9 +1,11 @@
 {
-  "input_type": "tag",
-  "input_id": "c:ingots/iron",
-  "output_id": "minecraft:gold_ingot",
-  "min_level": 2,
-  "max_level": 2,
+  "input_items": "#c:ingots/iron",
+  "output": "minecraft:gold_ingot",
+  "level": {
+    "type": "transmutatoria:fixed",
+    "min": 3,
+    "max": 3
+  },
   "min_polarity": -10,
   "max_polarity": 50
 }
