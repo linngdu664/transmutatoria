@@ -6,6 +6,9 @@ import com.linngdu664.transmutatoria.util.EssenceMetal;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.InteractionHand;
@@ -72,6 +75,9 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
         this.openingHand = openingHand;
         this.boxState = boxState;
         container.startOpen(playerInventory.player);
+        if (openingHand != null) {
+            playItemSound(playerInventory.player, SoundEvents.CHEST_OPEN);
+        }
         addSlots(container, playerInventory, boxState);
         addPlayerInventory(playerInventory);
     }
@@ -173,10 +179,27 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
         return openingHand;
     }
 
+    private static void playItemSound(Player player, SoundEvent sound) {
+        if (!player.level().isClientSide()) {
+            player.level().playSound(
+                    null,
+                    player.getX(),
+                    player.getY() + 0.5,
+                    player.getZ(),
+                    sound,
+                    SoundSource.BLOCKS,
+                    0.5F,
+                    player.level().getRandom().nextFloat() * 0.1F + 0.9F);
+        }
+    }
+
     @Override
     public void removed(Player player) {
         super.removed(player);
         container.stopOpen(player);
+        if (openingHand != null) {
+            playItemSound(player, SoundEvents.CHEST_CLOSE);
+        }
     }
 
     public static class LockedEssenceMetalSlot extends Slot {

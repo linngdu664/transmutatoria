@@ -2,5 +2,58 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "transmutatoria:item/nigredo_alchemist_storage_box"
+  },
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        135,
+        0
+      ],
+      "translation": [
+        2,
+        6,
+        -2
+      ],
+      "scale": [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        -105,
+        45,
+        180
+      ],
+      "translation": [
+        0,
+        3,
+        7
+      ],
+      "scale": [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    "gui": {
+      "rotation": [
+        -162,
+        37,
+        177
+      ],
+      "translation": [
+        0,
+        7,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    }
   }
 }
