@@ -93,7 +93,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     private int selectedSlot;
     private int processTimer;
     private int targetTimer;
-    private boolean isFinish;
     private IntArrayList inputOrder = new IntArrayList();
 
     public TransmutationCrucibleBlockEntity(BlockPos pos, BlockState state) {
@@ -124,7 +123,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         output.putInt("SelectedSlot", selectedSlot);
         output.putInt("ProcessTimer", processTimer);
         output.putInt("TargetTimer", targetTimer);
-        output.putBoolean("IsFinish", isFinish);
         output.putIntArray("InputOrder", inputOrder.toIntArray());
     }
 
@@ -136,7 +134,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         selectedSlot = input.getIntOr("SelectedSlot", 0);
         processTimer = input.getIntOr("ProcessTimer", 0);
         targetTimer = input.getIntOr("TargetTimer", 0);
-        isFinish = input.getBooleanOr("IsFinish", false);
         inputOrder = new IntArrayList(input.getIntArray("InputOrder").orElse(new int[0]));
     }
 
@@ -191,7 +188,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
 
     @Override
     public boolean canTakeItemThroughFace(int slot, ItemStack itemStack, Direction direction) {
-        if (!isFinish || direction != Direction.DOWN) return false;
+        if (!hasAnyOutput() || direction != Direction.DOWN) return false;
         if (slot == OUTPUT_SLOT) return !items.get(OUTPUT_SLOT).isEmpty();
         if (slot >= ESSENCE_OUTPUT_SLOT && slot < CATALYST_SLOT) return !items.get(slot).isEmpty();
         return false;
@@ -220,6 +217,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         return items.get(slot);
     }
 
+    // 他妈的，mojang简直有病，漏斗不是先检查能不能抽取，而是先调用removeItem把东西取出来，如果不能抽取再塞回去。但是removeItem后isFinish可能为false，为false就开始新反应了，新的源质输出直接顶掉
+    // 所以就不能缓存isFinish状态
     /**
      * 仅用于提供容器兼容，绝对禁止在自己的代码中调用该函数
      * 只能提取输出槽，在 getSlotsForFace 里设置？
@@ -231,10 +230,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
             ServerLevel serverLevel = (ServerLevel) level;
             ChunkPos chunkPos = getChunkPos();
             PacketDistributor.sendToPlayersTrackingChunk(serverLevel, chunkPos, new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, items.get(slot)))));
-            boolean isFinish1 = hasAnyOutput();
-            if (isFinish1 != isFinish) {
-                syncReset(isFinish1);
-            }
             setChanged();
         }
         return result;
@@ -284,7 +279,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         }
         items.clear();  // 由于 items 有默认值，这里的 clear 是重置而不是传统 clear
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots));
-        syncReset(false);
+        syncReset();
         setChanged();
     }
 
@@ -353,13 +348,12 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetSelectedSlotPayload(getBlockPos(), selectedSlot));
     }
 
-    private void syncReset(boolean isFinish) {
-        this.isFinish = isFinish;
+    private void syncReset() {
         this.processTimer = 0;
         this.targetTimer = 0;
         this.selectedSlot = 0;
         this.inputOrder.clear();
-        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleResetPayload(getBlockPos(), isFinish, polarity));
+        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleResetPayload(getBlockPos(), polarity));
     }
 
     private ChunkPos getChunkPos() {
@@ -367,7 +361,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public boolean canAddCatalyst(ItemStack itemStack) {
-        return targetTimer == 0 && !isFinish && getCatalyst().isEmpty()
+        return targetTimer == 0 && !hasAnyOutput() && getCatalyst().isEmpty()
                 && (itemStack.is(Items.ENDER_EYE) || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL)
                 || itemStack.is(InitItems.PHILOSOPHERS_STONE) || itemStack.getItem() instanceof EssenceMetalItem
                 || (itemStack.getItem() instanceof AbstractTransmutationScrollItem && itemStack.has(InitDataComponents.ALCHEMY_SLOTS) && itemStack.has(InitDataComponents.RECIPE_CONDITIONS)))
@@ -375,7 +369,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public boolean canAddInput(ItemStack itemStack) {
-        if (targetTimer != 0 || isFinish || !getInput().isEmpty() || itemStack.isEmpty() || !hasEnoughWater()) {
+        if (targetTimer != 0 || hasAnyOutput() || !getInput().isEmpty() || itemStack.isEmpty() || !hasEnoughWater()) {
             return false;
         }
         ItemStack catalyst = getCatalyst();
@@ -401,7 +395,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public boolean canAddEssence(int slot, ItemStack itemStack) {
-        if (targetTimer != 0 || isFinish || !(itemStack.getItem() instanceof EssenceMetalItem) || slot < ESSENCE_INPUT_SLOT || !items.get(slot).isEmpty() || !hasEnoughWater()) {
+        if (targetTimer != 0 || hasAnyOutput() || !(itemStack.getItem() instanceof EssenceMetalItem) || slot < ESSENCE_INPUT_SLOT || !items.get(slot).isEmpty() || !hasEnoughWater()) {
             return false;
         }
         ItemStack catalyst = getCatalyst();
@@ -505,7 +499,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
             level.setBlock(getBlockPos(), InitBlocks.ALCHEMICAL_DROSS_BLOCK.get().defaultBlockState(), 3);
         } else {
             PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlotsUpdate));
-            syncReset(hasAnyOutput());
+            syncReset();
         }
     }
 
@@ -682,10 +676,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         return 31 * hashValue;
     }
 
-    public boolean isFinish() {
-        return this.isFinish;
-    }
-
     public boolean hasCatalyst() {
         return !items.get(CATALYST_SLOT).isEmpty();
     }
@@ -720,7 +710,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         items.set(CATALYST_SLOT, ItemStack.EMPTY);
         level.addFreshEntity(itemEntity);
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(CATALYST_SLOT, ItemStack.EMPTY))));
-        syncReset(false);
+        syncReset();
         setChanged();
     }
 
@@ -729,7 +719,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         items.set(INPUT_SLOT, ItemStack.EMPTY);
         level.addFreshEntity(itemEntity);
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(INPUT_SLOT, ItemStack.EMPTY))));
-        syncReset(false);
+        syncReset();
         setChanged();
     }
 
@@ -743,7 +733,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
             }
         }
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots));
-        syncReset(false);
+        syncReset();
         setChanged();
     }
 
@@ -761,7 +751,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         level.addFreshEntity(itemEntity);
 
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots));
-        syncReset(false);
+        syncReset();
         setChanged();
     }
 
@@ -800,10 +790,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
 
     public void clientSetTargetTimer(int targetTimer) {
         this.targetTimer = targetTimer;
-    }
-
-    public void clientSetFinish(boolean finish) {
-        this.isFinish = finish;
     }
 
     public void clientSetSelectedSlot(int selectedSlot) {

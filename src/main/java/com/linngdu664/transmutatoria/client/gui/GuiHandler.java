@@ -235,7 +235,7 @@ public class GuiHandler {
                 drawSelectedSlot(guiGraphics, xys, crucible.getSelectedSlot(), delta);
             } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
                 // 源质反应的源质槽位
-                List<ItemStack> essencesInCrucible = crucible.isFinish() ? crucible.getOutputEssences() : crucible.getInputEssences();
+                List<ItemStack> essencesInCrucible = crucible.hasAnyOutput() ? crucible.getOutputEssences() : crucible.getInputEssences();
                 xys = calcPosCrystal(window);
                 drawEssenceSlots(guiGraphics, xys, _ -> Textures.NORMAL_SLOT);
                 drawEssences(guiGraphics, xys, essencesInCrucible::get);
@@ -244,7 +244,7 @@ public class GuiHandler {
                 // 炼金复制/炼金分解的源质槽位
                 List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
                 if (alchemySlots.isEmpty()) return; // 预防措施，即使有东西搞炸了，也不要把客户端崩了
-                List<ItemStack> essencesInCrucible = crucible.isFinish() ? crucible.getOutputEssences() : crucible.getInputEssences();
+                List<ItemStack> essencesInCrucible = crucible.hasAnyOutput() ? crucible.getOutputEssences() : crucible.getInputEssences();
 
                 xys = calcPosScroll(window, alchemySlots);
                 drawEssenceSlots(guiGraphics, xys, slotIdx -> alchemySlots.get(slotIdx).getTexture());
