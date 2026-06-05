@@ -52,7 +52,7 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
             int boxState,
             InteractionHand openingHand
     ) {
-        this(containerId, playerInventory, new StorageBoxContainer(boxStack), boxState, openingHand);
+        this(containerId, playerInventory, new StorageBoxContainer(boxStack, boxState), boxState, openingHand);
     }
 
     public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory, Container container, int boxState) {
@@ -92,10 +92,9 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
     }
 
     private void addSlots(Container container, Inventory playerInventory, int boxState) {
-        EssenceMetal[] metals = EssenceMetal.values();
         for (int j = 0; j < 4; j++) {
             for (int i = 0; i < 3; i++) {
-                addSlot(new LockedEssenceMetalSlot(container, j*3+i, 14+i*12+j*36, 56+i*21, metals[j*3+i], boxState));
+                addSlot(new LockedEssenceMetalSlot(container, j*3+i, 14+i*12+j*36, 56+i*21, boxState));
             }
         }
     }
@@ -154,6 +153,13 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
         };
     }
 
+    public static boolean canPlaceItem(int slot, ItemStack stack, int boxState) {
+        if (slot < 0 || slot >= CONTAINER_SLOTS || !(stack.getItem() instanceof EssenceMetalItem metalItem)) {
+            return false;
+        }
+        return metalItem.getEssenceMetal() == EssenceMetal.values()[slot] && metalItem.getState() == boxState;
+    }
+
     @Override
     public boolean stillValid(Player player) {
         return container.stillValid(player);
@@ -174,30 +180,29 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
     }
 
     public static class LockedEssenceMetalSlot extends Slot {
-        private final EssenceMetal expectedMetal;
+        private final int storageSlot;
         private final int expectedState;
 
-        LockedEssenceMetalSlot(Container container, int slot, int x, int y, EssenceMetal metal, int state) {
+        LockedEssenceMetalSlot(Container container, int slot, int x, int y, int state) {
             super(container, slot, x, y);
-            this.expectedMetal = metal;
+            this.storageSlot = slot;
             this.expectedState = state;
         }
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            if (stack.getItem() instanceof EssenceMetalItem metalItem) {
-                return metalItem.getEssenceMetal() == expectedMetal && metalItem.getState() == expectedState;
-            }
-            return false;
+            return canPlaceItem(storageSlot, stack, expectedState);
         }
     }
 
     static class StorageBoxContainer implements Container {
         final ItemStack stack;
         final NonNullList<ItemStack> items;
+        final int boxState;
 
-        StorageBoxContainer(ItemStack stack) {
+        StorageBoxContainer(ItemStack stack, int boxState) {
             this.stack = stack;
+            this.boxState = boxState;
             this.items = NonNullList.withSize(CONTAINER_SLOTS, ItemStack.EMPTY);
             ItemContainerContents contents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
             contents.copyInto(items);
@@ -250,6 +255,11 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
         @Override
         public void setChanged() {
             saveToStack();
+        }
+
+        @Override
+        public boolean canPlaceItem(int slot, ItemStack stack) {
+            return AlchemistStorageBoxMenu.canPlaceItem(slot, stack, boxState);
         }
 
         @Override

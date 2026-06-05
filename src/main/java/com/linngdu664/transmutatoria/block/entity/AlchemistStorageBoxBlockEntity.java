@@ -136,6 +136,11 @@ public class AlchemistStorageBoxBlockEntity extends BaseContainerBlockEntity imp
     }
 
     @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return AlchemistStorageBoxMenu.canPlaceItem(slot, stack, getBoxState());
+    }
+
+    @Override
     protected Component getDefaultName() {
         return Component.translatable(getBlockState().getBlock().asItem().getDescriptionId());
     }
