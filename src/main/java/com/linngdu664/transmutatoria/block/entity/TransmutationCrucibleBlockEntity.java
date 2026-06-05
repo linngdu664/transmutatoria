@@ -13,9 +13,12 @@ import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.AlchemyReactResult;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
@@ -24,10 +27,8 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.ItemStackWithSlot;
-import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -45,35 +46,27 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public class TransmutationCrucibleBlockEntity extends BlockEntity implements WorldlyContainer {
+public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private static final AABB SUCK_AABB = Block.column(16.0F, 11.0F, 32.0F).toAabbs().getFirst();
-    private static final int ESSENCE_INPUT_SLOT = 0;
-    private static final int ESSENCE_OUTPUT_SLOT = 24;
+    private static final int WATER_PER_REACTION = 20;
+    private static final int ESSENCE_INPUT_SLOT_BEGIN = 0;
+    private static final int ESSENCE_OUTPUT_SLOT_BEGIN = 24;
     private static final int CATALYST_SLOT = 48;
     private static final int INPUT_SLOT = 49;
     private static final int OUTPUT_SLOT = 50;
     private static final int SLOT_COUNT = 51;
-    private static final int[] UP_SLOTS = {CATALYST_SLOT, INPUT_SLOT};
-    private static final int[] SIDE_SLOTS;
-    private static final int[] DOWN_SLOTS;
-    static {
-        SIDE_SLOTS = new int[ESSENCE_OUTPUT_SLOT - ESSENCE_INPUT_SLOT];
-        for (int i = 0; i < SIDE_SLOTS.length; i++) {
-            SIDE_SLOTS[i] = ESSENCE_INPUT_SLOT + i;
-        }
-        DOWN_SLOTS = new int[CATALYST_SLOT - ESSENCE_OUTPUT_SLOT + 1];
-        for (int i = 0; i < DOWN_SLOTS.length - 1; i++) {
-            DOWN_SLOTS[i] = ESSENCE_OUTPUT_SLOT + i;
-        }
-        DOWN_SLOTS[DOWN_SLOTS.length - 1] = OUTPUT_SLOT;
-    }
 
     // 源质输入 - 源质输出 - 催化剂 - 转化输入 - 转化输出
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
+    private int polarity;
+    private int selectedSlot;
+    private int processTimer;
+    private int targetTimer;
+    private IntArrayList inputOrder = new IntArrayList();
+
     private final FluidStacksResourceHandler waterHandler = new FluidStacksResourceHandler(1, 1000) {
         @Override
         protected void onContentsChanged(int index, FluidStack prev) {
@@ -88,12 +81,141 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
             return resource.getFluid() == Fluids.WATER;
         }
     };
-    private static final int WATER_PER_REACTION = 20;
-    private int polarity;
-    private int selectedSlot;
-    private int processTimer;
-    private int targetTimer;
-    private IntArrayList inputOrder = new IntArrayList();
+
+    private final ResourceHandler<ItemResource> upDownItemHandler = new ResourceHandler<>() {
+        @Override
+        public int size() {
+            return 27;
+        }
+
+        @Override
+        public ItemResource getResource(int index) {
+            if (index <= 2) return ItemResource.of(items.get(CATALYST_SLOT + index));
+            return ItemResource.of(items.get(index - 3 + ESSENCE_OUTPUT_SLOT_BEGIN));
+        }
+
+        @Override
+        public long getAmountAsLong(int index) {
+            if (index <= 2) return items.get(CATALYST_SLOT + index).getCount();
+            return items.get(index - 3 + ESSENCE_OUTPUT_SLOT_BEGIN).getCount();
+        }
+
+        @Override
+        public long getCapacityAsLong(int index, ItemResource resource) {
+            return 1;
+        }
+
+        @Override
+        public boolean isValid(int index, ItemResource resource) {
+            if (index == 0) return canAddCatalyst(resource.toStack());
+            if (index == 1) return canAddInput(resource.toStack());
+            return false;
+        }
+
+        @Override
+        public int insert(int index, ItemResource resource, int amount, TransactionContext transaction) {
+            if (amount <= 0) return 0;
+            if (index == 0) {
+                ItemStack itemStack = resource.toStack();
+                if (canAddCatalyst(itemStack)) {
+                    items.set(CATALYST_SLOT, itemStack);
+                    PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(CATALYST_SLOT, itemStack))));
+                    setChanged();
+                    return 1;
+                }
+                return 0;
+            }
+            if (index == 1) {
+                ItemStack itemStack = resource.toStack();
+                if (canAddInput(itemStack)) {
+                    items.set(INPUT_SLOT, itemStack);
+                    PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(INPUT_SLOT, itemStack))));
+                    tryReactAfterAddInput(transaction);
+                    setChanged();
+                    return 1;
+                }
+                return 0;
+            }
+            return 0;
+        }
+
+        @Override
+        public int extract(int index, ItemResource resource, int amount, TransactionContext transaction) {
+            if (index < 2) return 0;
+            int slot = index == 2 ? OUTPUT_SLOT : index - 3 + ESSENCE_OUTPUT_SLOT_BEGIN;
+            ItemStack stack = items.get(slot);
+            if (!resource.matches(stack)) return 0;
+            int toExtract = Math.min(amount, stack.getCount());
+            ItemStack result = ContainerHelper.removeItem(items, slot, toExtract);
+            if (!result.isEmpty()) {
+                PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, items.get(slot)))));
+                setChanged();
+                return result.getCount();
+            }
+            return 0;
+        }
+    };
+
+    private final ResourceHandler<ItemResource> sideItemHandler = new ResourceHandler<>() {
+        @Override
+        public int size() {
+            return 49;
+        }
+
+        @Override
+        public ItemResource getResource(int index) {
+            if (index == 48) return ItemResource.of(getOutput());
+            return ItemResource.of(items.get(index));
+        }
+
+        @Override
+        public long getAmountAsLong(int index) {
+            if (index == 48) return getOutput().getCount();
+            return items.get(index).getCount();
+        }
+
+        @Override
+        public long getCapacityAsLong(int index, ItemResource resource) {
+            return 1;
+        }
+
+        @Override
+        public boolean isValid(int index, ItemResource resource) {
+            if (index < 24) return canAddEssence(index, resource.toStack());
+            return false;
+        }
+
+        @Override
+        public int insert(int index, ItemResource resource, int amount, TransactionContext transaction) {
+            if (index < 24 && amount > 0) {
+                ItemStack itemStack = resource.toStack();
+                if (canAddEssence(index, itemStack)) {
+                    items.set(index, itemStack);
+                    PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(index, itemStack))));
+                    tryReactAfterAddEssence(transaction);
+                    setChanged();
+                    return 1;
+                }
+            }
+            return 0;
+        }
+
+        @Override
+        public int extract(int index, ItemResource resource, int amount, TransactionContext transaction) {
+            if (index < 24) return 0;
+            int slot = index == 48 ? OUTPUT_SLOT : index;
+            ItemStack stack = items.get(slot);
+            if (!resource.matches(stack)) return 0;
+            int toExtract = Math.min(amount, stack.getCount());
+            ItemStack result = ContainerHelper.removeItem(items, slot, toExtract);
+            if (!result.isEmpty()) {
+                PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, items.get(slot)))));
+                setChanged();
+                return result.getCount();
+            }
+            return 0;
+        }
+    };
 
     public TransmutationCrucibleBlockEntity(BlockPos pos, BlockState state) {
         super(InitBlocks.TRANSMUTATION_CRUCIBLE_BLOCK_ENTITY.get(), pos, state);
@@ -137,6 +259,14 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         inputOrder = new IntArrayList(input.getIntArray("InputOrder").orElse(new int[0]));
     }
 
+    public ResourceHandler<ItemResource> getUpDownItemHandler() {
+        return upDownItemHandler;
+    }
+
+    public ResourceHandler<ItemResource> getSideItemHandler() {
+        return sideItemHandler;
+    }
+
     public FluidStacksResourceHandler getWaterHandler() {
         return waterHandler;
     }
@@ -145,9 +275,9 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         return waterHandler.getAmountAsInt(0) >= WATER_PER_REACTION;
     }
 
-    private boolean consumeWater() {
+    private boolean consumeWater(TransactionContext txContext) {
         if (!hasEnoughWater()) return false;
-        try (var tx = Transaction.openRoot()) {
+        try (var tx = txContext != null ? Transaction.open(txContext) : Transaction.openRoot()) {
             int extracted = waterHandler.extract(0, FluidResource.of(Fluids.WATER), WATER_PER_REACTION, tx);
             if (extracted == WATER_PER_REACTION) {
                 tx.commit();
@@ -161,126 +291,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return this.saveWithoutMetadata(registries);
-    }
-
-    @Override
-    public int[] getSlotsForFace(Direction direction) {
-        return switch (direction) {
-            case UP -> UP_SLOTS;
-            case DOWN -> DOWN_SLOTS;
-            default -> SIDE_SLOTS;
-        };
-    }
-
-    @Override
-    public boolean canPlaceItemThroughFace(int slot, ItemStack itemStack, @Nullable Direction direction) {
-        if (direction == null) return false;
-        return switch (direction) {
-            case UP -> {
-                if (slot == CATALYST_SLOT) yield canAddCatalyst(itemStack);
-                if (slot == INPUT_SLOT) yield canAddInput(itemStack);
-                yield false;
-            }
-            case DOWN -> false;
-            default -> canAddEssence(slot, itemStack);
-        };
-    }
-
-    @Override
-    public boolean canTakeItemThroughFace(int slot, ItemStack itemStack, Direction direction) {
-        if (!hasAnyOutput() || direction != Direction.DOWN) return false;
-        if (slot == OUTPUT_SLOT) return !items.get(OUTPUT_SLOT).isEmpty();
-        if (slot >= ESSENCE_OUTPUT_SLOT && slot < CATALYST_SLOT) return !items.get(slot).isEmpty();
-        return false;
-    }
-
-    @Override
-    public int getContainerSize() {
-        return SLOT_COUNT;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        for (ItemStack itemStack : items) {
-            if (!itemStack.isEmpty()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * 仅用于提供容器兼容，禁止在自己的代码中调用该函数
-     */
-    @Override
-    public ItemStack getItem(int slot) {
-        return items.get(slot);
-    }
-
-    // 他妈的，mojang简直有病，漏斗不是先检查能不能抽取，而是先调用removeItem把东西取出来，如果不能抽取再塞回去。但是removeItem后isFinish可能为false，为false就开始新反应了，新的源质输出直接顶掉
-    // 所以就不能缓存isFinish状态
-    /**
-     * 仅用于提供容器兼容，绝对禁止在自己的代码中调用该函数
-     * 只能提取输出槽，在 getSlotsForFace 里设置？
-     */
-    @Override
-    public ItemStack removeItem(int slot, int count) {
-        ItemStack result = ContainerHelper.removeItem(items, slot, count);
-        if (!result.isEmpty()) {
-            ServerLevel serverLevel = (ServerLevel) level;
-            ChunkPos chunkPos = getChunkPos();
-            PacketDistributor.sendToPlayersTrackingChunk(serverLevel, chunkPos, new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, items.get(slot)))));
-            setChanged();
-        }
-        return result;
-    }
-
-    /**
-     * 仅用于提供容器兼容，绝对禁止在自己的代码中调用该函数
-     * 只能提取输出槽，在 getSlotsForFace 里设置？
-     */
-    @Override
-    public ItemStack removeItemNoUpdate(int slot) {
-        return ContainerHelper.takeItem(items, slot);
-    }
-
-    /**
-     * 仅用于提供容器兼容，绝对禁止在自己的代码中调用该函数
-     * 只能放置输入槽，在 getSlotsForFace 里设置？
-     */
-    @Override
-    public void setItem(int slot, ItemStack itemStack) {
-        items.set(slot, itemStack);
-        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, itemStack))));
-        if (slot == INPUT_SLOT) {
-            tryReactAfterAddInput();
-        } else if (slot >= ESSENCE_INPUT_SLOT && slot < ESSENCE_OUTPUT_SLOT) {
-            tryReactAfterAddEssence();
-        }
-        setChanged();
-    }
-
-    /**
-     * 仅用于提供容器兼容
-     */
-    @Override
-    public boolean stillValid(Player player) {
-        return Container.stillValidBlockEntity(this, player);
-    }
-
-    /**
-     * 仅用于提供容器兼容，绝对禁止在自己的代码中调用该函数
-     */
-    @Override
-    public void clearContent() {
-        ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(SLOT_COUNT);
-        for (int i = 0; i < SLOT_COUNT; i++) {
-            itemStackWithSlots.add(new ItemStackWithSlot(i, ItemStack.EMPTY));
-        }
-        items.clear();  // 由于 items 有默认值，这里的 clear 是重置而不是传统 clear
-        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots));
-        syncReset();
-        setChanged();
     }
 
     public void entityInside(Entity entity) {
@@ -306,7 +316,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
             return false;
         }
         suckOneAndSync(entity, INPUT_SLOT);
-        tryReactAfterAddInput();
+        tryReactAfterAddInput(null);
         return true;
     }
 
@@ -318,7 +328,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         // 吸入源质金属并记录加入顺序
         suckOneAndSync(entity, selectedSlot);
         inputOrder.add(selectedSlot);
-        int maxSlot = tryReactAfterAddEssence();
+        int maxSlot = tryReactAfterAddEssence(null);
 
         // 公共逻辑：自动指向下一个槽位
         syncSelectedSlot((selectedSlot + 1) % maxSlot);
@@ -395,7 +405,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public boolean canAddEssence(int slot, ItemStack itemStack) {
-        if (targetTimer != 0 || hasAnyOutput() || !(itemStack.getItem() instanceof EssenceMetalItem) || slot < ESSENCE_INPUT_SLOT || !items.get(slot).isEmpty() || !hasEnoughWater()) {
+        if (targetTimer != 0 || hasAnyOutput() || !(itemStack.getItem() instanceof EssenceMetalItem) || slot < ESSENCE_INPUT_SLOT_BEGIN || !items.get(slot).isEmpty() || !hasEnoughWater()) {
             return false;
         }
         ItemStack catalyst = getCatalyst();
@@ -405,54 +415,54 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
             ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
             List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
             return container.getSlots() > 0 && getInput().getItem() == container.getStackInSlot(0).getItem()
-                    && !alchemySlots.isEmpty() && slot - ESSENCE_INPUT_SLOT < alchemySlots.size();
+                    && !alchemySlots.isEmpty() && slot - ESSENCE_INPUT_SLOT_BEGIN < alchemySlots.size();
         }
 
         if (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL)) {
             // 源质反应：槽位只能是 0 或 1
-            return slot - ESSENCE_INPUT_SLOT < 2;
+            return slot - ESSENCE_INPUT_SLOT_BEGIN < 2;
         }
 
         if (getCatalyst().getItem() instanceof EssenceMetalItem essenceMetalItem) {
             // 源质融合：槽位不越界
-            return slot - ESSENCE_INPUT_SLOT < essenceMetalItem.getEssenceMetal().getRestrainsAndDoubleRestrains().size();
+            return slot - ESSENCE_INPUT_SLOT_BEGIN < essenceMetalItem.getEssenceMetal().getRestrainsAndDoubleRestrains().size();
         }
 
         // 其他的催化剂不接受源质金属输入
         return false;
     }
 
-    private void tryReactAfterAddInput() {
+    private void tryReactAfterAddInput(TransactionContext txContext) {
         // 无须源质金属，直接开始反应
         ItemStack catalyst = getCatalyst();
         if (catalyst.is(Items.ENDER_EYE)) {
             // 嬗变分解
-            if (consumeWater()) {
+            if (consumeWater(txContext)) {
                 syncTargetTimer(10);
             }
         } else if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
             // 混沌分解
             CrucibleRecipe recipe = CrucibleRecipeManager.findMatchRep(level, getInput());
-            if (recipe != null && consumeWater()) {
+            if (recipe != null && consumeWater(txContext)) {
                 IntIntImmutablePair minMax = recipe.level().getMinMax(level, getInput());
                 syncTargetTimer(5 * (minMax.leftInt() + minMax.rightInt()));
             }
         }
     }
 
-    private int tryReactAfterAddEssence() {
+    private int tryReactAfterAddEssence(TransactionContext txContext) {
         ItemStack catalyst = getCatalyst();
         // 显然嬗变分解、混沌分解不会调用这个函数
         if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
             // 炼金复制/炼金合成：加够了
             List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
-            if (inputOrder.size() == alchemySlots.size() && consumeWater()) {
+            if (inputOrder.size() == alchemySlots.size() && consumeWater(txContext)) {
                 syncTargetTimer(10 * alchemySlots.size());
             }
             return alchemySlots.size();
         } else if (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL)) {
             // 源质反应：两个槽都有金属了
-            if (!items.get(ESSENCE_INPUT_SLOT).isEmpty() && !items.get(ESSENCE_INPUT_SLOT + 1).isEmpty() && consumeWater()) {
+            if (!items.get(ESSENCE_INPUT_SLOT_BEGIN).isEmpty() && !items.get(ESSENCE_INPUT_SLOT_BEGIN + 1).isEmpty() && consumeWater(txContext)) {
                 syncTargetTimer(20);
             }
             return 2;
@@ -462,12 +472,12 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
             int size = essenceRequired.size();
             if (inputOrder.size() == size) {
                 HashSet<EssenceMetal> essenceRequired1 = new HashSet<>(essenceRequired);
-                for (int i = ESSENCE_INPUT_SLOT, upper = ESSENCE_OUTPUT_SLOT + size; i < upper; i++) {
+                for (int i = ESSENCE_INPUT_SLOT_BEGIN, upper = ESSENCE_OUTPUT_SLOT_BEGIN + size; i < upper; i++) {
                     if (items.get(i).getItem() instanceof EssenceMetalItem inputEssenceMetalItem) {
                         essenceRequired1.remove(inputEssenceMetalItem.getEssenceMetal());
                     }
                 }
-                if (essenceRequired1.isEmpty() && consumeWater()) {
+                if (essenceRequired1.isEmpty() && consumeWater(txContext)) {
                     syncTargetTimer(20);
                 }
             }
@@ -517,10 +527,10 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     private void handleCrystalReaction(ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate) {
-        if (items.get(ESSENCE_INPUT_SLOT).getItem() instanceof EssenceMetalItem essence1 && items.get(ESSENCE_INPUT_SLOT + 1).getItem() instanceof EssenceMetalItem essence2) {
+        if (items.get(ESSENCE_INPUT_SLOT_BEGIN).getItem() instanceof EssenceMetalItem essence1 && items.get(ESSENCE_INPUT_SLOT_BEGIN + 1).getItem() instanceof EssenceMetalItem essence2) {
             EssenceMetal.Relation relation = essence1.getEssenceMetal().getRelationTo(essence2.getEssenceMetal());
-            setItemAndRecordChange(ESSENCE_OUTPUT_SLOT, essence1.change(relation.self), itemStackWithSlotsUpdate);
-            setItemAndRecordChange(ESSENCE_OUTPUT_SLOT + 1, essence2.change(relation.other), itemStackWithSlotsUpdate);
+            setItemAndRecordChange(ESSENCE_OUTPUT_SLOT_BEGIN, essence1.change(relation.self), itemStackWithSlotsUpdate);
+            setItemAndRecordChange(ESSENCE_OUTPUT_SLOT_BEGIN + 1, essence2.change(relation.other), itemStackWithSlotsUpdate);
             polarity += relation.self + relation.other;
         }
     }
@@ -533,7 +543,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
             int essenceCnt = randomSource.nextInt(minMax.leftInt(), minMax.rightInt() + 1);
             int len = InitItems.ESSENCE_METAL_ITEMS.length;
             for (int i = 0; i < essenceCnt; i++) {
-                setItemAndRecordChange(ESSENCE_OUTPUT_SLOT + i, InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(len)].toStack(), itemStackWithSlotsUpdate);
+                setItemAndRecordChange(ESSENCE_OUTPUT_SLOT_BEGIN + i, InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(len)].toStack(), itemStackWithSlotsUpdate);
             }
             setItemAndRecordChange(INPUT_SLOT, ItemStack.EMPTY, itemStackWithSlotsUpdate);
         }
@@ -552,8 +562,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
                 posToOutputSlot.put(slot.getPackedXY(), i);
                 i++;
             }
+            // todo 这个魔法数字应该换个地方，写在卷轴里
             int crucibleMagicNumber = getCrucibleMagicNumber();
-
             // 反应
             int annihilationCnt = 0;
             int entropy = catalyst.getOrDefault(InitDataComponents.ENTROPY, 0);
@@ -561,7 +571,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
                 AlchemyReactResult result = alchemySlots.get(slot).react(
                         catalyst,
                         items.get(slot),
-                        items.subList(ESSENCE_OUTPUT_SLOT, CATALYST_SLOT),
+                        items.subList(ESSENCE_OUTPUT_SLOT_BEGIN, CATALYST_SLOT),
                         inhibitionStates,
                         posToOutputSlot,
                         deferredTasks,
@@ -590,7 +600,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
                 setItemAndRecordChange(INPUT_SLOT, ItemStack.EMPTY, itemStackWithSlotsUpdate);
             }
 
-            for (int j = ESSENCE_OUTPUT_SLOT, upper = ESSENCE_OUTPUT_SLOT + alchemySlots.size(); j < upper; j++) {
+            for (int j = ESSENCE_OUTPUT_SLOT_BEGIN, upper = ESSENCE_OUTPUT_SLOT_BEGIN + alchemySlots.size(); j < upper; j++) {
                 recordItemChange(j, itemStackWithSlotsUpdate);
             }
             recordItemChange(CATALYST_SLOT, itemStackWithSlotsUpdate);
@@ -598,7 +608,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     private void clearInputEssencesAndRecordChange(List<ItemStackWithSlot> itemStackWithSlots) {
-        for (int i = ESSENCE_INPUT_SLOT; i < ESSENCE_OUTPUT_SLOT; i++) {
+        for (int i = ESSENCE_INPUT_SLOT_BEGIN; i < ESSENCE_OUTPUT_SLOT_BEGIN; i++) {
             if (!items.get(i).isEmpty()) {
                 setItemAndRecordChange(i, ItemStack.EMPTY, itemStackWithSlots);
             }
@@ -643,7 +653,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
      * @return 源质输入槽的不可变视图
      */
     public List<ItemStack> getInputEssences() {
-        return Collections.unmodifiableList(items.subList(ESSENCE_INPUT_SLOT, ESSENCE_OUTPUT_SLOT));
+        return Collections.unmodifiableList(items.subList(ESSENCE_INPUT_SLOT_BEGIN, ESSENCE_OUTPUT_SLOT_BEGIN));
     }
 
     /**
@@ -651,7 +661,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
      * @return 源质输出槽的不可变视图
      */
     public List<ItemStack> getOutputEssences() {
-        return Collections.unmodifiableList(items.subList(ESSENCE_OUTPUT_SLOT, CATALYST_SLOT));
+        return Collections.unmodifiableList(items.subList(ESSENCE_OUTPUT_SLOT_BEGIN, CATALYST_SLOT));
     }
 
     public int getPolarity() {
@@ -659,7 +669,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public int getSelectedSlot() {
-        return selectedSlot - ESSENCE_INPUT_SLOT;
+        return selectedSlot - ESSENCE_INPUT_SLOT_BEGIN;
     }
 
     public int getProcessTimer() {
@@ -685,7 +695,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public boolean hasInputEssenceMetals() {
-        for (int i = ESSENCE_INPUT_SLOT; i < ESSENCE_OUTPUT_SLOT; i++) {
+        for (int i = ESSENCE_INPUT_SLOT_BEGIN; i < ESSENCE_OUTPUT_SLOT_BEGIN; i++) {
             if (!items.get(i).isEmpty()) {
                 return true;
             }
@@ -697,7 +707,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         if (!items.get(OUTPUT_SLOT).isEmpty()) {
             return true;
         }
-        for (int i = ESSENCE_OUTPUT_SLOT; i < CATALYST_SLOT; i++) {
+        for (int i = ESSENCE_OUTPUT_SLOT_BEGIN; i < CATALYST_SLOT; i++) {
             if (!items.get(i).isEmpty()) {
                 return true;
             }
@@ -724,8 +734,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public void takeEssenceInput(Player player) {
-        ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(ESSENCE_OUTPUT_SLOT - ESSENCE_INPUT_SLOT);
-        for (int i = ESSENCE_INPUT_SLOT; i < ESSENCE_OUTPUT_SLOT; i++) {
+        ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(ESSENCE_OUTPUT_SLOT_BEGIN - ESSENCE_INPUT_SLOT_BEGIN);
+        for (int i = ESSENCE_INPUT_SLOT_BEGIN; i < ESSENCE_OUTPUT_SLOT_BEGIN; i++) {
             if (!items.get(i).isEmpty()) {
                 ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), items.get(i));
                 setItemAndRecordChange(i, ItemStack.EMPTY, itemStackWithSlots);
@@ -738,8 +748,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public void takeAllOutput(Player player) {
-        ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(CATALYST_SLOT - ESSENCE_OUTPUT_SLOT);
-        for (int i = ESSENCE_OUTPUT_SLOT; i < CATALYST_SLOT; i++) {
+        ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(CATALYST_SLOT - ESSENCE_OUTPUT_SLOT_BEGIN);
+        for (int i = ESSENCE_OUTPUT_SLOT_BEGIN; i < CATALYST_SLOT; i++) {
             if (!items.get(i).isEmpty()) {
                 ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), items.get(i));
                 setItemAndRecordChange(i, ItemStack.EMPTY, itemStackWithSlots);
