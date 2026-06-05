@@ -12,6 +12,10 @@ import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.AlchemyReactResult;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
@@ -30,6 +34,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -69,6 +74,21 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
 
     // 源质输入 - 源质输出 - 催化剂 - 转化输入 - 转化输出
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
+    private final FluidStacksResourceHandler waterHandler = new FluidStacksResourceHandler(1, 1000) {
+        @Override
+        protected void onContentsChanged(int index, FluidStack prev) {
+            setChanged();
+            if (level != null) {
+                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+            }
+        }
+
+        @Override
+        public boolean isValid(int index, FluidResource resource) {
+            return resource.getFluid() == Fluids.WATER;
+        }
+    };
+    private static final int WATER_PER_REACTION = 20;
     private int polarity;
     private int selectedSlot;
     private int processTimer;
@@ -99,6 +119,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     @Override
     public void saveAdditional(ValueOutput output) {
         ContainerHelper.saveAllItems(output, items, true);
+        waterHandler.serialize(output);
         output.putInt("Polarity", polarity);
         output.putInt("SelectedSlot", selectedSlot);
         output.putInt("ProcessTimer", processTimer);
@@ -110,12 +131,33 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     @Override
     public void loadAdditional(ValueInput input) {
         ContainerHelper.loadAllItems(input, items);
+        waterHandler.deserialize(input);
         polarity = input.getIntOr("Polarity", 0);
         selectedSlot = input.getIntOr("SelectedSlot", 0);
         processTimer = input.getIntOr("ProcessTimer", 0);
         targetTimer = input.getIntOr("TargetTimer", 0);
         isFinish = input.getBooleanOr("IsFinish", false);
         inputOrder = new IntArrayList(input.getIntArray("InputOrder").orElse(new int[0]));
+    }
+
+    public FluidStacksResourceHandler getWaterHandler() {
+        return waterHandler;
+    }
+
+    private boolean hasEnoughWater() {
+        return waterHandler.getAmountAsInt(0) >= WATER_PER_REACTION;
+    }
+
+    private boolean consumeWater() {
+        if (!hasEnoughWater()) return false;
+        try (var tx = Transaction.openRoot()) {
+            int extracted = waterHandler.extract(0, FluidResource.of(Fluids.WATER), WATER_PER_REACTION, tx);
+            if (extracted == WATER_PER_REACTION) {
+                tx.commit();
+                return true;
+            }
+            return false;
+        }
     }
 
     // 区块加载时会自动触发全量更新同步
@@ -328,11 +370,12 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         return targetTimer == 0 && !isFinish && getCatalyst().isEmpty()
                 && (itemStack.is(Items.ENDER_EYE) || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL)
                 || itemStack.is(InitItems.PHILOSOPHERS_STONE) || itemStack.getItem() instanceof EssenceMetalItem
-                || (itemStack.getItem() instanceof AbstractTransmutationScrollItem && itemStack.has(InitDataComponents.ALCHEMY_SLOTS) && itemStack.has(InitDataComponents.RECIPE_CONDITIONS)));
+                || (itemStack.getItem() instanceof AbstractTransmutationScrollItem && itemStack.has(InitDataComponents.ALCHEMY_SLOTS) && itemStack.has(InitDataComponents.RECIPE_CONDITIONS)))
+                && hasEnoughWater();
     }
 
     public boolean canAddInput(ItemStack itemStack) {
-        if (targetTimer != 0 || isFinish || !getInput().isEmpty() || itemStack.isEmpty()) {
+        if (targetTimer != 0 || isFinish || !getInput().isEmpty() || itemStack.isEmpty() || !hasEnoughWater()) {
             return false;
         }
         ItemStack catalyst = getCatalyst();
@@ -358,7 +401,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
     }
 
     public boolean canAddEssence(int slot, ItemStack itemStack) {
-        if (targetTimer != 0 || isFinish || !(itemStack.getItem() instanceof EssenceMetalItem) || slot < ESSENCE_INPUT_SLOT || !items.get(slot).isEmpty()) {
+        if (targetTimer != 0 || isFinish || !(itemStack.getItem() instanceof EssenceMetalItem) || slot < ESSENCE_INPUT_SLOT || !items.get(slot).isEmpty() || !hasEnoughWater()) {
             return false;
         }
         ItemStack catalyst = getCatalyst();
@@ -390,11 +433,13 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         ItemStack catalyst = getCatalyst();
         if (catalyst.is(Items.ENDER_EYE)) {
             // 嬗变分解
-            syncTargetTimer(10);
+            if (consumeWater()) {
+                syncTargetTimer(10);
+            }
         } else if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
             // 混沌分解
             CrucibleRecipe recipe = CrucibleRecipeManager.findMatchRep(level, getInput());
-            if (recipe != null) {
+            if (recipe != null && consumeWater()) {
                 IntIntImmutablePair minMax = recipe.level().getMinMax(level, getInput());
                 syncTargetTimer(5 * (minMax.leftInt() + minMax.rightInt()));
             }
@@ -407,13 +452,13 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
         if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
             // 炼金复制/炼金合成：加够了
             List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
-            if (inputOrder.size() == alchemySlots.size()) {
+            if (inputOrder.size() == alchemySlots.size() && consumeWater()) {
                 syncTargetTimer(10 * alchemySlots.size());
             }
             return alchemySlots.size();
         } else if (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL)) {
             // 源质反应：两个槽都有金属了
-            if (!items.get(ESSENCE_INPUT_SLOT).isEmpty() && !items.get(ESSENCE_INPUT_SLOT + 1).isEmpty()) {
+            if (!items.get(ESSENCE_INPUT_SLOT).isEmpty() && !items.get(ESSENCE_INPUT_SLOT + 1).isEmpty() && consumeWater()) {
                 syncTargetTimer(20);
             }
             return 2;
@@ -428,7 +473,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity implements Wor
                         essenceRequired1.remove(inputEssenceMetalItem.getEssenceMetal());
                     }
                 }
-                if (essenceRequired1.isEmpty()) {
+                if (essenceRequired1.isEmpty() && consumeWater()) {
                     syncTargetTimer(20);
                 }
             }

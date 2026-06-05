@@ -214,10 +214,12 @@ public class GuiHandler {
             guiGraphics.item(crucible.getOutput(), pos.x() + 3, pos.y() + 3);
 
             // 临时的极性显示
-            V2I polarityPos = GuiUtil.v2IRatio(window, 0.8, 0.2);
-            guiGraphics.text(mc.font, String.valueOf(crucible.getPolarity()), polarityPos.x(), polarityPos.y(), 0xffffffff);
+            V2I polarityPos = GuiUtil.v2IRatio(window, 0.75, 0.2);
+            guiGraphics.text(mc.font, "Polarity: " + crucible.getPolarity(), polarityPos.x(), polarityPos.y(), 0xffffffff);
+            // 临时的进度显示
+            guiGraphics.text(mc.font, "Progress: " + crucible.getProcessTimer() + "/" + crucible.getTargetTimer(), polarityPos.x(), polarityPos.y() + 9, 0xffffffff);
 
-            drawBackground(guiGraphics,window,catalyst);
+            drawBackground(guiGraphics, window, catalyst);
 
             long[] xys = null;
             if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
