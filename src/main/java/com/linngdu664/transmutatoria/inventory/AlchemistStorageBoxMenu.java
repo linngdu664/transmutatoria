@@ -5,8 +5,10 @@ import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -14,6 +16,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+import org.jspecify.annotations.Nullable;
 
 public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
     public static final int CONTAINER_SLOTS = 12;
@@ -24,31 +27,68 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
     private static final int TOTAL_SLOTS = HOTBAR_END;
 
     private final Container container;
+    private final @Nullable InteractionHand openingHand;
     public final int boxState;
 
     // Client-side constructor
     public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory) {
-        this(containerId, playerInventory, new SimpleContainer(CONTAINER_SLOTS), 0);
+        this(containerId, playerInventory, new SimpleContainer(CONTAINER_SLOTS), 0, null);
     }
 
     // Client-side constructor with boxState
     public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory, int boxState) {
-        this(containerId, playerInventory, new SimpleContainer(CONTAINER_SLOTS), boxState);
+        this(containerId, playerInventory, new SimpleContainer(CONTAINER_SLOTS), boxState, null);
     }
 
     // Server-side constructor
     public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory, ItemStack boxStack, int boxState) {
-        this(containerId, playerInventory, new StorageBoxContainer(boxStack), boxState);
+        this(containerId, playerInventory, boxStack, boxState, null);
+    }
+
+    public AlchemistStorageBoxMenu(
+            int containerId,
+            Inventory playerInventory,
+            ItemStack boxStack,
+            int boxState,
+            InteractionHand openingHand
+    ) {
+        this(containerId, playerInventory, new StorageBoxContainer(boxStack), boxState, openingHand);
     }
 
     public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory, Container container, int boxState) {
+        this(containerId, playerInventory, container, boxState, null);
+    }
+
+    private AlchemistStorageBoxMenu(
+            int containerId,
+            Inventory playerInventory,
+            Container container,
+            int boxState,
+            @Nullable InteractionHand openingHand
+    ) {
         super(getMenuType(boxState), containerId);
         checkContainerSize(container, CONTAINER_SLOTS);
         this.container = container;
+        this.openingHand = openingHand;
         this.boxState = boxState;
         container.startOpen(playerInventory.player);
         addSlots(container, playerInventory, boxState);
         addPlayerInventory(playerInventory);
+    }
+
+    public static AlchemistStorageBoxMenu fromNetwork(
+            int containerId,
+            Inventory playerInventory,
+            @Nullable RegistryFriendlyByteBuf data,
+            int boxState
+    ) {
+        InteractionHand openingHand = data == null ? null : data.readEnum(InteractionHand.class);
+        return new AlchemistStorageBoxMenu(
+                containerId,
+                playerInventory,
+                new SimpleContainer(CONTAINER_SLOTS),
+                boxState,
+                openingHand);
     }
 
     private void addSlots(Container container, Inventory playerInventory, int boxState) {
@@ -121,6 +161,10 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
 
     public boolean isContainer(Container container) {
         return this.container == container;
+    }
+
+    public @Nullable InteractionHand getOpeningHand() {
+        return openingHand;
     }
 
     @Override

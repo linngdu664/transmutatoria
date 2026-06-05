@@ -9,6 +9,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
@@ -42,11 +43,12 @@ public class AlchemistStorageBoxItem extends BlockItem {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!level.isClientSide()) {
-            player.openMenu(new SimpleMenuProvider(
+        if (player instanceof ServerPlayer serverPlayer) {
+            SimpleMenuProvider provider = new SimpleMenuProvider(
                     (containerId, playerInventory, p) ->
-                            new AlchemistStorageBoxMenu(containerId, playerInventory, stack, state),
-                    stack.getHoverName()));
+                            new AlchemistStorageBoxMenu(containerId, playerInventory, stack, state, hand),
+                    stack.getHoverName());
+            serverPlayer.openMenu(provider, buffer -> buffer.writeEnum(hand));
         }
         return InteractionResult.SUCCESS;
     }
