@@ -28,5 +28,10 @@ public class InitCapabilities {
                     };
                 }
         );
+        event.registerBlockEntity(
+                Capabilities.Item.BLOCK,
+                InitBlocks.ALCHEMIST_STORAGE_BOX_BLOCK_ENTITY.get(),
+                (be, side) -> be.getItemHandler()
+        );
     }
 }
