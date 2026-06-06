@@ -257,9 +257,9 @@ public class GuiHandler {
                 drawSelectedSlot(guiGraphics, xys, crucible.getSelectedSlot(), delta);
 
                 // 画可能的箭头
-                int crucibleMagicNumber = crucible.getCrucibleMagicNumber();
+                int magicNumber = catalyst.getOrDefault(InitDataComponents.MAGIC_NUMBER, 0);
                 for (int i = 0, size = alchemySlots.size(); i < size; i++) {
-                    switch (alchemySlots.get(i).getDirection(AbstractAlchemySlot.getSlotMagicNumber(crucibleMagicNumber, i))) {
+                    switch (alchemySlots.get(i).getShowDirection(AbstractAlchemySlot.getSlotMagicNumber(magicNumber, i))) {
                         case 0 -> Textures.UP_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 11, getYFromPacked(xys[i]) - 2);
                         case 1 -> Textures.UPRIGHT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 21, getYFromPacked(xys[i]) + 5);
                         case 2 -> Textures.DOWNRIGHT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 21, getYFromPacked(xys[i]) + 17);

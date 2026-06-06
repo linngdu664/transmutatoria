@@ -2,6 +2,7 @@ package com.linngdu664.transmutatoria.item;
 
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.inventory.TransmutationSigilScrollMenu;
+import com.linngdu664.transmutatoria.item.component.ExpireInfo;
 import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.recipe.CrucibleRecipeManager;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
@@ -21,6 +22,10 @@ public class TransmutationSigilScrollItem extends AbstractTransmutationScrollIte
         super(id);
     }
 
+    public TransmutationSigilScrollItem(Identifier id, ExpireInfo expireInfo) {
+        super(id, expireInfo);
+    }
+
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -38,9 +43,9 @@ public class TransmutationSigilScrollItem extends AbstractTransmutationScrollIte
         scrollStack.set(InitDataComponents.RECIPE_CONDITIONS, new RecipeConditions(recipe.oneTime(), recipe.minPolarity(), recipe.maxPolarity()));
         RandomSource random = level.getRandom();
         IntIntImmutablePair minMaxLevel = recipe.level().getMinMax(level, inputStack);
-        System.out.println("minMaxLevel: " + minMaxLevel);
         int count = random.nextInt(minMaxLevel.leftInt(), minMaxLevel.rightInt() + 1);
         AlchemySlotGenerator.generate(scrollStack, count, random);
+        scrollStack.set(InitDataComponents.MAGIC_NUMBER, random.nextInt());
     }
 
     @Override

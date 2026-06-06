@@ -2,6 +2,7 @@ package com.linngdu664.transmutatoria.util;
 
 import com.linngdu664.transmutatoria.client.gui.Textures;
 import com.linngdu664.transmutatoria.client.gui.util.TextureRenderable;
+import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.alchemy_slots.*;
 
@@ -39,7 +40,7 @@ public abstract class AbstractAlchemySlot {
         return false;
     }
 
-    public final int getDirection(int magicNumber) {
+    public final int getShowDirection(int magicNumber) {
         if (!hasDirection()) {
             return -1;
         }
@@ -61,15 +62,14 @@ public abstract class AbstractAlchemySlot {
      * @param inhibitionStates 输出槽位的抑制状态
      * @param posToOutputSlot 槽位 xy 到 输出槽下标的映射
      * @param deferredTasks 延迟任务列表
-     * @param magicNumber 方块位置、下一次重置时刻、本对象对应输出槽下标 的哈希
      * @return 最终反应结果
      */
-    public final AlchemyReactResult react(ItemStack scroll, ItemStack input, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
+    public final AlchemyReactResult react(ItemStack scroll, ItemStack input, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks) {
         if (!(input.getItem() instanceof EssenceMetalItem inputEssenceMetal)) {
             return new AlchemyReactResult(0, 0, 0, false, false);
         }
 
-        AlchemyReactResult result = internalReact(scroll, inputEssenceMetal, outputs, inhibitionStates, posToOutputSlot, deferredTasks, magicNumber);
+        AlchemyReactResult result = internalReact(scroll, inputEssenceMetal, outputs, inhibitionStates, posToOutputSlot, deferredTasks);
         int slot = posToOutputSlot.get(getPackedXY(x, y));
 
         // 如果本槽位被标记为抑制，强制把状态变化设成 0
@@ -100,10 +100,9 @@ public abstract class AbstractAlchemySlot {
      * @param inhibitionStates 输出槽位的抑制状态
      * @param posToOutputSlot 槽位 xy 到 输出槽下标的映射
      * @param deferredTasks 延迟任务列表
-     * @param magicNumber 方块位置、下一次重置时刻、本对象对应输出槽下标 的哈希
      * @return 中间反应结果，可被调整
      */
-    protected AlchemyReactResult internalReact(ItemStack scroll, EssenceMetalItem inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
+    protected AlchemyReactResult internalReact(ItemStack scroll, EssenceMetalItem inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks) {
         EssenceMetal.Relation relation = inputEssence.getRelation(essenceMetal);
         return switch (relation) {
             case DOUBLE_RESTRAIN, DOUBLE_BE_RESTRAINED -> new AlchemyReactResult(relation.self, relation.other, 2, false, false);
@@ -135,6 +134,10 @@ public abstract class AbstractAlchemySlot {
 
     public int getPackedXY() {
         return getPackedXY(x, y);
+    }
+
+    public int getSlotDirection(ItemStack scroll, Int2IntMap posToOutputSlot) {
+        return Math.floorMod(getSlotMagicNumber(scroll.getOrDefault(InitDataComponents.MAGIC_NUMBER, 0), posToOutputSlot.get(getPackedXY())), 6);
     }
 
     public void setEssenceMetal(EssenceMetal essenceMetal) {
@@ -180,8 +183,8 @@ public abstract class AbstractAlchemySlot {
         return (y << 16) | (x & 0xffff);
     }
 
-    public static int getSlotMagicNumber(int crucibleMagicNumber, int slot) {
-        return 31 * (crucibleMagicNumber + slot);
+    public static int getSlotMagicNumber(int magicNumber, int slot) {
+        return 1664525 * (magicNumber + slot + 1013904223);
     }
 
     /**

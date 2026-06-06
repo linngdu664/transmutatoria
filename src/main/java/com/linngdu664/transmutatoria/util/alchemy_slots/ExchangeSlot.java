@@ -23,9 +23,9 @@ public class ExchangeSlot extends AbstractAlchemySlot {
     }
 
     @Override
-    protected AlchemyReactResult internalReact(ItemStack scroll, EssenceMetalItem inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
-        AlchemyReactResult result = super.internalReact(scroll, inputEssence, outputs, inhibitionStates, posToOutputSlot, deferredTasks, magicNumber);
-        int slot = posToOutputSlot.getOrDefault(getAdjacentPackedXY(Math.floorMod(magicNumber, 6)), -1);
+    protected AlchemyReactResult internalReact(ItemStack scroll, EssenceMetalItem inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks) {
+        AlchemyReactResult result = super.internalReact(scroll, inputEssence, outputs, inhibitionStates, posToOutputSlot, deferredTasks);
+        int slot = posToOutputSlot.getOrDefault(getAdjacentPackedXY(getSlotDirection(scroll, posToOutputSlot)), -1);
         if (slot >= 0 && !outputs.get(slot).isEmpty()) {
             int thisSlot = posToOutputSlot.get(getPackedXY(x, y));
             ItemStack itemStack = outputs.get(thisSlot);
