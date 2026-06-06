@@ -13,11 +13,9 @@ public class AlchemySlotGenerator {
         EssenceMetal[] allMetals = EssenceMetal.values();
 
         for (HexPos pos : positions) {
-            slots.add(AbstractAlchemySlot.create(
-                    pickSlotType(positions.size(), random),
-                    allMetals[random.nextInt(allMetals.length)],
-                    pos.x, pos.y, true
-            ));
+            SlotType slotType = pickSlotType(positions.size(), random);
+            slots.add(AbstractAlchemySlot.create(slotType, allMetals[random.nextInt(allMetals.length)],
+                    pos.x, pos.y, shouldSetShowType(slotType, positions.size(), random)));
         }
 
         scrollStack.set(InitDataComponents.ALCHEMY_SLOTS, slots);
@@ -88,7 +86,13 @@ public class AlchemySlotGenerator {
     // todo 后续可能在配置文件中加入特殊槽位概率？
     private static SlotType pickSlotType(int slotCount, RandomSource random) {
         if (slotCount <= 8) return SlotType.NORMAL;
-        if (random.nextFloat() < 0.75f) return SlotType.NORMAL;
+        // 24 级时 50% 概率为特殊槽位
+        if (random.nextFloat() < 16f / (slotCount + 8)) return SlotType.NORMAL;
         return SPECIAL_TYPES[random.nextInt(SPECIAL_TYPES.length)];
+    }
+
+    private static boolean shouldSetShowType(SlotType slotType, int slotCount, RandomSource random) {
+        if (slotCount <= 8 || slotType == SlotType.NORMAL) return true;
+        return random.nextFloat() < 16f / (slotCount + 8);
     }
 }
