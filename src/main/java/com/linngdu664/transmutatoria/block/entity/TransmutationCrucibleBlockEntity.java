@@ -50,7 +50,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.*;
 
 public class TransmutationCrucibleBlockEntity extends BlockEntity {
-    private static final AABB SUCK_AABB = Block.column(16.0F, 11.0F, 32.0F).toAabbs().getFirst();
+    private static final AABB SUCK_AABB = Block.column(16.0F, 5.0F, 16.0F).toAabbs().getFirst();
     private static final int WATER_PER_REACTION = 20;
     private static final int ESSENCE_INPUT_SLOT_BEGIN = 0;
     private static final int ESSENCE_OUTPUT_SLOT_BEGIN = 24;
@@ -234,6 +234,15 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, crucible.getChunkPos(), new CrucibleSetProcessTimerPayload(pos, crucible.processTimer));
             }
             crucible.setChanged();
+        } else {
+            // 卷轴在炼金锅里过期
+            ItemStack itemStack = crucible.getCatalyst();
+            int times = AbstractTransmutationScrollItem.checkAndSetExpire(level, itemStack);
+            if (times > 0) {
+                AbstractTransmutationScrollItem.changeEssence(level, itemStack, times);
+                PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, crucible.getChunkPos(), new CrucibleSetItemPayload(pos, List.of(new ItemStackWithSlot(CATALYST_SLOT, itemStack))));
+                crucible.setChanged();
+            }
         }
     }
 

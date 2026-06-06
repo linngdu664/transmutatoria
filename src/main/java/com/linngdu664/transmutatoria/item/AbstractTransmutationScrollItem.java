@@ -64,8 +64,10 @@ public abstract class AbstractTransmutationScrollItem extends Item {
         for (AbstractAlchemySlot slot : slots) {
             if (random.nextFloat() < mutationChance) {
                 slot.setEssenceMetal(allMetals[random.nextInt(allMetals.length)]);
-                slot.setShowEssence(false);
             }
+        }
+        for (AbstractAlchemySlot slot : slots) {
+            slot.setShowEssence(false);
         }
 
         stack.set(InitDataComponents.ALCHEMY_SLOTS, slots);
