@@ -49,5 +49,10 @@ public class InitNetworks {
                 CrucibleResetPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
         );
+        registrar.playToClient(
+                CrucibleSetPolarityPayload.TYPE,
+                CrucibleSetPolarityPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
+        );
     }
 }

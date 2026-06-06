@@ -119,7 +119,7 @@ public class InitItems {
     public static DeferredItem<Item> ALBEDO_ESSENCE = ITEMS.registerSimpleItem("albedo_essence");
     public static DeferredItem<Item> CITRINITAS_ESSENCE = ITEMS.registerSimpleItem("citrinitas_essence");
     public static DeferredItem<Item> RUBEDO_ESSENCE = ITEMS.registerSimpleItem("rubedo_essence");
-    public static DeferredItem<Item> PHILOSOPHERS_STONE = ITEMS.registerSimpleItem("philosophers_stone");
+    public static DeferredItem<Item> PHILOSOPHERS_STONE = ITEMS.register("philosophers_stone", PhilosophersStoneItem::new);
 
     // ================= [ 卷轴 — 印记（复制） ] =================
     public static DeferredItem<Item> TRANSMUTATION_SIGIL_SCROLL = ITEMS.register("transmutation_sigil_scroll", TransmutationSigilScrollItem::new);

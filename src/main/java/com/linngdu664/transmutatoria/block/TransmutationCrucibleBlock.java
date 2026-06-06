@@ -2,6 +2,7 @@ package com.linngdu664.transmutatoria.block;
 
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
 import com.linngdu664.transmutatoria.init.InitBlocks;
+import com.linngdu664.transmutatoria.init.InitItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -86,6 +87,12 @@ public class TransmutationCrucibleBlock extends HorizontalDirectionalBlock imple
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (stack.is(InitItems.PHILOSOPHERS_STONE)) {
+            if (!level.isClientSide() && level.getBlockEntity(pos) instanceof TransmutationCrucibleBlockEntity crucible) {
+                crucible.adjustPolarityWithPhilosophersStone();
+            }
+            return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
+        }
         if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection())) {
             return InteractionResult.SUCCESS;
         }

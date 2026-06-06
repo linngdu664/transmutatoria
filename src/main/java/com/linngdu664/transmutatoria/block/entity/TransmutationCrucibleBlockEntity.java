@@ -366,6 +366,17 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleResetPayload(getBlockPos(), polarity));
     }
 
+    public void adjustPolarityWithPhilosophersStone() {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        if (polarity != 0){
+            polarity += polarity < 0 ? 1 : -1;
+        }
+        PacketDistributor.sendToPlayersTrackingChunk(serverLevel, getChunkPos(), new CrucibleSetPolarityPayload(getBlockPos(), polarity));
+        setChanged();
+    }
+
     private ChunkPos getChunkPos() {
         return new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ()));
     }
