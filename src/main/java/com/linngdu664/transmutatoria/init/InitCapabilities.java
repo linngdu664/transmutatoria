@@ -19,9 +19,7 @@ public class InitCapabilities {
                 Capabilities.Item.BLOCK,
                 InitBlocks.TRANSMUTATION_CRUCIBLE_BLOCK_ENTITY.get(),
                 (be, side) -> {
-                    if (side == null) {
-                        return null;
-                    }
+                    if (side == null) return null;
                     return switch (side) {
                         case UP, DOWN -> be.getUpDownItemHandler();
                         default -> be.getSideItemHandler();

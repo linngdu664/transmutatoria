@@ -20,15 +20,15 @@ public class UnstableSlot extends AbstractAlchemySlot {
     }
 
     @Override
-    protected AlchemyReactResult internalReact(ItemStack scroll, EssenceMetalItem inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
-        AlchemyReactResult result = super.internalReact(scroll, inputEssence, outputs, inhibitionStates, posToOutputSlot, deferredTasks, magicNumber);
+    protected AlchemyReactResult internalReact(ItemStack scroll, EssenceMetalItem inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks) {
+        AlchemyReactResult result = super.internalReact(scroll, inputEssence, outputs, inhibitionStates, posToOutputSlot, deferredTasks);
         if (result.getEssenceStateIncrease() != 0) {
             deferredTasks.add(() -> {
                 List<AbstractAlchemySlot> slotsInScroll = scroll.get(InitDataComponents.ALCHEMY_SLOTS);
                 // 通常来说不可能为 null
                 if (slotsInScroll != null) {
                     int thisSlot = posToOutputSlot.get(getPackedXY(x, y));
-                    int targetSlot = Math.floorMod(magicNumber, slotsInScroll.size() - 1);
+                    int targetSlot = Math.floorMod(getSlotMagicNumber(scroll.getOrDefault(InitDataComponents.MAGIC_NUMBER, 0), posToOutputSlot.get(getPackedXY())), slotsInScroll.size() - 1);
                     if (targetSlot >= thisSlot) {
                         targetSlot++;
                     }

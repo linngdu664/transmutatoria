@@ -36,6 +36,11 @@ public class InitDataComponents {
                     "next_expire",
                     builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.LONG)
             );
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> MAGIC_NUMBER =
+            DATA_COMPONENTS.registerComponentType(
+                    "magic_number",
+                    builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)     // 数可能较大，varint 可能并不能省流量
+            );
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<RecipeConditions>> RECIPE_CONDITIONS =
             DATA_COMPONENTS.registerComponentType(
                     "recipe_conditions",

@@ -2,6 +2,7 @@ package com.linngdu664.transmutatoria.item;
 
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.inventory.TransmutationEquationScrollMenu;
+import com.linngdu664.transmutatoria.item.component.ExpireInfo;
 import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.recipe.CrucibleRecipeManager;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
@@ -19,6 +20,10 @@ import net.minecraft.world.level.Level;
 public class TransmutationEquationScrollItem extends AbstractTransmutationScrollItem {
     public TransmutationEquationScrollItem(Identifier id) {
         super(id);
+    }
+
+    public TransmutationEquationScrollItem(Identifier id, ExpireInfo expireInfo) {
+        super(id, expireInfo);
     }
 
     @Override
@@ -41,6 +46,7 @@ public class TransmutationEquationScrollItem extends AbstractTransmutationScroll
         IntIntImmutablePair minMaxLevel = recipe.level().getMinMax(level, recipe.getOtherSideItemStack());
         int count = random.nextInt(minMaxLevel.leftInt(), minMaxLevel.rightInt() + 1);
         AlchemySlotGenerator.generate(scrollStack, count, random);
+        scrollStack.set(InitDataComponents.MAGIC_NUMBER, random.nextInt());
     }
 
     @Override

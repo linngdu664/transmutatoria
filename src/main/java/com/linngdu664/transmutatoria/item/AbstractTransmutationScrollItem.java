@@ -69,6 +69,7 @@ public abstract class AbstractTransmutationScrollItem extends Item {
         }
 
         stack.set(InitDataComponents.ALCHEMY_SLOTS, slots);
+        stack.set(InitDataComponents.MAGIC_NUMBER, random.nextInt());
     }
 
     /**
@@ -83,9 +84,9 @@ public abstract class AbstractTransmutationScrollItem extends Item {
             return 0;   // 永不过期
         }
 
-        long gameTime = level.getGameTime();
-        long currentOffset = gameTime % expireInfo.period();
-        long currentPeriod = gameTime / expireInfo.period();
+        long clockTime = level.getOverworldClockTime();
+        long currentOffset = clockTime % expireInfo.period();
+        long currentPeriod = clockTime / expireInfo.period();
         long currentNextExpire = stack.getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE);
         // 无论何种情况，下一次过期时间都可由该式计算
         long nextExpire = (currentPeriod + (currentOffset >= expireInfo.offset() ? 1 : 0)) * expireInfo.period() + expireInfo.offset();
@@ -95,22 +96,22 @@ public abstract class AbstractTransmutationScrollItem extends Item {
         }
 
         // 当前时间未超出过期时间，不重置。即使玩家 time set，NEXT_EXPIRE 组件也会被正确设置，无须担心
-        if (gameTime < currentNextExpire) {
+        if (clockTime < currentNextExpire) {
             return 0;
         }
 
         // 当前时间超出过期时间，正常计算
-        return (int) ((gameTime - currentNextExpire) / expireInfo.period()) + 1;
+        return (int) ((clockTime - currentNextExpire) / expireInfo.period()) + 1;
     }
 
     @Override
     public void inventoryTick(ItemStack itemStack, ServerLevel level, Entity owner, @Nullable EquipmentSlot slot) {
         // 只有当加载了配方时才 tick
-//        if (itemStack.getOrDefault(InitDataComponents.ACTIVATED, false)) {
-//            int times = checkAndSetExpire(level, itemStack);
-//            if (times > 0) {
-//                changeEssence(level, itemStack, times);
-//            }
-//        }
+        if (itemStack.has(InitDataComponents.ALCHEMY_SLOTS)) {
+            int times = checkAndSetExpire(level, itemStack);
+            if (times > 0) {
+                changeEssence(level, itemStack, times);
+            }
+        }
     }
 }

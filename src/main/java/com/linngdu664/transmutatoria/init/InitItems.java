@@ -1,6 +1,8 @@
 package com.linngdu664.transmutatoria.init;
 
+import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.item.*;
+import com.linngdu664.transmutatoria.item.component.ExpireInfo;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 import com.linngdu664.transmutatoria.item.TransmutationSigilScrollItem;
 
@@ -122,16 +124,22 @@ public class InitItems {
     public static DeferredItem<Item> PHILOSOPHERS_STONE = ITEMS.register("philosophers_stone", PhilosophersStoneItem::new);
 
     // ================= [ 卷轴 — 印记（复制） ] =================
-    public static DeferredItem<Item> TRANSMUTATION_SIGIL_SCROLL = ITEMS.register("transmutation_sigil_scroll", TransmutationSigilScrollItem::new);
-    public static DeferredItem<Item> TERRESTRIAL_SIGIL_SCROLL = ITEMS.register("terrestrial_sigil_scroll", TransmutationSigilScrollItem::new);
-    public static DeferredItem<Item> LUNAR_SIGIL_SCROLL = ITEMS.register("lunar_sigil_scroll", TransmutationSigilScrollItem::new);
+    public static DeferredItem<Item> TRANSMUTATION_SIGIL_SCROLL = ITEMS.register("transmutation_sigil_scroll",
+            () -> new TransmutationSigilScrollItem(ArsTransmutatoria.makeMyIdentifier("transmutation_sigil_scroll"), ExpireInfo.DEFAULT));
+    public static DeferredItem<Item> TERRESTRIAL_SIGIL_SCROLL = ITEMS.register("terrestrial_sigil_scroll",
+            () -> new TransmutationSigilScrollItem(ArsTransmutatoria.makeMyIdentifier("terrestrial_sigil_scroll"), ExpireInfo.DEFAULT));
+    public static DeferredItem<Item> LUNAR_SIGIL_SCROLL = ITEMS.register("lunar_sigil_scroll",
+            () -> new TransmutationSigilScrollItem(ArsTransmutatoria.makeMyIdentifier("lunar_sigil_scroll"), ExpireInfo.LUNAR));
     public static DeferredItem<Item> SOLAR_SIGIL_SCROLL = ITEMS.register("solar_sigil_scroll", TransmutationSigilScrollItem::new);
     public static DeferredItem<Item> VOID_SIGIL_SCROLL = ITEMS.register("void_sigil_scroll", TransmutationSigilScrollItem::new);
 
     // ================= [ 卷轴 — 方程（转化） ] =================
-    public static DeferredItem<Item> TRANSMUTATION_EQUATION_SCROLL = ITEMS.register("transmutation_equation_scroll", TransmutationEquationScrollItem::new);
-    public static DeferredItem<Item> TERRESTRIAL_EQUATION_SCROLL = ITEMS.register("terrestrial_equation_scroll", TransmutationEquationScrollItem::new);
-    public static DeferredItem<Item> LUNAR_EQUATION_SCROLL = ITEMS.register("lunar_equation_scroll", TransmutationEquationScrollItem::new);
+    public static DeferredItem<Item> TRANSMUTATION_EQUATION_SCROLL = ITEMS.register("transmutation_equation_scroll",
+            () -> new TransmutationEquationScrollItem(ArsTransmutatoria.makeMyIdentifier("transmutation_equation_scroll"), ExpireInfo.DEFAULT));
+    public static DeferredItem<Item> TERRESTRIAL_EQUATION_SCROLL = ITEMS.register("terrestrial_equation_scroll",
+            () -> new TransmutationEquationScrollItem(ArsTransmutatoria.makeMyIdentifier("terrestrial_equation_scroll"), ExpireInfo.DEFAULT));
+    public static DeferredItem<Item> LUNAR_EQUATION_SCROLL = ITEMS.register("lunar_equation_scroll",
+            () -> new TransmutationEquationScrollItem(ArsTransmutatoria.makeMyIdentifier("lunar_equation_scroll"), ExpireInfo.LUNAR));
     public static DeferredItem<Item> SOLAR_EQUATION_SCROLL = ITEMS.register("solar_equation_scroll", TransmutationEquationScrollItem::new);
     public static DeferredItem<Item> VOID_EQUATION_SCROLL = ITEMS.register("void_equation_scroll", TransmutationEquationScrollItem::new);
 

@@ -23,11 +23,11 @@ public class ActivitySlot extends AbstractAlchemySlot {
     }
 
     @Override
-    protected AlchemyReactResult internalReact(ItemStack scroll, EssenceMetalItem inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks, int magicNumber) {
-        AlchemyReactResult result = super.internalReact(scroll, inputEssence, outputs, inhibitionStates, posToOutputSlot, deferredTasks, magicNumber);
+    protected AlchemyReactResult internalReact(ItemStack scroll, EssenceMetalItem inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks) {
+        AlchemyReactResult result = super.internalReact(scroll, inputEssence, outputs, inhibitionStates, posToOutputSlot, deferredTasks);
         // 如果基础反应已经湮灭则不触发高级反应
         if (!result.isClearItemStack()) {
-            int slot = posToOutputSlot.getOrDefault(getAdjacentPackedXY(Math.floorMod(magicNumber, 6)), -1);
+            int slot = posToOutputSlot.getOrDefault(getAdjacentPackedXY(getSlotDirection(scroll, posToOutputSlot)), -1);
             if (slot >= 0 && outputs.get(slot).getItem() instanceof EssenceMetalItem outEssenceMetal) {
                 EssenceMetal.Relation relation = inputEssence.getRelation(outEssenceMetal.getEssenceMetal());
                 if (relation == EssenceMetal.Relation.SAME) {

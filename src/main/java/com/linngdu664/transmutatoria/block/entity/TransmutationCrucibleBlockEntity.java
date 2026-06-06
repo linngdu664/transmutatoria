@@ -382,11 +382,10 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     }
 
     public boolean canAddCatalyst(ItemStack itemStack) {
-        return targetTimer == 0 && !hasAnyOutput() && getCatalyst().isEmpty()
+        return targetTimer == 0 && !hasAnyOutput() && getCatalyst().isEmpty() && hasEnoughWater()
                 && (itemStack.is(Items.ENDER_EYE) || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL)
                 || itemStack.is(InitItems.PHILOSOPHERS_STONE) || itemStack.getItem() instanceof EssenceMetalItem
-                || (itemStack.getItem() instanceof AbstractTransmutationScrollItem && itemStack.has(InitDataComponents.ALCHEMY_SLOTS) && itemStack.has(InitDataComponents.RECIPE_CONDITIONS)))
-                && hasEnoughWater();
+                || (itemStack.getItem() instanceof AbstractTransmutationScrollItem && itemStack.has(InitDataComponents.ALCHEMY_SLOTS) && itemStack.has(InitDataComponents.RECIPE_CONDITIONS)));
     }
 
     public boolean canAddInput(ItemStack itemStack) {
@@ -573,8 +572,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 posToOutputSlot.put(slot.getPackedXY(), i);
                 i++;
             }
-            // todo 这个魔法数字应该换个地方，写在卷轴里
-            int crucibleMagicNumber = getCrucibleMagicNumber();
             // 反应
             int annihilationCnt = 0;
             int entropy = catalyst.getOrDefault(InitDataComponents.ENTROPY, 0);
@@ -585,8 +582,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                         items.subList(ESSENCE_OUTPUT_SLOT_BEGIN, CATALYST_SLOT),
                         inhibitionStates,
                         posToOutputSlot,
-                        deferredTasks,
-                        AbstractAlchemySlot.getSlotMagicNumber(crucibleMagicNumber, slot)
+                        deferredTasks
                 );
                 polarity += result.getPolarityIncrease();
                 entropy += result.getEntropyIncrease();
