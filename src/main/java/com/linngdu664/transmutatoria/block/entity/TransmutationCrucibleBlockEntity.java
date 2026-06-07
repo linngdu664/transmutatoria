@@ -191,6 +191,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 ItemStack itemStack = resource.toStack();
                 if (canAddEssence(index, itemStack)) {
                     items.set(index, itemStack);
+                    inputOrder.add(index);
                     PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(index, itemStack))));
                     tryReactAfterAddEssence(transaction);
                     setChanged();
@@ -476,13 +477,13 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 syncTargetTimer(10 * alchemySlots.size());
             }
             return alchemySlots.size();
-        } else if (getCatalyst().is(InitItems.TRANSMUTATION_CRYSTAL)) {
+        } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
             // 源质反应：两个槽都有金属了
             if (!items.get(ESSENCE_INPUT_SLOT_BEGIN).isEmpty() && !items.get(ESSENCE_INPUT_SLOT_BEGIN + 1).isEmpty() && consumeWater(txContext)) {
                 syncTargetTimer(20);
             }
             return 2;
-        } else if (getCatalyst().getItem() instanceof EssenceMetalItem essenceMetalItem) {
+        } else if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
             // 源质融合：加够了且覆盖所有克制
             Set<EssenceMetal> essenceRequired = essenceMetalItem.getEssenceMetal().getRestrainsAndDoubleRestrains();
             int size = essenceRequired.size();
