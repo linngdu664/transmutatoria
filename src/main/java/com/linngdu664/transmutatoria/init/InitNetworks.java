@@ -54,5 +54,10 @@ public class InitNetworks {
                 CrucibleSetPolarityPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
         );
+        registrar.playToClient(
+                CrucibleSetWaterPayload.TYPE,
+                CrucibleSetWaterPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
+        );
     }
 }
