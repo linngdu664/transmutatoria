@@ -1,4 +1,4 @@
-package com.linngdu664.transmutatoria.client.gui.util;
+package com.linngdu664.transmutatoria.client.gui.texture;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 

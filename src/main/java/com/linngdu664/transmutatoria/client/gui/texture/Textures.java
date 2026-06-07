@@ -1,9 +1,4 @@
-package com.linngdu664.transmutatoria.client.gui;
-
-import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.client.gui.util.GuiSprite;
-import com.linngdu664.transmutatoria.client.gui.util.GuiSubSprite;
-import com.linngdu664.transmutatoria.client.gui.util.GuiTexture;
+package com.linngdu664.transmutatoria.client.gui.texture;
 
 public class Textures {
     private static final GuiSprite SLOTS_FULL_SPRITE = new GuiSprite("hud/slots", 189, 61);
@@ -59,14 +54,14 @@ public class Textures {
         ALCHEMY_ARRAY_1, ALCHEMY_ARRAY_2, ALCHEMY_ARRAY_3, ALCHEMY_ARRAY_4,
         ALCHEMY_ARRAY_5, ALCHEMY_ARRAY_6, ALCHEMY_ARRAY_7, ALCHEMY_ARRAY_8
     };
-    public static final GuiSubSprite[] ROMAN_NUMBERS = new GuiSubSprite[24];
-
-    static {
-        GuiSprite roman124 = new GuiSprite("hud/roman1-24", 13, 192);
-        for (int i = 0; i < ROMAN_NUMBERS.length; i++) {
-            ROMAN_NUMBERS[i] = new GuiSubSprite(roman124, 0, i * 8, 13, 8);
-        }
-    }
+//    public static final GuiSubSprite[] ROMAN_NUMBERS = new GuiSubSprite[24];
+//
+//    static {
+//        GuiSprite roman124 = new GuiSprite("hud/roman1-24", 13, 192);
+//        for (int i = 0; i < ROMAN_NUMBERS.length; i++) {
+//            ROMAN_NUMBERS[i] = new GuiSubSprite(roman124, 0, i * 8, 13, 8);
+//        }
+//    }
 
     public static final GuiTexture SCROLL_ARR_EQ_BASE = new GuiTexture("textures/gui/scroll_arr_eq_base.png",128,128);
     public static final GuiTexture SCROLL_ARR_EQ_LIGHT = new GuiTexture("textures/gui/scroll_arr_eq_light.png",128,128);

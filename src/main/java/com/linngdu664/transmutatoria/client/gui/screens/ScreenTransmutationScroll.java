@@ -1,8 +1,8 @@
 package com.linngdu664.transmutatoria.client.gui.screens;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.client.gui.Textures;
-import com.linngdu664.transmutatoria.client.gui.util.TextureOption;
+import com.linngdu664.transmutatoria.client.gui.texture.Textures;
+import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
 import com.linngdu664.transmutatoria.inventory.AbstractTransmutationScrollMenu;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;

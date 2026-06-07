@@ -376,14 +376,11 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     }
 
     public void adjustPolarityWithPhilosophersStone() {
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
         if (polarity != 0){
             polarity += polarity < 0 ? 1 : -1;
+            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetPolarityPayload(getBlockPos(), polarity));
+            setChanged();
         }
-        PacketDistributor.sendToPlayersTrackingChunk(serverLevel, getChunkPos(), new CrucibleSetPolarityPayload(getBlockPos(), polarity));
-        setChanged();
     }
 
     private ChunkPos getChunkPos() {
@@ -784,19 +781,18 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     public void serverScrollSelectedSlot(boolean isIncrease) {
         ItemStack catalyst = getCatalyst();
         if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
-            if (selectedSlot == 0) {
-                syncSelectedSlot(1);
-            } else {
-                syncSelectedSlot(0);
-            }
+            syncSelectedSlot(selectedSlot == 0 ? 1 : 0);
+            setChanged();
         } else if (getCatalyst().getItem() instanceof EssenceMetalItem essenceMetalItem) {
             int size = essenceMetalItem.getEssenceMetal().getRestrainsAndDoubleRestrains().size();
-            syncSelectedSlot(((selectedSlot + (isIncrease ? 1 : -1)) % size + size) % size);
+            syncSelectedSlot(Math.floorMod(selectedSlot + (isIncrease ? 1 : -1), size));
+            setChanged();
         } else if (getCatalyst().getItem() instanceof AbstractTransmutationScrollItem) {
             List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
             if (!alchemySlots.isEmpty()) {
                 int size = alchemySlots.size();
-                syncSelectedSlot(((selectedSlot + (isIncrease ? 1 : -1)) % size + size) % size);
+                syncSelectedSlot(Math.floorMod(selectedSlot + (isIncrease ? 1 : -1), size));
+                setChanged();
             }
         }
     }

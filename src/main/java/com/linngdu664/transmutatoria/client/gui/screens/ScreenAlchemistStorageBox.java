@@ -1,8 +1,6 @@
 package com.linngdu664.transmutatoria.client.gui.screens;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.client.gui.util.GuiSprite;
-import com.linngdu664.transmutatoria.client.gui.util.TextureOption;
 import com.linngdu664.transmutatoria.inventory.AlchemistStorageBoxMenu;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;

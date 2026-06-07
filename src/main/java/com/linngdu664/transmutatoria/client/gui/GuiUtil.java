@@ -1,6 +1,5 @@
 package com.linngdu664.transmutatoria.client.gui;
 
-import com.linngdu664.transmutatoria.client.gui.util.V2I;
 import com.linngdu664.transmutatoria.client.renderer.state.gui.FloatBlitRenderState;
 import com.linngdu664.transmutatoria.client.renderer.state.gui.FloatColoredQuadRenderState;
 import com.linngdu664.transmutatoria.client.renderer.state.gui.FloatColoredRectangleRenderState;
@@ -16,6 +15,10 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec2;
 import org.joml.Matrix3x2f;
 
+/**
+ * Gui window utils and floating coords render tools
+ * Note: Text and item floating coords should use pose translate and methods in GuiGraphicsExtractor
+ */
 public class GuiUtil {
     public static int heightFrameCenter(Window window, int height) {
         return heightFrameRatio(window, height, 0.5);
@@ -61,26 +64,26 @@ public class GuiUtil {
         fill(guiGraphics, a.x, a.y, b.x, b.y, pColor);
     }
 
-    public static void fill(GuiGraphicsExtractor guiGraphics, float minX, float minY, float maxX, float maxY, int color) {
-        fill(guiGraphics, RenderPipelines.GUI, minX, minY, maxX, maxY, color);
+    public static void fill(GuiGraphicsExtractor guiGraphics, float x0, float y0, float x1, float y1, int color) {
+        fill(guiGraphics, RenderPipelines.GUI, x0, y0, x1, y1, color);
     }
 
-    public static void fill(GuiGraphicsExtractor guiGraphics, RenderPipeline renderPipeline, float minX, float minY, float maxX, float maxY, int color) {
-        if (minX < maxX) {
-            float tmp = minX;
-            minX = maxX;
-            maxX = tmp;
+    public static void fill(GuiGraphicsExtractor guiGraphics, RenderPipeline renderPipeline, float x0, float y0, float x1, float y1, int color) {
+        if (x0 < x1) {
+            float tmp = x0;
+            x0 = x1;
+            x1 = tmp;
         }
-        if (minY < maxY) {
-            float tmp = minY;
-            minY = maxY;
-            maxY = tmp;
+        if (y0 < y1) {
+            float tmp = y0;
+            y0 = y1;
+            y1 = tmp;
         }
-        guiGraphics.guiRenderState.addGuiElement(new FloatColoredRectangleRenderState(renderPipeline, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), minX, minY, maxX, maxY, color, color, guiGraphics.scissorStack.peek()));
+        guiGraphics.guiRenderState.addGuiElement(new FloatColoredRectangleRenderState(renderPipeline, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), x0, y0, x1, y1, color, color, guiGraphics.scissorStack.peek()));
     }
 
     public static void fill(GuiGraphicsExtractor guiGraphics, Vec2 a, Vec2 b, Vec2 c, Vec2 d, int pColor) {
-        guiGraphics.guiRenderState.addGuiElement(new FloatColoredQuadRenderState(RenderPipelines.GUI, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), a, b, c, d, pColor));
+        guiGraphics.guiRenderState.addGuiElement(new FloatColoredQuadRenderState(RenderPipelines.GUI, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), a, b, c, d, pColor, guiGraphics.scissorStack.peek()));
     }
 
     public static void blit(GuiGraphicsExtractor guiGraphics, Identifier texture, float x, float y, float u, float v, float width, float height, float textureWidth, float textureHeight) {

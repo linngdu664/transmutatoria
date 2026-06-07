@@ -5,11 +5,16 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 import org.joml.Matrix3x2fc;
 import org.jspecify.annotations.Nullable;
 
-public record FloatColoredQuadRenderState(RenderPipeline pipeline, TextureSetup textureSetup, Matrix3x2fc pose, Vec2 a, Vec2 b, Vec2 c, Vec2 d, int color) implements GuiElementRenderState {
+public record FloatColoredQuadRenderState(RenderPipeline pipeline, TextureSetup textureSetup, Matrix3x2fc pose, Vec2 a, Vec2 b, Vec2 c, Vec2 d, int color, @Nullable ScreenRectangle scissorArea, @Nullable ScreenRectangle bounds) implements GuiElementRenderState {
+    public FloatColoredQuadRenderState(RenderPipeline pipeline, TextureSetup textureSetup, Matrix3x2fc pose, Vec2 a, Vec2 b, Vec2 c, Vec2 d, int color, @Nullable ScreenRectangle scissorArea) {
+        this(pipeline, textureSetup, pose, a, b, c, d, color, scissorArea, computeBounds(a, b, c, d, pose, scissorArea));
+    }
+
     @Override
     public void buildVertices(VertexConsumer vertexConsumer) {
         vertexConsumer.addVertexWith2DPose(pose, a.x, a.y).setColor(color);
@@ -18,13 +23,12 @@ public record FloatColoredQuadRenderState(RenderPipeline pipeline, TextureSetup 
         vertexConsumer.addVertexWith2DPose(pose, d.x, d.y).setColor(color);
     }
 
-    @Override
-    public @Nullable ScreenRectangle scissorArea() {
-        return null;
-    }
-
-    @Override
-    public @Nullable ScreenRectangle bounds() {
-        return null;
+    private static @Nullable ScreenRectangle computeBounds(Vec2 a, Vec2 b, Vec2 c, Vec2 d, Matrix3x2fc pose, @Nullable ScreenRectangle scissorArea) {
+        int left = Mth.floor(Math.min(Math.min(a.x, b.x), Math.min(c.x, d.x)));
+        int top = Mth.floor(Math.min(Math.min(a.y, b.y), Math.min(c.y, d.y)));
+        int right = Mth.ceil(Math.max(Math.max(a.x, b.x), Math.max(c.x, d.x)));
+        int bottom = Mth.ceil(Math.max(Math.max(a.y, b.y), Math.max(c.y, d.y)));
+        ScreenRectangle bounds = new ScreenRectangle(left, top, right - left, bottom - top).transformMaxBounds(pose);
+        return scissorArea != null ? scissorArea.intersection(bounds) : bounds;
     }
 }

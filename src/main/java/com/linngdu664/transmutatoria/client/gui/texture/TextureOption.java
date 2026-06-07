@@ -1,4 +1,4 @@
-package com.linngdu664.transmutatoria.client.gui.util;
+package com.linngdu664.transmutatoria.client.gui.texture;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.renderer.RenderPipelines;

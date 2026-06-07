@@ -1,9 +1,9 @@
 package com.linngdu664.transmutatoria.client.gui;
 
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
-import com.linngdu664.transmutatoria.client.gui.util.TextureOption;
-import com.linngdu664.transmutatoria.client.gui.util.TextureRenderable;
-import com.linngdu664.transmutatoria.client.gui.util.V2I;
+import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
+import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
+import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;

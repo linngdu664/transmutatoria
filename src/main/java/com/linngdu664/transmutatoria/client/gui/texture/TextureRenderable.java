@@ -1,6 +1,7 @@
-package com.linngdu664.transmutatoria.client.gui.util;
+package com.linngdu664.transmutatoria.client.gui.texture;
 
 import com.linngdu664.transmutatoria.client.gui.GuiUtil;
+import com.linngdu664.transmutatoria.client.gui.V2I;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
