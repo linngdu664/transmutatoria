@@ -5,6 +5,7 @@ import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
 import com.linngdu664.transmutatoria.inventory.AbstractTransmutationScrollMenu;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
+import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.TransmutationEquationScrollItem;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
@@ -22,13 +23,19 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.neoforged.neoforge.registries.DeferredItem;
 
 import java.util.List;
 
 public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractTransmutationScrollMenu> {
     private static final Identifier INVENTORY_BG = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll.png");
+    private static final Identifier INVENTORY_BG_1 = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll_1.png");
+    private static final Identifier INVENTORY_BG_2 = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll_2.png");
+    private static final Identifier INVENTORY_BG_3 = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll_3.png");
+    private static final Identifier INVENTORY_BG_4 = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll_4.png");
     private static final float ESSENCE_METAL_RADIUS = 37;
 
     // 源质圆环扩散动画
@@ -53,7 +60,8 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
         int xo = (this.width - this.imageWidth) / 2;
         int yo = (this.height - this.imageHeight) / 2;
-        graphics.blit(RenderPipelines.GUI_TEXTURED, INVENTORY_BG, xo, yo, 34F, 40F, this.imageWidth, this.imageHeight, 256, 256);
+        ItemStack scrollStack = getScrollFromPlayer(SafeInstance.getMC().player);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, getBackground(scrollStack), xo, yo, 34F, 40F, this.imageWidth, this.imageHeight, 256, 256);
     }
 
     @Override
@@ -189,5 +197,28 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
             }
         }
         return null;
+    }
+
+    private static Identifier getBackground(ItemStack scrollStack) {
+        if (scrollStack == null) {
+            return INVENTORY_BG;
+        }
+        if (isScroll(scrollStack, InitItems.TERRESTRIAL_SIGIL_SCROLL, InitItems.TERRESTRIAL_EQUATION_SCROLL)) {
+            return INVENTORY_BG_1;
+        }
+        if (isScroll(scrollStack, InitItems.LUNAR_SIGIL_SCROLL, InitItems.LUNAR_EQUATION_SCROLL)) {
+            return INVENTORY_BG_2;
+        }
+        if (isScroll(scrollStack, InitItems.SOLAR_SIGIL_SCROLL, InitItems.SOLAR_EQUATION_SCROLL)) {
+            return INVENTORY_BG_3;
+        }
+        if (isScroll(scrollStack, InitItems.VOID_SIGIL_SCROLL, InitItems.VOID_EQUATION_SCROLL)) {
+            return INVENTORY_BG_4;
+        }
+        return INVENTORY_BG;
+    }
+
+    private static boolean isScroll(ItemStack scrollStack, DeferredItem<Item> sigilScroll, DeferredItem<Item> equationScroll) {
+        return scrollStack.getItem() == sigilScroll.get() || scrollStack.getItem() == equationScroll.get();
     }
 }

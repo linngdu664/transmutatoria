@@ -39,6 +39,7 @@ public class AlchemistStorageBoxRenderer
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.facing = blockEntity.getBlockState().getValue(AlchemistStorageBoxBlock.FACING);
         state.openness = blockEntity.getOpenNess(partialTicks);
+        state.texture = AlchemistStorageBoxModel.getTextureLocation(blockEntity.getBoxState());
     }
 
     @Override
@@ -58,7 +59,7 @@ public class AlchemistStorageBoxRenderer
                 model,
                 openness,
                 poseStack,
-                AlchemistStorageBoxModel.TEXTURE_LOCATION,
+                state.texture,
                 state.lightCoords,
                 OverlayTexture.NO_OVERLAY,
                 0,

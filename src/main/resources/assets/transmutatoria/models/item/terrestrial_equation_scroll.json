@@ -1,0 +1,9 @@
+{
+  "parent": "transmutatoria:item/base/scroll",
+  "textures": {
+    "0": "transmutatoria:item/model/scroll_base",
+    "2": "transmutatoria:item/model/scroll_terrestrial",
+    "3": "transmutatoria:item/model/scroll_equation",
+    "particle": "transmutatoria:item/model/scroll_base"
+  }
+}

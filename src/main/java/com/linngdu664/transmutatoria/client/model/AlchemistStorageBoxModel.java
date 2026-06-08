@@ -16,6 +16,9 @@ import net.minecraft.resources.Identifier;
 public class AlchemistStorageBoxModel extends Model<Float> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final Identifier TEXTURE_LOCATION = ArsTransmutatoria.makeMyIdentifier("textures/item/model/alchemist_storage_box.png");
+	public static final Identifier NIGREDO_TEXTURE_LOCATION = ArsTransmutatoria.makeMyIdentifier("textures/item/model/nigredo_alchemist_storage_box.png");
+	public static final Identifier ALBEDO_TEXTURE_LOCATION = ArsTransmutatoria.makeMyIdentifier("textures/item/model/albedo_alchemist_storage_box.png");
+	public static final Identifier CITRINITAS_TEXTURE_LOCATION = ArsTransmutatoria.makeMyIdentifier("textures/item/model/citrinitas_alchemist_storage_box.png");
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(TEXTURE_LOCATION, "main");
 	private final ModelPart cover;
 	private final ModelPart body;
@@ -32,6 +35,15 @@ public class AlchemistStorageBoxModel extends Model<Float> {
 
 	public ModelPart getBody() {
 		return body;
+	}
+
+	public static Identifier getTextureLocation(int boxState) {
+		return switch (boxState) {
+			case -1 -> NIGREDO_TEXTURE_LOCATION;
+			case 1 -> ALBEDO_TEXTURE_LOCATION;
+			case 2 -> CITRINITAS_TEXTURE_LOCATION;
+			default -> TEXTURE_LOCATION;
+		};
 	}
 
 	public static LayerDefinition createBodyLayer() {
