@@ -94,10 +94,6 @@ public class TransmutationCrucibleBlock extends HorizontalDirectionalBlock imple
             return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
         if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection())) {
-//            if (level.getBlockEntity(pos) instanceof TransmutationCrucibleBlockEntity crucible) {
-//                System.out.println("is client: " + level.isClientSide());
-//                System.out.println("water amount: " + crucible.getWaterHandler().getAmountAsInt(0));
-//            }
             return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
         return InteractionResult.TRY_WITH_EMPTY_HAND;
@@ -146,8 +142,7 @@ public class TransmutationCrucibleBlock extends HorizontalDirectionalBlock imple
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter worldIn,
-                               BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         Direction direction = state.getValue(FACING);
         switch (direction) {
             case SOUTH -> {

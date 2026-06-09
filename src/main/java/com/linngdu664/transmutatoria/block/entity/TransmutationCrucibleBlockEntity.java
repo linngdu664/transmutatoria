@@ -93,7 +93,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         @Override
         protected void onRootCommit(ItemsSnapshot snapshot) {
             // todo 疑问：onRootCommit 只在服务端被调用吗？
-            if (!level.isClientSide()) {
+            if (level instanceof ServerLevel serverLevel) {
                 ArrayList<ItemStackWithSlot> changes = new ArrayList<>();
                 ItemStack[] snapItems = snapshot.items;
                 for (int i = 0; i < snapItems.length; i++) {
@@ -102,10 +102,10 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                     }
                 }
                 if (!changes.isEmpty()) {
-                    PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), changes));
+                    PacketDistributor.sendToPlayersTrackingChunk(serverLevel, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), changes));
                 }
                 if (snapshot.targetTimer != targetTimer) {
-                    PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetTargetTimerPayload(getBlockPos(), targetTimer));
+                    PacketDistributor.sendToPlayersTrackingChunk(serverLevel, getChunkPos(), new CrucibleSetTargetTimerPayload(getBlockPos(), targetTimer));
                 }
             }
             setChanged();
@@ -116,10 +116,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         @Override
         protected void onContentsChanged(int index, FluidStack prev) {
             // todo 疑问：onContentsChanged 只在服务端被调用吗？
-            if (!level.isClientSide()) {
-                FluidResource resource = getResource(0);
-                FluidStack water = resource.toStack(getAmountAsInt(0));
-                PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetWaterPayload(getBlockPos(), water));
+            if (level instanceof ServerLevel serverLevel) {
+                PacketDistributor.sendToPlayersTrackingChunk(serverLevel, getChunkPos(), new CrucibleSetWaterPayload(getBlockPos(), getAmountAsInt(0)));
             }
             setChanged();
         }
@@ -306,6 +304,12 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         inputOrder = new IntArrayList(input.getIntArray("InputOrder").orElse(new int[0]));
     }
 
+    // 区块加载时会自动触发全量更新同步
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return this.saveWithoutMetadata(registries);
+    }
+
     public ResourceHandler<ItemResource> getUpDownItemHandler() {
         return upDownItemHandler;
     }
@@ -332,12 +336,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             }
             return false;
         }
-    }
-
-    // 区块加载时会自动触发全量更新同步
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return this.saveWithoutMetadata(registries);
     }
 
     public void entityInside(Entity entity) {
@@ -733,12 +731,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         return targetTimer;
     }
 
-    public int getCrucibleMagicNumber() {
-        int hashValue = 31 * 17 + getBlockPos().hashCode();
-        hashValue = 31 * hashValue + Long.hashCode(getCatalyst().getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE));
-        return 31 * hashValue;
-    }
-
     public boolean hasCatalyst() {
         return !items.get(CATALYST_SLOT).isEmpty();
     }
@@ -858,7 +850,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         this.selectedSlot = selectedSlot;
     }
 
-    public void clientSetWater(FluidStack water) {
-        waterHandler.set(0, FluidResource.of(water), water.getAmount());
+    public void clientSetWater(int amount) {
+        waterHandler.set(0, FluidResource.of(Fluids.WATER), amount);
     }
 }
