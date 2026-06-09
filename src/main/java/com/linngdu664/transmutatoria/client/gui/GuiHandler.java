@@ -11,6 +11,7 @@ import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 import com.linngdu664.transmutatoria.util.SafeInstance;
+import com.linngdu664.transmutatoria.util.V2I;
 import com.mojang.blaze3d.platform.Window;
 import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import net.minecraft.client.DeltaTracker;
@@ -168,7 +169,7 @@ public class GuiHandler {
             guiGraphics.pose().scale(scale, scale);
 
             // 槽位
-            Textures.SIMPLE_FRAME.render(guiGraphics, TextureOption.DEFAULT, -FRAME_SIZE / 2, -FRAME_SIZE / 2);
+            Textures.SIMPLE_FRAME.render(guiGraphics, -FRAME_SIZE / 2, -FRAME_SIZE / 2);
 
             // 物品
             ItemStack stack = items.get(i);
@@ -202,15 +203,15 @@ public class GuiHandler {
 
             // catalyst
             ItemStack catalyst = crucible.getCatalyst();
-            V2I pos = Textures.SIMPLE_FRAME.renderRatio(guiGraphics, TextureOption.DEFAULT, window, 0.1, 0.2);
+            V2I pos = Textures.SIMPLE_FRAME.renderRatio(guiGraphics, window, 0.1, 0.2);
             guiGraphics.item(catalyst, pos.x() + 3, pos.y() + 3);
 
             // input
-            Textures.SIMPLE_FRAME.render(guiGraphics, TextureOption.DEFAULT, pos.x() + Textures.SIMPLE_FRAME.width(), pos.y());
+            Textures.SIMPLE_FRAME.render(guiGraphics, pos.x() + Textures.SIMPLE_FRAME.width(), pos.y());
             guiGraphics.item(crucible.getInput(), pos.x() + Textures.SIMPLE_FRAME.width() + 3, pos.y() + 3);
 
             // output
-            pos = Textures.SIMPLE_FRAME.renderRatio(guiGraphics, TextureOption.DEFAULT, window, 0.1, 0.8);
+            pos = Textures.SIMPLE_FRAME.renderRatio(guiGraphics, window, 0.1, 0.8);
             guiGraphics.item(crucible.getOutput(), pos.x() + 3, pos.y() + 3);
 
             // 临时的极性显示
@@ -255,19 +256,7 @@ public class GuiHandler {
                     return alchemySlot.isShowEssence() ? alchemySlot.getEssenceMetal().getDefaultTexture() : null;
                 });
                 drawSelectedSlot(guiGraphics, xys, crucible.getSelectedSlot(), delta);
-
-                // 画可能的箭头
-                int magicNumber = catalyst.getOrDefault(InitDataComponents.MAGIC_NUMBER, 0);
-                for (int i = 0, size = alchemySlots.size(); i < size; i++) {
-                    switch (alchemySlots.get(i).getShowDirection(AbstractAlchemySlot.getSlotMagicNumber(magicNumber, i))) {
-                        case 0 -> Textures.UP_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 11, getYFromPacked(xys[i]) - 2);
-                        case 1 -> Textures.UPRIGHT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 21, getYFromPacked(xys[i]) + 5);
-                        case 2 -> Textures.DOWNRIGHT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 21, getYFromPacked(xys[i]) + 17);
-                        case 3 -> Textures.DOWN_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 11, getYFromPacked(xys[i]) + 24);
-                        case 4 -> Textures.DOWNLEFT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 1, getYFromPacked(xys[i]) + 17);
-                        case 5 -> Textures.UPLEFT_ARROW.render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(xys[i]) + 1, getYFromPacked(xys[i]) + 5);
-                    }
-                }
+                drawArrow(guiGraphics, xys, alchemySlots, catalyst.getOrDefault(InitDataComponents.MAGIC_NUMBER, 0));
             }
 
             // 画数字
@@ -324,15 +313,15 @@ public class GuiHandler {
         }
         return xys;
     }
-    private static void drawBackground(GuiGraphicsExtractor guiGraphics,Window window,ItemStack catalyst) {
-        Textures.ALCHEMY_ARRAYS[Math.floorMod(catalyst.hashCode(), Textures.ALCHEMY_ARRAYS.length)].renderRatio(guiGraphics, TextureOption.DEFAULT, window, 0.5, 0.5);
-    }
 
+    private static void drawBackground(GuiGraphicsExtractor guiGraphics,Window window,ItemStack catalyst) {
+        Textures.ALCHEMY_ARRAYS[Math.floorMod(catalyst.hashCode(), Textures.ALCHEMY_ARRAYS.length)].renderRatio(guiGraphics, window, 0.5, 0.5);
+    }
 
     private static void drawEssenceSlots(GuiGraphicsExtractor guiGraphics, long[] xys, Int2ObjectFunction<TextureRenderable> textureGetter) {
         for (int i = 0; i < xys.length; i++) {
             long packed = xys[i];
-            textureGetter.get(i).render(guiGraphics, TextureOption.DEFAULT, getXFromPacked(packed), getYFromPacked(packed));
+            textureGetter.get(i).render(guiGraphics, getXFromPacked(packed), getYFromPacked(packed));
         }
     }
 
@@ -373,7 +362,20 @@ public class GuiHandler {
             smoothHighlightY += diffY * t;
         }
 
-        Textures.SLOT_SELECTED.render(guiGraphics, TextureOption.DEFAULT, Math.round(smoothHighlightX), Math.round(smoothHighlightY));
+        Textures.SLOT_SELECTED.render(guiGraphics, Math.round(smoothHighlightX), Math.round(smoothHighlightY));
+    }
+
+    private static void drawArrow(GuiGraphicsExtractor guiGraphics, long[] xys, List<AbstractAlchemySlot> alchemySlots, int magicNumber) {
+        for (int i = 0, size = alchemySlots.size(); i < size; i++) {
+            switch (alchemySlots.get(i).getShowDirection(AbstractAlchemySlot.getSlotMagicNumber(magicNumber, i))) {
+                case 0 -> Textures.UP_ARROW.render(guiGraphics, getXFromPacked(xys[i]) + 11, getYFromPacked(xys[i]) - 2);
+                case 1 -> Textures.UPRIGHT_ARROW.render(guiGraphics, getXFromPacked(xys[i]) + 21, getYFromPacked(xys[i]) + 5);
+                case 2 -> Textures.DOWNRIGHT_ARROW.render(guiGraphics, getXFromPacked(xys[i]) + 21, getYFromPacked(xys[i]) + 17);
+                case 3 -> Textures.DOWN_ARROW.render(guiGraphics, getXFromPacked(xys[i]) + 11, getYFromPacked(xys[i]) + 24);
+                case 4 -> Textures.DOWNLEFT_ARROW.render(guiGraphics, getXFromPacked(xys[i]) + 1, getYFromPacked(xys[i]) + 17);
+                case 5 -> Textures.UPLEFT_ARROW.render(guiGraphics, getXFromPacked(xys[i]) + 1, getYFromPacked(xys[i]) + 5);
+            }
+        }
     }
 
     private static void drawNumbers(GuiGraphicsExtractor guiGraphics, Font font, long[] xys) {

@@ -24,11 +24,10 @@ public class InputEventHandler {
     @SubscribeEvent
     public static void onMouseScroll(InputEvent.MouseScrollingEvent event) {
         Minecraft mc = SafeInstance.getMC();
-        if (mc.player == null) {
+        Player player = mc.player;
+        if (player == null) {
             return;
         }
-
-        Player player = mc.player;
 
         // 必须指向炼金锅
         HitResult hit = mc.hitResult;

@@ -6,23 +6,21 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
 
+// region 连通六边形槽位生成
 public class AlchemySlotGenerator {
     public static void generate(ItemStack scrollStack, int count, RandomSource random) {
-        List<HexPos> positions = generateConnectedHexPositions(count, random);
+        List<V2I> positions = generateConnectedHexPositions(count, random);
         List<AbstractAlchemySlot> slots = new ArrayList<>(positions.size());
         EssenceMetal[] allMetals = EssenceMetal.values();
 
-        for (HexPos pos : positions) {
+        for (V2I pos : positions) {
             SlotType slotType = pickSlotType(positions.size(), random);
             slots.add(AbstractAlchemySlot.create(slotType, allMetals[random.nextInt(allMetals.length)],
-                    pos.x, pos.y, shouldSetShowType(slotType, positions.size(), random)));
+                    pos.x(), pos.y(), shouldSetShowType(slotType, positions.size(), random)));
         }
 
         scrollStack.set(InitDataComponents.ALCHEMY_SLOTS, slots);
     }
-
-
-    // region 连通六边形槽位生成
 
     private static final int[][] HEX_OFFSETS = {
             {0, -2}, {1, -1}, {1, 1}, {0, 2}, {-1, 1}, {-1, -1}
@@ -32,34 +30,32 @@ public class AlchemySlotGenerator {
             .filter(t -> t != SlotType.NORMAL)
             .toArray(SlotType[]::new);
 
-    private record HexPos(int x, int y) {}
-
     private static final int MAX_GRID_EXTENT = 12;
 
     /**
      * 用 frontier 扩张算法生成 count 个连通的六边形坐标，从 (0,0) 开始。
      * 约束生成区域的总宽度和总高度均不超过 {@value MAX_GRID_EXTENT}。
      */
-    private static List<HexPos> generateConnectedHexPositions(int count, RandomSource random) {
-        Set<HexPos> placed = new HashSet<>();
-        List<HexPos> frontier = new ArrayList<>();
+    private static List<V2I> generateConnectedHexPositions(int count, RandomSource random) {
+        Set<V2I> placed = new HashSet<>();
+        List<V2I> frontier = new ArrayList<>();
 
-        HexPos origin = new HexPos(0, 0);
+        V2I origin = new V2I(0, 0);
         placed.add(origin);
-        int minX = origin.x, maxX = origin.x;
-        int minY = origin.y, maxY = origin.y;
+        int minX = origin.x(), maxX = origin.x();
+        int minY = origin.y(), maxY = origin.y();
         addFrontier(origin, placed, frontier);
 
         while (placed.size() < count && !frontier.isEmpty()) {
             int idx = random.nextInt(frontier.size());
-            HexPos pos = frontier.remove(idx);
+            V2I pos = frontier.remove(idx);
             if (placed.contains(pos)) {
                 continue;
             }
-            int newMinX = Math.min(minX, pos.x);
-            int newMaxX = Math.max(maxX, pos.x);
-            int newMinY = Math.min(minY, pos.y);
-            int newMaxY = Math.max(maxY, pos.y);
+            int newMinX = Math.min(minX, pos.x());
+            int newMaxX = Math.max(maxX, pos.x());
+            int newMinY = Math.min(minY, pos.y());
+            int newMaxY = Math.max(maxY, pos.y());
             if (newMaxX - newMinX >= MAX_GRID_EXTENT || newMaxY - newMinY >= MAX_GRID_EXTENT) {
                 continue;
             }
@@ -74,9 +70,9 @@ public class AlchemySlotGenerator {
         return new ArrayList<>(placed);
     }
 
-    private static void addFrontier(HexPos pos, Set<HexPos> placed, List<HexPos> frontier) {
+    private static void addFrontier(V2I pos, Set<V2I> placed, List<V2I> frontier) {
         for (int[] off : HEX_OFFSETS) {
-            HexPos neighbor = new HexPos(pos.x + off[0], pos.y + off[1]);
+            V2I neighbor = new V2I(pos.x() + off[0], pos.y() + off[1]);
             if (!placed.contains(neighbor) && !frontier.contains(neighbor)) {
                 frontier.add(neighbor);
             }

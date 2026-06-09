@@ -12,6 +12,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 
 public class AlchemistStorageBoxModel extends Model<Float> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
@@ -87,6 +88,6 @@ public class AlchemistStorageBoxModel extends Model<Float> {
 	@Override
 	public void setupAnim(Float openness) {
 		super.setupAnim(openness);
-		cover.xRot = openness * ((float) Math.PI / 2.0F);
+		cover.xRot = openness * Mth.HALF_PI;
 	}
 }

@@ -1,5 +1,6 @@
 package com.linngdu664.transmutatoria.client.gui;
 
+import com.linngdu664.transmutatoria.util.V2I;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.phys.Vec2;
 

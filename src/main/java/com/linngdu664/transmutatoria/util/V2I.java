@@ -1,4 +1,4 @@
-package com.linngdu664.transmutatoria.client.gui;
+package com.linngdu664.transmutatoria.util;
 
 import net.minecraft.world.phys.Vec2;
 
