@@ -4,6 +4,7 @@ import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEnti
 import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;
+import com.linngdu664.transmutatoria.client.tool.Easing;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
@@ -31,53 +32,24 @@ import java.util.List;
 public class GuiHandler {
     private static final TextureOption VIRTUAL_ITEM = TextureOption.withAlpha(48);
 
-    // =============源质选择器参数==============
-    private static final int FRAME_SIZE = Textures.SIMPLE_FRAME.height();
-    private static final float RADIUS_RATE_X = 0.4f;
-    private static final float RADIUS_RATE_Y = 0.0f;
-    // 平滑旋转速度，值越小动画越慢（指数衰减系数，单位: 1/tick）
+    private static final StorageBoxHudStyle STORAGE_BOX_STYLE = new StorageBoxHudStyle(
+            Textures.SIMPLE_FRAME.height(),
+            0.4f,
+            0.0f,
+            0.5f,
+            1.3f,
+            0xc0
+    );
+    private static final RingRotationState storageBoxRotation = new RingRotationState();
+    private static final SmoothPoint selectedSlotHighlight = new SmoothPoint();
+    private static final SmoothValue hudIntro = new SmoothValue();
+
     private static final float LERP_SPEED = 1.2f;
-    // 近大远小缩放范围
-    private static final float MIN_SCALE = 0.5f;
-    private static final float MAX_SCALE = 1.3f;
-    // 深度遮罩最大透明度（12点钟最暗），不达到 0xFF
-    private static final int MAX_OVERLAY_ALPHA = 0xc0;
-
-    // 渲染用的连续旋转值，指数衰减插值逼近 unboundedTarget
-    private static float smoothRotation = 0;
-    // 独立累加的目标值（不依赖 smoothRotation），每步滚轮 ±1
-    private static float unboundedTarget = 0;
-    // 上一帧组件值，检测变化量
-    private static int lastComponentRotation = 0;
-    private static boolean initialized = false;
-
-    // 选中槽位高亮平滑漂移动画
-    private static float smoothHighlightX = 0;
-    private static float smoothHighlightY = 0;
-    private static float targetHighlightX = 0;  // todo 字段可以被转换为一个局部变量？
-    private static float targetHighlightY = 0;
-    private static boolean highlightInitialized = false;
-
-    // HUD入场动画
-    private static float animationProgress = 0.0f;
-    private static boolean animInitialized = false;
+    private static final float EASE_DURATION_TICKS = 6.931472f / LERP_SPEED;
 
     public static void updateHudAnimation(boolean isVisible, DeltaTracker delta) {
-        if (!animInitialized) {
-            animationProgress = isVisible ? 1.0f : 0.0f;
-            animInitialized = true;
-            return;
-        }
         float target = isVisible ? 1.0f : 0.0f;
-        float diff = target - animationProgress;
-        if (Math.abs(diff) > 0.001f) {
-            float dt = delta.getGameTimeDeltaTicks();
-            float t = 1f - (float) Math.exp(-LERP_SPEED * dt);
-            animationProgress += diff * t;
-            if (Math.abs(animationProgress - target) < 0.005f) {
-                animationProgress = target;
-            }
-        }
+        hudIntro.moveTo(target, delta, 0.005f);
     }
 
     // todo 如果后续确定椭圆短轴恒为0，可进一步优化
@@ -85,48 +57,16 @@ public class GuiHandler {
         Minecraft mc = SafeInstance.getMC();
 
         int componentRotation = boxStack.getOrDefault(InitDataComponents.ROTATION, 0);
-
-        if (!initialized) {
-            smoothRotation = componentRotation;
-            unboundedTarget = componentRotation;
-            lastComponentRotation = componentRotation;
-            initialized = true;
-        }
-
-        // 检测组件变化，独立累加目标值
-        if (componentRotation != lastComponentRotation) {
-            int delta2 = componentRotation - lastComponentRotation;
-            if (delta2 > 6) delta2 -= 12;
-            else if (delta2 < -6) delta2 += 12;
-            unboundedTarget += delta2;
-            lastComponentRotation = componentRotation;
-        }
-
-        // 指数衰减插值：smoothRotation 向 unboundedTarget 平滑逼近
-        float dt = delta.getGameTimeDeltaTicks();
-        float diff = unboundedTarget - smoothRotation;
-        if (Math.abs(diff) > 0.001f) {
-            float t = 1f - (float) Math.exp(-LERP_SPEED * dt);
-            smoothRotation += diff * t;
-            if (Math.abs(smoothRotation - unboundedTarget) < 0.01f) {
-                smoothRotation = unboundedTarget;
-            }
-        }
-
-        // 防止浮点精度漂移：同时平移两者，保持差值不变
-        if (Math.abs(smoothRotation) > 12f) {
-            float shift = 12f * Math.round(smoothRotation / 12f);
-            smoothRotation -= shift;
-            unboundedTarget -= shift;
-        }
+        float smoothRotation = storageBoxRotation.update(componentRotation, delta);
 
         int screenW = mc.getWindow().getGuiScaledWidth();
         int screenH = mc.getWindow().getGuiScaledHeight();
 
         float centerX = screenW * 0.5f;
         float centerY = screenH * 0.1f;
-        float radiusX = screenW * 0.5f * RADIUS_RATE_X;
-        float radiusY = screenH * 0.5f * RADIUS_RATE_Y;
+        float radiusX = screenW * 0.5f * STORAGE_BOX_STYLE.radiusRateX();
+        float radiusY = screenH * 0.5f * STORAGE_BOX_STYLE.radiusRateY();
+        int frameSize = STORAGE_BOX_STYLE.frameSize();
 
         ItemContainerContents contents = boxStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
         NonNullList<ItemStack> items = NonNullList.withSize(12, ItemStack.EMPTY);
@@ -144,7 +84,8 @@ public class GuiHandler {
             slotXYs[i] = packXY(slotX, slotY);
             // sin(angle): -1 at 12 o'clock (far), +1 at 6 o'clock (near)
             depths[i] = (Mth.sin(angle) + 1.0f) / 2.0f; // 因此最近深度为 1，最远深度为 0
-            scales[i] = MIN_SCALE + (MAX_SCALE - MIN_SCALE) * depths[i];
+            scales[i] = STORAGE_BOX_STYLE.minScale()
+                    + (STORAGE_BOX_STYLE.maxScale() - STORAGE_BOX_STYLE.minScale()) * depths[i];
         }
 
         // 第二阶段：直接生成渲染顺序（远→近，二渲三），无需排序
@@ -169,7 +110,7 @@ public class GuiHandler {
             guiGraphics.pose().scale(scale, scale);
 
             // 槽位
-            Textures.SIMPLE_FRAME.render(guiGraphics, -FRAME_SIZE / 2, -FRAME_SIZE / 2);
+            Textures.SIMPLE_FRAME.render(guiGraphics, -frameSize / 2, -frameSize / 2);
 
             // 物品
             ItemStack stack = items.get(i);
@@ -179,8 +120,14 @@ public class GuiHandler {
             }
 
             // 蒙版
-            int overlayAlpha = (int) (MAX_OVERLAY_ALPHA * (1 - depths[i]));
-            guiGraphics.fill(-FRAME_SIZE / 2, -FRAME_SIZE / 2, FRAME_SIZE / 2, FRAME_SIZE / 2, overlayAlpha << 24);
+            int overlayAlpha = (int) (STORAGE_BOX_STYLE.maxOverlayAlpha() * (1 - depths[i]));
+            guiGraphics.fill(
+                    -frameSize / 2,
+                    -frameSize / 2,
+                    frameSize / 2,
+                    frameSize / 2,
+                    overlayAlpha << 24
+            );
 
             guiGraphics.pose().popMatrix();
         }
@@ -192,12 +139,12 @@ public class GuiHandler {
             Window window = mc.getWindow();
 
             // 入场缩放动画
-            if (animationProgress < 0.995f) {
+            if (hudIntro.value() < 0.995f) {
                 int sw = window.getGuiScaledWidth();
                 int sh = window.getGuiScaledHeight();
                 guiGraphics.pose().pushMatrix();
                 guiGraphics.pose().translate(sw / 2f, sh / 2f);
-                guiGraphics.pose().scale(animationProgress, animationProgress);
+                guiGraphics.pose().scale(hudIntro.value(), hudIntro.value());
                 guiGraphics.pose().translate(-sw / 2f, -sh / 2f);
             }
 
@@ -265,7 +212,7 @@ public class GuiHandler {
                 drawNumbers(guiGraphics, mc.font, xys);
             }
 
-            if (animationProgress < 0.995f) {
+            if (hudIntro.value() < 0.995f) {
                 guiGraphics.pose().popMatrix();
             }
         }
@@ -342,27 +289,22 @@ public class GuiHandler {
         float targetX = getXFromPacked(packed) - 1;
         float targetY = getYFromPacked(packed) - 1;
 
-        if (!highlightInitialized) {
-            smoothHighlightX = targetX;
-            smoothHighlightY = targetY;
-            targetHighlightX = targetX;
-            targetHighlightY = targetY;
-            highlightInitialized = true;
+        selectedSlotHighlight.moveTo(targetX, targetY, delta);
+
+        Textures.SLOT_SELECTED.render(guiGraphics, Math.round(selectedSlotHighlight.x()), Math.round(selectedSlotHighlight.y()));
+    }
+
+    private static float easeStep(DeltaTracker delta) {
+        float t = Mth.clamp(delta.getGameTimeDeltaTicks(), 0.0f, EASE_DURATION_TICKS);
+        return Easing.EXPO_OUT.ease(t, 0.0f, 1.0f, EASE_DURATION_TICKS);
+    }
+
+    private static float approach(float current, float target, float step, float snapDistance) {
+        if (Math.abs(target - current) <= snapDistance) {
+            return target;
         }
-
-        targetHighlightX = targetX;
-        targetHighlightY = targetY;
-
-        float dt = delta.getGameTimeDeltaTicks();
-        float diffX = targetHighlightX - smoothHighlightX;
-        float diffY = targetHighlightY - smoothHighlightY;
-        if (Math.abs(diffX) > 0.01f || Math.abs(diffY) > 0.01f) {
-            float t = 1f - (float) Math.exp(-LERP_SPEED * dt);
-            smoothHighlightX += diffX * t;
-            smoothHighlightY += diffY * t;
-        }
-
-        Textures.SLOT_SELECTED.render(guiGraphics, Math.round(smoothHighlightX), Math.round(smoothHighlightY));
+        float next = Mth.lerp(step, current, target);
+        return Math.abs(target - next) <= snapDistance ? target : next;
     }
 
     private static void drawArrow(GuiGraphicsExtractor guiGraphics, long[] xys, List<AbstractAlchemySlot> alchemySlots, int magicNumber) {
@@ -383,6 +325,99 @@ public class GuiHandler {
             long packed = xys[i];
             String str = String.valueOf(i + 1);
             guiGraphics.text(font, str, getXFromPacked(packed) + 14 - font.width(str) / 2, getYFromPacked(packed) + 10, 0xffffffff, true);
+        }
+    }
+
+    private record StorageBoxHudStyle(
+            int frameSize,
+            float radiusRateX,
+            float radiusRateY,
+            float minScale,
+            float maxScale,
+            int maxOverlayAlpha
+    ) {
+    }
+
+    private static final class RingRotationState {
+        private float smoothRotation;
+        private float unboundedTarget;
+        private int lastComponentRotation;
+        private boolean initialized;
+
+        private float update(int componentRotation, DeltaTracker delta) {
+            if (!initialized) {
+                smoothRotation = componentRotation;
+                unboundedTarget = componentRotation;
+                lastComponentRotation = componentRotation;
+                initialized = true;
+            }
+
+            if (componentRotation != lastComponentRotation) {
+                int rotationDelta = componentRotation - lastComponentRotation;
+                if (rotationDelta > 6) {
+                    rotationDelta -= 12;
+                } else if (rotationDelta < -6) {
+                    rotationDelta += 12;
+                }
+                unboundedTarget += rotationDelta;
+                lastComponentRotation = componentRotation;
+            }
+
+            smoothRotation = approach(smoothRotation, unboundedTarget, easeStep(delta), 0.01f);
+
+            if (Math.abs(smoothRotation) > 12f) {
+                float shift = 12f * Math.round(smoothRotation / 12f);
+                smoothRotation -= shift;
+                unboundedTarget -= shift;
+            }
+
+            return smoothRotation;
+        }
+    }
+
+    private static final class SmoothPoint {
+        private float x;
+        private float y;
+        private boolean initialized;
+
+        private void moveTo(float targetX, float targetY, DeltaTracker delta) {
+            if (!initialized) {
+                x = targetX;
+                y = targetY;
+                initialized = true;
+                return;
+            }
+
+            float step = easeStep(delta);
+            x = approach(x, targetX, step, 0.01f);
+            y = approach(y, targetY, step, 0.01f);
+        }
+
+        private float x() {
+            return x;
+        }
+
+        private float y() {
+            return y;
+        }
+    }
+
+    private static final class SmoothValue {
+        private float value;
+        private boolean initialized;
+
+        private void moveTo(float target, DeltaTracker delta, float snapDistance) {
+            if (!initialized) {
+                value = target;
+                initialized = true;
+                return;
+            }
+
+            value = approach(value, target, easeStep(delta), snapDistance);
+        }
+
+        private float value() {
+            return value;
         }
     }
 

@@ -1,6 +1,7 @@
 package com.linngdu664.transmutatoria.client.gui.screens;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
+import com.linngdu664.transmutatoria.client.tool.Easing;
 import com.linngdu664.transmutatoria.util.V2I;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.inventory.AbstractTransmutationScrollMenu;
@@ -37,9 +38,10 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
     private static final Identifier INVENTORY_BG_3 = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll_3.png");
     private static final Identifier INVENTORY_BG_4 = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll_4.png");
     private static final float ESSENCE_METAL_RADIUS = 37;
+    private static final float RING_ANIM_DURATION_TICKS = 8.0f;
 
     // 源质圆环扩散动画
-    private float ringAnimProgress = 0.0f;
+    private float ringAnimTicks = 0.0f;
 
     public ScreenTransmutationScroll(AbstractTransmutationScrollMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title, 188, 216);
@@ -48,7 +50,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
     @Override
     protected void init() {
         super.init();
-        ringAnimProgress = 0.0f;
+        ringAnimTicks = 0.0f;
         titleLabelX = (imageWidth - font.width(title)) / 2;
         titleLabelY = 6;
         inventoryLabelX = 8;
@@ -124,11 +126,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
             }
         }
 
-        // 更新动画
-        if (ringAnimProgress < 0.995f) {
-            ringAnimProgress += (1.0f - ringAnimProgress) * 0.15f;
-            if (ringAnimProgress > 0.995f) ringAnimProgress = 1.0f;
-        }
+        float ringAnimProgress = advanceRingAnim(partialTick); // 这里传进来的partialTick是这一帧的tick增量，不是当前帧在这1tick内的比例。
 
         // 渲染配方源质——从圆心扩散到圆环
         List<AbstractAlchemySlot> alchemySlots = scrollStack.get(InitDataComponents.ALCHEMY_SLOTS);
@@ -142,9 +140,6 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
                 float offsetX = ESSENCE_METAL_RADIUS * Mth.cos(angle);
                 float offsetY = ESSENCE_METAL_RADIUS * Mth.sin(angle);
 
-                // todo 未使用的变量
-                float targetX = centerX + offsetX - 8;
-                float targetY = centerY + offsetY - 8;
                 float curX = centerX - 8 + offsetX * ringAnimProgress;
                 float curY = centerY - 8 + offsetY * ringAnimProgress;
 
@@ -187,6 +182,12 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
             graphics.itemDecorations(font, item, px, py);
         }
         return new V2I(px, py);
+    }
+
+    private float advanceRingAnim(float partialTick) {
+        ringAnimTicks = Mth.clamp(ringAnimTicks + partialTick, 0.0f, RING_ANIM_DURATION_TICKS);
+        float tick = Mth.clamp(ringAnimTicks, 0.0f, RING_ANIM_DURATION_TICKS);
+        return Easing.CUBIC_OUT.ease(tick, 0.0f, 1.0f, RING_ANIM_DURATION_TICKS);
     }
 
     private static @NotNull ItemStack getScrollFromPlayer(Player player) {
