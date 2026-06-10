@@ -23,6 +23,10 @@ public class Textures {
     public static final GuiSubSprite DOWNLEFT_ARROW = new GuiSubSprite(SLOTS_FULL_SPRITE, 6 * 4, 53, 5, 5);
     public static final GuiSubSprite UPLEFT_ARROW = new GuiSubSprite(SLOTS_FULL_SPRITE, 6 * 5, 53, 5, 5);
 
+    public static final GuiSubSprite ROMAN_I = new GuiSubSprite(SLOTS_FULL_SPRITE, 36, 53, 1, 8);
+    public static final GuiSubSprite ROMAN_V = new GuiSubSprite(SLOTS_FULL_SPRITE, 38, 53, 3, 8);
+    public static final GuiSubSprite ROMAN_X = new GuiSubSprite(SLOTS_FULL_SPRITE, 42, 53, 3, 8);
+
 
     public static final GuiSprite SLOT_SELECTED = new GuiSprite("hud/slot_selected", 29, 29);
     public static final GuiSprite SIMPLE_FRAME = new GuiSprite("hud/simple_frame", 22, 22);

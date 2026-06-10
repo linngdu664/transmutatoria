@@ -4,6 +4,7 @@ import com.linngdu664.transmutatoria.client.gui.GuiUtil;
 import com.linngdu664.transmutatoria.client.gui.texture.GuiTexture;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
 import com.linngdu664.transmutatoria.client.tool.Easing;
+import com.linngdu664.transmutatoria.client.tool.RomanNumberRenderer;
 import com.linngdu664.transmutatoria.util.V2I;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.inventory.AbstractTransmutationScrollMenu;
@@ -183,7 +184,9 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
                     graphics.setComponentTooltipForNextFrame(font, List.of(tooltip), mouseX, mouseY);
                 }
             }
-//            graphics.text(this.font, String.valueOf(size), centerX, centerY, colorWithAlpha(-12566464, fadeAlpha),false);
+            int romanX = xo + SCROLL_ARR_EQ_BASE.width() / 2 - RomanNumberRenderer.width(size) / 2;
+            int romanY = yo + SCROLL_ARR_EQ_BASE.height() / 2 - Textures.ROMAN_I.height() / 2;
+            RomanNumberRenderer.render(graphics, fadeOption, size, romanX, romanY);
         }
     }
 
