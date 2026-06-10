@@ -50,6 +50,24 @@ public class Textures {
     public static final GuiTexture ALCHEMY_ARRAY_7 = new GuiTexture("textures/gui/alchemy_array7.png", 256, 256);
     public static final GuiTexture ALCHEMY_ARRAY_8 = new GuiTexture("textures/gui/alchemy_array8.png", 256, 256);
 
+    public static final GuiTexture SCROLL_CONTAINER = new GuiTexture("textures/gui/scroll_container.png", 176, 90);
+    public static final GuiTexture SCROLL_GRIP_LEFT = new GuiTexture("textures/gui/scroll_grip_left.png", 16, 121);
+    public static final GuiTexture SCROLL_GRIP_RIGHT = new GuiTexture("textures/gui/scroll_grip_right.png", 16, 121);
+    public static final GuiTexture SCROLL_PAGE = new GuiTexture("textures/gui/scroll_page.png", 162, 121);
+    public static final GuiTexture SCROLL_TRANSMUTATION = new GuiTexture("textures/gui/scroll_transmutation.png", 10, 15);
+    public static final GuiTexture SCROLL_TERRESTRIAL = new GuiTexture("textures/gui/scroll_terrestrial.png", 10, 15);
+    public static final GuiTexture SCROLL_LUNAR = new GuiTexture("textures/gui/scroll_lunar.png", 10, 15);
+    public static final GuiTexture SCROLL_SOLAR = new GuiTexture("textures/gui/scroll_solar.png", 10, 15);
+    public static final GuiTexture SCROLL_VOID = new GuiTexture("textures/gui/scroll_void.png", 10, 15);
+
+    public static final GuiTexture[] SCROLL_MARKS = {
+        SCROLL_TRANSMUTATION,
+        SCROLL_TERRESTRIAL,
+        SCROLL_LUNAR,
+        SCROLL_SOLAR,
+        SCROLL_VOID
+    };
+
     public static final GuiTexture[] ALCHEMY_ARRAYS = {
         ALCHEMY_ARRAY_1, ALCHEMY_ARRAY_2, ALCHEMY_ARRAY_3, ALCHEMY_ARRAY_4,
         ALCHEMY_ARRAY_5, ALCHEMY_ARRAY_6, ALCHEMY_ARRAY_7, ALCHEMY_ARRAY_8

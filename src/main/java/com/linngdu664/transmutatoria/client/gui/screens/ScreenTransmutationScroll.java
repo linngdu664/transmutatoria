@@ -1,6 +1,7 @@
 package com.linngdu664.transmutatoria.client.gui.screens;
 
-import com.linngdu664.transmutatoria.ArsTransmutatoria;
+import com.linngdu664.transmutatoria.client.gui.GuiUtil;
+import com.linngdu664.transmutatoria.client.gui.texture.GuiTexture;
 import com.linngdu664.transmutatoria.client.tool.Easing;
 import com.linngdu664.transmutatoria.util.V2I;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;
@@ -19,7 +20,6 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -31,16 +31,26 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.linngdu664.transmutatoria.client.gui.texture.Textures.*;
+
 public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractTransmutationScrollMenu> {
-    private static final Identifier INVENTORY_BG = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll.png");
-    private static final Identifier INVENTORY_BG_1 = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll_1.png");
-    private static final Identifier INVENTORY_BG_2 = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll_2.png");
-    private static final Identifier INVENTORY_BG_3 = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll_3.png");
-    private static final Identifier INVENTORY_BG_4 = ArsTransmutatoria.makeMyIdentifier("textures/gui/scroll_4.png");
     private static final float ESSENCE_METAL_RADIUS = 37;
+    private static final float OPEN_ANIM_DURATION_TICKS = 8.0f;
     private static final float RING_ANIM_DURATION_TICKS = 8.0f;
+    private static final int SCROLL_PAGE_X = 13;
+    private static final int SCROLL_PAGE_Y = 0;
+    private static final int SCROLL_GRIP_LEFT_X = 0;
+    private static final int SCROLL_GRIP_RIGHT_X = 172;
+    private static final int SCROLL_GRIP_Y = 0;
+    private static final int SCROLL_CONTAINER_X = 6;
+    private static final int SCROLL_CONTAINER_Y = 126;
+    private static final int SCROLL_GEM_OFFSET_X = 3;
+    private static final int SCROLL_GEM_OFFSET_Y = 53;
+    private static final float LEFT_GRIP_TO_PAGE_OFFSET = SCROLL_PAGE_X - SCROLL_GRIP_LEFT_X;
+    private static final float RIGHT_GRIP_TO_PAGE_OFFSET = SCROLL_PAGE_X + SCROLL_PAGE.width() - SCROLL_GRIP_RIGHT_X;
 
     // 源质圆环扩散动画
+    private float openAnimTicks = 0.0f;
     private float ringAnimTicks = 0.0f;
 
     public ScreenTransmutationScroll(AbstractTransmutationScrollMenu menu, Inventory playerInventory, Component title) {
@@ -50,6 +60,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
     @Override
     protected void init() {
         super.init();
+        openAnimTicks = 0.0f;
         ringAnimTicks = 0.0f;
         titleLabelX = (imageWidth - font.width(title)) / 2;
         titleLabelY = 6;
@@ -63,12 +74,17 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         int xo = (this.width - this.imageWidth) / 2;
         int yo = (this.height - this.imageHeight) / 2;
         ItemStack scrollStack = getScrollFromPlayer(SafeInstance.getMC().player);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, getBackground(scrollStack), xo, yo, 34F, 40F, this.imageWidth, this.imageHeight, 256, 256);
+        renderOpeningScroll(graphics, xo, yo, advanceOpenAnim(partialTick), getGemTexture(scrollStack));
+        SCROLL_CONTAINER.render(graphics, xo + SCROLL_CONTAINER_X, yo + SCROLL_CONTAINER_Y);
     }
 
     @Override
     public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractContents(graphics, mouseX, mouseY, partialTick);
+        if (!isOpenAnimFinished()) {
+            this.hoveredSlot = null;
+            return;
+        }
         Minecraft mc = SafeInstance.getMC();
         // 从玩家手上获取卷轴（客户端菜单没有 scrollStack）
         ItemStack scrollStack = getScrollFromPlayer(mc.player);
@@ -184,6 +200,70 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         return new V2I(px, py);
     }
 
+    private void renderOpeningScroll(GuiGraphicsExtractor graphics, int x, int y, float progress, GuiTexture gemTexture) {
+        float pageHalfWidth = SCROLL_PAGE.width() * 0.5f;
+        float visibleHalfWidth = pageHalfWidth * progress;
+        float pageCenterX = x + SCROLL_PAGE_X + pageHalfWidth;
+        float pageY = y + SCROLL_PAGE_Y;
+        float pageLeftX = pageCenterX - visibleHalfWidth;
+        float pageRightX = pageCenterX + visibleHalfWidth;
+
+        if (visibleHalfWidth > 0.0f) {
+            GuiUtil.blit(
+                    graphics,
+                    RenderPipelines.GUI_TEXTURED,
+                    SCROLL_PAGE.identifier(),
+                    pageLeftX,
+                    pageY,
+                    pageHalfWidth - visibleHalfWidth,
+                    0,
+                    visibleHalfWidth,
+                    SCROLL_PAGE.height(),
+                    visibleHalfWidth,
+                    SCROLL_PAGE.height(),
+                    SCROLL_PAGE.width(),
+                    SCROLL_PAGE.height()
+            );
+            GuiUtil.blit(
+                    graphics,
+                    RenderPipelines.GUI_TEXTURED,
+                    SCROLL_PAGE.identifier(),
+                    pageCenterX,
+                    pageY,
+                    pageHalfWidth,
+                    0,
+                    visibleHalfWidth,
+                    SCROLL_PAGE.height(),
+                    visibleHalfWidth,
+                    SCROLL_PAGE.height(),
+                    SCROLL_PAGE.width(),
+                    SCROLL_PAGE.height()
+            );
+        }
+
+        float leftGripX = pageLeftX - LEFT_GRIP_TO_PAGE_OFFSET;
+        float rightGripX = pageRightX - RIGHT_GRIP_TO_PAGE_OFFSET;
+        float gripY = y + SCROLL_GRIP_Y;
+        renderTexture(graphics, SCROLL_GRIP_LEFT, leftGripX, gripY);
+        renderTexture(graphics, SCROLL_GRIP_RIGHT, rightGripX, gripY);
+        renderTexture(graphics, gemTexture, leftGripX + SCROLL_GEM_OFFSET_X, y + SCROLL_GEM_OFFSET_Y);
+        renderTexture(graphics, gemTexture, rightGripX + SCROLL_GEM_OFFSET_X, y + SCROLL_GEM_OFFSET_Y);
+    }
+
+    private void renderTexture(GuiGraphicsExtractor graphics, GuiTexture texture, float x, float y) {
+        GuiUtil.blit(graphics, texture.identifier(), x, y, 0, 0, texture.width(), texture.height(), texture.width(), texture.height());
+    }
+
+    private float advanceOpenAnim(float partialTick) {
+        openAnimTicks = Mth.clamp(openAnimTicks + partialTick, 0.0f, OPEN_ANIM_DURATION_TICKS);
+        float tick = Mth.clamp(openAnimTicks, 0.0f, OPEN_ANIM_DURATION_TICKS);
+        return Easing.CUBIC_OUT.ease(tick, 0.0f, 1.0f, OPEN_ANIM_DURATION_TICKS);
+    }
+
+    private boolean isOpenAnimFinished() {
+        return openAnimTicks >= OPEN_ANIM_DURATION_TICKS;
+    }
+
     private float advanceRingAnim(float partialTick) {
         ringAnimTicks = Mth.clamp(ringAnimTicks + partialTick, 0.0f, RING_ANIM_DURATION_TICKS);
         float tick = Mth.clamp(ringAnimTicks, 0.0f, RING_ANIM_DURATION_TICKS);
@@ -200,20 +280,20 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         return ItemStack.EMPTY;
     }
 
-    private static Identifier getBackground(ItemStack scrollStack) {
+    private static GuiTexture getGemTexture(ItemStack scrollStack) {
         if (isScroll(scrollStack, InitItems.TERRESTRIAL_SIGIL_SCROLL, InitItems.TERRESTRIAL_EQUATION_SCROLL)) {
-            return INVENTORY_BG_1;
+            return SCROLL_TERRESTRIAL;
         }
         if (isScroll(scrollStack, InitItems.LUNAR_SIGIL_SCROLL, InitItems.LUNAR_EQUATION_SCROLL)) {
-            return INVENTORY_BG_2;
+            return SCROLL_LUNAR;
         }
         if (isScroll(scrollStack, InitItems.SOLAR_SIGIL_SCROLL, InitItems.SOLAR_EQUATION_SCROLL)) {
-            return INVENTORY_BG_3;
+            return SCROLL_SOLAR;
         }
         if (isScroll(scrollStack, InitItems.VOID_SIGIL_SCROLL, InitItems.VOID_EQUATION_SCROLL)) {
-            return INVENTORY_BG_4;
+            return SCROLL_VOID;
         }
-        return INVENTORY_BG;
+        return SCROLL_TRANSMUTATION;
     }
 
     private static boolean isScroll(ItemStack scrollStack, DeferredItem<Item> sigilScroll, DeferredItem<Item> equationScroll) {

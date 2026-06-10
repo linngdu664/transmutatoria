@@ -6,14 +6,26 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public interface TextureRenderable {
-    void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y);
+    void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y, int u, int v);
 
     int width();
 
     int height();
 
+    int u();
+
+    int v();
+
+    default void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y) {
+        render(guiGraphics, option, x, y, u(), v());
+    }
+
     default void render(GuiGraphicsExtractor guiGraphics, int x, int y) {
         render(guiGraphics, TextureOption.DEFAULT, x, y);
+    }
+
+    default void render(GuiGraphicsExtractor guiGraphics, int x, int y, int u, int v) {
+        render(guiGraphics, TextureOption.DEFAULT, x, y, u, v);
     }
 
     default V2I renderVerticalCenter(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, int x) {
