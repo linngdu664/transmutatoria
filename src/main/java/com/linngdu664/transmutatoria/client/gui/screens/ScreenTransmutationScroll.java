@@ -48,6 +48,8 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
     private static final int SCROLL_CONTAINER_Y = 126;
     private static final int SCROLL_GEM_OFFSET_X = 3;
     private static final int SCROLL_GEM_OFFSET_Y = 53;
+    private static final int STABILITY_TEXT_OFFSET_X = 8;
+    private static final int STABILITY_TEXT_OFFSET_Y = 96;
     private static final float LEFT_GRIP_TO_PAGE_OFFSET = SCROLL_PAGE_X - SCROLL_GRIP_LEFT_X;
     private static final float RIGHT_GRIP_TO_PAGE_OFFSET = SCROLL_PAGE_X + SCROLL_PAGE.width() - SCROLL_GRIP_RIGHT_X;
 
@@ -188,6 +190,40 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
             int romanY = yo + SCROLL_ARR_EQ_BASE.height() / 2 - Textures.ROMAN_I.height() / 2;
             RomanNumberRenderer.render(graphics, fadeOption, size, romanX, romanY);
         }
+
+        renderStabilityText(graphics, scrollStack, fadeAlpha);
+    }
+
+    private void renderStabilityText(GuiGraphicsExtractor graphics, ItemStack scrollStack, int fadeAlpha) {
+        Component text = Component.translatable(getStabilityTranslationKey(scrollStack));
+        int color = colorWithAlpha(0x4a2f21, fadeAlpha);
+        graphics.text(font, text, leftPos + SCROLL_PAGE_X + STABILITY_TEXT_OFFSET_X, topPos + SCROLL_PAGE_Y + STABILITY_TEXT_OFFSET_Y, color, false);
+    }
+
+    private static String getStabilityTranslationKey(ItemStack scrollStack) {
+        int entropy = scrollStack.getOrDefault(InitDataComponents.ENTROPY, 0);
+        int maxDurability = scrollStack.getOrDefault(DataComponents.MAX_DAMAGE, 0);
+        if (entropy <= 0 || maxDurability <= 0) {
+            return "gui.transmutatoria.scroll_stability.stable";
+        }
+
+        double ratio = (double) entropy / maxDurability;
+        if (ratio <= 0.025) {
+            return "gui.transmutatoria.scroll_stability.slight_disturbance";
+        }
+        if (ratio <= 0.05) {
+            return "gui.transmutatoria.scroll_stability.slightly_unstable";
+        }
+        if (ratio <= 0.10) {
+            return "gui.transmutatoria.scroll_stability.unstable";
+        }
+        if (ratio <= 0.20) {
+            return "gui.transmutatoria.scroll_stability.clearly_unstable";
+        }
+        if (ratio <= 0.30) {
+            return "gui.transmutatoria.scroll_stability.very_unstable";
+        }
+        return "gui.transmutatoria.scroll_stability.near_collapse";
     }
 
     private V2I renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDeco, float fadeProgress){

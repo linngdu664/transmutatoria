@@ -93,6 +93,14 @@
   "item.transmutatoria.solar_equation_scroll": "Solar Equation Scroll",
   "item.transmutatoria.void_equation_scroll": "Void Equation Scroll",
 
+  "gui.transmutatoria.scroll_stability.stable": "Stable",
+  "gui.transmutatoria.scroll_stability.slight_disturbance": "Slightly Disturbed",
+  "gui.transmutatoria.scroll_stability.slightly_unstable": "Slightly Unstable",
+  "gui.transmutatoria.scroll_stability.unstable": "Unstable",
+  "gui.transmutatoria.scroll_stability.clearly_unstable": "Clearly Unstable",
+  "gui.transmutatoria.scroll_stability.very_unstable": "Very Unstable",
+  "gui.transmutatoria.scroll_stability.near_collapse": "Near Collapse",
+
   "jei.transmutatoria.catalyst_shapeless": "Catalyst Crafting",
   "jei.transmutatoria.alchemical_replication": "Alchemical Replication",
   "jei.transmutatoria.alchemical_transformation": "Alchemical Transformation"

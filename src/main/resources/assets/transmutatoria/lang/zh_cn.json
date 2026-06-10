@@ -93,6 +93,14 @@
   "item.transmutatoria.solar_equation_scroll": "日相方程卷",
   "item.transmutatoria.void_equation_scroll": "无相方程卷",
 
+  "gui.transmutatoria.scroll_stability.stable": "稳定",
+  "gui.transmutatoria.scroll_stability.slight_disturbance": "轻微扰动",
+  "gui.transmutatoria.scroll_stability.slightly_unstable": "略微不稳",
+  "gui.transmutatoria.scroll_stability.unstable": "不稳",
+  "gui.transmutatoria.scroll_stability.clearly_unstable": "明显不稳",
+  "gui.transmutatoria.scroll_stability.very_unstable": "非常不稳",
+  "gui.transmutatoria.scroll_stability.near_collapse": "濒临崩解",
+
   "jei.transmutatoria.catalyst_shapeless": "催化剂合成",
   "jei.transmutatoria.alchemical_replication": "炼金复制",
   "jei.transmutatoria.alchemical_transformation": "炼金转化"
