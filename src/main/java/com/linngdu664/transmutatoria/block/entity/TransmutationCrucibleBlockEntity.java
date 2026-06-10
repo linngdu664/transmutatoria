@@ -605,6 +605,9 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     private void handleScrollReaction(ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate) {
         ItemStack catalyst = getCatalyst();
+        if (catalyst.getItem() instanceof AbstractTransmutationScrollItem scrollItem) {
+            scrollItem.syncConfiguredDurability(catalyst);
+        }
         List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
         if (!alchemySlots.isEmpty() && inputOrder.size() == alchemySlots.size()) {
             // 反应前预先做的事

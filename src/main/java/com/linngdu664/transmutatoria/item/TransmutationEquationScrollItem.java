@@ -17,13 +17,23 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import java.util.function.IntSupplier;
+
 public class TransmutationEquationScrollItem extends AbstractTransmutationScrollItem {
-    public TransmutationEquationScrollItem(Identifier id) {
-        super(id);
+    public TransmutationEquationScrollItem(Identifier id, int durability) {
+        super(id, durability);
     }
 
-    public TransmutationEquationScrollItem(Identifier id, ExpireInfo expireInfo) {
-        super(id, expireInfo);
+    public TransmutationEquationScrollItem(Identifier id, int defaultDurability, IntSupplier durabilitySupplier) {
+        super(id, defaultDurability, durabilitySupplier);
+    }
+
+    public TransmutationEquationScrollItem(Identifier id, ExpireInfo expireInfo, int durability) {
+        super(id, expireInfo, durability);
+    }
+
+    public TransmutationEquationScrollItem(Identifier id, ExpireInfo expireInfo, int defaultDurability, IntSupplier durabilitySupplier) {
+        super(id, expireInfo, defaultDurability, durabilitySupplier);
     }
 
     @Override

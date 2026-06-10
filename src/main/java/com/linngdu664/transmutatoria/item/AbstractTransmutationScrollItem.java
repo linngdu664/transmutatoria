@@ -5,11 +5,13 @@ import com.linngdu664.transmutatoria.item.component.ExpireInfo;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.Unit;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
@@ -18,16 +20,71 @@ import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.IntSupplier;
 
 public abstract class AbstractTransmutationScrollItem extends Item {
+    private final int defaultDurability;
+    private final IntSupplier durabilitySupplier;
+
     // 不会过期的卷轴
-    protected AbstractTransmutationScrollItem(Identifier id) {
-        super(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id)).stacksTo(1));
+    protected AbstractTransmutationScrollItem(Identifier id, int durability) {
+        this(id, durability, () -> durability);
+    }
+
+    protected AbstractTransmutationScrollItem(Identifier id, int defaultDurability, IntSupplier durabilitySupplier) {
+        super(createProperties(id, null, defaultDurability));
+        this.defaultDurability = defaultDurability;
+        this.durabilitySupplier = durabilitySupplier;
     }
 
     // 会过期的卷轴
-    protected AbstractTransmutationScrollItem(Identifier id, ExpireInfo expireInfo) {
-        super(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id)).stacksTo(1).component(InitDataComponents.EXPIRE_INFO, expireInfo));
+    protected AbstractTransmutationScrollItem(Identifier id, ExpireInfo expireInfo, int durability) {
+        this(id, expireInfo, durability, () -> durability);
+    }
+
+    protected AbstractTransmutationScrollItem(Identifier id, ExpireInfo expireInfo, int defaultDurability, IntSupplier durabilitySupplier) {
+        super(createProperties(id, expireInfo, defaultDurability));
+        this.defaultDurability = defaultDurability;
+        this.durabilitySupplier = durabilitySupplier;
+    }
+
+    private static Item.Properties createProperties(Identifier id, ExpireInfo expireInfo, int durability) {
+        Item.Properties properties = new Item.Properties()
+                .setId(ResourceKey.create(Registries.ITEM, id))
+                .stacksTo(1);
+        if (durability > 0) {
+            properties.durability(durability);
+        }
+        if (durability <= 0) {
+            properties.component(DataComponents.UNBREAKABLE, Unit.INSTANCE);
+        }
+        if (expireInfo != null) {
+            properties.component(InitDataComponents.EXPIRE_INFO, expireInfo);
+        }
+        return properties;
+    }
+
+    public void syncConfiguredDurability(ItemStack stack) {
+        int durability = getConfiguredDurability();
+        if (durability <= 0) {
+            stack.remove(DataComponents.MAX_DAMAGE);
+            stack.remove(DataComponents.DAMAGE);
+            stack.set(DataComponents.UNBREAKABLE, Unit.INSTANCE);
+            return;
+        }
+
+        stack.remove(DataComponents.UNBREAKABLE);
+        stack.set(DataComponents.MAX_DAMAGE, durability);
+        int damage = stack.getOrDefault(DataComponents.DAMAGE, 0);
+        stack.set(DataComponents.DAMAGE, Math.min(damage, durability - 1));
+    }
+
+    private int getConfiguredDurability() {
+        try {
+            return durabilitySupplier.getAsInt();
+        } catch (IllegalStateException ignored) {
+            return defaultDurability;
+        }
     }
 
     /**
@@ -108,6 +165,7 @@ public abstract class AbstractTransmutationScrollItem extends Item {
 
     @Override
     public void inventoryTick(ItemStack itemStack, ServerLevel level, Entity owner, @Nullable EquipmentSlot slot) {
+        syncConfiguredDurability(itemStack);
         // 只有当加载了配方时才 tick
         if (itemStack.has(InitDataComponents.ALCHEMY_SLOTS)) {
             int times = checkAndSetExpire(level, itemStack);
