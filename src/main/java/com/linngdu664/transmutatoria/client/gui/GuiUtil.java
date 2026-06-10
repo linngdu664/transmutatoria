@@ -3,6 +3,7 @@ package com.linngdu664.transmutatoria.client.gui;
 import com.linngdu664.transmutatoria.client.renderer.state.gui.FloatBlitRenderState;
 import com.linngdu664.transmutatoria.client.renderer.state.gui.FloatColoredQuadRenderState;
 import com.linngdu664.transmutatoria.client.renderer.state.gui.FloatColoredRectangleRenderState;
+import com.linngdu664.transmutatoria.client.renderer.state.gui.FloatGradientQuadRenderState;
 import com.linngdu664.transmutatoria.util.V2I;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.Window;
@@ -83,8 +84,60 @@ public class GuiUtil {
         guiGraphics.guiRenderState.addGuiElement(new FloatColoredRectangleRenderState(renderPipeline, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), x0, y0, x1, y1, color, color, guiGraphics.scissorStack.peek()));
     }
 
+    public static void fillGradient(GuiGraphicsExtractor guiGraphics, Vec2 a, Vec2 b, int colorTop, int colorBottom) {
+        fillGradient(guiGraphics, a.x, a.y, b.x, b.y, colorTop, colorBottom);
+    }
+
+    public static void fillGradient(GuiGraphicsExtractor guiGraphics, float x0, float y0, float x1, float y1, int colorTop, int colorBottom) {
+        fillGradient(guiGraphics, RenderPipelines.GUI, x0, y0, x1, y1, colorTop, colorBottom);
+    }
+
+    public static void fillGradient(GuiGraphicsExtractor guiGraphics, RenderPipeline renderPipeline, float x0, float y0, float x1, float y1, int colorTop, int colorBottom) {
+        if (x0 < x1) {
+            float tmp = x0;
+            x0 = x1;
+            x1 = tmp;
+        }
+        if (y0 < y1) {
+            float tmp = y0;
+            y0 = y1;
+            y1 = tmp;
+        }
+        guiGraphics.guiRenderState.addGuiElement(new FloatColoredRectangleRenderState(renderPipeline, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), x0, y0, x1, y1, colorTop, colorBottom, guiGraphics.scissorStack.peek()));
+    }
+
     public static void fill(GuiGraphicsExtractor guiGraphics, Vec2 a, Vec2 b, Vec2 c, Vec2 d, int pColor) {
         guiGraphics.guiRenderState.addGuiElement(new FloatColoredQuadRenderState(RenderPipelines.GUI, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), a, b, c, d, pColor, guiGraphics.scissorStack.peek()));
+    }
+
+    public static void fillGradient(GuiGraphicsExtractor guiGraphics, Vec2 a, Vec2 b, Vec2 c, Vec2 d, int colorA, int colorB, int colorC, int colorD) {
+        guiGraphics.guiRenderState.addGuiElement(new FloatGradientQuadRenderState(RenderPipelines.GUI, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), a, b, c, d, colorA, colorB, colorC, colorD, guiGraphics.scissorStack.peek()));
+    }
+
+    public static void gradientLine(GuiGraphicsExtractor guiGraphics, Vec2 start, Vec2 end, float thickness, int startColor, int endColor) {
+        gradientLine(guiGraphics, RenderPipelines.GUI, start, end, thickness, startColor, endColor);
+    }
+
+    public static void gradientLine(GuiGraphicsExtractor guiGraphics, RenderPipeline renderPipeline, Vec2 start, Vec2 end, float thickness, int startColor, int endColor) {
+        if (thickness <= 0.0F) {
+            return;
+        }
+
+        float dx = end.x - start.x;
+        float dy = end.y - start.y;
+        float length = (float)Math.sqrt(dx * dx + dy * dy);
+        if (length == 0.0F) {
+            return;
+        }
+
+        float halfThickness = thickness * 0.5F;
+        float normalX = -dy / length * halfThickness;
+        float normalY = dx / length * halfThickness;
+        Vec2 a = new Vec2(start.x + normalX, start.y + normalY);
+        Vec2 b = new Vec2(start.x - normalX, start.y - normalY);
+        Vec2 c = new Vec2(end.x - normalX, end.y - normalY);
+        Vec2 d = new Vec2(end.x + normalX, end.y + normalY);
+        guiGraphics.guiRenderState.addGuiElement(new FloatGradientQuadRenderState(renderPipeline, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), a, b, c, d, startColor, startColor, endColor, endColor, guiGraphics.scissorStack.peek()));
     }
 
     public static void blit(GuiGraphicsExtractor guiGraphics, Identifier texture, float x, float y, float u, float v, float width, float height, float textureWidth, float textureHeight) {
