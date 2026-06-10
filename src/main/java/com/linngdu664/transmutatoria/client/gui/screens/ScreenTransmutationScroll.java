@@ -80,6 +80,11 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
     }
 
     @Override
+    protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {
+        // 不显示标题
+    }
+
+    @Override
     public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractContents(graphics, mouseX, mouseY, partialTick);
         if (!isOpenAnimFinished()) {
@@ -132,14 +137,14 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
             if (recipe != null) {
                 if (isEquationScroll){
                     ItemStack visualRightStack = recipe.getOtherSideItemStack();
-                    renderSlotItem(graphics, visualRightStack, false, false, fadeProgress);
-                    renderSlotItem(graphics, item, true, false, fadeProgress);
+                    renderSlotItem(graphics, visualRightStack, false, false, fadeProgress, 0.5f);
+                    renderSlotItem(graphics, item, true, false, fadeProgress, 0.5f);
                     Textures.SCROLL_ARR_EQ_LIGHT.render(graphics, fadeOption, xo, yo);
                     Textures.SCROLL_ARR_EQ_SHINE.render(graphics, fadeOption, xo, yo);
                 } else {
                     ItemStack visualLeftStack = recipe.getOtherSideItemStack();
-                    renderSlotItem(graphics, visualLeftStack, true, false, fadeProgress);
-                    renderSlotItem(graphics, item, false, false, fadeProgress);
+                    renderSlotItem(graphics, visualLeftStack, true, false, fadeProgress, 0.5f);
+                    renderSlotItem(graphics, item, false, false, fadeProgress, 0.5f);
                     Textures.SCROLL_ARR_SG_LIGHT.render(graphics, fadeOption, xo, yo);
                     Textures.SCROLL_ARR_SG_SHINE.render(graphics, fadeOption, xo, yo);
                 }
@@ -178,18 +183,22 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
                     graphics.setComponentTooltipForNextFrame(font, List.of(tooltip), mouseX, mouseY);
                 }
             }
-            graphics.text(this.font, String.valueOf(size), centerX, centerY, colorWithAlpha(-12566464, fadeAlpha),false);
+//            graphics.text(this.font, String.valueOf(size), centerX, centerY, colorWithAlpha(-12566464, fadeAlpha),false);
         }
     }
 
     private V2I renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDeco, float fadeProgress){
+        return renderSlotItem(graphics, item, isLeft, needDeco, fadeProgress, 1.0f);
+    }
+
+    private V2I renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDeco, float fadeProgress, float opacity){
         int px = leftPos + (isLeft ? AbstractTransmutationScrollMenu.SLOT0_X : AbstractTransmutationScrollMenu.SLOT1_X);
         int py = topPos + (isLeft ? AbstractTransmutationScrollMenu.SLOT0_Y : AbstractTransmutationScrollMenu.SLOT1_Y);
         graphics.item(item, px, py);
         if (needDeco) {
             graphics.itemDecorations(font, item, px, py);
         }
-        coverSlotItemWithPage(graphics, px, py, fadeProgress);
+        coverSlotItemWithPage(graphics, px, py, fadeProgress, opacity);
         return new V2I(px, py);
     }
 
@@ -247,8 +256,8 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         GuiUtil.blit(graphics, texture.identifier(), x, y, 0, 0, texture.width(), texture.height(), texture.width(), texture.height());
     }
 
-    private void coverSlotItemWithPage(GuiGraphicsExtractor graphics, int x, int y, float fadeProgress) {
-        int alpha = Mth.clamp(Mth.ceil(255.0f * (1.0f - fadeProgress)), 0, 255);
+    private void coverSlotItemWithPage(GuiGraphicsExtractor graphics, int x, int y, float fadeProgress, float opacity) {
+        int alpha = Mth.clamp(Mth.ceil(255.0f * (1.0f - fadeProgress * opacity)), 0, 255);
         if (alpha <= 0) {
             return;
         }
@@ -275,7 +284,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
     private float advanceOpenAnim(float partialTick) {
         openAnimTicks = Mth.clamp(openAnimTicks + partialTick, 0.0f, OPEN_ANIM_DURATION_TICKS);
         float tick = Mth.clamp(openAnimTicks, 0.0f, OPEN_ANIM_DURATION_TICKS);
-        return Easing.CUBIC_OUT.ease(tick, 0.0f, 1.0f, OPEN_ANIM_DURATION_TICKS);
+        return Easing.QUARTIC_IN_OUT.ease(tick, 0.0f, 1.0f, OPEN_ANIM_DURATION_TICKS);
     }
 
     private boolean isOpenAnimFinished() {
