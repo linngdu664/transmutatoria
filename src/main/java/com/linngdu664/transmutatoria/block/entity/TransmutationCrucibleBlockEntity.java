@@ -67,6 +67,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private int selectedSlot;
     private int processTimer;
     private int targetTimer;
+    private int essenceInputPulseSlot = -1;
+    private long essenceInputPulseStartedAtMillis;
 
     private record ItemsSnapshot(ItemStack[] items, int[] inputOrder, int targetTimer) {}
 
@@ -734,6 +736,14 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         return targetTimer;
     }
 
+    public int getEssenceInputPulseSlot() {
+        return essenceInputPulseSlot;
+    }
+
+    public long getEssenceInputPulseStartedAtMillis() {
+        return essenceInputPulseStartedAtMillis;
+    }
+
     public boolean hasCatalyst() {
         return !items.get(CATALYST_SLOT).isEmpty();
     }
@@ -834,7 +844,15 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     // ======================客户端网络同步=========================
     public void clientSetItem(int slot, ItemStack itemStack) {
+        boolean filledEmptyEssenceInputSlot = slot >= ESSENCE_INPUT_SLOT_BEGIN
+                && slot < ESSENCE_OUTPUT_SLOT_BEGIN
+                && items.get(slot).isEmpty()
+                && !itemStack.isEmpty();
         this.items.set(slot, itemStack);
+        if (filledEmptyEssenceInputSlot) {
+            essenceInputPulseSlot = slot - ESSENCE_INPUT_SLOT_BEGIN;
+            essenceInputPulseStartedAtMillis = System.currentTimeMillis();
+        }
     }
 
     public void clientSetPolarity(int polarity) {
