@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -52,8 +53,9 @@ public class AlchemistStorageBoxBlock extends BaseEntityBlock {
     public AlchemistStorageBoxBlock(Identifier id, int boxState) {
         super(BlockBehaviour.Properties.of()
                 .setId(ResourceKey.create(Registries.BLOCK, id))
+                .mapColor(MapColor.WOOD)
                 .sound(SoundType.WOOD)
-                .strength(0.5F)
+                .strength(2.5F)
                 .noOcclusion());
         this.boxState = boxState;
         this.codec = MapCodec.unit(this);

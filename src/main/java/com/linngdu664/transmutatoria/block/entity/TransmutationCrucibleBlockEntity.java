@@ -29,6 +29,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.Containers;
 import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -310,6 +311,13 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         processTimer = input.getIntOr("ProcessTimer", 0);
         targetTimer = input.getIntOr("TargetTimer", 0);
         inputOrder = new IntArrayList(input.getIntArray("InputOrder").orElse(new int[0]));
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        if (level != null) {
+            Containers.dropContents(level, pos, items);
+        }
     }
 
     // 区块加载时会自动触发全量更新同步
@@ -848,10 +856,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     // ======================客户端网络同步=========================
     public void clientSetItem(int slot, ItemStack itemStack) {
-        boolean filledEmptyEssenceInputSlot = slot >= ESSENCE_INPUT_SLOT_BEGIN
-                && slot < ESSENCE_OUTPUT_SLOT_BEGIN
-                && items.get(slot).isEmpty()
-                && !itemStack.isEmpty();
+        boolean filledEmptyEssenceInputSlot = slot >= ESSENCE_INPUT_SLOT_BEGIN && slot < ESSENCE_OUTPUT_SLOT_BEGIN
+                && items.get(slot).isEmpty() && !itemStack.isEmpty();
         this.items.set(slot, itemStack);
         if (filledEmptyEssenceInputSlot) {
             essenceInputPulseSlot = slot - ESSENCE_INPUT_SLOT_BEGIN;

@@ -37,7 +37,7 @@ public class InitItems {
     // ================= [ 基础物品 ] =================
     public static DeferredItem<Item> TRANSMUTATION_CRYSTAL = ITEMS.registerSimpleItem("transmutation_crystal");
     public static DeferredItem<Item> ALCHEMICAL_DROSS = ITEMS.registerSimpleItem("alchemical_dross");
-    public static DeferredItem<BlockItem> ALCHEMICAL_DROSS_BLOCK = ITEMS.registerSimpleBlockItem("alchemical_dross_block",InitBlocks.ALCHEMICAL_DROSS_BLOCK);
+    public static DeferredItem<BlockItem> ALCHEMICAL_DROSS_BLOCK = ITEMS.registerSimpleBlockItem("alchemical_dross_block", InitBlocks.ALCHEMICAL_DROSS_BLOCK);
 
     // ================= [ 金属变体 (12种 x 4状态) ] =================
     // 【星火】 蚀日金 (A) / 泣月银 (B) / 灾星钛 (C)

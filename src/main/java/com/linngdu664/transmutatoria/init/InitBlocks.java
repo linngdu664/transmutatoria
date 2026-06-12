@@ -1,12 +1,18 @@
 package com.linngdu664.transmutatoria.init;
 
+import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.block.AlchemistStorageBoxBlock;
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
 import com.linngdu664.transmutatoria.block.entity.AlchemistStorageBoxBlockEntity;
 import com.linngdu664.transmutatoria.block.TransmutationCrucibleBlock;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -20,7 +26,13 @@ public class InitBlocks {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
 
     public static final DeferredBlock<Block> TRANSMUTATION_CRUCIBLE = BLOCKS.register("transmutation_crucible", TransmutationCrucibleBlock::new);
-    public static final DeferredBlock<Block> ALCHEMICAL_DROSS_BLOCK = BLOCKS.registerSimpleBlock("alchemical_dross_block");
+    public static final DeferredBlock<Block> ALCHEMICAL_DROSS_BLOCK = BLOCKS.registerSimpleBlock("alchemical_dross_block", () ->
+            BlockBehaviour.Properties.of()
+                    .setId(ResourceKey.create(Registries.BLOCK, ArsTransmutatoria.makeMyIdentifier("alchemical_dross_block")))
+                    .mapColor(MapColor.SAND)
+                    .instrument(NoteBlockInstrument.SNARE)
+                    .strength(0.5F)
+                    .sound(SoundType.SAND));
     public static final DeferredBlock<AlchemistStorageBoxBlock> ALCHEMIST_STORAGE_BOX =
             BLOCKS.register("alchemist_storage_box", id -> new AlchemistStorageBoxBlock(id, 0));
     public static final DeferredBlock<AlchemistStorageBoxBlock> NIGREDO_ALCHEMIST_STORAGE_BOX =
