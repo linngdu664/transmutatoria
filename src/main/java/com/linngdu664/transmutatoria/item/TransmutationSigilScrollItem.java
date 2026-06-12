@@ -17,23 +17,21 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import java.util.function.IntSupplier;
-
 public class TransmutationSigilScrollItem extends AbstractTransmutationScrollItem {
-    public TransmutationSigilScrollItem(Identifier id, int durability) {
-        super(id, durability);
-    }
-
-    public TransmutationSigilScrollItem(Identifier id, int defaultDurability, IntSupplier durabilitySupplier) {
-        super(id, defaultDurability, durabilitySupplier);
-    }
-
     public TransmutationSigilScrollItem(Identifier id, ExpireInfo expireInfo, int durability) {
         super(id, expireInfo, durability);
     }
 
-    public TransmutationSigilScrollItem(Identifier id, ExpireInfo expireInfo, int defaultDurability, IntSupplier durabilitySupplier) {
-        super(id, expireInfo, defaultDurability, durabilitySupplier);
+    public TransmutationSigilScrollItem(Identifier id, ExpireInfo expireInfo) {
+        super(id, expireInfo);
+    }
+
+    public TransmutationSigilScrollItem(Identifier id, int durability) {
+        super(id, durability);
+    }
+
+    public TransmutationSigilScrollItem(Identifier id) {
+        super(id);
     }
 
     @Override
