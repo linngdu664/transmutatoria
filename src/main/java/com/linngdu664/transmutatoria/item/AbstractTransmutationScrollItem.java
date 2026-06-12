@@ -1,10 +1,12 @@
 package com.linngdu664.transmutatoria.item;
 
 import com.linngdu664.transmutatoria.init.InitDataComponents;
+import com.linngdu664.transmutatoria.inventory.AbstractTransmutationScrollMenu;
 import com.linngdu664.transmutatoria.item.component.ExpireInfo;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -16,6 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
@@ -23,33 +26,31 @@ import java.util.List;
 
 public abstract class AbstractTransmutationScrollItem extends Item {
     protected AbstractTransmutationScrollItem(Identifier id, ExpireInfo expireInfo, int durability) {
-        super(new Item.Properties()
-                .setId(ResourceKey.create(Registries.ITEM, id))
-                .stacksTo(1)
+        super(getCommonProperties(id)
                 .component(InitDataComponents.EXPIRE_INFO, expireInfo)
                 .durability(durability));
     }
 
     protected AbstractTransmutationScrollItem(Identifier id, ExpireInfo expireInfo) {
-        super(new Item.Properties()
-                .setId(ResourceKey.create(Registries.ITEM, id))
-                .stacksTo(1)
+        super(getCommonProperties(id)
                 .component(InitDataComponents.EXPIRE_INFO, expireInfo)
                 .component(DataComponents.UNBREAKABLE, Unit.INSTANCE));
     }
 
     protected AbstractTransmutationScrollItem(Identifier id, int durability) {
-        super(new Item.Properties()
-                .setId(ResourceKey.create(Registries.ITEM, id))
-                .stacksTo(1)
-                .durability(durability));
+        super(getCommonProperties(id).durability(durability));
     }
 
     protected AbstractTransmutationScrollItem(Identifier id) {
-        super(new Item.Properties()
+        super(getCommonProperties(id).component(DataComponents.UNBREAKABLE, Unit.INSTANCE));
+    }
+
+    private static Item.Properties getCommonProperties(Identifier id) {
+        return new Item.Properties()
                 .setId(ResourceKey.create(Registries.ITEM, id))
                 .stacksTo(1)
-                .component(DataComponents.UNBREAKABLE, Unit.INSTANCE));
+                .component(DataComponents.CONTAINER, ItemContainerContents.fromItems(
+                        NonNullList.withSize(AbstractTransmutationScrollMenu.CONTAINER_SLOTS, ItemStack.EMPTY)));
     }
 
     /**

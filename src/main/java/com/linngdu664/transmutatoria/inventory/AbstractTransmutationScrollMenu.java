@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
 public abstract class AbstractTransmutationScrollMenu extends AbstractContainerMenu {
-    private static final int CONTAINER_SLOTS = 2;
+    public static final int CONTAINER_SLOTS = 2;
     private static final int INV_START = CONTAINER_SLOTS;
     private static final int INV_END = INV_START + 27;
     private static final int HOTBAR_START = INV_END;
