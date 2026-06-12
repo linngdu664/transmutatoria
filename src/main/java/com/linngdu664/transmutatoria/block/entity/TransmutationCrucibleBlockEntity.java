@@ -636,7 +636,9 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             // 反应
             int annihilationCnt = 0;
             int entropy = catalyst.getOrDefault(InitDataComponents.ENTROPY, 0);
-            for (int slot : inputOrder) {
+            // 避免装箱拆箱
+            for (int j = 0, size = inputOrder.size(); j < size; j++) {
+                int slot = inputOrder.getInt(j);
                 AlchemyReactResult result = alchemySlots.get(slot).react(
                         catalyst,
                         items.get(slot),
