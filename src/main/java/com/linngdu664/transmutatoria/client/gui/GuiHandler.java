@@ -47,12 +47,14 @@ public class GuiHandler {
     private static final SmoothPoint selectedSlotHighlight = new SmoothPoint();
     private static final SmoothValue hudIntro = new SmoothValue();
     private static final SmoothValue dashboardPolarity = new SmoothValue();
+    private static final CrucibleSlotAnimation crucibleSlotAnimation = new CrucibleSlotAnimation();
 
     private static final float LERP_SPEED = 1.2f;
     private static final float EASE_DURATION_TICKS = 6.931472f / LERP_SPEED;
     private static final float SLOT_CLICK_PRESS_TICKS = 3.0f;
     private static final float SLOT_CLICK_RELEASE_TICKS = 7.0f;
     private static final float SLOT_CLICK_MIN_SCALE = 0.78f;
+    private static final float SLOT_REVEAL_TICKS = 8.0f;
     private static final float DASHBOARD_MAX_POLARITY = 50.0f;
     private static final float DASHBOARD_MAX_POINTER_DEGREES = 90.0f;
 
@@ -146,6 +148,7 @@ public class GuiHandler {
         if (be instanceof TransmutationCrucibleBlockEntity crucible) {
             Minecraft mc = SafeInstance.getMC();
             Window window = mc.getWindow();
+            crucibleSlotAnimation.update(crucible, delta);
 
             // 入场缩放动画
             if (hudIntro.value() < 0.995f) {
@@ -203,13 +206,13 @@ public class GuiHandler {
                     AbstractAlchemySlot alchemySlot = alchemySlots.get(slotIdx);
                     return alchemySlot.isShowEssence() ? alchemySlot.getEssenceMetal().getDefaultTexture() : null;
                 });
-                drawArrow(guiGraphics, xys, alchemySlots, catalyst.getOrDefault(InitDataComponents.MAGIC_NUMBER, 0), crucible);
+                drawArrow(guiGraphics, xys, alchemySlots, catalyst.getOrDefault(InitDataComponents.MAGIC_NUMBER, 0), crucible, delta);
             }
 
             // 画数字
             Player player = mc.player;
             if (xys != null && player != null && player.isShiftKeyDown()) {
-                drawNumbers(guiGraphics, mc.font, xys);
+                drawNumbers(guiGraphics, mc.font, xys, crucible, delta);
             }
 
             if (hudIntro.value() < 0.995f) {
@@ -395,14 +398,46 @@ public class GuiHandler {
                 continue;
             }
             long packed = xys[i];
-            drawEssenceSlot(guiGraphics, getXFromPacked(packed), getYFromPacked(packed), textureGetter.get(i));
-            drawEssence(guiGraphics, getXFromPacked(packed), getYFromPacked(packed), itemGetter.get(i));
+            drawScaledEssenceSlot(
+                    guiGraphics,
+                    getXFromPacked(packed),
+                    getYFromPacked(packed),
+                    getReactionSlotScale(crucible, delta, i, xys.length),
+                    textureGetter.get(i),
+                    itemGetter.get(i)
+            );
         }
 
         if (pulsedSlotIndex >= 0) {
-            drawPulsedEssenceSlot(guiGraphics, xys, pulsedSlotIndex, crucible, textureGetter, itemGetter);
+            drawPulsedEssenceSlot(guiGraphics, xys, pulsedSlotIndex, crucible, delta, textureGetter, itemGetter);
         }
         drawSelectedSlot(guiGraphics, xys, crucible, delta);
+    }
+
+    private static void drawScaledEssenceSlot(
+            GuiGraphicsExtractor guiGraphics,
+            int x,
+            int y,
+            float scale,
+            TextureRenderable texture,
+            Object itemDraw
+    ) {
+        if (scale <= 0.001f) {
+            return;
+        }
+
+        if (Math.abs(scale - 1.0f) <= 0.001f) {
+            drawEssenceSlot(guiGraphics, x, y, texture);
+            drawEssence(guiGraphics, x, y, itemDraw);
+            return;
+        }
+
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(x + Textures.NORMAL_SLOT.width() / 2.0f - 0.5f, y + Textures.NORMAL_SLOT.height() / 2.0f - 0.5f);
+        guiGraphics.pose().scale(scale, scale);
+        drawEssenceSlot(guiGraphics, -Textures.NORMAL_SLOT.width() / 2, -Textures.NORMAL_SLOT.height() / 2, texture);
+        drawEssence(guiGraphics, -Textures.NORMAL_SLOT.width() / 2, -Textures.NORMAL_SLOT.height() / 2, itemDraw);
+        guiGraphics.pose().popMatrix();
     }
 
     private static void drawEssenceSlot(GuiGraphicsExtractor guiGraphics, int x, int y, TextureRenderable texture) {
@@ -422,13 +457,17 @@ public class GuiHandler {
             long[] xys,
             int pulsedSlotIndex,
             TransmutationCrucibleBlockEntity crucible,
+            DeltaTracker delta,
             Int2ObjectFunction<TextureRenderable> textureGetter,
             Int2ObjectFunction<Object> itemGetter
     ) {
         long packed = xys[pulsedSlotIndex];
         int x = getXFromPacked(packed);
         int y = getYFromPacked(packed);
-        float scale = getSelectedSlotClickScale(crucible);
+        float scale = getSelectedSlotClickScale(crucible) * getReactionSlotScale(crucible, delta, pulsedSlotIndex, xys.length);
+        if (scale <= 0.001f) {
+            return;
+        }
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(x + Textures.NORMAL_SLOT.width() / 2.0f - 0.5f, y + Textures.NORMAL_SLOT.height() / 2.0f - 0.5f);
@@ -452,7 +491,10 @@ public class GuiHandler {
 
         int x = Math.round(selectedSlotHighlight.x());
         int y = Math.round(selectedSlotHighlight.y());
-        float scale = getSelectedSlotClickScale(crucible);
+        float scale = getSelectedSlotClickScale(crucible) * getReactionSlotScale(crucible, delta, selectedSlotIndex, xys.length);
+        if (scale <= 0.001f) {
+            return;
+        }
         if (Math.abs(scale - 1.0f) <= 0.001f) {
             Textures.SLOT_SELECTED.render(guiGraphics, x, y);
             return;
@@ -492,6 +534,16 @@ public class GuiHandler {
         return Easing.BACK_OUT.ease(releaseTick, SLOT_CLICK_MIN_SCALE, 1.0f - SLOT_CLICK_MIN_SCALE, SLOT_CLICK_RELEASE_TICKS);
     }
 
+    private static float getReactionSlotScale(TransmutationCrucibleBlockEntity crucible, DeltaTracker delta, int slotIndex, int slotCount) {
+        if (crucibleSlotAnimation.isRunningFor(crucible) && slotCount > 0) {
+            float progress = crucibleSlotAnimation.processProgress();
+            float slotProgress = Mth.clamp(progress * slotCount - slotIndex, 0.0f, 1.0f);
+            return 1.0f - Easing.CUBIC_IN.ease(slotProgress, 0.0f, 1.0f, 1.0f);
+        }
+
+        return crucibleSlotAnimation.revealScale();
+    }
+
     private static float easeStep(DeltaTracker delta) {
         float t = Mth.clamp(delta.getGameTimeDeltaTicks(), 0.0f, EASE_DURATION_TICKS);
         return Easing.EXPO_OUT.ease(t, 0.0f, 1.0f, EASE_DURATION_TICKS);
@@ -505,13 +557,16 @@ public class GuiHandler {
         return Math.abs(target - next) <= snapDistance ? target : next;
     }
 
-    private static void drawArrow(GuiGraphicsExtractor guiGraphics, long[] xys, List<AbstractAlchemySlot> alchemySlots, int magicNumber, TransmutationCrucibleBlockEntity crucible) {
+    private static void drawArrow(GuiGraphicsExtractor guiGraphics, long[] xys, List<AbstractAlchemySlot> alchemySlots, int magicNumber, TransmutationCrucibleBlockEntity crucible, DeltaTracker delta) {
         int pulsedSlotIndex = getActiveEssenceInputPulseSlot(crucible, Math.min(xys.length, alchemySlots.size()));
-        for (int i = 0, size = alchemySlots.size(); i < size; i++) {
+        for (int i = 0, size = Math.min(alchemySlots.size(), xys.length); i < size; i++) {
             if (i == pulsedSlotIndex) {
                 continue;
             }
-            drawArrow(guiGraphics, getXFromPacked(xys[i]), getYFromPacked(xys[i]), alchemySlots.get(i), magicNumber, i);
+            float scale = getReactionSlotScale(crucible, delta, i, xys.length);
+            if (scale > 0.001f) {
+                drawScaledArrow(guiGraphics, getXFromPacked(xys[i]), getYFromPacked(xys[i]), scale, alchemySlots.get(i), magicNumber, i);
+            }
         }
 
         if (pulsedSlotIndex < 0) {
@@ -521,11 +576,23 @@ public class GuiHandler {
         long packed = xys[pulsedSlotIndex];
         int x = getXFromPacked(packed);
         int y = getYFromPacked(packed);
-        float scale = getSelectedSlotClickScale(crucible);
+        float scale = getSelectedSlotClickScale(crucible) * getReactionSlotScale(crucible, delta, pulsedSlotIndex, xys.length);
+        if (scale <= 0.001f) {
+            return;
+        }
+        drawScaledArrow(guiGraphics, x, y, scale, alchemySlots.get(pulsedSlotIndex), magicNumber, pulsedSlotIndex);
+    }
+
+    private static void drawScaledArrow(GuiGraphicsExtractor guiGraphics, int x, int y, float scale, AbstractAlchemySlot alchemySlot, int magicNumber, int slotIndex) {
+        if (Math.abs(scale - 1.0f) <= 0.001f) {
+            drawArrow(guiGraphics, x, y, alchemySlot, magicNumber, slotIndex);
+            return;
+        }
+
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(x + Textures.NORMAL_SLOT.width() / 2.0f - 0.5f, y + Textures.NORMAL_SLOT.height() / 2.0f - 0.5f);
         guiGraphics.pose().scale(scale, scale);
-        drawArrow(guiGraphics, -Textures.NORMAL_SLOT.width() / 2, -Textures.NORMAL_SLOT.height() / 2, alchemySlots.get(pulsedSlotIndex), magicNumber, pulsedSlotIndex);
+        drawArrow(guiGraphics, -Textures.NORMAL_SLOT.width() / 2, -Textures.NORMAL_SLOT.height() / 2, alchemySlot, magicNumber, slotIndex);
         guiGraphics.pose().popMatrix();
     }
 
@@ -540,11 +607,27 @@ public class GuiHandler {
         }
     }
 
-    private static void drawNumbers(GuiGraphicsExtractor guiGraphics, Font font, long[] xys) {
+    private static void drawNumbers(GuiGraphicsExtractor guiGraphics, Font font, long[] xys, TransmutationCrucibleBlockEntity crucible, DeltaTracker delta) {
         for (int i = 0; i < xys.length; i++) {
             long packed = xys[i];
+            int slotX = getXFromPacked(packed);
+            int slotY = getYFromPacked(packed);
+            float scale = getReactionSlotScale(crucible, delta, i, xys.length);
+            if (scale <= 0.001f) {
+                continue;
+            }
+
             String str = String.valueOf(i + 1);
-            guiGraphics.text(font, str, getXFromPacked(packed) + 14 - font.width(str) / 2, getYFromPacked(packed) + 10, 0xffffffff, true);
+            if (Math.abs(scale - 1.0f) <= 0.001f) {
+                guiGraphics.text(font, str, slotX + 14 - font.width(str) / 2, slotY + 10, 0xffffffff, true);
+                continue;
+            }
+
+            guiGraphics.pose().pushMatrix();
+            guiGraphics.pose().translate(slotX + Textures.NORMAL_SLOT.width() / 2.0f - 0.5f, slotY + Textures.NORMAL_SLOT.height() / 2.0f - 0.5f);
+            guiGraphics.pose().scale(scale, scale);
+            guiGraphics.text(font, str, 1 - font.width(str) / 2, -3, 0xffffffff, true);
+            guiGraphics.pose().popMatrix();
         }
     }
 
@@ -638,6 +721,75 @@ public class GuiHandler {
 
         private float value() {
             return value;
+        }
+    }
+
+    private static final class CrucibleSlotAnimation {
+        private long blockPos;
+        private boolean initialized;
+        private boolean wasRunning;
+        private int targetTimer;
+        private int lastSyncedProcessTimer;
+        private float processTicks;
+        private float revealTicks = SLOT_REVEAL_TICKS;
+
+        private void update(TransmutationCrucibleBlockEntity crucible, DeltaTracker delta) {
+            long currentBlockPos = crucible.getBlockPos().asLong();
+            int syncedTargetTimer = crucible.getTargetTimer();
+            int syncedProcessTimer = crucible.getProcessTimer();
+            boolean running = syncedTargetTimer > 0;
+            float gameDeltaTicks = Mth.clamp(delta.getGameTimeDeltaTicks(), 0.0f, 3.0f);
+            float realtimeDeltaTicks = Mth.clamp(delta.getRealtimeDeltaTicks(), 0.0f, 3.0f);
+
+            if (!initialized || blockPos != currentBlockPos) {
+                blockPos = currentBlockPos;
+                initialized = true;
+                wasRunning = running;
+                targetTimer = syncedTargetTimer;
+                lastSyncedProcessTimer = syncedProcessTimer;
+                processTicks = syncedProcessTimer;
+                revealTicks = SLOT_REVEAL_TICKS;
+                return;
+            }
+
+            if (running) {
+                if (!wasRunning || targetTimer != syncedTargetTimer || syncedProcessTimer < lastSyncedProcessTimer) {
+                    processTicks = syncedProcessTimer;
+                } else {
+                    processTicks = Math.max(processTicks, syncedProcessTimer);
+                    processTicks += gameDeltaTicks;
+                }
+                targetTimer = syncedTargetTimer;
+                processTicks = Mth.clamp(processTicks, 0.0f, targetTimer);
+                revealTicks = SLOT_REVEAL_TICKS;
+            } else if (wasRunning) {
+                targetTimer = 0;
+                processTicks = 0.0f;
+                revealTicks = 0.0f;
+            } else if (revealTicks < SLOT_REVEAL_TICKS) {
+                revealTicks = Mth.clamp(revealTicks + realtimeDeltaTicks, 0.0f, SLOT_REVEAL_TICKS);
+            }
+
+            lastSyncedProcessTimer = syncedProcessTimer;
+            wasRunning = running;
+        }
+
+        private boolean isRunningFor(TransmutationCrucibleBlockEntity crucible) {
+            return initialized && blockPos == crucible.getBlockPos().asLong() && targetTimer > 0;
+        }
+
+        private float processProgress() {
+            if (targetTimer <= 0) {
+                return 0.0f;
+            }
+            return Mth.clamp(processTicks / targetTimer, 0.0f, 1.0f);
+        }
+
+        private float revealScale() {
+            if (revealTicks >= SLOT_REVEAL_TICKS) {
+                return 1.0f;
+            }
+            return Easing.CUBIC_OUT.ease(revealTicks, 0.0f, 1.0f, SLOT_REVEAL_TICKS);
         }
     }
 
