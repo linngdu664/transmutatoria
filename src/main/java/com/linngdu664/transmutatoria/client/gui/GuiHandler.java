@@ -1,6 +1,7 @@
 package com.linngdu664.transmutatoria.client.gui;
 
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
+import com.linngdu664.transmutatoria.client.gui.texture.GuiTexture;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;
@@ -9,6 +10,8 @@ import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
+import com.linngdu664.transmutatoria.item.component.ExpireInfo;
+import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 import com.linngdu664.transmutatoria.util.SafeInstance;
@@ -43,12 +46,15 @@ public class GuiHandler {
     private static final RingRotationState storageBoxRotation = new RingRotationState();
     private static final SmoothPoint selectedSlotHighlight = new SmoothPoint();
     private static final SmoothValue hudIntro = new SmoothValue();
+    private static final SmoothValue dashboardPolarity = new SmoothValue();
 
     private static final float LERP_SPEED = 1.2f;
     private static final float EASE_DURATION_TICKS = 6.931472f / LERP_SPEED;
     private static final float SLOT_CLICK_PRESS_TICKS = 3.0f;
     private static final float SLOT_CLICK_RELEASE_TICKS = 7.0f;
     private static final float SLOT_CLICK_MIN_SCALE = 0.78f;
+    private static final float DASHBOARD_MAX_POLARITY = 50.0f;
+    private static final float DASHBOARD_MAX_POINTER_DEGREES = 90.0f;
 
     public static void updateHudAnimation(boolean isVisible, DeltaTracker delta) {
         float target = isVisible ? 1.0f : 0.0f;
@@ -165,10 +171,7 @@ public class GuiHandler {
             guiGraphics.item(crucible.getOutput(), pos.x() + 3, pos.y() + 3);
 
             // 临时的极性显示
-            V2I polarityPos = GuiUtil.v2IRatio(window, 0.75, 0.2);
-            guiGraphics.text(mc.font, "Polarity: " + crucible.getPolarity(), polarityPos.x(), polarityPos.y(), 0xffffffff);
-            // 临时的进度显示
-            guiGraphics.text(mc.font, "Progress: " + crucible.getProcessTimer() + "/" + crucible.getTargetTimer(), polarityPos.x(), polarityPos.y() + 9, 0xffffffff);
+            drawDashboard(guiGraphics, window, crucible, catalyst, delta);
 
             drawBackground(guiGraphics, window, catalyst);
 
@@ -190,7 +193,7 @@ public class GuiHandler {
             } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
                 // 炼金复制/炼金分解的源质槽位
                 List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
-                if (alchemySlots.isEmpty()) return; // 预防措施，即使有东西搞炸了，也不要把客户端崩了
+                if (alchemySlots.isEmpty()) return; // Prevent malformed client-side scroll data from crashing the HUD.
                 List<ItemStack> essencesInCrucible = crucible.hasAnyOutput() ? crucible.getOutputEssences() : crucible.getInputEssences();
 
                 xys = calcPosScroll(window, alchemySlots);
@@ -213,6 +216,122 @@ public class GuiHandler {
                 guiGraphics.pose().popMatrix();
             }
         }
+    }
+
+    private static void drawDashboard(GuiGraphicsExtractor guiGraphics, Window window, TransmutationCrucibleBlockEntity crucible, ItemStack catalyst, DeltaTracker delta) {
+        V2I center = GuiUtil.v2IRatio(window, 0.85, 0.2);
+        float centerX = center.x();
+        float centerY = center.y();
+
+        Textures.DASHBOARD_HOURGLASS_BG.render(
+                guiGraphics,
+                Math.round(centerX - Textures.DASHBOARD_HOURGLASS_BG.width() / 2.0f),
+                Math.round(centerY - Textures.DASHBOARD_HOURGLASS_BG.height() / 2.0f)
+        );
+        drawHourglassLiquid(guiGraphics, centerX, centerY, getScrollExpireRemainingRatio(catalyst, delta));
+
+        Textures.DASHBOARD_BG.render(
+                guiGraphics,
+                Math.round(centerX - Textures.DASHBOARD_BG.width() / 2.0f),
+                Math.round(centerY - Textures.DASHBOARD_BG.height() / 2.0f)
+        );
+
+        RecipeConditions conditions = catalyst.getOrDefault(InitDataComponents.RECIPE_CONDITIONS, RecipeConditions.DEFAULT);
+        renderRotatedCentered(guiGraphics, Textures.DASHBOARD_BG_POINTER_FLAG, centerX, centerY, polarityToDegrees(conditions.minPolarity()));
+        renderRotatedCentered(guiGraphics, Textures.DASHBOARD_BG_POINTER_FLAG, centerX, centerY, polarityToDegrees(conditions.maxPolarity()));
+
+        dashboardPolarity.moveTo(crucible.getPolarity(), delta, 0.05f);
+        renderRotatedCentered(guiGraphics, Textures.DASHBOARD_BG_POINTER, centerX, centerY, polarityToDegrees(dashboardPolarity.value()));
+    }
+
+    private static void drawHourglassLiquid(GuiGraphicsExtractor guiGraphics, float centerX, float centerY, float remainingRatio) {
+        if (remainingRatio < 0.0f) {
+            return;
+        }
+
+        float clampedRemaining = Mth.clamp(remainingRatio, 0.0f, 1.0f);
+        float upX = centerX - Textures.DASHBOARD_HOURGLASS_UP.width() / 2.0f;
+        float upY = centerY - Textures.DASHBOARD_HOURGLASS_UP.height();
+        float downX = centerX - Textures.DASHBOARD_HOURGLASS_DOWN.width() / 2.0f;
+        float downY = centerY;
+
+        renderBottomCropped(guiGraphics, Textures.DASHBOARD_HOURGLASS_UP, upX, upY, Textures.DASHBOARD_HOURGLASS_UP.height() * clampedRemaining);
+        renderBottomCropped(guiGraphics, Textures.DASHBOARD_HOURGLASS_DOWN, downX, downY, Textures.DASHBOARD_HOURGLASS_DOWN.height() * (1.0f - clampedRemaining));
+    }
+
+    private static void renderBottomCropped(GuiGraphicsExtractor guiGraphics, GuiTexture texture, float x, float y, float visibleHeight) {
+        float height = Mth.clamp(visibleHeight, 0.0f, texture.height());
+        if (height <= 0.001f) {
+            return;
+        }
+
+        float srcY = texture.v() + texture.height() - height;
+        float destY = y + texture.height() - height;
+        GuiUtil.blit(
+                guiGraphics,
+                TextureOption.DEFAULT.renderPipeline(),
+                texture.identifier(),
+                x,
+                destY,
+                texture.u(),
+                srcY,
+                texture.width(),
+                height,
+                texture.width(),
+                height,
+                texture.width(),
+                texture.height()
+        );
+    }
+
+    private static void renderRotatedCentered(GuiGraphicsExtractor guiGraphics, GuiTexture texture, float centerX, float centerY, float angleDegrees) {
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(centerX, centerY);
+        guiGraphics.pose().rotate(angleDegrees * Mth.DEG_TO_RAD);
+        GuiUtil.blit(
+                guiGraphics,
+                texture.identifier(),
+                -texture.width() / 2.0f,
+                -texture.height() / 2.0f,
+                texture.u(),
+                texture.v(),
+                texture.width(),
+                texture.height(),
+                texture.width(),
+                texture.height()
+        );
+        guiGraphics.pose().popMatrix();
+    }
+
+    private static float polarityToDegrees(float polarity) {
+        return Mth.clamp(polarity / DASHBOARD_MAX_POLARITY, -1.0f, 1.0f) * DASHBOARD_MAX_POINTER_DEGREES;
+    }
+
+    private static float getScrollExpireRemainingRatio(ItemStack catalyst, DeltaTracker delta) {
+        ExpireInfo expireInfo = catalyst.get(InitDataComponents.EXPIRE_INFO);
+        Minecraft mc = SafeInstance.getMC();
+        if (expireInfo == null || expireInfo.period() <= 0 || mc.level == null) {
+            return -1.0f;
+        }
+
+        double clockTime = mc.level.getOverworldClockTime() + delta.getGameTimeDeltaPartialTick(false);
+        long nextExpire = catalyst.getOrDefault(
+                InitDataComponents.NEXT_EXPIRE,
+                getNextExpireForClock((long) Math.floor(clockTime), expireInfo)
+        );
+
+        if (nextExpire < clockTime) {
+            long periodsBehind = (long) Math.ceil((clockTime - nextExpire) / expireInfo.period());
+            nextExpire += Math.max(1L, periodsBehind) * (long) expireInfo.period();
+        }
+
+        return (float) Mth.clamp((nextExpire - clockTime) / expireInfo.period(), 0.0, 1.0);
+    }
+
+    private static long getNextExpireForClock(long clockTime, ExpireInfo expireInfo) {
+        long currentOffset = clockTime % expireInfo.period();
+        long currentPeriod = clockTime / expireInfo.period();
+        return (currentPeriod + (currentOffset >= expireInfo.offset() ? 1 : 0)) * (long) expireInfo.period() + expireInfo.offset();
     }
 
     private static long[] calcPosEssenceMetal(Window window, int size) {

@@ -31,6 +31,13 @@ public class Textures {
     public static final GuiSprite SLOT_SELECTED = new GuiSprite("hud/slot_selected", 29, 29);
     public static final GuiSprite SIMPLE_FRAME = new GuiSprite("hud/simple_frame", 22, 22);
 
+    public static final GuiTexture DASHBOARD_BG = new GuiTexture("textures/gui/dashboard_bg.png", 80, 80);
+    public static final GuiTexture DASHBOARD_BG_POINTER = new GuiTexture("textures/gui/dashboard_bg_pointer.png", 83, 5);
+    public static final GuiTexture DASHBOARD_BG_POINTER_FLAG = new GuiTexture("textures/gui/dashboard_bg_pointer_flag.png", 83, 5);
+    public static final GuiTexture DASHBOARD_HOURGLASS_BG = new GuiTexture("textures/gui/dashboard_hourglass_bg.png", 80, 80);
+    public static final GuiTexture DASHBOARD_HOURGLASS_DOWN = new GuiTexture("textures/gui/dashboard_hourglass_down.png", 14, 19);
+    public static final GuiTexture DASHBOARD_HOURGLASS_UP = new GuiTexture("textures/gui/dashboard_hourglass_up.png", 14, 19);
+
     public static final GuiTexture ABYSSION = new GuiTexture("textures/item/abyssion.png", 16, 16);
     public static final GuiTexture ANIMERCURY = new GuiTexture("textures/item/animercury.png", 16, 16);
     public static final GuiTexture ASTROTITE = new GuiTexture("textures/item/astrotite.png", 16, 16);
