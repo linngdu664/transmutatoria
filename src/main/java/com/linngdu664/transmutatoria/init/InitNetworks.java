@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public class InitNetworks {
     @SubscribeEvent
     public static void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
-        final PayloadRegistrar registrar = event.registrar("1");
+        PayloadRegistrar registrar = event.registrar("1");
         registrar.playToServer(
                 RotateStorageBoxPayload.TYPE,
                 RotateStorageBoxPayload.STREAM_CODEC,

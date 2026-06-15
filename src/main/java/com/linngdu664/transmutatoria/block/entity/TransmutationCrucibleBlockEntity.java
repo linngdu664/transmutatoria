@@ -118,7 +118,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private final FluidStacksResourceHandler waterHandler = new FluidStacksResourceHandler(1, 1000) {
         @Override
         protected void onContentsChanged(int index, FluidStack prev) {
-            // todo 疑问：onContentsChanged 只在服务端被调用吗？
+            // 这里的服务端检查是必须的，因为客户端的 setWater 最后也会调用到这里
             if (level instanceof ServerLevel serverLevel) {
                 int water = getAmountAsInt(0);
                 PacketDistributor.sendToPlayersTrackingChunk(serverLevel, getChunkPos(), new CrucibleSetWaterPayload(getBlockPos(), water));
@@ -282,9 +282,13 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         } else {
             // 卷轴在炼金锅里过期
             ItemStack itemStack = crucible.getCatalyst();
+            long nextExpire = itemStack.getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE);
             int times = AbstractTransmutationScrollItem.checkAndSetExpire(level, itemStack);
             if (times > 0) {
                 AbstractTransmutationScrollItem.changeEssence(level, itemStack, times);
+                PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, crucible.getChunkPos(), new CrucibleSetItemPayload(pos, List.of(new ItemStackWithSlot(CATALYST_SLOT, itemStack))));
+                crucible.setChanged();
+            } else if (nextExpire != itemStack.getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE)) {
                 PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, crucible.getChunkPos(), new CrucibleSetItemPayload(pos, List.of(new ItemStackWithSlot(CATALYST_SLOT, itemStack))));
                 crucible.setChanged();
             }
@@ -842,11 +846,11 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
             setAndSyncSelectedSlot(selectedSlot == 0 ? 1 : 0);
             setChanged();
-        } else if (getCatalyst().getItem() instanceof EssenceMetalItem essenceMetalItem) {
+        } else if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
             int size = essenceMetalItem.getEssenceMetal().getRestrainsAndDoubleRestrains().size();
             setAndSyncSelectedSlot(Math.floorMod(selectedSlot + (isIncrease ? 1 : -1), size));
             setChanged();
-        } else if (getCatalyst().getItem() instanceof AbstractTransmutationScrollItem) {
+        } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
             List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
             if (!alchemySlots.isEmpty()) {
                 int size = alchemySlots.size();
