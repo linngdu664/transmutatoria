@@ -37,6 +37,11 @@ public class Textures {
     public static final GuiTexture DASHBOARD_HOURGLASS_BG = new GuiTexture("textures/gui/dashboard_hourglass_bg.png", 80, 80);
     public static final GuiTexture DASHBOARD_HOURGLASS_DOWN = new GuiTexture("textures/gui/dashboard_hourglass_down.png", 14, 19);
     public static final GuiTexture DASHBOARD_HOURGLASS_UP = new GuiTexture("textures/gui/dashboard_hourglass_up.png", 14, 19);
+    public static final GuiTexture DURABILITY_STRIP = new GuiTexture("textures/gui/durability_strip.png", 23, 181);
+    public static final GuiTexture DURABILITY_STRIP_DAMAGE = new GuiTexture("textures/gui/durability_strip_damage.png", 11, 131);
+    public static final GuiTexture DURABILITY_STRIP_DURABILITY = new GuiTexture("textures/gui/durability_strip_durability.png", 11, 131);
+    public static final GuiTexture PROGRESS_BAR = new GuiTexture("textures/gui/progress_bar.png", 42, 203);
+    public static final GuiTexture PROGRESS_BAR_CONTENT = new GuiTexture("textures/gui/progress_bar_content.png", 10, 98);
 
     public static final GuiTexture ABYSSION = new GuiTexture("textures/item/abyssion.png", 16, 16);
     public static final GuiTexture ANIMERCURY = new GuiTexture("textures/item/animercury.png", 16, 16);

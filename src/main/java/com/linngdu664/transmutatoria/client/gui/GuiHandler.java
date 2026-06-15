@@ -57,6 +57,10 @@ public class GuiHandler {
     private static final float SLOT_REVEAL_TICKS = 8.0f;
     private static final float DASHBOARD_MAX_POLARITY = 50.0f;
     private static final float DASHBOARD_MAX_POINTER_DEGREES = 90.0f;
+    private static final int DURABILITY_STRIP_CONTENT_X = 6;
+    private static final int DURABILITY_STRIP_CONTENT_Y = 25;
+    private static final int PROGRESS_BAR_CONTENT_X = 16;
+    private static final int PROGRESS_BAR_CONTENT_Y = 67;
 
     public static void updateHudAnimation(boolean isVisible, DeltaTracker delta) {
         float target = isVisible ? 1.0f : 0.0f;
@@ -160,18 +164,32 @@ public class GuiHandler {
                 guiGraphics.pose().translate(-sw / 2f, -sh / 2f);
             }
 
-            // catalyst
+
             ItemStack catalyst = crucible.getCatalyst();
-            V2I pos = Textures.SIMPLE_FRAME.renderRatio(guiGraphics, window, 0.1, 0.2);
-            guiGraphics.item(catalyst, pos.x() + 3, pos.y() + 3);
+            List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
+
+            V2I stripCenter = GuiUtil.v2IRatio(window, 0.05, 0.5);
+            if ((catalyst.getItem() instanceof AbstractTransmutationScrollItem)) {
+                V2I stripPos = new V2I(stripCenter.x() - Textures.DURABILITY_STRIP.wholeWidth() / 2, stripCenter.y() - Textures.DURABILITY_STRIP.wholeHeight() / 2);
+
+                Textures.DURABILITY_STRIP.render(guiGraphics, stripPos.x(), stripPos.y());
+                drawScrollDurabilityStrip(guiGraphics, catalyst, alchemySlots, stripPos.x() + DURABILITY_STRIP_CONTENT_X, stripPos.y() + DURABILITY_STRIP_CONTENT_Y);
+            }
+
+            V2I barCenter = new V2I(stripCenter.x() + 35, stripCenter.y());
+            V2I barPos = new V2I(barCenter.x() - Textures.PROGRESS_BAR.wholeWidth() / 2, barCenter.y() - Textures.PROGRESS_BAR.wholeHeight() / 2);
+            Textures.PROGRESS_BAR.render(guiGraphics, barPos.x(), barPos.y());
+            drawScrollUnlockProgress(guiGraphics, alchemySlots, barPos.x() + PROGRESS_BAR_CONTENT_X, barPos.y() + PROGRESS_BAR_CONTENT_Y);
+
+            // catalyst
+            guiGraphics.item(catalyst, barPos.x() + 13, barPos.y() + 19);
 
             // input
-            Textures.SIMPLE_FRAME.render(guiGraphics, pos.x() + Textures.SIMPLE_FRAME.width(), pos.y());
-            guiGraphics.item(crucible.getInput(), pos.x() + Textures.SIMPLE_FRAME.width() + 3, pos.y() + 3);
+            guiGraphics.item(crucible.getInput(), barPos.x() + 13, barPos.y() + 47);
 
             // output
-            pos = Textures.SIMPLE_FRAME.renderRatio(guiGraphics, window, 0.1, 0.8);
-            guiGraphics.item(crucible.getOutput(), pos.x() + 3, pos.y() + 3);
+            guiGraphics.item(crucible.getOutput(), barPos.x() + 13, barPos.y() + 169);
+
 
             // 临时的极性显示
             drawDashboard(guiGraphics, window, crucible, catalyst, delta);
@@ -195,7 +213,6 @@ public class GuiHandler {
                 drawEssenceSlotsWithItemsAndSelection(guiGraphics, xys, crucible, delta, _ -> Textures.NORMAL_SLOT, essencesInCrucible::get);
             } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
                 // 炼金复制/炼金分解的源质槽位
-                List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
                 if (alchemySlots.isEmpty()) return; // Prevent malformed client-side scroll data from crashing the HUD.
                 List<ItemStack> essencesInCrucible = crucible.hasAnyOutput() ? crucible.getOutputEssences() : crucible.getInputEssences();
 
@@ -219,6 +236,49 @@ public class GuiHandler {
                 guiGraphics.pose().popMatrix();
             }
         }
+    }
+
+    private static void drawScrollDurabilityStrip(GuiGraphicsExtractor guiGraphics, ItemStack catalyst, List<AbstractAlchemySlot> alchemySlots, int x, int y) {
+        int maxDurability = catalyst.getMaxDamage();
+        if (maxDurability <= 0) {
+            return;
+        }
+
+        int damage = Mth.clamp(catalyst.getDamageValue(), 0, maxDurability);
+        int durability = maxDurability - damage;
+        float durabilityHeight = Textures.DURABILITY_STRIP_DURABILITY.height() * durability / (float) maxDurability;
+        renderBottomCropped(guiGraphics, Textures.DURABILITY_STRIP_DURABILITY, x, y, durabilityHeight);
+
+        int predictedDamage = getPredictedScrollDamage(catalyst, alchemySlots);
+        if (predictedDamage <= 0 || durability <= 0) {
+            return;
+        }
+
+        float damageTop = Textures.DURABILITY_STRIP_DAMAGE.height() * damage / (float) maxDurability;
+        float damageHeight = Textures.DURABILITY_STRIP_DAMAGE.height() * Math.min(predictedDamage, durability) / (float) maxDurability;
+        renderVerticalSlice(guiGraphics, Textures.DURABILITY_STRIP_DAMAGE, x, y, damageTop, damageHeight);
+    }
+
+    private static int getPredictedScrollDamage(ItemStack catalyst, List<AbstractAlchemySlot> alchemySlots) {
+        int entropy = catalyst.getOrDefault(InitDataComponents.ENTROPY, 0);
+        int damagePerSlot = Math.max(1, 1 + entropy);
+        return alchemySlots.size() * damagePerSlot;
+    }
+
+    private static void drawScrollUnlockProgress(GuiGraphicsExtractor guiGraphics, List<AbstractAlchemySlot> alchemySlots, int x, int y) {
+        if (alchemySlots.isEmpty()) {
+            return;
+        }
+
+        int unlockedSlots = 0;
+        for (AbstractAlchemySlot slot : alchemySlots) {
+            if (slot.isShowEssence()) {
+                unlockedSlots++;
+            }
+        }
+
+        float visibleHeight = Textures.PROGRESS_BAR_CONTENT.height() * unlockedSlots / (float) alchemySlots.size();
+        renderTopCropped(guiGraphics, Textures.PROGRESS_BAR_CONTENT, x, y, visibleHeight);
     }
 
     private static void drawDashboard(GuiGraphicsExtractor guiGraphics, Window window, TransmutationCrucibleBlockEntity crucible, ItemStack catalyst, DeltaTracker delta) {
@@ -278,6 +338,53 @@ public class GuiHandler {
                 destY,
                 texture.u(),
                 srcY,
+                texture.width(),
+                height,
+                texture.width(),
+                height,
+                texture.width(),
+                texture.height()
+        );
+    }
+
+    private static void renderTopCropped(GuiGraphicsExtractor guiGraphics, GuiTexture texture, float x, float y, float visibleHeight) {
+        float height = Mth.clamp(visibleHeight, 0.0f, texture.height());
+        if (height <= 0.001f) {
+            return;
+        }
+
+        GuiUtil.blit(
+                guiGraphics,
+                TextureOption.DEFAULT.renderPipeline(),
+                texture.identifier(),
+                x,
+                y,
+                texture.u(),
+                texture.v(),
+                texture.width(),
+                height,
+                texture.width(),
+                height,
+                texture.width(),
+                texture.height()
+        );
+    }
+
+    private static void renderVerticalSlice(GuiGraphicsExtractor guiGraphics, GuiTexture texture, float x, float y, float yOffset, float visibleHeight) {
+        float top = Mth.clamp(yOffset, 0.0f, texture.height());
+        float height = Mth.clamp(visibleHeight, 0.0f, texture.height() - top);
+        if (height <= 0.001f) {
+            return;
+        }
+
+        GuiUtil.blit(
+                guiGraphics,
+                TextureOption.DEFAULT.renderPipeline(),
+                texture.identifier(),
+                x,
+                y + top,
+                texture.u(),
+                texture.v() + top,
                 texture.width(),
                 height,
                 texture.width(),
