@@ -14,10 +14,13 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.fml.ModList;
 
 import static com.linngdu664.transmutatoria.ArsTransmutatoria.MODID;
 
 public class InitItems {
+    private static final String AGERATUM_MOD_ID = "ageratum";
+
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
@@ -121,7 +124,10 @@ public class InitItems {
     public static DeferredItem<Item> CITRINITAS_ESSENCE = ITEMS.registerSimpleItem("citrinitas_essence");
     public static DeferredItem<Item> RUBEDO_ESSENCE = ITEMS.registerSimpleItem("rubedo_essence");
     public static DeferredItem<Item> PHILOSOPHERS_STONE = ITEMS.register("philosophers_stone", PhilosophersStoneItem::new);
+
     public static DeferredItem<Item> EMERALD_TABLET = ITEMS.register("emerald_tablet", EmeraldTabletItem::new);
+    public static DeferredItem<Item> LIBER_TRANSMUTATIONIS_ARS_TRANSMUTATORIA = ITEMS.register("liber_transmutationis_ars_transmutatoria",
+            LiberTransmutationisArsTransmutatoriaItem::new);
 
     // ================= [ 卷轴 — 印记（复制） ] =================
     public static DeferredItem<Item> TRANSMUTATION_SIGIL_SCROLL = ITEMS.register("transmutation_sigil_scroll",
@@ -238,7 +244,11 @@ public class InitItems {
                 output.accept(new ItemStack(CITRINITAS_ESSENCE.get()));
                 output.accept(new ItemStack(RUBEDO_ESSENCE.get()));
                 output.accept(new ItemStack(PHILOSOPHERS_STONE.get()));
+
                 output.accept(new ItemStack(EMERALD_TABLET.get()));
+                if (ModList.get().isLoaded(AGERATUM_MOD_ID)) {
+                    output.accept(new ItemStack(LIBER_TRANSMUTATIONIS_ARS_TRANSMUTATORIA.get()));
+                }
 
                 // 卷轴 — 印记
                 output.accept(new ItemStack(TRANSMUTATION_SIGIL_SCROLL.get()));

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "transmutatoria:item/liber_transmutationis_ars_transmutatoria"
+  }
+}
