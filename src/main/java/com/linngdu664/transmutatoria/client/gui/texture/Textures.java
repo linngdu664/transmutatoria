@@ -30,6 +30,7 @@ public class Textures {
 
     public static final GuiSprite SLOT_SELECTED = new GuiSprite("hud/slot_selected", 29, 29);
     public static final GuiSprite SIMPLE_FRAME = new GuiSprite("hud/simple_frame", 22, 22);
+    public static final GuiSprite EMERALD_TABLET_ESSENCE_NODE = new GuiSprite("tablet/essence_node", 28, 28);
 
     public static final GuiTexture DASHBOARD_BG = new GuiTexture("textures/gui/dashboard_bg.png", 80, 80);
     public static final GuiTexture DASHBOARD_BG_POINTER = new GuiTexture("textures/gui/dashboard_bg_pointer.png", 83, 5);

@@ -121,6 +121,7 @@ public class InitItems {
     public static DeferredItem<Item> CITRINITAS_ESSENCE = ITEMS.registerSimpleItem("citrinitas_essence");
     public static DeferredItem<Item> RUBEDO_ESSENCE = ITEMS.registerSimpleItem("rubedo_essence");
     public static DeferredItem<Item> PHILOSOPHERS_STONE = ITEMS.register("philosophers_stone", PhilosophersStoneItem::new);
+    public static DeferredItem<Item> EMERALD_TABLET = ITEMS.register("emerald_tablet", EmeraldTabletItem::new);
 
     // ================= [ 卷轴 — 印记（复制） ] =================
     public static DeferredItem<Item> TRANSMUTATION_SIGIL_SCROLL = ITEMS.register("transmutation_sigil_scroll",
@@ -237,6 +238,7 @@ public class InitItems {
                 output.accept(new ItemStack(CITRINITAS_ESSENCE.get()));
                 output.accept(new ItemStack(RUBEDO_ESSENCE.get()));
                 output.accept(new ItemStack(PHILOSOPHERS_STONE.get()));
+                output.accept(new ItemStack(EMERALD_TABLET.get()));
 
                 // 卷轴 — 印记
                 output.accept(new ItemStack(TRANSMUTATION_SIGIL_SCROLL.get()));
