@@ -1,6 +1,7 @@
 package com.linngdu664.transmutatoria.init;
 
 import com.linngdu664.transmutatoria.inventory.AlchemistStorageBoxMenu;
+import com.linngdu664.transmutatoria.inventory.EmeraldTabletMenu;
 import com.linngdu664.transmutatoria.inventory.TransmutationEquationScrollMenu;
 import com.linngdu664.transmutatoria.inventory.TransmutationSigilScrollMenu;
 import net.minecraft.core.registries.Registries;
@@ -39,4 +40,8 @@ public class InitMenuTypes {
     public static final DeferredHolder<MenuType<?>, MenuType<TransmutationEquationScrollMenu>> TRANSMUTATION_EQUATION_SCROLL_MENU =
             MENU_TYPES.register("transmutation_equation_scroll",
                     () -> new MenuType<>(TransmutationEquationScrollMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<EmeraldTabletMenu>> EMERALD_TABLET_MENU =
+            MENU_TYPES.register("emerald_tablet",
+                    () -> new MenuType<>(EmeraldTabletMenu::new, FeatureFlags.DEFAULT_FLAGS));
 }
