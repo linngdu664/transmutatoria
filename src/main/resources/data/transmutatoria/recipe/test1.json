@@ -1,4 +1,5 @@
 {
+  "type": "transmutatoria:alchemical_replication",
   "output_items": "#c:ingots/gold",
   "level": {
     "type": "transmutatoria:fixed",

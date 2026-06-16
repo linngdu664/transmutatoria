@@ -1,5 +1,7 @@
 package com.linngdu664.transmutatoria.jei;
 
+import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalTransformationPreciseRecipe;
+import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalTransformationRecipe;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -9,11 +11,12 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jspecify.annotations.Nullable;
 
-public class AlchemicalTransformationCategory implements IRecipeCategory<JEIAlchemicalTransformationDisplay> {
+public class AlchemicalTransformationCategory implements IRecipeCategory<RecipeHolder<?>> {
     @Override
-    public IRecipeType<JEIAlchemicalTransformationDisplay> getRecipeType() {
+    public IRecipeType<RecipeHolder<?>> getRecipeType() {
         return AlchemicalJeiTypes.ALCHEMICAL_TRANSFORMATION;
     }
 
@@ -38,15 +41,17 @@ public class AlchemicalTransformationCategory implements IRecipeCategory<JEIAlch
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, JEIAlchemicalTransformationDisplay recipe, IFocusGroup focuses) {
-        // 输入槽
-        builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.displayInputItem());
-        // 输出槽
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.displayOutputItem());
+    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<?> holder, IFocusGroup focuses) {
+        if (holder.value() instanceof AlchemicalTransformationRecipe recipe) {
+            builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.inputItems());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.getOtherSideItemStack());
+        } else if (holder.value() instanceof AlchemicalTransformationPreciseRecipe recipe) {
+            builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.input().create());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.getOtherSideItemStack());
+        }
     }
 
     @Override
-    public void draw(JEIAlchemicalTransformationDisplay recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
-        // 自定义画图逻辑
+    public void draw(RecipeHolder<?> recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
     }
 }

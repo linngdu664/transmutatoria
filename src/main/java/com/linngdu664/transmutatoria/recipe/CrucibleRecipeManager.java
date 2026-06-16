@@ -2,19 +2,18 @@ package com.linngdu664.transmutatoria.recipe;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.linngdu664.transmutatoria.init.InitDatapacks;
+import com.linngdu664.transmutatoria.client.event.ClientRecipeManager;
+import com.linngdu664.transmutatoria.init.InitRecipes;
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalEmptyRecipe;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 public class CrucibleRecipeManager {
@@ -29,10 +28,9 @@ public class CrucibleRecipeManager {
     public static CrucibleRecipe findMatchRep(Level level, ItemStack outputStack) {
         try {
             var result = repCache.get(new ItemStackTemplate(outputStack.getItem(), outputStack.getComponentsPatch()), () -> {
-                RegistryAccess registryAccess = level.registryAccess();
-                CrucibleRecipe found = tryLookup(registryAccess, InitDatapacks.ALCHEMICAL_REPLICATION_PRECISE_KEY, outputStack);
+                CrucibleRecipe found = tryLookup(level, InitRecipes.ALCHEMICAL_REPLICATION_PRECISE_TYPE.get(), ClientRecipeManager.replicationPrecises, outputStack);
                 if (found != null) return found;
-                found = tryLookup(registryAccess, InitDatapacks.ALCHEMICAL_REPLICATION_KEY, outputStack);
+                found = tryLookup(level, InitRecipes.ALCHEMICAL_REPLICATION_TYPE.get(), ClientRecipeManager.replications, outputStack);
                 return found != null ? found : AlchemicalEmptyRecipe.INSTANCE;
             });
             return result instanceof AlchemicalEmptyRecipe ? null : result;
@@ -44,10 +42,9 @@ public class CrucibleRecipeManager {
     public static CrucibleRecipe findMatchTrans(Level level, ItemStack inputStack) {
         try {
             var result = transCache.get(new ItemStackTemplate(inputStack.getItem(), inputStack.getComponentsPatch()), () -> {
-                RegistryAccess registryAccess = level.registryAccess();
-                CrucibleRecipe found = tryLookup(registryAccess, InitDatapacks.ALCHEMICAL_TRANSFORMATION_PRECISE_KEY, inputStack);
+                CrucibleRecipe found = tryLookup(level, InitRecipes.ALCHEMICAL_TRANSFORMATION_PRECISE_TYPE.get(), ClientRecipeManager.transformationPrecises, inputStack);
                 if (found != null) return found;
-                found = tryLookup(registryAccess, InitDatapacks.ALCHEMICAL_TRANSFORMATION_KEY, inputStack);
+                found = tryLookup(level, InitRecipes.ALCHEMICAL_TRANSFORMATION_TYPE.get(), ClientRecipeManager.transformations, inputStack);
                 return found != null ? found : AlchemicalEmptyRecipe.INSTANCE;
             });
             return result instanceof AlchemicalEmptyRecipe ? null : result;
@@ -56,26 +53,21 @@ public class CrucibleRecipeManager {
         }
     }
 
-    @Nullable
-    private static CrucibleRecipe tryLookup(RegistryAccess registryAccess, ResourceKey<? extends Registry<? extends CrucibleRecipe>> key, ItemStack stack) {
-        var lookupOpt = registryAccess.lookup(key);
-        return lookupOpt.map(iAlchemicalRecipes -> innerLookup(iAlchemicalRecipes, stack)).orElse(null);
-    }
-
-    private static CrucibleRecipe innerLookup(Registry<? extends CrucibleRecipe> lookup, ItemStack stack) {
-        // 1. 先收集成 List
-        List<? extends CrucibleRecipe> recipes = lookup.listElements()
-                .map(Holder.Reference::value)
-                .toList();
-
-        // 2. 倒序遍历：后加载的优先级更高（摆烂解法）
-        for (int i = recipes.size() - 1; i >= 0; i--) {
-            CrucibleRecipe recipe = recipes.get(i);
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static CrucibleRecipe tryLookup(Level level, RecipeType<?> recipeType, Collection<?> clientRecipes, ItemStack stack) {
+        Collection<RecipeHolder<?>> recipes;
+        MinecraftServer server = level.getServer();
+        if (server != null) {
+            recipes = (Collection) server.getRecipeManager().recipeMap().byType((RecipeType) recipeType);
+        } else if (level.isClientSide()) {
+            recipes = (Collection) clientRecipes;
+        } else {
+            return null;
+        }
+        for (RecipeHolder<?> recipeHolder : recipes) {
+            CrucibleRecipe recipe = (CrucibleRecipe) recipeHolder.value();
             if (recipe.matches(stack)) {
-                if (recipe.isValid()) {
-                    return recipe;
-                }
-                return null;
+                return recipe;
             }
         }
         return null;

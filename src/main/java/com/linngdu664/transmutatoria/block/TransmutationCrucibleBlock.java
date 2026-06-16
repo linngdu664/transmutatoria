@@ -94,7 +94,7 @@ public class TransmutationCrucibleBlock extends HorizontalDirectionalBlock imple
             }
             return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
-        if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection())) {
+        if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection(), null)) {
             return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
         return InteractionResult.TRY_WITH_EMPTY_HAND;

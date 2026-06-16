@@ -1,5 +1,7 @@
 package com.linngdu664.transmutatoria.jei;
 
+import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalReplicationPreciseRecipe;
+import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalReplicationRecipe;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -9,13 +11,12 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jspecify.annotations.Nullable;
 
-public class AlchemicalReplicationCategory implements IRecipeCategory<JEIAlchemicalReplicationDisplay> {
-
+public class AlchemicalReplicationCategory implements IRecipeCategory<RecipeHolder<?>> {
     @Override
-    public IRecipeType<JEIAlchemicalReplicationDisplay> getRecipeType() {
+    public IRecipeType<RecipeHolder<?>> getRecipeType() {
         return AlchemicalJeiTypes.ALCHEMICAL_REPLICATION;
     }
 
@@ -40,15 +41,17 @@ public class AlchemicalReplicationCategory implements IRecipeCategory<JEIAlchemi
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, JEIAlchemicalReplicationDisplay recipe, IFocusGroup focuses) {
-        // 输入槽
-        builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.displayInputItem());
-        // 输出槽
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.displayOutputItem());
+    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<?> holder, IFocusGroup focuses) {
+        if (holder.value() instanceof AlchemicalReplicationRecipe recipe) {
+            builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.getOtherSideItemStack());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.outputItems());
+        } else if (holder.value() instanceof AlchemicalReplicationPreciseRecipe recipe) {
+            builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.getOtherSideItemStack());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.output().create());
+        }
     }
 
     @Override
-    public void draw(JEIAlchemicalReplicationDisplay recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
-        // 自定义画图逻辑
+    public void draw(RecipeHolder<?> recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
     }
 }

@@ -1,4 +1,5 @@
 {
+  "type": "transmutatoria:alchemical_replication",
   "input": "minecraft:slime_ball",
   "output_items": "minecraft:emerald",
   "level": {

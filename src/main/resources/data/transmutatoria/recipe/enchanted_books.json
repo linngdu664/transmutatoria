@@ -1,4 +1,5 @@
 {
+  "type": "transmutatoria:alchemical_replication",
   "input": "minecraft:book",
   "output_items": "minecraft:enchanted_book",
   "level": {

@@ -5,11 +5,11 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 
@@ -22,6 +22,14 @@ public record EnchantmentLevel(int baseMin, int baseMax, double scaleMin, double
             Codec.DOUBLE.optionalFieldOf("scale_max", 1.0).forGetter(EnchantmentLevel::scaleMax)
     ).apply(i, EnchantmentLevel::new));
 
+    public static final StreamCodec<RegistryFriendlyByteBuf, EnchantmentLevel> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, EnchantmentLevel::baseMin,
+            ByteBufCodecs.VAR_INT, EnchantmentLevel::baseMax,
+            ByteBufCodecs.DOUBLE, EnchantmentLevel::scaleMin,
+            ByteBufCodecs.DOUBLE, EnchantmentLevel::scaleMax,
+            EnchantmentLevel::new
+    );
+
     @Override
     public String type() {
         return "transmutatoria:enchantment";
@@ -30,7 +38,6 @@ public record EnchantmentLevel(int baseMin, int baseMax, double scaleMin, double
     @Override
     public IntIntImmutablePair getMinMax(Level level, ItemStack stack) {
         double value = getEnchantIndex(level, stack);
-        System.out.println("enchant index: " + value);
         return new IntIntImmutablePair(Math.max(MIN_BOUND, baseMin + (int) (value * scaleMin)), Math.min(MAX_BOUND, baseMax + (int) (value * scaleMax)));
     }
 

@@ -1,4 +1,5 @@
 {
+  "type": "transmutatoria:alchemical_transformation",
   "input_items": "#c:ingots/iron",
   "output": "minecraft:gold_ingot",
   "level": {

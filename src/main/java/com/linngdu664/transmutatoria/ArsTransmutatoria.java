@@ -34,6 +34,7 @@ public class ArsTransmutatoria {
         InitItems.TABS.register(modEventBus);
         InitMenuTypes.MENU_TYPES.register(modEventBus);
         InitRecipes.RECIPE_SERIALIZERS.register(modEventBus);
+        InitRecipes.RECIPE_TYPES.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
         // Register the Deferred Register to the mod event bus so tabs get registered
 //        CREATIVE_MODE_TABS.register(modEventBus);

@@ -120,7 +120,11 @@ public record CatalystShapelessRecipe(
 
     @Override
     public PlacementInfo placementInfo() {
-        return PlacementInfo.NOT_PLACEABLE;
+        // todo 这块修改不知是否合理，出 bug 时检查
+        var all = new ArrayList<Ingredient>(ingredients.size() + catalysts.size());
+        all.addAll(ingredients);
+        all.addAll(catalysts);
+        return PlacementInfo.create(all);
     }
 
     public static final MapCodec<CatalystShapelessRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
