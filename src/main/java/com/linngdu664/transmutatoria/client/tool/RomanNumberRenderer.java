@@ -1,6 +1,5 @@
 package com.linngdu664.transmutatoria.client.tool;
 
-import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.client.gui.texture.GuiSubSprite;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;
@@ -17,26 +16,7 @@ public final class RomanNumberRenderer {
     }
 
     public static int render(GuiGraphicsExtractor guiGraphics, TextureOption option, int number, int x, int y) {
-        try {
-            return renderUnchecked(guiGraphics, option, number, x, y);
-        } catch (RuntimeException exception) {
-            ArsTransmutatoria.LOGGER.error("Failed to render roman number {}", number, exception);
-            return 0;
-        }
-    }
-
-    public static int width(int number) {
-        try {
-            return widthUnchecked(number);
-        } catch (RuntimeException exception) {
-            ArsTransmutatoria.LOGGER.error("Failed to calculate roman number width {}", number, exception);
-            return 0;
-        }
-    }
-
-    private static int renderUnchecked(GuiGraphicsExtractor guiGraphics, TextureOption option, int number, int x, int y) {
-        validateNumber(number);
-
+        if (number < 1 || number > 39) return 0;
         int cursorX = x;
         String roman = toRomanNumber(number);
         for (int i = 0; i < roman.length(); i++) {
@@ -47,21 +27,14 @@ public final class RomanNumberRenderer {
         return cursorX - x - SPACING;
     }
 
-    private static int widthUnchecked(int number) {
-        validateNumber(number);
-
+    public static int width(int number) {
+        if (number < 1 || number > 39) return 0;
         int width = 0;
         String roman = toRomanNumber(number);
         for (int i = 0; i < roman.length(); i++) {
             width += getSprite(roman.charAt(i)).width();
         }
         return width + SPACING * (roman.length() - 1);
-    }
-
-    private static void validateNumber(int number) {
-        if (number < 1 || number > 39) {
-            throw new IllegalArgumentException("Roman number must be in range 1..39 when only I, V and X are available: " + number);
-        }
     }
 
     private static GuiSubSprite getSprite(char romanDigit) {

@@ -98,7 +98,7 @@ public class GuiHandler {
             int slotY = (int) (centerY + radiusY * Mth.sin(angle));
             slotXYs[i] = packXY(slotX, slotY);
             // sin(angle): -1 at 12 o'clock (far), +1 at 6 o'clock (near)
-            depths[i] = (Mth.sin(angle) + 1.0f) / 2.0f; // 因此最近深度为 1，最远深度为 0
+            depths[i] = (Mth.sin(angle) + 1.0f) * 0.5f; // 因此最近深度为 1，最远深度为 0
             scales[i] = STORAGE_BOX_STYLE.minScale()
                     + (STORAGE_BOX_STYLE.maxScale() - STORAGE_BOX_STYLE.minScale()) * depths[i];
         }
@@ -247,7 +247,7 @@ public class GuiHandler {
         int damage = Mth.clamp(catalyst.getDamageValue(), 0, maxDurability);
         int durability = maxDurability - damage;
         float durabilityHeight = Textures.DURABILITY_STRIP_DURABILITY.height() * durability / (float) maxDurability;
-        renderBottomCropped(guiGraphics, Textures.DURABILITY_STRIP_DURABILITY, x, y, durabilityHeight);
+        BSFGuiTool.renderBottomCropped(guiGraphics, Textures.DURABILITY_STRIP_DURABILITY, x, y, durabilityHeight);
 
         int predictedDamage = getPredictedScrollDamage(catalyst, alchemySlots);
         if (predictedDamage <= 0 || durability <= 0) {
@@ -256,7 +256,7 @@ public class GuiHandler {
 
         float damageTop = Textures.DURABILITY_STRIP_DAMAGE.height() * damage / (float) maxDurability;
         float damageHeight = Textures.DURABILITY_STRIP_DAMAGE.height() * Math.min(predictedDamage, durability) / (float) maxDurability;
-        renderVerticalSlice(guiGraphics, Textures.DURABILITY_STRIP_DAMAGE, x, y, damageTop, damageHeight);
+        BSFGuiTool.renderVerticalSlice(guiGraphics, Textures.DURABILITY_STRIP_DAMAGE, x, y, damageTop, damageHeight);
     }
 
     private static int getPredictedScrollDamage(ItemStack catalyst, List<AbstractAlchemySlot> alchemySlots) {
@@ -278,7 +278,7 @@ public class GuiHandler {
         }
 
         float visibleHeight = Textures.PROGRESS_BAR_CONTENT.height() * unlockedSlots / (float) alchemySlots.size();
-        renderTopCropped(guiGraphics, Textures.PROGRESS_BAR_CONTENT, x, y, visibleHeight);
+        BSFGuiTool.renderTopCropped(guiGraphics, Textures.PROGRESS_BAR_CONTENT, x, y, visibleHeight);
     }
 
     private static void drawDashboard(GuiGraphicsExtractor guiGraphics, Window window, TransmutationCrucibleBlockEntity crucible, ItemStack catalyst, DeltaTracker delta) {
@@ -288,23 +288,23 @@ public class GuiHandler {
 
         Textures.DASHBOARD_HOURGLASS_BG.render(
                 guiGraphics,
-                Math.round(centerX - Textures.DASHBOARD_HOURGLASS_BG.width() / 2.0f),
-                Math.round(centerY - Textures.DASHBOARD_HOURGLASS_BG.height() / 2.0f)
+                Math.round(centerX - Textures.DASHBOARD_HOURGLASS_BG.width() * 0.5f),
+                Math.round(centerY - Textures.DASHBOARD_HOURGLASS_BG.height() * 0.5f)
         );
         drawHourglassLiquid(guiGraphics, centerX, centerY, getScrollExpireRemainingRatio(catalyst, delta));
 
         Textures.DASHBOARD_BG.render(
                 guiGraphics,
-                Math.round(centerX - Textures.DASHBOARD_BG.width() / 2.0f),
-                Math.round(centerY - Textures.DASHBOARD_BG.height() / 2.0f)
+                Math.round(centerX - Textures.DASHBOARD_BG.width() * 0.5f),
+                Math.round(centerY - Textures.DASHBOARD_BG.height() * 0.5f)
         );
 
         RecipeConditions conditions = catalyst.getOrDefault(InitDataComponents.RECIPE_CONDITIONS, RecipeConditions.DEFAULT);
-        renderRotatedCentered(guiGraphics, Textures.DASHBOARD_BG_POINTER_FLAG, centerX, centerY, polarityToDegrees(conditions.minPolarity()));
-        renderRotatedCentered(guiGraphics, Textures.DASHBOARD_BG_POINTER_FLAG, centerX, centerY, polarityToDegrees(conditions.maxPolarity()));
+        BSFGuiTool.renderRotatedCentered(guiGraphics, Textures.DASHBOARD_BG_POINTER_FLAG, centerX, centerY, polarityToDegrees(conditions.minPolarity()));
+        BSFGuiTool.renderRotatedCentered(guiGraphics, Textures.DASHBOARD_BG_POINTER_FLAG, centerX, centerY, polarityToDegrees(conditions.maxPolarity()));
 
         dashboardPolarity.moveTo(crucible.getPolarity(), delta, 0.05f);
-        renderRotatedCentered(guiGraphics, Textures.DASHBOARD_BG_POINTER, centerX, centerY, polarityToDegrees(dashboardPolarity.value()));
+        BSFGuiTool.renderRotatedCentered(guiGraphics, Textures.DASHBOARD_BG_POINTER, centerX, centerY, polarityToDegrees(dashboardPolarity.value()));
     }
 
     private static void drawHourglassLiquid(GuiGraphicsExtractor guiGraphics, float centerX, float centerY, float remainingRatio) {
@@ -313,104 +313,13 @@ public class GuiHandler {
         }
 
         float clampedRemaining = Mth.clamp(remainingRatio, 0.0f, 1.0f);
-        float upX = centerX - Textures.DASHBOARD_HOURGLASS_UP.width() / 2.0f;
+        float upX = centerX - Textures.DASHBOARD_HOURGLASS_UP.width() * 0.5f;
         float upY = centerY - Textures.DASHBOARD_HOURGLASS_UP.height();
-        float downX = centerX - Textures.DASHBOARD_HOURGLASS_DOWN.width() / 2.0f;
+        float downX = centerX - Textures.DASHBOARD_HOURGLASS_DOWN.width() * 0.5f;
         float downY = centerY;
 
-        renderBottomCropped(guiGraphics, Textures.DASHBOARD_HOURGLASS_UP, upX, upY, Textures.DASHBOARD_HOURGLASS_UP.height() * clampedRemaining);
-        renderBottomCropped(guiGraphics, Textures.DASHBOARD_HOURGLASS_DOWN, downX, downY, Textures.DASHBOARD_HOURGLASS_DOWN.height() * (1.0f - clampedRemaining));
-    }
-
-    private static void renderBottomCropped(GuiGraphicsExtractor guiGraphics, GuiTexture texture, float x, float y, float visibleHeight) {
-        float height = Mth.clamp(visibleHeight, 0.0f, texture.height());
-        if (height <= 0.001f) {
-            return;
-        }
-
-        float srcY = texture.v() + texture.height() - height;
-        float destY = y + texture.height() - height;
-        GuiUtil.blit(
-                guiGraphics,
-                TextureOption.DEFAULT.renderPipeline(),
-                texture.identifier(),
-                x,
-                destY,
-                texture.u(),
-                srcY,
-                texture.width(),
-                height,
-                texture.width(),
-                height,
-                texture.width(),
-                texture.height()
-        );
-    }
-
-    private static void renderTopCropped(GuiGraphicsExtractor guiGraphics, GuiTexture texture, float x, float y, float visibleHeight) {
-        float height = Mth.clamp(visibleHeight, 0.0f, texture.height());
-        if (height <= 0.001f) {
-            return;
-        }
-
-        GuiUtil.blit(
-                guiGraphics,
-                TextureOption.DEFAULT.renderPipeline(),
-                texture.identifier(),
-                x,
-                y,
-                texture.u(),
-                texture.v(),
-                texture.width(),
-                height,
-                texture.width(),
-                height,
-                texture.width(),
-                texture.height()
-        );
-    }
-
-    private static void renderVerticalSlice(GuiGraphicsExtractor guiGraphics, GuiTexture texture, float x, float y, float yOffset, float visibleHeight) {
-        float top = Mth.clamp(yOffset, 0.0f, texture.height());
-        float height = Mth.clamp(visibleHeight, 0.0f, texture.height() - top);
-        if (height <= 0.001f) {
-            return;
-        }
-
-        GuiUtil.blit(
-                guiGraphics,
-                TextureOption.DEFAULT.renderPipeline(),
-                texture.identifier(),
-                x,
-                y + top,
-                texture.u(),
-                texture.v() + top,
-                texture.width(),
-                height,
-                texture.width(),
-                height,
-                texture.width(),
-                texture.height()
-        );
-    }
-
-    private static void renderRotatedCentered(GuiGraphicsExtractor guiGraphics, GuiTexture texture, float centerX, float centerY, float angleDegrees) {
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(centerX, centerY);
-        guiGraphics.pose().rotate(angleDegrees * Mth.DEG_TO_RAD);
-        GuiUtil.blit(
-                guiGraphics,
-                texture.identifier(),
-                -texture.width() / 2.0f,
-                -texture.height() / 2.0f,
-                texture.u(),
-                texture.v(),
-                texture.width(),
-                texture.height(),
-                texture.width(),
-                texture.height()
-        );
-        guiGraphics.pose().popMatrix();
+        BSFGuiTool.renderBottomCropped(guiGraphics, Textures.DASHBOARD_HOURGLASS_UP, upX, upY, Textures.DASHBOARD_HOURGLASS_UP.height() * clampedRemaining);
+        BSFGuiTool.renderBottomCropped(guiGraphics, Textures.DASHBOARD_HOURGLASS_DOWN, downX, downY, Textures.DASHBOARD_HOURGLASS_DOWN.height() * (1.0f - clampedRemaining));
     }
 
     private static float polarityToDegrees(float polarity) {
@@ -487,7 +396,7 @@ public class GuiHandler {
         return xys;
     }
 
-    private static void drawBackground(GuiGraphicsExtractor guiGraphics,Window window,ItemStack catalyst) {
+    private static void drawBackground(GuiGraphicsExtractor guiGraphics, Window window, ItemStack catalyst) {
         Textures.ALCHEMY_ARRAYS[Math.floorMod(catalyst.hashCode(), Textures.ALCHEMY_ARRAYS.length)].renderRatio(guiGraphics, window, 0.5, 0.5);
     }
 
@@ -540,7 +449,7 @@ public class GuiHandler {
         }
 
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(x + Textures.NORMAL_SLOT.width() / 2.0f - 0.5f, y + Textures.NORMAL_SLOT.height() / 2.0f - 0.5f);
+        guiGraphics.pose().translate(x + Textures.NORMAL_SLOT.width() * 0.5f - 0.5f, y + Textures.NORMAL_SLOT.height() * 0.5f - 0.5f);
         guiGraphics.pose().scale(scale, scale);
         drawEssenceSlot(guiGraphics, -Textures.NORMAL_SLOT.width() / 2, -Textures.NORMAL_SLOT.height() / 2, texture);
         drawEssence(guiGraphics, -Textures.NORMAL_SLOT.width() / 2, -Textures.NORMAL_SLOT.height() / 2, itemDraw);
@@ -577,7 +486,7 @@ public class GuiHandler {
         }
 
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(x + Textures.NORMAL_SLOT.width() / 2.0f - 0.5f, y + Textures.NORMAL_SLOT.height() / 2.0f - 0.5f);
+        guiGraphics.pose().translate(x + Textures.NORMAL_SLOT.width() * 0.5f - 0.5f, y + Textures.NORMAL_SLOT.height() * 0.5f - 0.5f);
         guiGraphics.pose().scale(scale, scale);
         drawEssenceSlot(guiGraphics, -Textures.NORMAL_SLOT.width() / 2, -Textures.NORMAL_SLOT.height() / 2, textureGetter.get(pulsedSlotIndex));
         drawEssence(guiGraphics, -Textures.NORMAL_SLOT.width() / 2, -Textures.NORMAL_SLOT.height() / 2, itemGetter.get(pulsedSlotIndex));
@@ -608,7 +517,7 @@ public class GuiHandler {
         }
 
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(x + Textures.SLOT_SELECTED.width() / 2.0f - 0.5f, y + Textures.SLOT_SELECTED.height() / 2.0f - 0.5f);
+        guiGraphics.pose().translate(x + Textures.SLOT_SELECTED.width() * 0.5f - 0.5f, y + Textures.SLOT_SELECTED.height() * 0.5f - 0.5f);
         guiGraphics.pose().scale(scale, scale);
         Textures.SLOT_SELECTED.render(guiGraphics, -Textures.SLOT_SELECTED.width() / 2, -Textures.SLOT_SELECTED.height() / 2);
         guiGraphics.pose().popMatrix();
@@ -697,7 +606,7 @@ public class GuiHandler {
         }
 
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(x + Textures.NORMAL_SLOT.width() / 2.0f - 0.5f, y + Textures.NORMAL_SLOT.height() / 2.0f - 0.5f);
+        guiGraphics.pose().translate(x + Textures.NORMAL_SLOT.width() * 0.5f - 0.5f, y + Textures.NORMAL_SLOT.height() * 0.5f - 0.5f);
         guiGraphics.pose().scale(scale, scale);
         drawArrow(guiGraphics, -Textures.NORMAL_SLOT.width() / 2, -Textures.NORMAL_SLOT.height() / 2, alchemySlot, magicNumber, slotIndex);
         guiGraphics.pose().popMatrix();
@@ -731,7 +640,7 @@ public class GuiHandler {
             }
 
             guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(slotX + Textures.NORMAL_SLOT.width() / 2.0f - 0.5f, slotY + Textures.NORMAL_SLOT.height() / 2.0f - 0.5f);
+            guiGraphics.pose().translate(slotX + Textures.NORMAL_SLOT.width() * 0.5f - 0.5f, slotY + Textures.NORMAL_SLOT.height() * 0.5f - 0.5f);
             guiGraphics.pose().scale(scale, scale);
             guiGraphics.text(font, str, 1 - font.width(str) / 2, -3, 0xffffffff, true);
             guiGraphics.pose().popMatrix();

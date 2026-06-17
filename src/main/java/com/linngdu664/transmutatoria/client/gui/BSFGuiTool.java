@@ -1,7 +1,10 @@
 package com.linngdu664.transmutatoria.client.gui;
 
+import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
+import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
 import com.linngdu664.transmutatoria.util.V2I;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 
 public class BSFGuiTool {
@@ -41,6 +44,35 @@ public class BSFGuiTool {
 
     public static void renderFilledRectangle(GuiGraphicsExtractor guiGraphics, Vec2 a, Vec2 b, int pColor) {
         GuiUtil.fill(guiGraphics, a.x, a.y, b.x, b.y, pColor);
+    }
+
+    public static void renderBottomCropped(GuiGraphicsExtractor guiGraphics, TextureRenderable texture, float x, float y, float visibleHeight) {
+        float height = Mth.clamp(visibleHeight, 0.0f, texture.height());
+        if (height <= 0.001f) return;
+        float srcY = texture.height() - height;
+        float destY = y + texture.height() - height;
+        texture.render(guiGraphics, TextureOption.DEFAULT, x, destY, 0, srcY, texture.width(), height);
+    }
+
+    public static void renderTopCropped(GuiGraphicsExtractor guiGraphics, TextureRenderable texture, float x, float y, float visibleHeight) {
+        float height = Mth.clamp(visibleHeight, 0.0f, texture.height());
+        if (height <= 0.001f) return;
+        texture.render(guiGraphics, TextureOption.DEFAULT, x, y, 0, 0, texture.width(), height);
+    }
+
+    public static void renderVerticalSlice(GuiGraphicsExtractor guiGraphics, TextureRenderable texture, float x, float y, float yOffset, float visibleHeight) {
+        float top = Mth.clamp(yOffset, 0.0f, texture.height());
+        float height = Mth.clamp(visibleHeight, 0.0f, texture.height() - top);
+        if (height <= 0.001f) return;
+        texture.render(guiGraphics, TextureOption.DEFAULT, x, y + top, 0, top, texture.width(), height);
+    }
+
+    public static void renderRotatedCentered(GuiGraphicsExtractor guiGraphics, TextureRenderable texture, float centerX, float centerY, float angleDegrees) {
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(centerX, centerY);
+        guiGraphics.pose().rotate(angleDegrees * Mth.DEG_TO_RAD);
+        texture.render(guiGraphics, -texture.width() * 0.5f, -texture.height() * 0.5f);
+        guiGraphics.pose().popMatrix();
     }
 
     /*

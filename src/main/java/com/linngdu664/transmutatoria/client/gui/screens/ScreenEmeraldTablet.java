@@ -361,7 +361,7 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
 
             Textures.EMERALD_TABLET_ESSENCE_NODE.render(graphics, TextureOption.withAlpha(alpha), nodeX, nodeY);
             if (metal == hovered) {
-                Textures.SLOT_SELECTED.render(graphics, TextureOption.withAlpha(255), nodeX, nodeY);
+                Textures.SLOT_SELECTED.render(graphics, nodeX, nodeY);
             }
             metal.getDefaultTexture().render(graphics, TextureOption.withAlpha(alpha), iconX + 2, iconY + 1);
         }
@@ -461,8 +461,6 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
                         if (from.ordinal() < to.ordinal()) {
                             edges.add(new RelationEdge(from, to, RelationKind.SYMBIOSIS));
                         }
-                    }
-                    default -> {
                     }
                 }
             }

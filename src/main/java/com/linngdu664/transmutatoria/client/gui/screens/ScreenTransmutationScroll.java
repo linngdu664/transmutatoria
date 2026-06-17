@@ -1,8 +1,7 @@
 package com.linngdu664.transmutatoria.client.gui.screens;
 
-import com.linngdu664.transmutatoria.client.gui.GuiUtil;
-import com.linngdu664.transmutatoria.client.gui.texture.GuiTexture;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
+import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
 import com.linngdu664.transmutatoria.client.tool.Easing;
 import com.linngdu664.transmutatoria.client.tool.RomanNumberRenderer;
 import com.linngdu664.transmutatoria.util.V2I;
@@ -18,7 +17,6 @@ import com.linngdu664.transmutatoria.util.SafeInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -32,8 +30,6 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static com.linngdu664.transmutatoria.client.gui.texture.Textures.*;
 
 public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractTransmutationScrollMenu> {
     private static final float ESSENCE_METAL_RADIUS = 37;
@@ -51,7 +47,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
     private static final int STABILITY_TEXT_OFFSET_X = 8;
     private static final int STABILITY_TEXT_OFFSET_Y = 96;
     private static final float LEFT_GRIP_TO_PAGE_OFFSET = SCROLL_PAGE_X - SCROLL_GRIP_LEFT_X;
-    private static final float RIGHT_GRIP_TO_PAGE_OFFSET = SCROLL_PAGE_X + SCROLL_PAGE.width() - SCROLL_GRIP_RIGHT_X;
+    private static final float RIGHT_GRIP_TO_PAGE_OFFSET = SCROLL_PAGE_X + Textures.SCROLL_PAGE.width() - SCROLL_GRIP_RIGHT_X;
 
     // Scroll opening, then recipe visuals fade in.
     private float openAnimTicks = 0.0f;
@@ -79,7 +75,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         int yo = (this.height - this.imageHeight) / 2;
         ItemStack scrollStack = getScrollFromPlayer(SafeInstance.getMC().player);
         renderOpeningScroll(graphics, xo, yo, advanceOpenAnim(partialTick), getGemTexture(scrollStack));
-        SCROLL_CONTAINER.render(graphics, xo + SCROLL_CONTAINER_X, yo + SCROLL_CONTAINER_Y);
+        Textures.SCROLL_CONTAINER.render(graphics, xo + SCROLL_CONTAINER_X, yo + SCROLL_CONTAINER_Y);
     }
 
     @Override
@@ -186,8 +182,8 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
                     graphics.setComponentTooltipForNextFrame(font, List.of(tooltip), mouseX, mouseY);
                 }
             }
-            int romanX = xo + SCROLL_ARR_EQ_BASE.width() / 2 - RomanNumberRenderer.width(size) / 2;
-            int romanY = yo + SCROLL_ARR_EQ_BASE.height() / 2 - Textures.ROMAN_I.height() / 2;
+            int romanX = xo + Textures.SCROLL_ARR_EQ_BASE.width() / 2 - RomanNumberRenderer.width(size) / 2;
+            int romanY = yo + Textures.SCROLL_ARR_EQ_BASE.height() / 2 - Textures.ROMAN_I.height() / 2;
             RomanNumberRenderer.render(graphics, fadeOption, size, romanX, romanY);
         }
 
@@ -241,8 +237,8 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         return new V2I(px, py);
     }
 
-    private void renderOpeningScroll(GuiGraphicsExtractor graphics, int x, int y, float progress, GuiTexture gemTexture) {
-        float pageHalfWidth = SCROLL_PAGE.width() * 0.5f;
+    private void renderOpeningScroll(GuiGraphicsExtractor graphics, int x, int y, float progress, TextureRenderable gemTexture) {
+        float pageHalfWidth = Textures.SCROLL_PAGE.width() * 0.5f;
         float visibleHalfWidth = pageHalfWidth * progress;
         float pageCenterX = x + SCROLL_PAGE_X + pageHalfWidth;
         float pageY = y + SCROLL_PAGE_Y;
@@ -250,50 +246,59 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         float pageRightX = pageCenterX + visibleHalfWidth;
 
         if (visibleHalfWidth > 0.0f) {
-            GuiUtil.blit(
-                    graphics,
-                    RenderPipelines.GUI_TEXTURED,
-                    SCROLL_PAGE.identifier(),
-                    pageLeftX,
-                    pageY,
-                    pageHalfWidth - visibleHalfWidth,
-                    0,
-                    visibleHalfWidth,
-                    SCROLL_PAGE.height(),
-                    visibleHalfWidth,
-                    SCROLL_PAGE.height(),
-                    SCROLL_PAGE.width(),
-                    SCROLL_PAGE.height()
-            );
-            GuiUtil.blit(
-                    graphics,
-                    RenderPipelines.GUI_TEXTURED,
-                    SCROLL_PAGE.identifier(),
-                    pageCenterX,
-                    pageY,
-                    pageHalfWidth,
-                    0,
-                    visibleHalfWidth,
-                    SCROLL_PAGE.height(),
-                    visibleHalfWidth,
-                    SCROLL_PAGE.height(),
-                    SCROLL_PAGE.width(),
-                    SCROLL_PAGE.height()
-            );
+            int scrollHeight = Textures.SCROLL_PAGE.height();
+            Textures.SCROLL_PAGE.render(graphics, TextureOption.DEFAULT, pageLeftX, pageY, pageHalfWidth - visibleHalfWidth, 0, visibleHalfWidth, scrollHeight);
+            Textures.SCROLL_PAGE.render(graphics, TextureOption.DEFAULT, pageCenterX, pageY, pageHalfWidth, 0, visibleHalfWidth, scrollHeight);
+//            GuiUtil.blit(
+//                    graphics,
+//                    RenderPipelines.GUI_TEXTURED,
+//                    SCROLL_PAGE.identifier(),
+//                    pageLeftX,
+//                    pageY,
+//                    pageHalfWidth - visibleHalfWidth,
+//                    0,
+//                    visibleHalfWidth,
+//                    SCROLL_PAGE.height(),
+//                    visibleHalfWidth,
+//                    SCROLL_PAGE.height(),
+//                    SCROLL_PAGE.width(),
+//                    SCROLL_PAGE.height()
+//            );
+//            GuiUtil.blit(
+//                    graphics,
+//                    RenderPipelines.GUI_TEXTURED,
+//                    SCROLL_PAGE.identifier(),
+//                    pageCenterX,
+//                    pageY,
+//                    pageHalfWidth,
+//                    0,
+//                    visibleHalfWidth,
+//                    SCROLL_PAGE.height(),
+//                    visibleHalfWidth,
+//                    SCROLL_PAGE.height(),
+//                    SCROLL_PAGE.width(),
+//                    SCROLL_PAGE.height()
+//            );
         }
 
         float leftGripX = pageLeftX - LEFT_GRIP_TO_PAGE_OFFSET;
         float rightGripX = pageRightX - RIGHT_GRIP_TO_PAGE_OFFSET;
         float gripY = y + SCROLL_GRIP_Y;
-        renderTexture(graphics, SCROLL_GRIP_LEFT, leftGripX, gripY);
-        renderTexture(graphics, SCROLL_GRIP_RIGHT, rightGripX, gripY);
-        renderTexture(graphics, gemTexture, leftGripX + SCROLL_GEM_OFFSET_X, y + SCROLL_GEM_OFFSET_Y);
-        renderTexture(graphics, gemTexture, rightGripX + SCROLL_GEM_OFFSET_X, y + SCROLL_GEM_OFFSET_Y);
+        float gemY = y + SCROLL_GEM_OFFSET_Y;
+        Textures.SCROLL_GRIP_LEFT.render(graphics, leftGripX, gripY);
+        Textures.SCROLL_GRIP_RIGHT.render(graphics, rightGripX, gripY);
+        gemTexture.render(graphics, leftGripX + SCROLL_GEM_OFFSET_X, gemY);
+        gemTexture.render(graphics, rightGripX + SCROLL_GEM_OFFSET_X, gemY);
+
+//        renderTexture(graphics, SCROLL_GRIP_LEFT, leftGripX, gripY);
+//        renderTexture(graphics, SCROLL_GRIP_RIGHT, rightGripX, gripY);
+//        renderTexture(graphics, gemTexture, leftGripX + SCROLL_GEM_OFFSET_X, y + SCROLL_GEM_OFFSET_Y);
+//        renderTexture(graphics, gemTexture, rightGripX + SCROLL_GEM_OFFSET_X, y + SCROLL_GEM_OFFSET_Y);
     }
 
-    private void renderTexture(GuiGraphicsExtractor graphics, GuiTexture texture, float x, float y) {
-        GuiUtil.blit(graphics, texture.identifier(), x, y, 0, 0, texture.width(), texture.height(), texture.width(), texture.height());
-    }
+//    private void renderTexture(GuiGraphicsExtractor graphics, GuiTexture texture, float x, float y) {
+//        GuiUtil.blit(graphics, texture.identifier(), x, y, 0, 0, texture.width(), texture.height(), texture.width(), texture.height());
+//    }
 
     private void coverSlotItemWithPage(GuiGraphicsExtractor graphics, int x, int y, float fadeProgress, float opacity) {
         int alpha = Mth.clamp(Mth.ceil(255.0f * (1.0f - fadeProgress * opacity)), 0, 255);
@@ -302,22 +307,23 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         }
         float u = x - leftPos - SCROLL_PAGE_X;
         float v = y - topPos - SCROLL_PAGE_Y;
-        GuiUtil.blit(
-                graphics,
-                RenderPipelines.GUI_TEXTURED,
-                SCROLL_PAGE.identifier(),
-                x,
-                y,
-                u,
-                v,
-                16,
-                16,
-                16,
-                16,
-                SCROLL_PAGE.width(),
-                SCROLL_PAGE.height(),
-                colorWithAlpha(-1, alpha)
-        );
+        Textures.SCROLL_PAGE.render(graphics, TextureOption.withAlpha(alpha), x, y, u, v, 16, 16);
+//        GuiUtil.blit(
+//                graphics,
+//                RenderPipelines.GUI_TEXTURED,
+//                SCROLL_PAGE.identifier(),
+//                x,
+//                y,
+//                u,
+//                v,
+//                16,
+//                16,
+//                16,
+//                16,
+//                SCROLL_PAGE.width(),
+//                SCROLL_PAGE.height(),
+//                colorWithAlpha(-1, alpha)
+//        );
     }
 
     private float advanceOpenAnim(float partialTick) {
@@ -350,20 +356,20 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         return ItemStack.EMPTY;
     }
 
-    private static GuiTexture getGemTexture(ItemStack scrollStack) {
+    private static TextureRenderable getGemTexture(ItemStack scrollStack) {
         if (isScroll(scrollStack, InitItems.TERRESTRIAL_SIGIL_SCROLL, InitItems.TERRESTRIAL_EQUATION_SCROLL)) {
-            return SCROLL_TERRESTRIAL;
+            return Textures.SCROLL_TERRESTRIAL;
         }
         if (isScroll(scrollStack, InitItems.LUNAR_SIGIL_SCROLL, InitItems.LUNAR_EQUATION_SCROLL)) {
-            return SCROLL_LUNAR;
+            return Textures.SCROLL_LUNAR;
         }
         if (isScroll(scrollStack, InitItems.SOLAR_SIGIL_SCROLL, InitItems.SOLAR_EQUATION_SCROLL)) {
-            return SCROLL_SOLAR;
+            return Textures.SCROLL_SOLAR;
         }
         if (isScroll(scrollStack, InitItems.VOID_SIGIL_SCROLL, InitItems.VOID_EQUATION_SCROLL)) {
-            return SCROLL_VOID;
+            return Textures.SCROLL_VOID;
         }
-        return SCROLL_TRANSMUTATION;
+        return Textures.SCROLL_TRANSMUTATION;
     }
 
     private static boolean isScroll(ItemStack scrollStack, DeferredItem<Item> sigilScroll, DeferredItem<Item> equationScroll) {

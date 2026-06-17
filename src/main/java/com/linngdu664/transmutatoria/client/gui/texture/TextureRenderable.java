@@ -4,28 +4,45 @@ import com.linngdu664.transmutatoria.client.gui.GuiUtil;
 import com.linngdu664.transmutatoria.util.V2I;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 
 public interface TextureRenderable {
     void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y, int u, int v);
+
+    void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y, float u, float v, float widthOverride, float heightOverride);
 
     int width();
 
     int height();
 
-    int u();
-
-    int v();
-
-    default void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y) {
-        render(guiGraphics, option, x, y, u(), v());
-    }
+    Identifier identifier();
 
     default void render(GuiGraphicsExtractor guiGraphics, int x, int y) {
-        render(guiGraphics, TextureOption.DEFAULT, x, y);
+        render(guiGraphics, TextureOption.DEFAULT, x, y, 0, 0);
+    }
+
+    default void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y) {
+        render(guiGraphics, option, x, y, 0, 0);
     }
 
     default void render(GuiGraphicsExtractor guiGraphics, int x, int y, int u, int v) {
         render(guiGraphics, TextureOption.DEFAULT, x, y, u, v);
+    }
+
+    default void render(GuiGraphicsExtractor guiGraphics, float x, float y) {
+        render(guiGraphics, TextureOption.DEFAULT, x, y, 0, 0, width(), height());
+    }
+
+    default void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y) {
+        render(guiGraphics, option, x, y, 0, 0, width(), height());
+    }
+
+    default void render(GuiGraphicsExtractor guiGraphics, float x, float y, float u, float v) {
+        render(guiGraphics, TextureOption.DEFAULT, x, y, u, v, width(), height());
+    }
+
+    default void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y, float u, float v) {
+        render(guiGraphics, option, x, y, u, v, width(), height());
     }
 
     default V2I renderVerticalCenter(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, int x) {
