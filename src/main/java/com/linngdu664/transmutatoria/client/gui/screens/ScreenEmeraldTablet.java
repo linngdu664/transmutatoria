@@ -1,7 +1,7 @@
 package com.linngdu664.transmutatoria.client.gui.screens;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.client.gui.GuiUtil;
+import com.linngdu664.transmutatoria.client.gui.BSFGuiTool;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.inventory.EmeraldTabletMenu;
@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.phys.Vec2;
@@ -93,7 +94,7 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
             float angle = Mth.TWO_PI * i / 12.0F - Mth.HALF_PI;
             Vec2 inner = pointOnCircle(center, angle, 42.0F);
             Vec2 outer = pointOnCircle(center, angle, OUTER_RING_RADIUS - 15.0F);
-            GuiUtil.gradientLine(graphics, inner, outer, 0.8F, 0x204f9f5e, 0x805ba768);
+            BSFGuiTool.renderGradientLine(graphics, inner, outer, 0.8F, 0x204f9f5e, 0x805ba768);
         }
     }
 
@@ -150,8 +151,8 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
             Vec2 start = offsetRelationPoint(edgePoint(from, to, NODE_RADIUS + 2.0F));
             Vec2 end = offsetRelationPoint(edgePoint(to, from, NODE_RADIUS + 2.0F));
             drawRasterGlow(image, start, end, thickness, alpha);
-            int red = argb(alpha, SYMBIOSIS_RGB);
-            int green = argb(alpha, GREEN_RGB);
+            int red = ARGB.color(alpha, SYMBIOSIS_RGB);
+            int green = ARGB.color(alpha, GREEN_RGB);
             Vec2 middle = lerp(start, end, 0.5F);
             drawRasterLine(image, start, middle, thickness, red, green);
             drawRasterLine(image, middle, end, thickness, green, red);
@@ -160,9 +161,9 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
 
         Vec2 start = offsetRelationPoint(edgePoint(from, to, NODE_RADIUS + 2.0F));
         Vec2 end = offsetRelationPoint(edgePoint(to, from, NODE_RADIUS + 4.0F));
-        int black = argb(alpha, BLACK_RGB);
+        int black = ARGB.color(alpha, BLACK_RGB);
         if (edge.kind() == RelationKind.MUTUAL_RESTRAINED) {
-            int blue = argb(alpha, BLUE_RGB);
+            int blue = ARGB.color(alpha, BLUE_RGB);
             Vec2 middle = lerp(start, end, 0.5F);
             drawRasterGlow(image, start, end, thickness, alpha);
             drawRasterLine(image, start, middle, thickness + 1.2F, black, blue);
@@ -170,11 +171,11 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
             return;
         }
 
-        int red = argb(alpha, RED_RGB);
+        int red = ARGB.color(alpha, RED_RGB);
         drawRasterGlow(image, start, end, thickness, alpha);
 
         if (edge.kind() == RelationKind.DOUBLE_RESTRAIN) {
-            int blue = argb(alpha, BLUE_RGB);
+            int blue = ARGB.color(alpha, BLUE_RGB);
             Vec2 middle = lerp(start, end, 0.5F);
             drawRasterLine(image, start, middle, thickness, red, black);
             drawRasterLine(image, middle, end, thickness, black, blue);
@@ -184,7 +185,7 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
     }
 
     private static void drawRasterGlow(NativeImage image, Vec2 start, Vec2 end, float thickness, int alpha) {
-        int glow = argb(activeGlowAlpha(alpha), RELATION_GLOW_RGB);
+        int glow = ARGB.color(activeGlowAlpha(alpha), RELATION_GLOW_RGB);
         drawRasterLine(image, start, end, thickness + 2.6F, glow, glow);
     }
 
@@ -270,6 +271,7 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
+    // todo 未使用的方法？
     private void drawRelations(GuiGraphicsExtractor graphics, Vec2 center, EssenceMetal hovered) {
         if (hovered != null) {
             for (RelationEdge edge : EDGES) {
@@ -308,45 +310,45 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
     private void drawSymbiosis(GuiGraphicsExtractor graphics, Vec2 a, Vec2 b, float thickness, int alpha) {
         Vec2 start = offsetRelationPoint(edgePoint(a, b, NODE_RADIUS + 2.0F));
         Vec2 end = offsetRelationPoint(edgePoint(b, a, NODE_RADIUS + 2.0F));
-        int red = argb(alpha, SYMBIOSIS_RGB);
-        int green = argb(alpha, GREEN_RGB);
+        int red = ARGB.color(alpha, SYMBIOSIS_RGB);
+        int green = ARGB.color(alpha, GREEN_RGB);
         Vec2 middle = lerp(start, end, 0.5F);
         drawRelationGlow(graphics, start, end, thickness, alpha);
-        GuiUtil.gradientLine(graphics, start, middle, thickness, red, green);
-        GuiUtil.gradientLine(graphics, middle, end, thickness, green, red);
+        BSFGuiTool.renderGradientLine(graphics, start, middle, thickness, red, green);
+        BSFGuiTool.renderGradientLine(graphics, middle, end, thickness, green, red);
     }
 
     private void drawMutualRestrained(GuiGraphicsExtractor graphics, Vec2 a, Vec2 b, float thickness, int alpha) {
         Vec2 start = offsetRelationPoint(edgePoint(a, b, NODE_RADIUS + 2.0F));
         Vec2 end = offsetRelationPoint(edgePoint(b, a, NODE_RADIUS + 3.0F));
-        int black = argb(alpha, BLACK_RGB);
-        int blue = argb(alpha, BLUE_RGB);
+        int black = ARGB.color(alpha, BLACK_RGB);
+        int blue = ARGB.color(alpha, BLUE_RGB);
         Vec2 middle = lerp(start, end, 0.5F);
         drawRelationGlow(graphics, start, end, thickness, alpha);
-        GuiUtil.gradientLine(graphics, start, middle, thickness + 1.2F, black, blue);
-        GuiUtil.gradientLine(graphics, middle, end, thickness + 1.2F, blue, black);
+        BSFGuiTool.renderGradientLine(graphics, start, middle, thickness + 1.2F, black, blue);
+        BSFGuiTool.renderGradientLine(graphics, middle, end, thickness + 1.2F, blue, black);
     }
 
     private void drawRestrainLine(GuiGraphicsExtractor graphics, Vec2 restrainer, Vec2 restrained, float thickness, int alpha, boolean doubled) {
         Vec2 start = offsetRelationPoint(edgePoint(restrainer, restrained, NODE_RADIUS + 2.0F));
         Vec2 end = offsetRelationPoint(edgePoint(restrained, restrainer, NODE_RADIUS + 3.0F));
-        int red = argb(alpha, RED_RGB);
-        int black = argb(alpha, BLACK_RGB);
+        int red = ARGB.color(alpha, RED_RGB);
+        int black = ARGB.color(alpha, BLACK_RGB);
         drawRelationGlow(graphics, start, end, thickness, alpha);
 
         if (doubled) {
-            int blue = argb(alpha, BLUE_RGB);
+            int blue = ARGB.color(alpha, BLUE_RGB);
             Vec2 middle = lerp(start, end, 0.5F);
-            GuiUtil.gradientLine(graphics, start, middle, thickness, red, black);
-            GuiUtil.gradientLine(graphics, middle, end, thickness, black, blue);
+            BSFGuiTool.renderGradientLine(graphics, start, middle, thickness, red, black);
+            BSFGuiTool.renderGradientLine(graphics, middle, end, thickness, black, blue);
         } else {
-            GuiUtil.gradientLine(graphics, start, end, thickness, red, black);
+            BSFGuiTool.renderGradientLine(graphics, start, end, thickness, red, black);
         }
     }
 
     private void drawRelationGlow(GuiGraphicsExtractor graphics, Vec2 start, Vec2 end, float thickness, int alpha) {
-        int glow = argb(Math.max(22, alpha / 4), RELATION_GLOW_RGB);
-        GuiUtil.gradientLine(graphics, start, end, thickness + 1.6F, glow, glow);
+        int glow = ARGB.color(Math.max(22, alpha / 4), RELATION_GLOW_RGB);
+        BSFGuiTool.renderGradientLine(graphics, start, end, thickness + 1.6F, glow, glow);
     }
 
     private void drawNodes(GuiGraphicsExtractor graphics, Vec2 center, EssenceMetal hovered, int mouseX, int mouseY) {
@@ -431,13 +433,9 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
         for (int i = 1; i <= segments; i++) {
             float angle = Mth.TWO_PI * i / segments;
             Vec2 current = pointOnCircle(center, angle, radius);
-            GuiUtil.gradientLine(graphics, previous, current, thickness, color, color);
+            BSFGuiTool.renderGradientLine(graphics, previous, current, thickness, color, color);
             previous = current;
         }
-    }
-
-    private static int argb(int alpha, int rgb) {
-        return (Mth.clamp(alpha, 0, 255) << 24) | (rgb & 0x00ffffff);
     }
 
     private static List<RelationEdge> createEdges() {

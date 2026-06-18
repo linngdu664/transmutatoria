@@ -1,9 +1,7 @@
 package com.linngdu664.transmutatoria.client.gui;
 
 import com.linngdu664.transmutatoria.client.renderer.state.gui.*;
-import com.linngdu664.transmutatoria.util.V2I;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.textures.GpuSampler;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -20,50 +18,10 @@ import net.minecraft.world.phys.Vec2;
 import org.joml.Matrix3x2f;
 
 /**
- * Gui window utils and floating coords render tools
+ * Gui floating coords render tools
  * Note: Text and item floating coords should use pose translate and methods in GuiGraphicsExtractor
  */
-public class GuiUtil {
-    public static int heightFrameCenter(Window window, int height) {
-        return heightFrameRatio(window, height, 0.5);
-    }
-
-    public static int heightFrameRatio(Window window, int height, double heightRatio) {
-        return (int) ((window.getHeight() / window.getGuiScale() - height) * heightRatio);
-    }
-
-    public static int heightWinRatio(Window window, double heightRatio) {
-        return heightFrameRatio(window, 0, heightRatio);
-    }
-
-    public static int widthFrameCenter(Window window, int width) {
-        return widthFrameRatio(window, width, 0.5);
-    }
-
-    public static int widthFrameRatio(Window window, int width, double widthRatio) {
-        return (int) ((window.getWidth() / window.getGuiScale() - width) * widthRatio);
-    }
-
-    public static int widthWinRatio(Window window, double widthRatio) {
-        return widthFrameRatio(window, 0, widthRatio);
-    }
-
-    public static V2I v2IRatio(Window window, int width, int height, double widthRatio, double heightRatio) {
-        return v2IRatio(window, width, height, widthRatio, heightRatio, 0, 0);
-    }
-
-    public static V2I v2IRatio(Window window, int width, int height, double widthRatio, double heightRatio, int xOffset, int yOffset) {
-        return new V2I(widthFrameRatio(window, width, widthRatio) + xOffset, heightFrameRatio(window, height, heightRatio) + yOffset);
-    }
-
-    public static V2I v2IRatio(Window window, double widthRatio, double heightRatio) {
-        return new V2I((int) (window.getWidth() * widthRatio / window.getGuiScale()), (int) (window.getHeight() * heightRatio / window.getGuiScale()));
-    }
-
-    public static boolean isInScreen(Vec2 point, Window window) {
-        return point.x > 0 && point.y > 0 && point.x < window.getGuiScaledWidth() && point.y < window.getGuiScaledHeight();
-    }
-
+public class FloatGuiGraphics {
     public static void fill(GuiGraphicsExtractor guiGraphics, Vec2 a, Vec2 b, int pColor) {
         fill(guiGraphics, a.x, a.y, b.x, b.y, pColor);
     }
@@ -84,6 +42,10 @@ public class GuiUtil {
             y1 = tmp;
         }
         guiGraphics.guiRenderState.addGuiElement(new FloatColoredRectangleRenderState(renderPipeline, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), x0, y0, x1, y1, color, color, guiGraphics.scissorStack.peek()));
+    }
+
+    public static void fill(GuiGraphicsExtractor guiGraphics, Vec2 a, Vec2 b, Vec2 c, Vec2 d, int pColor) {
+        guiGraphics.guiRenderState.addGuiElement(new FloatColoredQuadRenderState(RenderPipelines.GUI, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), a, b, c, d, pColor, guiGraphics.scissorStack.peek()));
     }
 
     public static void fillGradient(GuiGraphicsExtractor guiGraphics, Vec2 a, Vec2 b, int colorTop, int colorBottom) {
@@ -108,38 +70,8 @@ public class GuiUtil {
         guiGraphics.guiRenderState.addGuiElement(new FloatColoredRectangleRenderState(renderPipeline, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), x0, y0, x1, y1, colorTop, colorBottom, guiGraphics.scissorStack.peek()));
     }
 
-    public static void fill(GuiGraphicsExtractor guiGraphics, Vec2 a, Vec2 b, Vec2 c, Vec2 d, int pColor) {
-        guiGraphics.guiRenderState.addGuiElement(new FloatColoredQuadRenderState(RenderPipelines.GUI, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), a, b, c, d, pColor, guiGraphics.scissorStack.peek()));
-    }
-
     public static void fillGradient(GuiGraphicsExtractor guiGraphics, Vec2 a, Vec2 b, Vec2 c, Vec2 d, int colorA, int colorB, int colorC, int colorD) {
         guiGraphics.guiRenderState.addGuiElement(new FloatGradientQuadRenderState(RenderPipelines.GUI, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), a, b, c, d, colorA, colorB, colorC, colorD, guiGraphics.scissorStack.peek()));
-    }
-
-    public static void gradientLine(GuiGraphicsExtractor guiGraphics, Vec2 start, Vec2 end, float thickness, int startColor, int endColor) {
-        gradientLine(guiGraphics, RenderPipelines.GUI, start, end, thickness, startColor, endColor);
-    }
-
-    public static void gradientLine(GuiGraphicsExtractor guiGraphics, RenderPipeline renderPipeline, Vec2 start, Vec2 end, float thickness, int startColor, int endColor) {
-        if (thickness <= 0.0F) {
-            return;
-        }
-
-        float dx = end.x - start.x;
-        float dy = end.y - start.y;
-        float length = (float) Math.sqrt(dx * dx + dy * dy);
-        if (length == 0.0F) {
-            return;
-        }
-
-        float halfThickness = thickness * 0.5F;
-        float normalX = -dy / length * halfThickness;
-        float normalY = dx / length * halfThickness;
-        Vec2 a = new Vec2(start.x + normalX, start.y + normalY);
-        Vec2 b = new Vec2(start.x - normalX, start.y - normalY);
-        Vec2 c = new Vec2(end.x - normalX, end.y - normalY);
-        Vec2 d = new Vec2(end.x + normalX, end.y + normalY);
-        guiGraphics.guiRenderState.addGuiElement(new FloatGradientQuadRenderState(renderPipeline, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), a, b, c, d, startColor, startColor, endColor, endColor, guiGraphics.scissorStack.peek()));
     }
 
     public static void blit(GuiGraphicsExtractor guiGraphics, Identifier texture, float x, float y, float u, float v, float width, float height, float textureWidth, float textureHeight) {
@@ -155,7 +87,7 @@ public class GuiUtil {
     }
 
     public static void blitSprite(GuiGraphicsExtractor guiGraphics, RenderPipeline renderPipeline, Identifier location, float x, float y, float width, float height) {
-        blitSprite(guiGraphics, renderPipeline, (Identifier)location, x, y, width, height, -1);
+        blitSprite(guiGraphics, renderPipeline, location, x, y, width, height, -1);
     }
 
     public static void blitSprite(GuiGraphicsExtractor guiGraphics, RenderPipeline renderPipeline, Identifier location, float x, float y, float width, float height, float alpha) {
@@ -190,10 +122,6 @@ public class GuiUtil {
             blitSprite(guiGraphics, renderPipeline, location, x - textureX, y - textureY, spriteWidth, spriteHeight, color);
             guiGraphics.disableScissor();
         }
-    }
-
-    public static void blitSprite(GuiGraphicsExtractor guiGraphics, RenderPipeline renderPipeline, TextureAtlasSprite sprite, float x, float y, float width, float height) {
-        blitSprite(guiGraphics, renderPipeline, sprite, x, y, width, height, -1);
     }
 
     public static void blitSprite(GuiGraphicsExtractor guiGraphics, RenderPipeline renderPipeline, TextureAtlasSprite sprite, float x, float y, float width, float height, int color) {

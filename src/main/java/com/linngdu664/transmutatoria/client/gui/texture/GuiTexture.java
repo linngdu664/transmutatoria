@@ -1,7 +1,7 @@
 package com.linngdu664.transmutatoria.client.gui.texture;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.client.gui.GuiUtil;
+import com.linngdu664.transmutatoria.client.gui.FloatGuiGraphics;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 
@@ -16,8 +16,13 @@ public record GuiTexture(Identifier identifier, int wholeWidth, int wholeHeight)
     }
 
     @Override
+    public void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y, float u, float v) {
+        FloatGuiGraphics.blit(guiGraphics, option.renderPipeline(), identifier, x, y, u, v, wholeWidth, wholeHeight, wholeWidth, wholeHeight, wholeWidth, wholeHeight, option.color());
+    }
+
+    @Override
     public void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y, float u, float v, float widthOverride, float heightOverride) {
-        GuiUtil.blit(guiGraphics, option.renderPipeline(), identifier, x, y, u, v, widthOverride, heightOverride, widthOverride, heightOverride, wholeWidth, wholeHeight, option.color());
+        FloatGuiGraphics.blit(guiGraphics, option.renderPipeline(), identifier, x, y, u, v, widthOverride, heightOverride, widthOverride, heightOverride, wholeWidth, wholeHeight, option.color());
     }
 
     @Override

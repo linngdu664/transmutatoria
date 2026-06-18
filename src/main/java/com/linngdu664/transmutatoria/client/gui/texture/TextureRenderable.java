@@ -1,6 +1,6 @@
 package com.linngdu664.transmutatoria.client.gui.texture;
 
-import com.linngdu664.transmutatoria.client.gui.GuiUtil;
+import com.linngdu664.transmutatoria.client.gui.PosUtil;
 import com.linngdu664.transmutatoria.util.V2I;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -8,6 +8,8 @@ import net.minecraft.resources.Identifier;
 
 public interface TextureRenderable {
     void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y, int u, int v);
+
+    void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y, float u, float v);
 
     void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y, float u, float v, float widthOverride, float heightOverride);
 
@@ -30,23 +32,19 @@ public interface TextureRenderable {
     }
 
     default void render(GuiGraphicsExtractor guiGraphics, float x, float y) {
-        render(guiGraphics, TextureOption.DEFAULT, x, y, 0, 0, width(), height());
+        render(guiGraphics, TextureOption.DEFAULT, x, y, 0, 0);
     }
 
     default void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y) {
-        render(guiGraphics, option, x, y, 0, 0, width(), height());
+        render(guiGraphics, option, x, y, 0, 0);
     }
 
     default void render(GuiGraphicsExtractor guiGraphics, float x, float y, float u, float v) {
-        render(guiGraphics, TextureOption.DEFAULT, x, y, u, v, width(), height());
-    }
-
-    default void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y, float u, float v) {
-        render(guiGraphics, option, x, y, u, v, width(), height());
+        render(guiGraphics, TextureOption.DEFAULT, x, y, u, v);
     }
 
     default V2I renderVerticalCenter(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, int x) {
-        int y = GuiUtil.heightFrameCenter(window, height());
+        int y = PosUtil.heightFrameCenter(window, height());
         render(guiGraphics, option, x, y);
         return new V2I(x, y);
     }
@@ -56,7 +54,7 @@ public interface TextureRenderable {
     }
 
     default V2I renderHorizontalCenter(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, int y) {
-        int x = GuiUtil.widthFrameCenter(window, width());
+        int x = PosUtil.widthFrameCenter(window, width());
         render(guiGraphics, option, x, y);
         return new V2I(x, y);
     }
@@ -65,22 +63,22 @@ public interface TextureRenderable {
         return renderHorizontalCenter(guiGraphics, TextureOption.DEFAULT, window, y);
     }
 
-    default V2I renderRatio(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, double widthRatio, double heightRatio) {
+    default V2I renderRatio(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, float widthRatio, float heightRatio) {
         return renderRatio(guiGraphics, option, window, widthRatio, heightRatio, 0, 0);
     }
 
-    default V2I renderRatio(GuiGraphicsExtractor guiGraphics, Window window, double widthRatio, double heightRatio) {
+    default V2I renderRatio(GuiGraphicsExtractor guiGraphics, Window window, float widthRatio, float heightRatio) {
         return renderRatio(guiGraphics, TextureOption.DEFAULT, window, widthRatio, heightRatio, 0, 0);
     }
 
-    default V2I renderRatio(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, double widthRatio, double heightRatio, int xOffset, int yOffset) {
-        int x = GuiUtil.widthFrameRatio(window, width(), widthRatio) + xOffset;
-        int y = GuiUtil.heightFrameRatio(window, height(), heightRatio) + yOffset;
+    default V2I renderRatio(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, float widthRatio, float heightRatio, int xOffset, int yOffset) {
+        int x = PosUtil.widthFrameRatio(window, width(), widthRatio) + xOffset;
+        int y = PosUtil.heightFrameRatio(window, height(), heightRatio) + yOffset;
         render(guiGraphics, option, x, y);
         return new V2I(x, y);
     }
 
-    default V2I renderRatio(GuiGraphicsExtractor guiGraphics, Window window, double widthRatio, double heightRatio, int xOffset, int yOffset) {
+    default V2I renderRatio(GuiGraphicsExtractor guiGraphics, Window window, float widthRatio, float heightRatio, int xOffset, int yOffset) {
         return renderRatio(guiGraphics, TextureOption.DEFAULT, window, widthRatio, heightRatio, xOffset, yOffset);
     }
 }

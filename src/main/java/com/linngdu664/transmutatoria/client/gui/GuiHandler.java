@@ -1,7 +1,6 @@
 package com.linngdu664.transmutatoria.client.gui;
 
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
-import com.linngdu664.transmutatoria.client.gui.texture.GuiTexture;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;
@@ -24,6 +23,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -135,13 +135,12 @@ public class GuiHandler {
             }
 
             // 蒙版
-            int overlayAlpha = (int) (STORAGE_BOX_STYLE.maxOverlayAlpha() * (1 - depths[i]));
             guiGraphics.fill(
                     -frameSize / 2,
                     -frameSize / 2,
                     frameSize / 2,
                     frameSize / 2,
-                    overlayAlpha << 24
+                    ARGB.black((int) (STORAGE_BOX_STYLE.maxOverlayAlpha() * (1 - depths[i])))
             );
 
             guiGraphics.pose().popMatrix();
@@ -168,7 +167,7 @@ public class GuiHandler {
             ItemStack catalyst = crucible.getCatalyst();
             List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
 
-            V2I stripCenter = GuiUtil.v2IRatio(window, 0.05, 0.5);
+            V2I stripCenter = PosUtil.v2IRatio(window, 0.05f, 0.5f);
             if ((catalyst.getItem() instanceof AbstractTransmutationScrollItem)) {
                 V2I stripPos = new V2I(stripCenter.x() - Textures.DURABILITY_STRIP.wholeWidth() / 2, stripCenter.y() - Textures.DURABILITY_STRIP.wholeHeight() / 2);
 
@@ -282,7 +281,7 @@ public class GuiHandler {
     }
 
     private static void drawDashboard(GuiGraphicsExtractor guiGraphics, Window window, TransmutationCrucibleBlockEntity crucible, ItemStack catalyst, DeltaTracker delta) {
-        V2I center = GuiUtil.v2IRatio(window, 0.85, 0.2);
+        V2I center = PosUtil.v2IRatio(window, 0.85f, 0.2f);
         float centerX = center.x();
         float centerY = center.y();
 
@@ -291,7 +290,7 @@ public class GuiHandler {
                 Math.round(centerX - Textures.DASHBOARD_HOURGLASS_BG.width() * 0.5f),
                 Math.round(centerY - Textures.DASHBOARD_HOURGLASS_BG.height() * 0.5f)
         );
-        drawHourglassLiquid(guiGraphics, centerX, centerY, getScrollExpireRemainingRatio(catalyst, delta));
+        drawHourglassLiquid(guiGraphics, centerX, centerY, getScrollExpireRemainingRatio(catalyst));
 
         Textures.DASHBOARD_BG.render(
                 guiGraphics,
@@ -326,37 +325,21 @@ public class GuiHandler {
         return Mth.clamp(polarity / DASHBOARD_MAX_POLARITY, -1.0f, 1.0f) * DASHBOARD_MAX_POINTER_DEGREES;
     }
 
-    private static float getScrollExpireRemainingRatio(ItemStack catalyst, DeltaTracker delta) {
+    private static float getScrollExpireRemainingRatio(ItemStack catalyst) {
         ExpireInfo expireInfo = catalyst.get(InitDataComponents.EXPIRE_INFO);
         Minecraft mc = SafeInstance.getMC();
         if (expireInfo == null || expireInfo.period() <= 0 || mc.level == null) {
             return -1.0f;
         }
-
-        double clockTime = mc.level.getOverworldClockTime() + delta.getGameTimeDeltaPartialTick(false);
-        long nextExpire = catalyst.getOrDefault(
-                InitDataComponents.NEXT_EXPIRE,
-                getNextExpireForClock((long) Math.floor(clockTime), expireInfo)
-        );
-
-        if (nextExpire < clockTime) {
-            long periodsBehind = (long) Math.ceil((clockTime - nextExpire) / expireInfo.period());
-            nextExpire += Math.max(1L, periodsBehind) * (long) expireInfo.period();
-        }
-
-        return (float) Mth.clamp((nextExpire - clockTime) / expireInfo.period(), 0.0, 1.0);
-    }
-
-    private static long getNextExpireForClock(long clockTime, ExpireInfo expireInfo) {
-        long currentOffset = clockTime % expireInfo.period();
-        long currentPeriod = clockTime / expireInfo.period();
-        return (currentPeriod + (currentOffset >= expireInfo.offset() ? 1 : 0)) * (long) expireInfo.period() + expireInfo.offset();
+        long clockTime = mc.level.getOverworldClockTime();
+        long nextExpire = catalyst.getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE);
+        return (float) Mth.clamp((double) (nextExpire - clockTime) / (double) expireInfo.period(), 0.0, 1.0);
     }
 
     private static long[] calcPosEssenceMetal(Window window, int size) {
         long[] xys = new long[size];
-        int x = GuiUtil.widthFrameCenter(window, Textures.NORMAL_SLOT.width()) - 10 * (size - 1);
-        int y = GuiUtil.heightFrameRatio(window, 0, 0.6);
+        int x = PosUtil.widthFrameCenter(window, Textures.NORMAL_SLOT.width()) - 10 * (size - 1);
+        int y = PosUtil.heightFrameRatio(window, 0, 0.6f);
         for (int i = 0; i < size; i++) {
             xys[i] = packXY(x, y);
             x += 20;
@@ -366,8 +349,8 @@ public class GuiHandler {
     }
 
     private static long[] calcPosCrystal(Window window) {
-        int x = GuiUtil.widthFrameCenter(window, Textures.NORMAL_SLOT.width());
-        int y = GuiUtil.heightFrameRatio(window, Textures.NORMAL_SLOT.height(), 0.6);
+        int x = PosUtil.widthFrameCenter(window, Textures.NORMAL_SLOT.width());
+        int y = PosUtil.heightFrameRatio(window, Textures.NORMAL_SLOT.height(), 0.6f);
         return new long[]{packXY(x, y), packXY(x, y + 24)};
     }
 
@@ -380,7 +363,7 @@ public class GuiHandler {
             minY = Math.min(slot.getY(), minY);
             maxY = Math.max(slot.getY(), maxY);
         }
-        V2I origin = GuiUtil.v2IRatio(window, Textures.NORMAL_SLOT.width(), Textures.NORMAL_SLOT.height(), 0.5, 0.6);
+        V2I origin = PosUtil.v2IRatio(window, Textures.NORMAL_SLOT.width(), Textures.NORMAL_SLOT.height(), 0.5f, 0.6f);
         int initX = origin.x() - 10 * (maxX - minX);
         int initY = origin.y() - 6 * (maxY - minY);
 
@@ -397,7 +380,7 @@ public class GuiHandler {
     }
 
     private static void drawBackground(GuiGraphicsExtractor guiGraphics, Window window, ItemStack catalyst) {
-        Textures.ALCHEMY_ARRAYS[Math.floorMod(catalyst.hashCode(), Textures.ALCHEMY_ARRAYS.length)].renderRatio(guiGraphics, window, 0.5, 0.5);
+        Textures.ALCHEMY_ARRAYS[Math.floorMod(catalyst.hashCode(), Textures.ALCHEMY_ARRAYS.length)].renderRatio(guiGraphics, window, 0.5f, 0.5f);
     }
 
     private static void drawEssenceSlotsWithItemsAndSelection(

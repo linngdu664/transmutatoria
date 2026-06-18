@@ -2,10 +2,15 @@ package com.linngdu664.transmutatoria.client.gui;
 
 import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
+import com.linngdu664.transmutatoria.client.renderer.state.gui.FloatGradientQuadRenderState;
 import com.linngdu664.transmutatoria.util.V2I;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.render.TextureSetup;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
+import org.joml.Matrix3x2f;
 
 public class BSFGuiTool {
     /**
@@ -31,19 +36,45 @@ public class BSFGuiTool {
         Vec2 v2 = new Vec2(-v1.y, v1.x);
         if (isDown) {
             Vec2 v2s = v2.scale(padding);
-            GuiUtil.fill(guiGraphics, p1, p1.add(v2), p2.add(v2), p2, padColor);
-            GuiUtil.fill(guiGraphics, p1, p1.add(v2s), p2.add(v2s), p2, color);
+            FloatGuiGraphics.fill(guiGraphics, p1, p1.add(v2), p2.add(v2), p2, padColor);
+            FloatGuiGraphics.fill(guiGraphics, p1, p1.add(v2s), p2.add(v2s), p2, color);
         } else {
             v2 = v2.negated();
             p2 = p2.add(v2.negated());
             Vec2 v2s = v2.scale(1 - padding);
-            GuiUtil.fill(guiGraphics, p1.add(v2), p1, p2, p2.add(v2), color);
-            GuiUtil.fill(guiGraphics, p1.add(v2s), p1, p2, p2.add(v2s), padColor);
+            FloatGuiGraphics.fill(guiGraphics, p1.add(v2), p1, p2, p2.add(v2), color);
+            FloatGuiGraphics.fill(guiGraphics, p1.add(v2s), p1, p2, p2.add(v2s), padColor);
         }
     }
 
     public static void renderFilledRectangle(GuiGraphicsExtractor guiGraphics, Vec2 a, Vec2 b, int pColor) {
-        GuiUtil.fill(guiGraphics, a.x, a.y, b.x, b.y, pColor);
+        FloatGuiGraphics.fill(guiGraphics, a.x, a.y, b.x, b.y, pColor);
+    }
+
+    public static void renderGradientLine(GuiGraphicsExtractor guiGraphics, Vec2 start, Vec2 end, float thickness, int startColor, int endColor) {
+        renderGradientLine(guiGraphics, RenderPipelines.GUI, start, end, thickness, startColor, endColor);
+    }
+
+    public static void renderGradientLine(GuiGraphicsExtractor guiGraphics, RenderPipeline renderPipeline, Vec2 start, Vec2 end, float thickness, int startColor, int endColor) {
+        if (thickness <= 0.0F) {
+            return;
+        }
+
+        float dx = end.x - start.x;
+        float dy = end.y - start.y;
+        float length = (float) Math.sqrt(dx * dx + dy * dy);
+        if (length == 0.0F) {
+            return;
+        }
+
+        float halfThickness = thickness * 0.5F;
+        float normalX = -dy / length * halfThickness;
+        float normalY = dx / length * halfThickness;
+        Vec2 a = new Vec2(start.x + normalX, start.y + normalY);
+        Vec2 b = new Vec2(start.x - normalX, start.y - normalY);
+        Vec2 c = new Vec2(end.x - normalX, end.y - normalY);
+        Vec2 d = new Vec2(end.x + normalX, end.y + normalY);
+        guiGraphics.guiRenderState.addGuiElement(new FloatGradientQuadRenderState(renderPipeline, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), a, b, c, d, startColor, startColor, endColor, endColor, guiGraphics.scissorStack.peek()));
     }
 
     public static void renderBottomCropped(GuiGraphicsExtractor guiGraphics, TextureRenderable texture, float x, float y, float visibleHeight) {
