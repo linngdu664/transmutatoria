@@ -285,18 +285,18 @@ public class GuiHandler {
         float centerX = center.x();
         float centerY = center.y();
 
-        Textures.DASHBOARD_HOURGLASS_BG.render(
-                guiGraphics,
-                Math.round(centerX - Textures.DASHBOARD_HOURGLASS_BG.width() * 0.5f),
-                Math.round(centerY - Textures.DASHBOARD_HOURGLASS_BG.height() * 0.5f)
-        );
-        drawHourglassLiquid(guiGraphics, centerX, centerY, getScrollExpireRemainingRatio(catalyst));
+//        Textures.DASHBOARD_HOURGLASS_BG.render(
+//                guiGraphics,
+//                Math.round(centerX - Textures.DASHBOARD_HOURGLASS_BG.width() * 0.5f),
+//                Math.round(centerY - Textures.DASHBOARD_HOURGLASS_BG.height() * 0.5f)
+//        );
 
         Textures.DASHBOARD_BG.render(
                 guiGraphics,
                 Math.round(centerX - Textures.DASHBOARD_BG.width() * 0.5f),
                 Math.round(centerY - Textures.DASHBOARD_BG.height() * 0.5f)
         );
+        drawHourglassLiquid(guiGraphics, centerX, centerY + 2, getScrollExpireRemainingRatio(catalyst));
 
         RecipeConditions conditions = catalyst.getOrDefault(InitDataComponents.RECIPE_CONDITIONS, RecipeConditions.DEFAULT);
         BSFGuiTool.renderRotatedCentered(guiGraphics, Textures.DASHBOARD_BG_POINTER_FLAG, centerX, centerY, polarityToDegrees(conditions.minPolarity()));

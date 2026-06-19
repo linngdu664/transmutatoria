@@ -33,7 +33,7 @@ public class Textures {
     public static final GuiSprite DASHBOARD_BG = new GuiSprite("hud/dashboard_bg", 80, 80);
     public static final GuiSprite DASHBOARD_BG_POINTER = new GuiSprite("hud/dashboard_bg_pointer", 83, 5);
     public static final GuiSprite DASHBOARD_BG_POINTER_FLAG = new GuiSprite("hud/dashboard_bg_pointer_flag", 83, 5);
-    public static final GuiSprite DASHBOARD_HOURGLASS_BG = new GuiSprite("hud/dashboard_hourglass_bg", 80, 80);
+//    public static final GuiSprite DASHBOARD_HOURGLASS_BG = new GuiSprite("hud/dashboard_hourglass_bg", 80, 80);
     public static final GuiSprite DASHBOARD_HOURGLASS_DOWN = new GuiSprite("hud/dashboard_hourglass_down", 14, 19);
     public static final GuiSprite DASHBOARD_HOURGLASS_UP = new GuiSprite("hud/dashboard_hourglass_up", 14, 19);
     public static final GuiSprite DURABILITY_STRIP = new GuiSprite("hud/durability_strip", 23, 181);
