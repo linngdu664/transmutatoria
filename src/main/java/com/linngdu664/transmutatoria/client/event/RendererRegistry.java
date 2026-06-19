@@ -3,6 +3,7 @@ package com.linngdu664.transmutatoria.client.event;
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.client.model.AlchemistStorageBoxModel;
 import com.linngdu664.transmutatoria.client.renderer.blockentity.AlchemistStorageBoxRenderer;
+import com.linngdu664.transmutatoria.client.renderer.blockentity.TransmutationCrucibleRenderer;
 import com.linngdu664.transmutatoria.client.renderer.special.AlchemistStorageBoxSpecialRenderer;
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import net.neoforged.api.distmarker.Dist;
@@ -21,6 +22,7 @@ public class RendererRegistry {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(InitBlocks.ALCHEMIST_STORAGE_BOX_BLOCK_ENTITY.get(), AlchemistStorageBoxRenderer::new);
+        event.registerBlockEntityRenderer(InitBlocks.TRANSMUTATION_CRUCIBLE_BLOCK_ENTITY.get(), TransmutationCrucibleRenderer::new);
     }
 
     @SubscribeEvent

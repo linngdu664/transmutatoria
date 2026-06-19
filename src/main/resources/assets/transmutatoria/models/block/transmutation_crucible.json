@@ -4,8 +4,7 @@
 	"texture_size": [32, 32],
 	"textures": {
 		"1": "transmutatoria:block/crucible",
-		"2": "transmutatoria:block/water_0",
-		"particle": "transmutatoria:block/water_0"
+		"particle": "transmutatoria:block/crucible"
 	},
 	"elements": [
 		{
@@ -657,19 +656,6 @@
 				"up": {"uv": [15.5, 11, 12.5, 10.75], "texture": "#1"},
 				"down": {"uv": [15.5, 11, 12.5, 11.25], "texture": "#1"}
 			}
-		},
-		{
-			"from": [2, 12, 2],
-			"to": [14, 13, 14],
-			"rotation": {"angle": 0, "axis": "y", "origin": [0, 18, 0]},
-			"faces": {
-				"north": {"uv": [6, 0, 12, 0.5], "texture": "#2"},
-				"east": {"uv": [6, 0.5, 12, 1], "texture": "#2"},
-				"south": {"uv": [6, 1, 12, 1.5], "texture": "#2"},
-				"west": {"uv": [6, 1.5, 12, 2], "texture": "#2"},
-				"up": {"uv": [6, 6, 0, 0], "texture": "#2"},
-				"down": {"uv": [6, 6, 0, 12], "texture": "#2"}
-			}
 		}
 	],
 	"display": {
@@ -760,12 +746,6 @@
 				48,
 				49
 			]
-		},
-		{
-			"name": "water",
-			"origin": [8, 8, 8],
-			"color": 0,
-			"children": [50]
 		}
 	]
 }
