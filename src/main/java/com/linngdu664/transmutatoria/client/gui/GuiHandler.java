@@ -30,6 +30,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -101,6 +102,12 @@ public class GuiHandler {
     private static final int SLOT_DESCRIPTION_TITLE_COLOR = 0xfff2d79a;
     // 右下角高级槽位说明正文颜色。
     private static final int SLOT_DESCRIPTION_TEXT_COLOR = 0xffe2ddd0;
+    // 右下角特殊提示面板的红色边框。
+    private static final int SLOT_HINT_BORDER_COLOR = 0xc0d95757;
+    // 右下角特殊提示标题的红色文字颜色。
+    private static final int SLOT_HINT_TITLE_COLOR = 0xffff7777;
+    // 右下角特殊提示正文的红色文字颜色。
+    private static final int SLOT_HINT_TEXT_COLOR = 0xffffb0b0;
 
     public static void updateHudAnimation(boolean isVisible, DeltaTracker delta) {
         float target = isVisible ? 1.0f : 0.0f;
@@ -271,9 +278,7 @@ public class GuiHandler {
                 drawNumbers(guiGraphics, mc.font, xys, crucible, delta);
             }
 
-            if (catalyst.getItem() instanceof AbstractTransmutationScrollItem && !alchemySlots.isEmpty()) {
-                drawSelectedAdvancedSlotDescription(guiGraphics, window, mc.font, alchemySlots, crucible);
-            }
+            drawSelectedSlotDescription(guiGraphics, window, mc.font, catalyst, alchemySlots, crucible);
 
             if (hudIntro.value() < 0.995f) {
                 guiGraphics.pose().popMatrix();
@@ -674,13 +679,57 @@ public class GuiHandler {
         }
     }
 
-    private static void drawSelectedAdvancedSlotDescription(
+    private static void drawSelectedSlotDescription(
             GuiGraphicsExtractor guiGraphics,
             Window window,
             Font font,
+            ItemStack catalyst,
             List<AbstractAlchemySlot> alchemySlots,
             TransmutationCrucibleBlockEntity crucible
     ) {
+        if (crucible.getTargetTimer() == 0 && !crucible.hasAnyOutput()) {
+            if (crucible.getWaterAmount() < TransmutationCrucibleBlockEntity.WATER_PER_REACTION) {
+                drawSlotDescriptionPanel(
+                        guiGraphics,
+                        window,
+                        font,
+                        Component.translatable("gui.transmutatoria.crucible_hint.water.title"),
+                        Component.translatable(
+                                "gui.transmutatoria.crucible_hint.water.description",
+                                TransmutationCrucibleBlockEntity.WATER_PER_REACTION
+                        ),
+                        true
+                );
+                return;
+            }
+            if (catalyst.isEmpty()) {
+                drawSlotDescriptionPanel(
+                        guiGraphics,
+                        window,
+                        font,
+                        Component.translatable("gui.transmutatoria.crucible_hint.catalyst.title"),
+                        Component.translatable("gui.transmutatoria.crucible_hint.catalyst.description"),
+                        true
+                );
+                return;
+            }
+            if (crucible.getInput().isEmpty() && requiresTransformationInput(catalyst)) {
+                drawSlotDescriptionPanel(
+                        guiGraphics,
+                        window,
+                        font,
+                        Component.translatable("gui.transmutatoria.crucible_hint.input.title"),
+                        Component.translatable("gui.transmutatoria.crucible_hint.input.description"),
+                        true
+                );
+                return;
+            }
+        }
+
+        if (!(catalyst.getItem() instanceof AbstractTransmutationScrollItem) || alchemySlots.isEmpty()) {
+            return;
+        }
+
         int selectedSlotIndex = crucible.getSelectedSlot();
         if (selectedSlotIndex < 0 || selectedSlotIndex >= alchemySlots.size()) {
             return;
@@ -695,6 +744,28 @@ public class GuiHandler {
         String slotKey = slotType.getSerializedName();
         Component title = Component.translatable("gui.transmutatoria.alchemy_slot." + slotKey);
         Component description = Component.translatable("gui.transmutatoria.alchemy_slot.description." + slotKey);
+        drawSlotDescriptionPanel(guiGraphics, window, font, title, description, false);
+    }
+
+    private static boolean requiresTransformationInput(ItemStack catalyst) {
+        if (catalyst.is(Items.ENDER_EYE) || catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
+            return true;
+        }
+        if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
+            ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+            return container.getSlots() > 0 && !container.getStackInSlot(0).isEmpty();
+        }
+        return false;
+    }
+
+    private static void drawSlotDescriptionPanel(
+            GuiGraphicsExtractor guiGraphics,
+            Window window,
+            Font font,
+            Component title,
+            Component description,
+            boolean isWarning
+    ) {
         int availableContentWidth = window.getGuiScaledWidth() - (SLOT_DESCRIPTION_MARGIN + SLOT_DESCRIPTION_PADDING) * 2;
         if (availableContentWidth <= 0) {
             return;
@@ -716,12 +787,15 @@ public class GuiHandler {
         int y = window.getGuiScaledHeight() - panelHeight - SLOT_DESCRIPTION_MARGIN;
 
         guiGraphics.fill(x, y, x + panelWidth, y + panelHeight, SLOT_DESCRIPTION_BG_COLOR);
-        guiGraphics.outline(x, y, panelWidth, panelHeight, SLOT_DESCRIPTION_BORDER_COLOR);
-        guiGraphics.text(font, title, x + SLOT_DESCRIPTION_PADDING, y + SLOT_DESCRIPTION_PADDING, SLOT_DESCRIPTION_TITLE_COLOR, true);
+        int borderColor = isWarning ? SLOT_HINT_BORDER_COLOR : SLOT_DESCRIPTION_BORDER_COLOR;
+        int titleColor = isWarning ? SLOT_HINT_TITLE_COLOR : SLOT_DESCRIPTION_TITLE_COLOR;
+        int textColor = isWarning ? SLOT_HINT_TEXT_COLOR : SLOT_DESCRIPTION_TEXT_COLOR;
+        guiGraphics.outline(x, y, panelWidth, panelHeight, borderColor);
+        guiGraphics.text(font, title, x + SLOT_DESCRIPTION_PADDING, y + SLOT_DESCRIPTION_PADDING, titleColor, true);
 
         int lineY = y + SLOT_DESCRIPTION_PADDING + SLOT_DESCRIPTION_LINE_HEIGHT + SLOT_DESCRIPTION_TITLE_GAP;
         for (FormattedCharSequence line : descriptionLines) {
-            guiGraphics.text(font, line, x + SLOT_DESCRIPTION_PADDING, lineY, SLOT_DESCRIPTION_TEXT_COLOR, true);
+            guiGraphics.text(font, line, x + SLOT_DESCRIPTION_PADDING, lineY, textColor, true);
             lineY += SLOT_DESCRIPTION_LINE_HEIGHT;
         }
     }

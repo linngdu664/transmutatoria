@@ -105,6 +105,13 @@
   "gui.transmutatoria.scroll_stability.very_unstable": "Very Unstable",
   "gui.transmutatoria.scroll_stability.near_collapse": "Near Collapse",
 
+  "gui.transmutatoria.crucible_hint.water.title": "Crucible Needs Water",
+  "gui.transmutatoria.crucible_hint.water.description": "The crucible needs at least %s mB of water before an essence slot can be selected.",
+  "gui.transmutatoria.crucible_hint.catalyst.title": "Waiting for Catalyst",
+  "gui.transmutatoria.crucible_hint.catalyst.description": "Add a catalyst to the crucible before selecting an essence slot.",
+  "gui.transmutatoria.crucible_hint.input.title": "Waiting for Input",
+  "gui.transmutatoria.crucible_hint.input.description": "Add an input item matching the current catalyst before selecting an essence slot.",
+
   "gui.transmutatoria.alchemy_slot.normal": "Normal Slot",
   "gui.transmutatoria.alchemy_slot.deterioration": "Deterioration Slot",
   "gui.transmutatoria.alchemy_slot.activation": "Activation Slot",

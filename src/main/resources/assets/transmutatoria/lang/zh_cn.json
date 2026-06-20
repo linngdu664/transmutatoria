@@ -105,6 +105,13 @@
   "gui.transmutatoria.scroll_stability.very_unstable": "非常不稳",
   "gui.transmutatoria.scroll_stability.near_collapse": "濒临崩解",
 
+  "gui.transmutatoria.crucible_hint.water.title": "炼金锅缺水",
+  "gui.transmutatoria.crucible_hint.water.description": "炼金锅至少需要%s mB水，之后才能选择源质槽位。",
+  "gui.transmutatoria.crucible_hint.catalyst.title": "等待催化剂",
+  "gui.transmutatoria.crucible_hint.catalyst.description": "请先向炼金锅投入催化剂，之后才能选择源质槽位。",
+  "gui.transmutatoria.crucible_hint.input.title": "等待输入物品",
+  "gui.transmutatoria.crucible_hint.input.description": "请先投入与当前催化剂匹配的输入物品，之后才能选择源质槽位。",
+
   "gui.transmutatoria.alchemy_slot.normal": "普通槽位",
   "gui.transmutatoria.alchemy_slot.deterioration": "劣化槽位",
   "gui.transmutatoria.alchemy_slot.activation": "活化槽位",

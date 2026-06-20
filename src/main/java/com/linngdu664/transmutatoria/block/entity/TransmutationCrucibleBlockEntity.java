@@ -54,7 +54,7 @@ import java.util.*;
 
 public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private static final AABB SUCK_AABB = Block.column(16.0F, 5.0F, 16.0F).toAabbs().getFirst();
-    private static final int WATER_PER_REACTION = 20;
+    public static final int WATER_PER_REACTION = 20;
     private static final int ESSENCE_INPUT_SLOT_BEGIN = 0;
     private static final int ESSENCE_OUTPUT_SLOT_BEGIN = 24;
     private static final int CATALYST_SLOT = 48;
