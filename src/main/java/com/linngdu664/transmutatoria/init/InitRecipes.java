@@ -1,6 +1,5 @@
 package com.linngdu664.transmutatoria.init;
 
-import com.linngdu664.transmutatoria.recipe.CatalystShapelessRecipe;
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalReplicationPreciseRecipe;
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalReplicationRecipe;
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalTransformationPreciseRecipe;
@@ -66,11 +65,5 @@ public class InitRecipes {
             RECIPE_SERIALIZERS.register("alchemical_replication", () -> new RecipeSerializer<>(
                     AlchemicalReplicationRecipe.MAP_CODEC,
                     AlchemicalReplicationRecipe.STREAM_CODEC
-            ));
-
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<CatalystShapelessRecipe>> CATALYST_SHAPELESS_SERIALIZER =
-            RECIPE_SERIALIZERS.register("catalyst_shapeless", () -> new RecipeSerializer<>(
-                    CatalystShapelessRecipe.CODEC,
-                    CatalystShapelessRecipe.STREAM_CODEC
             ));
 }

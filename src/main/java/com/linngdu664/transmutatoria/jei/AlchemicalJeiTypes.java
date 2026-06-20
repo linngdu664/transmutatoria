@@ -11,6 +11,7 @@ public class AlchemicalJeiTypes {
     public static final Identifier TRANSMUTATION_DECOMPOSITION_UID = ArsTransmutatoria.makeMyIdentifier("transmutation_decomposition");
     public static final Identifier CHAOS_DECOMPOSITION_UID = ArsTransmutatoria.makeMyIdentifier("chaos_decomposition");
     public static final Identifier ESSENCE_FUSION_UID = ArsTransmutatoria.makeMyIdentifier("essence_fusion");
+    public static final Identifier TRANSMUTATION_CRYSTAL_CAULDRON_UID = ArsTransmutatoria.makeMyIdentifier("transmutation_crystal_cauldron");
 
     public static final IRecipeType<TransmutationDecompositionJeiRecipe> TRANSMUTATION_DECOMPOSITION =
             IRecipeType.create(TRANSMUTATION_DECOMPOSITION_UID, TransmutationDecompositionJeiRecipe.class);
@@ -18,6 +19,8 @@ public class AlchemicalJeiTypes {
             IRecipeType.create(CHAOS_DECOMPOSITION_UID, ChaosDecompositionJeiRecipe.class);
     public static final IRecipeType<EssenceFusionJeiRecipe> ESSENCE_FUSION =
             IRecipeType.create(ESSENCE_FUSION_UID, EssenceFusionJeiRecipe.class);
+    public static final IRecipeType<TransmutationCrystalCauldronJeiRecipe> TRANSMUTATION_CRYSTAL_CAULDRON =
+            IRecipeType.create(TRANSMUTATION_CRYSTAL_CAULDRON_UID, TransmutationCrystalCauldronJeiRecipe.class);
 
     @SuppressWarnings("unchecked")
     public static final IRecipeType<RecipeHolder<?>> ALCHEMICAL_TRANSFORMATION =

@@ -1,11 +1,9 @@
 {
-  "type": "transmutatoria:catalyst_shapeless",
+  "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
     "transmutatoria:pandemonium",
-    "transmutatoria:solar_equation_scroll"
-  ],
-  "catalysts": [
+    "transmutatoria:solar_equation_scroll",
     "transmutatoria:philosophers_stone"
   ],
   "result": {

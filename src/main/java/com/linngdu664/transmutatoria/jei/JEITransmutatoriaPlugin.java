@@ -3,16 +3,16 @@ package com.linngdu664.transmutatoria.jei;
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.client.event.ClientRecipeManager;
 import com.linngdu664.transmutatoria.init.InitBlocks;
-import com.linngdu664.transmutatoria.recipe.CatalystShapelessRecipe;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
-import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,12 +28,6 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
-        registration.getCraftingCategory()
-                .addExtension(CatalystShapelessRecipe.class, new CatalystShapelessExtension());
-    }
-
-    @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         var guiHelper = registration.getJeiHelpers().getGuiHelper();
         registration.addRecipeCategories(new AlchemicalReplicationCategory(guiHelper));
@@ -41,6 +35,7 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
         registration.addRecipeCategories(new TransmutationDecompositionCategory(guiHelper));
         registration.addRecipeCategories(new ChaosDecompositionCategory(guiHelper));
         registration.addRecipeCategories(new EssenceFusionCategory(guiHelper));
+        registration.addRecipeCategories(new TransmutationCrystalCauldronCategory(guiHelper));
     }
 
     @Override
@@ -64,6 +59,11 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
         registration.addCraftingStation(
                 AlchemicalJeiTypes.ESSENCE_FUSION,
                 InitBlocks.TRANSMUTATION_CRUCIBLE.get()
+        );
+        registration.addCraftingStation(
+                AlchemicalJeiTypes.TRANSMUTATION_CRYSTAL_CAULDRON,
+                Items.CAULDRON,
+                Blocks.EMERALD_BLOCK
         );
     }
 
@@ -93,6 +93,10 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
                         .flatMap(essence -> IntStream.rangeClosed(-1, 2)
                                 .mapToObj(state -> new EssenceFusionJeiRecipe(essence, state)))
                         .toList()
+        );
+        registration.addRecipes(
+                AlchemicalJeiTypes.TRANSMUTATION_CRYSTAL_CAULDRON,
+                List.of(TransmutationCrystalCauldronJeiRecipe.INSTANCE)
         );
     }
 }
