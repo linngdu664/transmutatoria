@@ -24,11 +24,11 @@ public class DiffusionSlot extends AbstractAlchemySlot {
         for (int i = 0; i < 6; i++) {
             int slot = posToOutputSlot.getOrDefault(getAdjacentPackedXY(i), -1);
             if (slot >= 0 && outputs.get(slot).getItem() instanceof EssenceMetalItem outEssenceMetal && !inhibitionStates[slot]) {
-                outEssenceMetal.change(result.getEssenceStateIncrease());
+                outputs.set(slot, outEssenceMetal.change(result.getEssenceStateIncrease()));
                 triggeredCnt++;
             }
         }
-        result.setEssenceStateIncrease(result.getEssenceStateIncrease() * (1 + triggeredCnt));
+        result.setPolarityIncrease(result.getPolarityIncrease() * (1 + triggeredCnt));
         return result;
     }
 

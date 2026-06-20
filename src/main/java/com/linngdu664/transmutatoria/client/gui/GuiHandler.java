@@ -14,6 +14,7 @@ import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 import com.linngdu664.transmutatoria.util.SafeInstance;
+import com.linngdu664.transmutatoria.util.SlotType;
 import com.linngdu664.transmutatoria.util.V2I;
 import com.mojang.blaze3d.platform.Window;
 import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
@@ -23,7 +24,9 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -33,8 +36,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import java.util.List;
 
 public class GuiHandler {
+    // 用于绘制“虚拟物品”预览的半透明渲染参数。
     private static final TextureOption VIRTUAL_ITEM = TextureOption.withAlpha(48);
 
+    // 储物盒环形 HUD 的统一布局、透视缩放与遮罩配置。
     private static final StorageBoxHudStyle STORAGE_BOX_STYLE = new StorageBoxHudStyle(
             Textures.SIMPLE_FRAME.height(),
             0.4f,
@@ -43,24 +48,59 @@ public class GuiHandler {
             1.3f,
             0xc0
     );
+    // 储物盒环形 HUD 的平滑旋转状态。
     private static final RingRotationState storageBoxRotation = new RingRotationState();
+    // 炼金锅当前选中源质槽高亮框的平滑位置。
     private static final SmoothPoint selectedSlotHighlight = new SmoothPoint();
+    // 炼金锅 HUD 出入场缩放动画进度。
     private static final SmoothValue hudIntro = new SmoothValue();
+    // 极性仪表盘指针使用的平滑极性值。
     private static final SmoothValue dashboardPolarity = new SmoothValue();
+    // 炼金槽位在反应开始、结束与重新显现时的动画状态。
     private static final CrucibleSlotAnimation crucibleSlotAnimation = new CrucibleSlotAnimation();
 
+    // 通用缓动速度，数值越大越快靠近目标。
     private static final float LERP_SPEED = 1.2f;
+    // 单次缓动的参考时长，配合指数缓动得到接近目标的插值步长。
     private static final float EASE_DURATION_TICKS = 6.931472f / LERP_SPEED;
+    // 投入源质时，选中槽位按压缩小阶段的持续 tick。
     private static final float SLOT_CLICK_PRESS_TICKS = 3.0f;
+    // 投入源质后，选中槽位回弹阶段的持续 tick。
     private static final float SLOT_CLICK_RELEASE_TICKS = 7.0f;
+    // 投入源质时，选中槽位按压动画的最小缩放。
     private static final float SLOT_CLICK_MIN_SCALE = 0.78f;
+    // 反应结束后，槽位从隐藏状态重新显现的持续 tick。
     private static final float SLOT_REVEAL_TICKS = 8.0f;
+    // 仪表盘指针映射的最大绝对极性值。
     private static final float DASHBOARD_MAX_POLARITY = 50.0f;
+    // 仪表盘指针在最大极性处对应的旋转角度。
     private static final float DASHBOARD_MAX_POINTER_DEGREES = 90.0f;
+    // 卷轴耐久条内容区域相对贴图左上角的 X 偏移。
     private static final int DURABILITY_STRIP_CONTENT_X = 6;
+    // 卷轴耐久条内容区域相对贴图左上角的 Y 偏移。
     private static final int DURABILITY_STRIP_CONTENT_Y = 25;
+    // 卷轴槽位解锁进度条内容区域相对贴图左上角的 X 偏移。
     private static final int PROGRESS_BAR_CONTENT_X = 16;
+    // 卷轴槽位解锁进度条内容区域相对贴图左上角的 Y 偏移。
     private static final int PROGRESS_BAR_CONTENT_Y = 67;
+    // 右下角高级槽位说明面板距离屏幕边缘的边距。
+    private static final int SLOT_DESCRIPTION_MARGIN = 20;
+    // 右下角高级槽位说明面板的内边距。
+    private static final int SLOT_DESCRIPTION_PADDING = 6;
+    // 右下角高级槽位说明文本的最大内容宽度。
+    private static final int SLOT_DESCRIPTION_MAX_WIDTH = 130;
+    // 右下角高级槽位说明面板每行文字的高度。
+    private static final int SLOT_DESCRIPTION_LINE_HEIGHT = 9;
+    // 右下角高级槽位说明标题与正文之间的间距。
+    private static final int SLOT_DESCRIPTION_TITLE_GAP = 4;
+    // 右下角高级槽位说明面板背景色。
+    private static final int SLOT_DESCRIPTION_BG_COLOR = 0xb0181116;
+    // 右下角高级槽位说明面板边框色。
+    private static final int SLOT_DESCRIPTION_BORDER_COLOR = 0xc0d6b47b;
+    // 右下角高级槽位说明标题颜色。
+    private static final int SLOT_DESCRIPTION_TITLE_COLOR = 0xfff2d79a;
+    // 右下角高级槽位说明正文颜色。
+    private static final int SLOT_DESCRIPTION_TEXT_COLOR = 0xffe2ddd0;
 
     public static void updateHudAnimation(boolean isVisible, DeltaTracker delta) {
         float target = isVisible ? 1.0f : 0.0f;
@@ -229,6 +269,10 @@ public class GuiHandler {
             Player player = mc.player;
             if (xys != null && player != null && player.isShiftKeyDown()) {
                 drawNumbers(guiGraphics, mc.font, xys, crucible, delta);
+            }
+
+            if (catalyst.getItem() instanceof AbstractTransmutationScrollItem && !alchemySlots.isEmpty()) {
+                drawSelectedAdvancedSlotDescription(guiGraphics, window, mc.font, alchemySlots, crucible);
             }
 
             if (hudIntro.value() < 0.995f) {
@@ -627,6 +671,58 @@ public class GuiHandler {
             guiGraphics.pose().scale(scale, scale);
             guiGraphics.text(font, str, 1 - font.width(str) / 2, -3, 0xffffffff, true);
             guiGraphics.pose().popMatrix();
+        }
+    }
+
+    private static void drawSelectedAdvancedSlotDescription(
+            GuiGraphicsExtractor guiGraphics,
+            Window window,
+            Font font,
+            List<AbstractAlchemySlot> alchemySlots,
+            TransmutationCrucibleBlockEntity crucible
+    ) {
+        int selectedSlotIndex = crucible.getSelectedSlot();
+        if (selectedSlotIndex < 0 || selectedSlotIndex >= alchemySlots.size()) {
+            return;
+        }
+
+        AbstractAlchemySlot slot = alchemySlots.get(selectedSlotIndex);
+        SlotType slotType = slot.getType();
+        if (!slot.isShowType() || slotType == SlotType.NORMAL) {
+            return;
+        }
+
+        String slotKey = slotType.getSerializedName();
+        Component title = Component.translatable("gui.transmutatoria.alchemy_slot." + slotKey);
+        Component description = Component.translatable("gui.transmutatoria.alchemy_slot.description." + slotKey);
+        int availableContentWidth = window.getGuiScaledWidth() - (SLOT_DESCRIPTION_MARGIN + SLOT_DESCRIPTION_PADDING) * 2;
+        if (availableContentWidth <= 0) {
+            return;
+        }
+
+        int contentMaxWidth = Math.min(SLOT_DESCRIPTION_MAX_WIDTH, availableContentWidth);
+        List<FormattedCharSequence> descriptionLines = font.split(description, contentMaxWidth);
+        int contentWidth = Math.min(font.width(title), contentMaxWidth);
+        for (FormattedCharSequence line : descriptionLines) {
+            contentWidth = Math.max(contentWidth, font.width(line));
+        }
+
+        int panelWidth = contentWidth + SLOT_DESCRIPTION_PADDING * 2;
+        int panelHeight = SLOT_DESCRIPTION_PADDING * 2
+                + SLOT_DESCRIPTION_LINE_HEIGHT
+                + SLOT_DESCRIPTION_TITLE_GAP
+                + descriptionLines.size() * SLOT_DESCRIPTION_LINE_HEIGHT;
+        int x = window.getGuiScaledWidth() - panelWidth - SLOT_DESCRIPTION_MARGIN;
+        int y = window.getGuiScaledHeight() - panelHeight - SLOT_DESCRIPTION_MARGIN;
+
+        guiGraphics.fill(x, y, x + panelWidth, y + panelHeight, SLOT_DESCRIPTION_BG_COLOR);
+        guiGraphics.outline(x, y, panelWidth, panelHeight, SLOT_DESCRIPTION_BORDER_COLOR);
+        guiGraphics.text(font, title, x + SLOT_DESCRIPTION_PADDING, y + SLOT_DESCRIPTION_PADDING, SLOT_DESCRIPTION_TITLE_COLOR, true);
+
+        int lineY = y + SLOT_DESCRIPTION_PADDING + SLOT_DESCRIPTION_LINE_HEIGHT + SLOT_DESCRIPTION_TITLE_GAP;
+        for (FormattedCharSequence line : descriptionLines) {
+            guiGraphics.text(font, line, x + SLOT_DESCRIPTION_PADDING, lineY, SLOT_DESCRIPTION_TEXT_COLOR, true);
+            lineY += SLOT_DESCRIPTION_LINE_HEIGHT;
         }
     }
 

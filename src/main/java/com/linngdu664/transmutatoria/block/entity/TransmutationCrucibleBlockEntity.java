@@ -669,6 +669,9 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                     annihilationCnt++;
                 }
             }
+            for (Runnable deferredTask : deferredTasks) {
+                deferredTask.run();
+            }
             catalyst.set(InitDataComponents.ALCHEMY_SLOTS, alchemySlots);
             catalyst.set(InitDataComponents.ENTROPY, entropy);
 
