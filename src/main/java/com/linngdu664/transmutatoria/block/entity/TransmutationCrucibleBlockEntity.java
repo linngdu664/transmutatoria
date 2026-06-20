@@ -616,10 +616,18 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         if (recipe != null) {
             RandomSource randomSource = level.getRandom();
             IntIntImmutablePair minMax = recipe.level().getMinMax(level, getInput());
-            int essenceCnt = randomSource.nextInt(minMax.leftInt(), minMax.rightInt() + 1);
+            int[] outputSlots = new int[CATALYST_SLOT - ESSENCE_OUTPUT_SLOT_BEGIN];
+            for (int i = 0; i < outputSlots.length; i++) {
+                outputSlots[i] = i;
+            }
+            int essenceCnt = Math.min(randomSource.nextInt(minMax.leftInt(), minMax.rightInt() + 1), outputSlots.length);
             int len = InitItems.ESSENCE_METAL_ITEMS.length;
             for (int i = 0; i < essenceCnt; i++) {
-                setItemAndRecordChange(ESSENCE_OUTPUT_SLOT_BEGIN + i, InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(len)].toStack(), itemStackWithSlotsUpdate);
+                int randomSlotIndex = randomSource.nextInt(i, outputSlots.length);
+                int outputSlot = outputSlots[randomSlotIndex];
+                outputSlots[randomSlotIndex] = outputSlots[i];
+                outputSlots[i] = outputSlot;
+                setItemAndRecordChange(ESSENCE_OUTPUT_SLOT_BEGIN + outputSlot, InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(len)].toStack(), itemStackWithSlotsUpdate);
             }
             setItemAndRecordChange(INPUT_SLOT, ItemStack.EMPTY, itemStackWithSlotsUpdate);
         }

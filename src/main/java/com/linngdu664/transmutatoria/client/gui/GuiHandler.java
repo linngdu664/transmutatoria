@@ -257,6 +257,10 @@ public class GuiHandler {
                 List<ItemStack> essencesInCrucible = crucible.hasAnyOutput() ? crucible.getOutputEssences() : crucible.getInputEssences();
                 xys = calcPosCrystal(window);
                 drawEssenceSlotsWithItemsAndSelection(guiGraphics, xys, crucible, delta, _ -> Textures.NORMAL_SLOT, essencesInCrucible::get);
+            } else if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
+                // 混沌分解固定使用 24 个只读源质输出槽。
+                xys = calcPosPhilosophersStone(window);
+                drawDisplayOnlyEssenceSlots(guiGraphics, xys, crucible.getOutputEssences(), crucible, delta);
             } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
                 // 炼金复制/炼金分解的源质槽位
                 if (alchemySlots.isEmpty()) return; // Prevent malformed client-side scroll data from crashing the HUD.
@@ -403,6 +407,51 @@ public class GuiHandler {
         return new long[]{packXY(x, y), packXY(x, y + 24)};
     }
 
+    private static long[] calcPosPhilosophersStone(Window window) {
+        long[] xys = new long[24];
+        V2I origin = PosUtil.v2IRatio(window, Textures.NORMAL_SLOT.width(), Textures.NORMAL_SLOT.height(), 0.5f, 0.6f);
+
+        // 外层边长为 7（每边 6 段），中心位于轴坐标 (2, 2)。
+        // 内层向内缩进一格后边长为 4（每边 3 段），两层共用同一中心。
+        int index = appendHollowTriangle(xys, 0, 1, 1, 3, false, origin);
+        appendHollowTriangle(xys, index, 0, 0, 6, true, origin);
+        return xys;
+    }
+
+    private static int appendHollowTriangle(
+            long[] xys,
+            int index,
+            int originQ,
+            int originR,
+            int edgeSteps,
+            boolean removeVertices,
+            V2I screenOrigin
+    ) {
+        // 三条边分别沿六边形网格的 (1,0)、(-1,1)、(0,-1) 方向延伸。
+        for (int step = 0; step < edgeSteps; step++) {
+            if (!removeVertices || step != 0) {
+                xys[index++] = packPhilosophersStoneSlot(screenOrigin, originQ + step, originR);
+            }
+        }
+        for (int step = 0; step < edgeSteps; step++) {
+            if (!removeVertices || step != 0) {
+                xys[index++] = packPhilosophersStoneSlot(screenOrigin, originQ + edgeSteps - step, originR + step);
+            }
+        }
+        for (int step = 0; step < edgeSteps; step++) {
+            if (!removeVertices || step != 0) {
+                xys[index++] = packPhilosophersStoneSlot(screenOrigin, originQ, originR + edgeSteps - step);
+            }
+        }
+        return index;
+    }
+
+    private static long packPhilosophersStoneSlot(V2I screenOrigin, int q, int r) {
+        int x = screenOrigin.x() + q * 20 - 40;
+        int y = screenOrigin.y() + (2 * r + q) * 12 - 96;
+        return packXY(x, y);
+    }
+
     private static long[] calcPosScroll(Window window, List<AbstractAlchemySlot> alchemySlots) {
         // 确定 XY 范围
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
@@ -460,6 +509,26 @@ public class GuiHandler {
             drawPulsedEssenceSlot(guiGraphics, xys, pulsedSlotIndex, crucible, delta, textureGetter, itemGetter);
         }
         drawSelectedSlot(guiGraphics, xys, crucible, delta);
+    }
+
+    private static void drawDisplayOnlyEssenceSlots(
+            GuiGraphicsExtractor guiGraphics,
+            long[] xys,
+            List<ItemStack> items,
+            TransmutationCrucibleBlockEntity crucible,
+            DeltaTracker delta
+    ) {
+        for (int i = 0; i < xys.length; i++) {
+            long packed = xys[i];
+            drawScaledEssenceSlot(
+                    guiGraphics,
+                    getXFromPacked(packed),
+                    getYFromPacked(packed),
+                    getReactionSlotScale(crucible, delta, i, xys.length),
+                    Textures.NORMAL_SLOT,
+                    items.get(i)
+            );
+        }
     }
 
     private static void drawScaledEssenceSlot(

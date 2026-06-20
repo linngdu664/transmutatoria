@@ -129,7 +129,7 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
         return holder.value() instanceof CrucibleRecipe recipe ? recipe : null;
     }
 
-    private static String compactLevel(LevelFunction level) {
+    static String compactLevel(LevelFunction level) {
         if (level instanceof FixedLevel fixed) {
             return romanRange(fixed.min(), fixed.max());
         }
@@ -139,7 +139,7 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
         return "?";
     }
 
-    private static Component getLevelTooltip(LevelFunction level) {
+    static Component getLevelTooltip(LevelFunction level) {
         if (level instanceof FixedLevel fixed) {
             return Component.translatable(
                     "jei.transmutatoria.info.level.fixed.tooltip",
@@ -159,11 +159,11 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
         return Component.translatable("jei.transmutatoria.info.level.unknown.tooltip", level.type());
     }
 
-    private static String romanRange(int min, int max) {
+    static String romanRange(int min, int max) {
         return min == max ? roman(min) : roman(min) + "–" + roman(max);
     }
 
-    private static String roman(int number) {
+    static String roman(int number) {
         if (number < 1 || number > 39) {
             return Integer.toString(number);
         }

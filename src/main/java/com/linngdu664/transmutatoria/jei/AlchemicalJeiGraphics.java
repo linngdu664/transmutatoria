@@ -45,6 +45,18 @@ final class AlchemicalJeiGraphics {
             0xC8FFFFFF
     );
 
+    static final Theme CHAOS_THEME = new Theme(
+            0xFF351616,
+            0xFFF3E5E2,
+            0xFF682B27,
+            0xFFE8CAC4,
+            0xFFC65E50,
+            0xFFE17A68,
+            0xFF54211D,
+            0xFFFFE9E3,
+            0xC8FFFFFF
+    );
+
     private AlchemicalJeiGraphics() {
     }
 

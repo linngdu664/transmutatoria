@@ -45,11 +45,7 @@ public class TransmutationDecompositionCategory extends AbstractRecipeCategory<T
                 .add(Items.ENDER_EYE);
         builder.addSlot(RecipeIngredientRole.OUTPUT, AlchemicalJeiGraphics.OUTPUT_X, AlchemicalJeiGraphics.SLOT_Y)
                 .setOutputSlotBackground()
-                .addItemStacks(getOutputs())
-                .addRichTooltipCallback((slot, tooltip) -> slot.getDisplayedItemStack().ifPresent(stack ->
-                        tooltip.add(Component.translatable(stack.is(InitItems.PANDEMONIUM)
-                                ? "jei.transmutatoria.transmutation_decomposition.output.rare"
-                                : "jei.transmutatoria.transmutation_decomposition.output.common"))));
+                .addItemStacks(getOutputs());
     }
 
     @Override

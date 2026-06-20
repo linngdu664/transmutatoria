@@ -36,6 +36,7 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
         registration.addRecipeCategories(new AlchemicalReplicationCategory(guiHelper));
         registration.addRecipeCategories(new AlchemicalTransformationCategory(guiHelper));
         registration.addRecipeCategories(new TransmutationDecompositionCategory(guiHelper));
+        registration.addRecipeCategories(new ChaosDecompositionCategory(guiHelper));
     }
 
     @Override
@@ -50,6 +51,10 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
         );
         registration.addCraftingStation(
                 AlchemicalJeiTypes.TRANSMUTATION_DECOMPOSITION,
+                InitBlocks.TRANSMUTATION_CRUCIBLE.get()
+        );
+        registration.addCraftingStation(
+                AlchemicalJeiTypes.CHAOS_DECOMPOSITION,
                 InitBlocks.TRANSMUTATION_CRUCIBLE.get()
         );
     }
@@ -69,6 +74,10 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
         registration.addRecipes(
                 AlchemicalJeiTypes.TRANSMUTATION_DECOMPOSITION,
                 List.of(TransmutationDecompositionJeiRecipe.INSTANCE)
+        );
+        registration.addRecipes(
+                AlchemicalJeiTypes.CHAOS_DECOMPOSITION,
+                repList.stream().map(ChaosDecompositionJeiRecipe::new).toList()
         );
     }
 }
