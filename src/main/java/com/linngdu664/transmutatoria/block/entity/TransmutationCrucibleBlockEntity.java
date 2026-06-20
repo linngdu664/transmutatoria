@@ -118,16 +118,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     private final FluidStacksResourceHandler waterHandler = new FluidStacksResourceHandler(1, 1000) {
         @Override
-        public int insert(int index, FluidResource resource, int amount, TransactionContext transaction) {
-            int inserted = super.insert(index, resource, amount, transaction);
-            if (inserted > 0 && amount >= FluidType.BUCKET_VOLUME) {
-                // Bucket pours always consume a full bucket; any overflow is discarded.
-                return FluidType.BUCKET_VOLUME;
-            }
-            return inserted;
-        }
-
-        @Override
         protected void onContentsChanged(int index, FluidStack prev) {
             // 这里的服务端检查是必须的，因为客户端的 setWater 最后也会调用到这里
             if (level instanceof ServerLevel serverLevel) {
