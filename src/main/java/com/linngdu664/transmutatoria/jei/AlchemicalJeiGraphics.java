@@ -57,14 +57,39 @@ final class AlchemicalJeiGraphics {
             0xC8FFFFFF
     );
 
+    static final Theme FUSION_THEME = new Theme(
+            0xFF3B091C,
+            0xFFFFE7EE,
+            0xFF941943,
+            0xFFF8B8CC,
+            0xFFEA3C6C,
+            0xFFFF5D85,
+            0xFF68142F,
+            0xFFFFEAF1,
+            0xE8FFFFFF
+    );
+
     private AlchemicalJeiGraphics() {
     }
 
     static void drawBase(GuiGraphicsExtractor graphics, Theme theme, TextureRenderable mark) {
-        drawPanelBackground(graphics, theme);
-        drawAlchemyMark(graphics, theme, mark);
-        drawPanelForeground(graphics, theme);
+        drawCustomBase(graphics, theme, mark, WIDTH, HEIGHT, CATALYST_X + 8, SLOT_Y + 8, INFO_TOP);
         drawArrows(graphics, theme.arrowColor());
+    }
+
+    static void drawCustomBase(
+            GuiGraphicsExtractor graphics,
+            Theme theme,
+            TextureRenderable mark,
+            int width,
+            int height,
+            int markCenterX,
+            int markCenterY,
+            int infoTop
+    ) {
+        drawPanelBackground(graphics, theme, width, height);
+        drawAlchemyMark(graphics, theme, mark, markCenterX, markCenterY);
+        drawPanelForeground(graphics, theme, width, height, infoTop);
     }
 
     static void drawSlotLabels(GuiGraphicsExtractor graphics, Font font, Theme theme) {
@@ -77,21 +102,25 @@ final class AlchemicalJeiGraphics {
         graphics.text(font, text, centerX - font.width(text) / 2, y, color, false);
     }
 
-    private static void drawPanelBackground(GuiGraphicsExtractor graphics, Theme theme) {
-        graphics.fill(0, 0, WIDTH, HEIGHT, theme.outerColor());
-        graphics.fill(1, 1, WIDTH - 1, HEIGHT - 1, theme.bodyColor());
+    private static void drawPanelBackground(GuiGraphicsExtractor graphics, Theme theme, int width, int height) {
+        graphics.fill(0, 0, width, height, theme.outerColor());
+        graphics.fill(1, 1, width - 1, height - 1, theme.bodyColor());
     }
 
-    private static void drawPanelForeground(GuiGraphicsExtractor graphics, Theme theme) {
-        graphics.fill(2, 2, WIDTH - 2, HEADER_BOTTOM, theme.headerColor());
-        graphics.fill(2, HEADER_BOTTOM - 1, WIDTH - 2, HEADER_BOTTOM, theme.accentColor());
-        graphics.fill(2, INFO_TOP, WIDTH - 2, HEIGHT - 2, theme.infoColor());
-        graphics.fill(2, INFO_TOP, WIDTH - 2, INFO_TOP + 1, theme.accentColor());
+    private static void drawPanelForeground(GuiGraphicsExtractor graphics, Theme theme, int width, int height, int infoTop) {
+        graphics.fill(2, 2, width - 2, HEADER_BOTTOM, theme.headerColor());
+        graphics.fill(2, HEADER_BOTTOM - 1, width - 2, HEADER_BOTTOM, theme.accentColor());
+        graphics.fill(2, infoTop, width - 2, height - 2, theme.infoColor());
+        graphics.fill(2, infoTop, width - 2, infoTop + 1, theme.accentColor());
     }
 
-    private static void drawAlchemyMark(GuiGraphicsExtractor graphics, Theme theme, TextureRenderable mark) {
-        int centerX = CATALYST_X + 8;
-        int centerY = SLOT_Y + 8;
+    private static void drawAlchemyMark(
+            GuiGraphicsExtractor graphics,
+            Theme theme,
+            TextureRenderable mark,
+            int centerX,
+            int centerY
+    ) {
         if (mark instanceof GuiTexture texture) {
             graphics.blit(
                     TextureOption.DEFAULT.renderPipeline(),
@@ -122,15 +151,20 @@ final class AlchemicalJeiGraphics {
     }
 
     private static void drawArrows(GuiGraphicsExtractor graphics, int color) {
-        drawArrow(graphics, 35, 63, color);
-        drawArrow(graphics, 87, 115, color);
+        int centerY = SLOT_Y + 8;
+        drawArrow(graphics, 35, 63, centerY, color);
+        drawArrow(graphics, 87, 115, centerY, color);
     }
 
-    private static void drawArrow(GuiGraphicsExtractor graphics, int startX, int endX, int color) {
-        graphics.fill(startX, 36, endX - 2, 38, color);
-        graphics.fill(endX - 7, 32, endX - 5, 42, color);
-        graphics.fill(endX - 5, 34, endX - 3, 40, color);
-        graphics.fill(endX - 3, 36, endX, 38, color);
+    private static void drawArrow(GuiGraphicsExtractor graphics, int startX, int endX, int centerY, int color) {
+        graphics.fill(startX, centerY - 1, endX - 2, centerY + 1, color);
+        graphics.fill(endX - 7, centerY - 5, endX - 5, centerY + 5, color);
+        graphics.fill(endX - 5, centerY - 3, endX - 3, centerY + 3, color);
+        graphics.fill(endX - 3, centerY - 1, endX, centerY + 1, color);
+    }
+
+    static void drawArrowBetween(GuiGraphicsExtractor graphics, int startX, int endX, int centerY, int color) {
+        drawArrow(graphics, startX, endX, centerY, color);
     }
 
     record Theme(

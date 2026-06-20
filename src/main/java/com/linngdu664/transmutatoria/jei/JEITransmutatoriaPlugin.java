@@ -4,6 +4,7 @@ import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.client.event.ClientRecipeManager;
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.recipe.CatalystShapelessRecipe;
+import com.linngdu664.transmutatoria.util.EssenceMetal;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -14,7 +15,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @JeiPlugin
 public class JEITransmutatoriaPlugin implements IModPlugin {
@@ -37,6 +40,7 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
         registration.addRecipeCategories(new AlchemicalTransformationCategory(guiHelper));
         registration.addRecipeCategories(new TransmutationDecompositionCategory(guiHelper));
         registration.addRecipeCategories(new ChaosDecompositionCategory(guiHelper));
+        registration.addRecipeCategories(new EssenceFusionCategory(guiHelper));
     }
 
     @Override
@@ -55,6 +59,10 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
         );
         registration.addCraftingStation(
                 AlchemicalJeiTypes.CHAOS_DECOMPOSITION,
+                InitBlocks.TRANSMUTATION_CRUCIBLE.get()
+        );
+        registration.addCraftingStation(
+                AlchemicalJeiTypes.ESSENCE_FUSION,
                 InitBlocks.TRANSMUTATION_CRUCIBLE.get()
         );
     }
@@ -78,6 +86,13 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
         registration.addRecipes(
                 AlchemicalJeiTypes.CHAOS_DECOMPOSITION,
                 repList.stream().map(ChaosDecompositionJeiRecipe::new).toList()
+        );
+        registration.addRecipes(
+                AlchemicalJeiTypes.ESSENCE_FUSION,
+                Arrays.stream(EssenceMetal.values())
+                        .flatMap(essence -> IntStream.rangeClosed(-1, 2)
+                                .mapToObj(state -> new EssenceFusionJeiRecipe(essence, state)))
+                        .toList()
         );
     }
 }
