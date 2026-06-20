@@ -46,7 +46,8 @@ public final class RomanNumberRenderer {
         };
     }
 
-    private static String toRomanNumber(int number) {
+    /** Returns the Roman numeral text without drawing any digit sprites. */
+    public static String toRomanNumber(int number) {
         StringBuilder builder = new StringBuilder();
         while (number >= 10) {
             builder.append('X');

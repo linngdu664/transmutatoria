@@ -141,6 +141,28 @@
 
   "jei.transmutatoria.catalyst_shapeless": "Catalyst Crafting",
   "jei.transmutatoria.alchemical_replication": "Alchemical Replication",
-  "jei.transmutatoria.alchemical_transformation": "Alchemical Transformation"
+  "jei.transmutatoria.alchemical_transformation": "Alchemical Transformation",
+  "jei.transmutatoria.transmutation_decomposition": "Transmutation Decomposition",
+  "jei.transmutatoria.transmutation_decomposition.description": "Decompose a Transmutation Crystal with an Eye of Ender in the Transmutation Crucible to obtain a random base-state essence metal.",
+  "jei.transmutatoria.transmutation_decomposition.water.short": "Water 20",
+  "jei.transmutatoria.transmutation_decomposition.water.tooltip": "Consumes 20 mB of water per reaction",
+  "jei.transmutatoria.transmutation_decomposition.chance.short": "99% / 1%",
+  "jei.transmutatoria.transmutation_decomposition.chance.tooltip": "99% split equally among the first 11 essence metals (9% each); 1% for Pandemonium",
+  "jei.transmutatoria.transmutation_decomposition.time.short": "10 ticks",
+  "jei.transmutatoria.transmutation_decomposition.time.tooltip": "Reaction time: 10 ticks",
+  "jei.transmutatoria.transmutation_decomposition.output.common": "Output chance: 9%",
+  "jei.transmutatoria.transmutation_decomposition.output.rare": "Output chance: 1%",
+  "jei.transmutatoria.alchemical_replication.description": "Record a target material on a scroll, then reproduce it with essences in the Transmutation Crucible.",
+  "jei.transmutatoria.alchemical_transformation.description": "Record a material change on a scroll, then transform the input into the output in the Transmutation Crucible.",
+  "jei.transmutatoria.input": "Input",
+  "jei.transmutatoria.catalyst": "Catalyst",
+  "jei.transmutatoria.output": "Output",
+  "jei.transmutatoria.info.level.short": "Lv. %s",
+  "jei.transmutatoria.info.level.fixed.tooltip": "Scroll level: %s–%s",
+  "jei.transmutatoria.info.level.enchantment.tooltip": "Scroll level is derived from item enchantments (base %s–%s, scaling %s–%s)",
+  "jei.transmutatoria.info.level.unknown.tooltip": "Unknown level function: %s",
+  "jei.transmutatoria.info.polarity.short": "Pol. %s",
+  "jei.transmutatoria.info.polarity.tooltip": "Allowed crucible polarity: %s to %s",
+  "jei.transmutatoria.info.one_time.tooltip": "One-time recipe: the scroll is consumed after the reaction"
 }
 

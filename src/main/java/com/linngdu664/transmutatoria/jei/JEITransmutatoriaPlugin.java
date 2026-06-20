@@ -2,10 +2,12 @@ package com.linngdu664.transmutatoria.jei;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.client.event.ClientRecipeManager;
+import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.recipe.CatalystShapelessRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import net.minecraft.resources.Identifier;
@@ -30,8 +32,26 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        registration.addRecipeCategories(new AlchemicalReplicationCategory());
-        registration.addRecipeCategories(new AlchemicalTransformationCategory());
+        var guiHelper = registration.getJeiHelpers().getGuiHelper();
+        registration.addRecipeCategories(new AlchemicalReplicationCategory(guiHelper));
+        registration.addRecipeCategories(new AlchemicalTransformationCategory(guiHelper));
+        registration.addRecipeCategories(new TransmutationDecompositionCategory(guiHelper));
+    }
+
+    @Override
+    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        registration.addCraftingStation(
+                AlchemicalJeiTypes.ALCHEMICAL_REPLICATION,
+                InitBlocks.TRANSMUTATION_CRUCIBLE.get()
+        );
+        registration.addCraftingStation(
+                AlchemicalJeiTypes.ALCHEMICAL_TRANSFORMATION,
+                InitBlocks.TRANSMUTATION_CRUCIBLE.get()
+        );
+        registration.addCraftingStation(
+                AlchemicalJeiTypes.TRANSMUTATION_DECOMPOSITION,
+                InitBlocks.TRANSMUTATION_CRUCIBLE.get()
+        );
     }
 
     @Override
@@ -46,5 +66,9 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
 
         registration.addRecipes(AlchemicalJeiTypes.ALCHEMICAL_TRANSFORMATION, transList);
         registration.addRecipes(AlchemicalJeiTypes.ALCHEMICAL_REPLICATION, repList);
+        registration.addRecipes(
+                AlchemicalJeiTypes.TRANSMUTATION_DECOMPOSITION,
+                List.of(TransmutationDecompositionJeiRecipe.INSTANCE)
+        );
     }
 }

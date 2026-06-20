@@ -1,57 +1,59 @@
 package com.linngdu664.transmutatoria.jei;
 
+import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalReplicationPreciseRecipe;
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalReplicationRecipe;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.api.recipe.types.IRecipeType;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import org.jspecify.annotations.Nullable;
 
-public class AlchemicalReplicationCategory implements IRecipeCategory<RecipeHolder<?>> {
-    @Override
-    public IRecipeType<RecipeHolder<?>> getRecipeType() {
-        return AlchemicalJeiTypes.ALCHEMICAL_REPLICATION;
-    }
+import java.util.List;
 
-    @Override
-    public Component getTitle() {
-        return Component.translatable("jei.transmutatoria.alchemical_replication");
-    }
-
-    @Override
-    public int getWidth() {
-        return 116; // copy from jei
-    }
-
-    @Override
-    public int getHeight() {
-        return 54;  // copy from jei
-    }
-
-    @Override
-    public @Nullable IDrawable getIcon() {
-        return null;
+public class AlchemicalReplicationCategory extends AbstractAlchemicalCategory {
+    public AlchemicalReplicationCategory(IGuiHelper guiHelper) {
+        super(
+                guiHelper,
+                AlchemicalJeiTypes.ALCHEMICAL_REPLICATION,
+                Component.translatable("jei.transmutatoria.alchemical_replication"),
+                InitItems.TRANSMUTATION_SIGIL_SCROLL.get().getDefaultInstance(),
+                true
+        );
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<?> holder, IFocusGroup focuses) {
+        builder.addSlot(RecipeIngredientRole.CRAFTING_STATION, CATALYST_X, SLOT_Y)
+                .setStandardSlotBackground()
+                .addItemStacks(getCatalysts());
+
         if (holder.value() instanceof AlchemicalReplicationRecipe recipe) {
-            builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.getOtherSideItemStack());
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.outputItems());
+            builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, SLOT_Y)
+                    .setStandardSlotBackground()
+                    .add(recipe.getOtherSideItemStack());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X, SLOT_Y)
+                    .setOutputSlotBackground()
+                    .add(recipe.outputItems());
         } else if (holder.value() instanceof AlchemicalReplicationPreciseRecipe recipe) {
-            builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.getOtherSideItemStack());
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.output().create());
+            builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, SLOT_Y)
+                    .setStandardSlotBackground()
+                    .add(recipe.getOtherSideItemStack());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X, SLOT_Y)
+                    .setOutputSlotBackground()
+                    .add(recipe.output().create());
         }
     }
 
-    @Override
-    public void draw(RecipeHolder<?> recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+    private static List<ItemStack> getCatalysts() {
+        return List.of(
+                InitItems.TRANSMUTATION_SIGIL_SCROLL.get().getDefaultInstance(),
+                InitItems.TERRESTRIAL_SIGIL_SCROLL.get().getDefaultInstance(),
+                InitItems.LUNAR_SIGIL_SCROLL.get().getDefaultInstance(),
+                InitItems.SOLAR_SIGIL_SCROLL.get().getDefaultInstance(),
+                InitItems.VOID_SIGIL_SCROLL.get().getDefaultInstance()
+        );
     }
 }

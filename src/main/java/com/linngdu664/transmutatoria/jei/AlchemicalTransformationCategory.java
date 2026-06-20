@@ -1,57 +1,59 @@
 package com.linngdu664.transmutatoria.jei;
 
+import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalTransformationPreciseRecipe;
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalTransformationRecipe;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.api.recipe.types.IRecipeType;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import org.jspecify.annotations.Nullable;
 
-public class AlchemicalTransformationCategory implements IRecipeCategory<RecipeHolder<?>> {
-    @Override
-    public IRecipeType<RecipeHolder<?>> getRecipeType() {
-        return AlchemicalJeiTypes.ALCHEMICAL_TRANSFORMATION;
-    }
+import java.util.List;
 
-    @Override
-    public Component getTitle() {
-        return Component.translatable("jei.transmutatoria.alchemical_transformation");
-    }
-
-    @Override
-    public int getWidth() {
-        return 116; // copy from jei
-    }
-
-    @Override
-    public int getHeight() {
-        return 54;  // copy from jei
-    }
-
-    @Override
-    public @Nullable IDrawable getIcon() {
-        return null;
+public class AlchemicalTransformationCategory extends AbstractAlchemicalCategory {
+    public AlchemicalTransformationCategory(IGuiHelper guiHelper) {
+        super(
+                guiHelper,
+                AlchemicalJeiTypes.ALCHEMICAL_TRANSFORMATION,
+                Component.translatable("jei.transmutatoria.alchemical_transformation"),
+                InitItems.TRANSMUTATION_EQUATION_SCROLL.get().getDefaultInstance(),
+                false
+        );
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<?> holder, IFocusGroup focuses) {
+        builder.addSlot(RecipeIngredientRole.CRAFTING_STATION, CATALYST_X, SLOT_Y)
+                .setStandardSlotBackground()
+                .addItemStacks(getCatalysts());
+
         if (holder.value() instanceof AlchemicalTransformationRecipe recipe) {
-            builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.inputItems());
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.getOtherSideItemStack());
+            builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, SLOT_Y)
+                    .setStandardSlotBackground()
+                    .add(recipe.inputItems());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X, SLOT_Y)
+                    .setOutputSlotBackground()
+                    .add(recipe.getOtherSideItemStack());
         } else if (holder.value() instanceof AlchemicalTransformationPreciseRecipe recipe) {
-            builder.addSlot(RecipeIngredientRole.INPUT, 20, 20).add(recipe.input().create());
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 90, 20).add(recipe.getOtherSideItemStack());
+            builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, SLOT_Y)
+                    .setStandardSlotBackground()
+                    .add(recipe.input().create());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X, SLOT_Y)
+                    .setOutputSlotBackground()
+                    .add(recipe.getOtherSideItemStack());
         }
     }
 
-    @Override
-    public void draw(RecipeHolder<?> recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+    private static List<ItemStack> getCatalysts() {
+        return List.of(
+                InitItems.TRANSMUTATION_EQUATION_SCROLL.get().getDefaultInstance(),
+                InitItems.TERRESTRIAL_EQUATION_SCROLL.get().getDefaultInstance(),
+                InitItems.LUNAR_EQUATION_SCROLL.get().getDefaultInstance(),
+                InitItems.SOLAR_EQUATION_SCROLL.get().getDefaultInstance(),
+                InitItems.VOID_EQUATION_SCROLL.get().getDefaultInstance()
+        );
     }
 }

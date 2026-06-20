@@ -8,6 +8,10 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 public class AlchemicalJeiTypes {
     public static final Identifier ALCHEMICAL_REPLICATION_UID = ArsTransmutatoria.makeMyIdentifier("alchemical_replication");
     public static final Identifier ALCHEMICAL_TRANSFORMATION_UID = ArsTransmutatoria.makeMyIdentifier("alchemical_transformation");
+    public static final Identifier TRANSMUTATION_DECOMPOSITION_UID = ArsTransmutatoria.makeMyIdentifier("transmutation_decomposition");
+
+    public static final IRecipeType<TransmutationDecompositionJeiRecipe> TRANSMUTATION_DECOMPOSITION =
+            IRecipeType.create(TRANSMUTATION_DECOMPOSITION_UID, TransmutationDecompositionJeiRecipe.class);
 
     @SuppressWarnings("unchecked")
     public static final IRecipeType<RecipeHolder<?>> ALCHEMICAL_TRANSFORMATION =

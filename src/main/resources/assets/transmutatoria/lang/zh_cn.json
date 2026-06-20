@@ -141,5 +141,27 @@
 
   "jei.transmutatoria.catalyst_shapeless": "催化剂合成",
   "jei.transmutatoria.alchemical_replication": "炼金复制",
-  "jei.transmutatoria.alchemical_transformation": "炼金转化"
+  "jei.transmutatoria.alchemical_transformation": "炼金转化",
+  "jei.transmutatoria.transmutation_decomposition": "嬗变分解",
+  "jei.transmutatoria.transmutation_decomposition.description": "在嬗变之锅中以末影之眼分解嬗变结晶，随机得到一种普通状态的源质金属。",
+  "jei.transmutatoria.transmutation_decomposition.water.short": "水 20",
+  "jei.transmutatoria.transmutation_decomposition.water.tooltip": "每次反应消耗 20 mB 水",
+  "jei.transmutatoria.transmutation_decomposition.chance.short": "99% / 1%",
+  "jei.transmutatoria.transmutation_decomposition.chance.tooltip": "99% 从前 11 种源质金属中等概率产出（每种 9%）；1% 产出无相源金",
+  "jei.transmutatoria.transmutation_decomposition.time.short": "10 tick",
+  "jei.transmutatoria.transmutation_decomposition.time.tooltip": "反应时间：10 tick",
+  "jei.transmutatoria.transmutation_decomposition.output.common": "产出概率：9%",
+  "jei.transmutatoria.transmutation_decomposition.output.rare": "产出概率：1%",
+  "jei.transmutatoria.alchemical_replication.description": "以卷轴记录目标物质，并在嬗变之锅中用源质复制它。",
+  "jei.transmutatoria.alchemical_transformation.description": "以卷轴记录物质变化，并在嬗变之锅中将输入转化为输出。",
+  "jei.transmutatoria.input": "输入",
+  "jei.transmutatoria.catalyst": "催化剂",
+  "jei.transmutatoria.output": "输出",
+  "jei.transmutatoria.info.level.short": "等级 %s",
+  "jei.transmutatoria.info.level.fixed.tooltip": "卷轴等级：%s–%s",
+  "jei.transmutatoria.info.level.enchantment.tooltip": "卷轴等级由物品附魔动态决定（基础 %s–%s，缩放 %s–%s）",
+  "jei.transmutatoria.info.level.unknown.tooltip": "未知等级函数：%s",
+  "jei.transmutatoria.info.polarity.short": "极性 %s",
+  "jei.transmutatoria.info.polarity.tooltip": "允许的锅极性：%s 至 %s",
+  "jei.transmutatoria.info.one_time.tooltip": "一次性配方：反应后会消耗卷轴"
 }
