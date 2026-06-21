@@ -85,14 +85,12 @@ public class TransmutationDecompositionCategory extends AbstractRecipeCategory<T
         if (mouseY >= AlchemicalJeiGraphics.INFO_TOP) {
             if (mouseX < AlchemicalJeiGraphics.WIDTH / 3.0) {
                 tooltip.add(Component.translatable("jei.transmutatoria.transmutation_decomposition.water.tooltip"));
-            } else if (mouseX < AlchemicalJeiGraphics.WIDTH * 2.0 / 3.0) {
+            } else if (mouseX < AlchemicalJeiGraphics.WIDTH * (2.0 / 3.0)) {
                 tooltip.add(Component.translatable("jei.transmutatoria.transmutation_decomposition.chance.tooltip"));
             } else {
                 tooltip.add(Component.translatable("jei.transmutatoria.transmutation_decomposition.time.tooltip"));
             }
-        } else if (mouseX >= 35 && mouseX < 115
-                && mouseY >= AlchemicalJeiGraphics.HEADER_BOTTOM
-                && mouseY < AlchemicalJeiGraphics.INFO_TOP) {
+        } else if (mouseY >= AlchemicalJeiGraphics.HEADER_BOTTOM && mouseX >= 35 && mouseX < 115) {
             tooltip.add(Component.translatable("jei.transmutatoria.transmutation_decomposition.description"));
         }
     }

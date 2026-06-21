@@ -1,5 +1,7 @@
 package com.linngdu664.transmutatoria.jei;
 
+import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
+import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalTransformationPreciseRecipe;
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalTransformationRecipe;
@@ -19,9 +21,18 @@ public class AlchemicalTransformationCategory extends AbstractAlchemicalCategory
                 guiHelper,
                 AlchemicalJeiTypes.ALCHEMICAL_TRANSFORMATION,
                 Component.translatable("jei.transmutatoria.alchemical_transformation"),
-                InitItems.TRANSMUTATION_EQUATION_SCROLL.get().getDefaultInstance(),
-                false
+                InitItems.TRANSMUTATION_EQUATION_SCROLL.get().getDefaultInstance()
         );
+    }
+
+    @Override
+    protected TextureRenderable getMark() {
+        return Textures.SCROLL_ARR_EQ_BASE;
+    }
+
+    @Override
+    protected Component getDescriptionTooltip() {
+        return Component.translatable("jei.transmutatoria.alchemical_transformation.description");
     }
 
     @Override

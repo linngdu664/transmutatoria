@@ -115,7 +115,7 @@ public class TransmutationCrystalCauldronCategory extends AbstractRecipeCategory
             double mouseY
     ) {
         if (mouseY >= INFO_TOP) {
-            if (mouseX < WIDTH / 2.0) {
+            if (mouseX < WIDTH * 0.5) {
                 tooltip.add(Component.translatable("jei.transmutatoria.transmutation_crystal_cauldron.drop.tooltip"));
             } else {
                 tooltip.add(Component.translatable("jei.transmutatoria.transmutation_crystal_cauldron.water.tooltip"));

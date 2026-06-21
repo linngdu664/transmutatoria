@@ -78,7 +78,7 @@ public class ChaosDecompositionCategory extends AbstractRecipeCategory<ChaosDeco
         Component water = Component.translatable("jei.transmutatoria.chaos_decomposition.water.short");
         Component count = Component.translatable(
                 "jei.transmutatoria.chaos_decomposition.count.short",
-                AbstractAlchemicalCategory.compactLevel(level)
+                level.toCompactString()
         );
         graphics.text(font, water, 7, 63, theme.textColor(), false);
         graphics.text(font, count, AlchemicalJeiGraphics.WIDTH - 7 - font.width(count), 63, theme.textColor(), false);
@@ -96,11 +96,9 @@ public class ChaosDecompositionCategory extends AbstractRecipeCategory<ChaosDeco
             if (mouseX < AlchemicalJeiGraphics.WIDTH / 2.0) {
                 tooltip.add(Component.translatable("jei.transmutatoria.chaos_decomposition.water.tooltip"));
             } else {
-                tooltip.add(getCountTooltip(display.recipe().level()));
+                tooltip.add(display.recipe().level().getDecompTooltipComponent());
             }
-        } else if (mouseX >= 35 && mouseX < 115
-                && mouseY >= AlchemicalJeiGraphics.HEADER_BOTTOM
-                && mouseY < AlchemicalJeiGraphics.INFO_TOP) {
+        } else if (mouseY >= AlchemicalJeiGraphics.HEADER_BOTTOM && mouseX >= 35 && mouseX < 115) {
             tooltip.add(Component.translatable("jei.transmutatoria.chaos_decomposition.description"));
         }
     }
@@ -117,25 +115,6 @@ public class ChaosDecompositionCategory extends AbstractRecipeCategory<ChaosDeco
     @Override
     public boolean needsRecipeBorder() {
         return false;
-    }
-
-    private static Component getCountTooltip(LevelFunction level) {
-        if (level instanceof FixedLevel fixed) {
-            return Component.translatable(
-                    "jei.transmutatoria.chaos_decomposition.count.fixed.tooltip",
-                    AbstractAlchemicalCategory.romanRange(fixed.min(), fixed.max())
-            );
-        }
-        if (level instanceof EnchantmentLevel enchantment) {
-            return Component.translatable(
-                    "jei.transmutatoria.chaos_decomposition.count.enchantment.tooltip",
-                    AbstractAlchemicalCategory.roman(enchantment.baseMin()),
-                    AbstractAlchemicalCategory.roman(enchantment.baseMax()),
-                    enchantment.scaleMin(),
-                    enchantment.scaleMax()
-            );
-        }
-        return Component.translatable("jei.transmutatoria.chaos_decomposition.dynamic.tooltip");
     }
 
     private static List<ItemStack> getOutputs() {

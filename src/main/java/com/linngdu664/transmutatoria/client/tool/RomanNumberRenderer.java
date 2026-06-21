@@ -68,4 +68,15 @@ public final class RomanNumberRenderer {
         }
         return builder.toString();
     }
+
+    public static String romanOrFallback(int number) {
+        if (number < 1 || number > 39) {
+            return Integer.toString(number);
+        }
+        return RomanNumberRenderer.toRomanNumber(number);
+    }
+
+    public static String romanRange(int min, int max) {
+        return min == max ? romanOrFallback(min) : romanOrFallback(min) + "–" + romanOrFallback(max);
+    }
 }

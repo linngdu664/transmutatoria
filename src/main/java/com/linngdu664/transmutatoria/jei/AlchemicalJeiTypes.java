@@ -22,10 +22,10 @@ public class AlchemicalJeiTypes {
     public static final IRecipeType<TransmutationCrystalCauldronJeiRecipe> TRANSMUTATION_CRYSTAL_CAULDRON =
             IRecipeType.create(TRANSMUTATION_CRYSTAL_CAULDRON_UID, TransmutationCrystalCauldronJeiRecipe.class);
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static final IRecipeType<RecipeHolder<?>> ALCHEMICAL_TRANSFORMATION =
             (IRecipeType) IRecipeType.create(ALCHEMICAL_TRANSFORMATION_UID, RecipeHolder.class);
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static final IRecipeType<RecipeHolder<?>> ALCHEMICAL_REPLICATION =
             (IRecipeType) IRecipeType.create(ALCHEMICAL_REPLICATION_UID, RecipeHolder.class);
 }

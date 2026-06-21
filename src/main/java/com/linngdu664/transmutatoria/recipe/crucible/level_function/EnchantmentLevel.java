@@ -1,11 +1,13 @@
 package com.linngdu664.transmutatoria.recipe.crucible.level_function;
 
+import com.linngdu664.transmutatoria.client.tool.RomanNumberRenderer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
@@ -65,5 +67,32 @@ public record EnchantmentLevel(int baseMin, int baseMax, double scaleMin, double
         }
 
         return value;
+    }
+
+    @Override
+    public Component getAlchTooltipComponent() {
+        return Component.translatable(
+                "jei.transmutatoria.info.level.enchantment.tooltip",
+                RomanNumberRenderer.romanOrFallback(baseMin),
+                RomanNumberRenderer.romanOrFallback(baseMax),
+                scaleMin,
+                scaleMax
+        );
+    }
+
+    @Override
+    public Component getDecompTooltipComponent() {
+        return Component.translatable(
+                "jei.transmutatoria.chaos_decomposition.count.enchantment.tooltip",
+                RomanNumberRenderer.romanOrFallback(baseMin),
+                RomanNumberRenderer.romanOrFallback(baseMax),
+                scaleMin,
+                scaleMax
+        );
+    }
+
+    @Override
+    public String toCompactString() {
+        return "*";
     }
 }

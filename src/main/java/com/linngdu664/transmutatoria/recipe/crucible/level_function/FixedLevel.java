@@ -1,10 +1,12 @@
 package com.linngdu664.transmutatoria.recipe.crucible.level_function;
 
+import com.linngdu664.transmutatoria.client.tool.RomanNumberRenderer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
@@ -36,5 +38,27 @@ public record FixedLevel(int min, int max) implements LevelFunction {
     @Override
     public boolean isValid() {
         return min >= MIN_BOUND && max >= MIN_BOUND && min <= MAX_BOUND && max <= MAX_BOUND && min <= max;
+    }
+
+    @Override
+    public Component getAlchTooltipComponent() {
+        return Component.translatable(
+                "jei.transmutatoria.info.level.fixed.tooltip",
+                RomanNumberRenderer.romanOrFallback(min),
+                RomanNumberRenderer.romanOrFallback(max)
+        );
+    }
+
+    @Override
+    public Component getDecompTooltipComponent() {
+        return Component.translatable(
+                "jei.transmutatoria.chaos_decomposition.count.fixed.tooltip",
+                RomanNumberRenderer.romanRange(min, max)
+        );
+    }
+
+    @Override
+    public String toCompactString() {
+        return RomanNumberRenderer.romanRange(min, max);
     }
 }

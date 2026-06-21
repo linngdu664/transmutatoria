@@ -161,7 +161,7 @@
   "jei.transmutatoria.chaos_decomposition.water.short": "Water 20",
   "jei.transmutatoria.chaos_decomposition.water.tooltip": "Consumes 20 mB of water per reaction",
   "jei.transmutatoria.chaos_decomposition.count.short": "Yield %s",
-  "jei.transmutatoria.chaos_decomposition.count.fixed.tooltip": "Produces %s random essence metals",
+  "jei.transmutatoria.chaos_decomposition.count.fixed.tooltip": "Yield %s random essence metals",
   "jei.transmutatoria.chaos_decomposition.count.enchantment.tooltip": "Yield is derived from input enchantments (base %s–%s, scaling %s–%s)",
   "jei.transmutatoria.chaos_decomposition.dynamic.tooltip": "Yield is determined dynamically by the recipe's level function",
   "jei.transmutatoria.transmutation_decomposition.description": "Decompose a Transmutation Crystal with an Eye of Ender in the Transmutation Crucible to obtain a random base-state essence metal.",

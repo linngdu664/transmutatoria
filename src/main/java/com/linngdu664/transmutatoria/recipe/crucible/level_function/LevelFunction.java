@@ -3,6 +3,7 @@ package com.linngdu664.transmutatoria.recipe.crucible.level_function;
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
@@ -43,9 +44,21 @@ public interface LevelFunction {
 
     IntIntImmutablePair getMinMax(Level level, ItemStack stack);
 
+    String type();
+
     default boolean isValid() {
         return true;
     }
 
-    String type();
+    default Component getAlchTooltipComponent() {
+        return Component.translatable("jei.transmutatoria.info.level.unknown.tooltip", type());
+    }
+
+    default Component getDecompTooltipComponent() {
+        return Component.translatable("jei.transmutatoria.chaos_decomposition.dynamic.tooltip");
+    }
+
+    default String toCompactString() {
+        return "?";
+    }
 }

@@ -91,7 +91,7 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
                 AlchemicalJeiTypes.ESSENCE_FUSION,
                 Arrays.stream(EssenceMetal.values())
                         .flatMap(essence -> IntStream.rangeClosed(-1, 2)
-                                .mapToObj(state -> new EssenceFusionJeiRecipe(essence, state)))
+                        .mapToObj(state -> new EssenceFusionJeiRecipe(essence, state)))
                         .toList()
         );
         registration.addRecipes(

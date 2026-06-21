@@ -1,11 +1,7 @@
 package com.linngdu664.transmutatoria.jei;
 
-import com.linngdu664.transmutatoria.client.gui.texture.Textures;
-import com.linngdu664.transmutatoria.client.tool.RomanNumberRenderer;
+import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
-import com.linngdu664.transmutatoria.recipe.crucible.level_function.EnchantmentLevel;
-import com.linngdu664.transmutatoria.recipe.crucible.level_function.FixedLevel;
-import com.linngdu664.transmutatoria.recipe.crucible.level_function.LevelFunction;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -35,18 +31,18 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
     private static final int HEADER_BOTTOM = AlchemicalJeiGraphics.HEADER_BOTTOM;
     private static final int INFO_TOP = AlchemicalJeiGraphics.INFO_TOP;
 
-    private final boolean replication;
-
     protected AbstractAlchemicalCategory(
             IGuiHelper guiHelper,
             IRecipeType<RecipeHolder<?>> recipeType,
             Component title,
-            ItemStack icon,
-            boolean replication
+            ItemStack icon
     ) {
         super(recipeType, title, guiHelper.createDrawableItemStack(icon), WIDTH, HEIGHT);
-        this.replication = replication;
     }
+
+    protected abstract Component getDescriptionTooltip();
+
+    protected abstract TextureRenderable getMark();
 
     @Override
     public void draw(
@@ -61,11 +57,7 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
             return;
         }
 
-        AlchemicalJeiGraphics.drawBase(
-                graphics,
-                AlchemicalJeiGraphics.PARCHMENT_THEME,
-                replication ? Textures.SCROLL_ARR_SG_BASE : Textures.SCROLL_ARR_EQ_BASE
-        );
+        AlchemicalJeiGraphics.drawBase(graphics, AlchemicalJeiGraphics.PARCHMENT_THEME, getMark());
         drawLabels(graphics, recipe);
     }
 
@@ -83,10 +75,10 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
         }
 
         if (mouseY >= INFO_TOP) {
-            if (recipe.oneTime() && mouseX >= WIDTH / 2.0 - 12 && mouseX < WIDTH / 2.0 + 12) {
+            if (recipe.oneTime() && mouseX >= WIDTH * 0.5 - 12 && mouseX < WIDTH * 0.5 + 12) {
                 tooltip.add(Component.translatable("jei.transmutatoria.info.one_time.tooltip"));
-            } else if (mouseX < WIDTH / 2.0) {
-                tooltip.add(getLevelTooltip(recipe.level()));
+            } else if (mouseX < WIDTH * 0.5) {
+                tooltip.add(recipe.level().getAlchTooltipComponent());
             } else {
                 tooltip.add(Component.translatable(
                         "jei.transmutatoria.info.polarity.tooltip",
@@ -94,10 +86,8 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
                         signed(recipe.maxPolarity())
                 ));
             }
-        } else if (mouseX >= 48 && mouseX < 101 && mouseY >= HEADER_BOTTOM && mouseY < INFO_TOP) {
-            tooltip.add(Component.translatable(replication
-                    ? "jei.transmutatoria.alchemical_replication.description"
-                    : "jei.transmutatoria.alchemical_transformation.description"));
+        } else if (mouseY >= HEADER_BOTTOM && mouseX >= 48 && mouseX < 101) {
+            tooltip.add(getDescriptionTooltip());
         }
     }
 
@@ -115,7 +105,7 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
             graphics.text(font, oneTime, (WIDTH - font.width(oneTime)) / 2, 63, AlchemicalJeiGraphics.PARCHMENT_THEME.textColor(), false);
         }
 
-        Component level = Component.translatable("jei.transmutatoria.info.level.short", compactLevel(recipe.level()));
+        Component level = Component.translatable("jei.transmutatoria.info.level.short", recipe.level().toCompactString());
         Component polarity = Component.translatable(
                 "jei.transmutatoria.info.polarity.short",
                 signed(recipe.minPolarity()) + ".." + signed(recipe.maxPolarity())
@@ -127,47 +117,6 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
 
     private static CrucibleRecipe getCrucibleRecipe(RecipeHolder<?> holder) {
         return holder.value() instanceof CrucibleRecipe recipe ? recipe : null;
-    }
-
-    static String compactLevel(LevelFunction level) {
-        if (level instanceof FixedLevel fixed) {
-            return romanRange(fixed.min(), fixed.max());
-        }
-        if (level instanceof EnchantmentLevel) {
-            return "*";
-        }
-        return "?";
-    }
-
-    static Component getLevelTooltip(LevelFunction level) {
-        if (level instanceof FixedLevel fixed) {
-            return Component.translatable(
-                    "jei.transmutatoria.info.level.fixed.tooltip",
-                    roman(fixed.min()),
-                    roman(fixed.max())
-            );
-        }
-        if (level instanceof EnchantmentLevel enchantment) {
-            return Component.translatable(
-                    "jei.transmutatoria.info.level.enchantment.tooltip",
-                    roman(enchantment.baseMin()),
-                    roman(enchantment.baseMax()),
-                    enchantment.scaleMin(),
-                    enchantment.scaleMax()
-            );
-        }
-        return Component.translatable("jei.transmutatoria.info.level.unknown.tooltip", level.type());
-    }
-
-    static String romanRange(int min, int max) {
-        return min == max ? roman(min) : roman(min) + "–" + roman(max);
-    }
-
-    static String roman(int number) {
-        if (number < 1 || number > 39) {
-            return Integer.toString(number);
-        }
-        return RomanNumberRenderer.toRomanNumber(number);
     }
 
     private static String signed(int value) {
