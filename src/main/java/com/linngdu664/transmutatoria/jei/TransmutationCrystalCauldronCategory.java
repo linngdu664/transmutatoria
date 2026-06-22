@@ -44,7 +44,7 @@ public class TransmutationCrystalCauldronCategory extends AbstractRecipeCategory
         super(
                 AlchemicalJeiTypes.TRANSMUTATION_CRYSTAL_CAULDRON,
                 Component.translatable("jei.transmutatoria.transmutation_crystal_cauldron"),
-                guiHelper.createDrawableItemLike(InitItems.TRANSMUTATION_CRYSTAL.get()),
+                guiHelper.createDrawableItemLike(Items.CAULDRON),
                 WIDTH,
                 HEIGHT
         );

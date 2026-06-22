@@ -155,6 +155,12 @@
   "jei.transmutatoria.transmutation_decomposition": "Transmutation Decomposition",
   "jei.transmutatoria.chaos_decomposition": "Chaos Decomposition",
   "jei.transmutatoria.essence_fusion": "Essence Fusion",
+  "jei.transmutatoria.crystal_essence_fusion": "Essence Reaction",
+  "jei.transmutatoria.crystal_essence_fusion.description": "Two essences change state according to their relationship; input order is unrestricted and every concrete state combination is shown separately.",
+  "jei.transmutatoria.crystal_essence_fusion.water.short": "Water 20",
+  "jei.transmutatoria.crystal_essence_fusion.water.tooltip": "Consumes 20 mB of water per reaction",
+  "jei.transmutatoria.crystal_essence_fusion.polarity.short": "Pol. %s",
+  "jei.transmutatoria.crystal_essence_fusion.polarity.tooltip": "This reaction changes crucible polarity by %s",
   "jei.transmutatoria.essence_fusion.description": "Supply every essence restrained or doubly restrained by the catalyst essence; any input essence state is accepted.",
   "jei.transmutatoria.essence_fusion.required": "Required",
   "jei.transmutatoria.essence_fusion.water.short": "Water 20",
@@ -186,6 +192,7 @@
   "jei.transmutatoria.info.level.unknown.tooltip": "Unknown level function: %s",
   "jei.transmutatoria.info.polarity.short": "Pol. %s",
   "jei.transmutatoria.info.polarity.tooltip": "Allowed crucible polarity: %s to %s",
-  "jei.transmutatoria.info.one_time.tooltip": "One-time recipe: the scroll is consumed after the reaction"
+  "jei.transmutatoria.info.one_time.tooltip": "One-time recipe: the scroll is consumed after the reaction",
+  "jei.transmutatoria.info.all_essence_metals.tooltip": "Required quantity is determined by the alchemy level; essence type is unknown and any state is accepted"
 }
 

@@ -37,6 +37,7 @@ public class AlchemicalReplicationCategory extends AbstractAlchemicalCategory {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<?> holder, IFocusGroup focuses) {
+        addEssenceInputSlot(builder);
         builder.addSlot(RecipeIngredientRole.CRAFTING_STATION, CATALYST_X, SLOT_Y)
                 .setStandardSlotBackground()
                 .addItemStacks(getCatalysts());

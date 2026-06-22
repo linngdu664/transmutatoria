@@ -1,10 +1,13 @@
 package com.linngdu664.transmutatoria.jei;
 
 import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
+import com.linngdu664.transmutatoria.init.InitTags;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.AbstractRecipeCategory;
 import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.client.Minecraft;
@@ -12,6 +15,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 /**
@@ -21,12 +25,12 @@ import net.minecraft.world.item.crafting.RecipeHolder;
  * recipe lookups keep working. Everything around them is presentation only.</p>
  */
 public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<RecipeHolder<?>> {
-    protected static final int WIDTH = AlchemicalJeiGraphics.WIDTH;
-    protected static final int HEIGHT = AlchemicalJeiGraphics.HEIGHT;
-    protected static final int INPUT_X = AlchemicalJeiGraphics.INPUT_X;
-    protected static final int CATALYST_X = AlchemicalJeiGraphics.CATALYST_X;
-    protected static final int OUTPUT_X = AlchemicalJeiGraphics.OUTPUT_X;
-    protected static final int SLOT_Y = AlchemicalJeiGraphics.SLOT_Y;
+    protected static final int WIDTH = AlchemicalJeiGraphics.RECIPE_WIDTH;
+    protected static final int HEIGHT = AlchemicalJeiGraphics.RECIPE_HEIGHT;
+    protected static final int INPUT_X = AlchemicalJeiGraphics.RECIPE_INPUT_X;
+    protected static final int CATALYST_X = AlchemicalJeiGraphics.RECIPE_CATALYST_X;
+    protected static final int OUTPUT_X = AlchemicalJeiGraphics.RECIPE_OUTPUT_X;
+    protected static final int SLOT_Y = AlchemicalJeiGraphics.RECIPE_SLOT_Y;
 
     private static final int HEADER_BOTTOM = AlchemicalJeiGraphics.HEADER_BOTTOM;
     private static final int INFO_TOP = AlchemicalJeiGraphics.INFO_TOP;
@@ -57,7 +61,7 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
             return;
         }
 
-        AlchemicalJeiGraphics.drawBase(graphics, AlchemicalJeiGraphics.PARCHMENT_THEME, getMark());
+        AlchemicalJeiGraphics.drawRecipeBase(graphics, AlchemicalJeiGraphics.PARCHMENT_THEME, getMark());
         drawLabels(graphics, recipe);
     }
 
@@ -86,7 +90,7 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
                         signed(recipe.maxPolarity())
                 ));
             }
-        } else if (mouseY >= HEADER_BOTTOM && mouseX >= 48 && mouseX < 101) {
+        } else if (mouseY >= HEADER_BOTTOM && mouseX >= 64 && mouseX < 131) {
             tooltip.add(getDescriptionTooltip());
         }
     }
@@ -98,7 +102,7 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
 
     private void drawLabels(GuiGraphicsExtractor graphics, CrucibleRecipe recipe) {
         Font font = Minecraft.getInstance().font;
-        AlchemicalJeiGraphics.drawSlotLabels(graphics, font, AlchemicalJeiGraphics.PARCHMENT_THEME);
+        AlchemicalJeiGraphics.drawRecipeSlotLabels(graphics, font, AlchemicalJeiGraphics.PARCHMENT_THEME);
 
         if (recipe.oneTime()) {
             Component oneTime = Component.literal("1x");
@@ -121,5 +125,19 @@ public abstract class AbstractAlchemicalCategory extends AbstractRecipeCategory<
 
     private static String signed(int value) {
         return value > 0 ? "+" + value : Integer.toString(value);
+    }
+
+    protected static void addEssenceInputSlot(IRecipeLayoutBuilder builder) {
+        builder.addSlot(
+                        RecipeIngredientRole.INPUT,
+                        AlchemicalJeiGraphics.RECIPE_INPUT_ESSENCE_X,
+                        AlchemicalJeiGraphics.RECIPE_ESSENCE_SLOT_Y
+                )
+                .setStandardSlotBackground()
+                .add(new SlotDisplay.TagSlotDisplay(InitTags.ALL_ESSENCE_METALS))
+                .addRichTooltipCallback((slot, tooltip) -> tooltip.add(
+                        Component.translatable("jei.transmutatoria.info.all_essence_metals.tooltip")
+                ))
+                .setSlotName("all_essence_metals");
     }
 }

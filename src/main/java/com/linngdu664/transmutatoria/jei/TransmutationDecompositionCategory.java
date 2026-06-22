@@ -25,7 +25,7 @@ public class TransmutationDecompositionCategory extends AbstractRecipeCategory<T
         super(
                 AlchemicalJeiTypes.TRANSMUTATION_DECOMPOSITION,
                 Component.translatable("jei.transmutatoria.transmutation_decomposition"),
-                guiHelper.createDrawableItemLike(InitItems.TRANSMUTATION_CRYSTAL.get()),
+                guiHelper.createDrawableItemLike(Items.ENDER_EYE),
                 AlchemicalJeiGraphics.WIDTH,
                 AlchemicalJeiGraphics.HEIGHT
         );

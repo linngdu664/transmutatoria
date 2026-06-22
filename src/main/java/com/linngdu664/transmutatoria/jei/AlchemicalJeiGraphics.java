@@ -18,6 +18,15 @@ final class AlchemicalJeiGraphics {
     static final int HEADER_BOTTOM = 16;
     static final int INFO_TOP = 57;
 
+    static final int RECIPE_WIDTH = 166;
+    static final int RECIPE_HEIGHT = HEIGHT;
+    static final int RECIPE_INPUT_X = 12;
+    static final int RECIPE_INPUT_ESSENCE_X = 34;
+    static final int RECIPE_CATALYST_X = 82;
+    static final int RECIPE_OUTPUT_X = 132;
+    static final int RECIPE_SLOT_Y = 29;
+    static final int RECIPE_ESSENCE_SLOT_Y = RECIPE_SLOT_Y;
+
     /** Display size for every alchemical background, independent of its source texture resolution. */
     static final int ALCHEMY_BACKGROUND_SIZE = 100;
 
@@ -77,6 +86,22 @@ final class AlchemicalJeiGraphics {
         drawArrows(graphics, theme.arrowColor());
     }
 
+    static void drawRecipeBase(GuiGraphicsExtractor graphics, Theme theme, TextureRenderable mark) {
+        int centerY = RECIPE_SLOT_Y + 8;
+        drawCustomBase(
+                graphics,
+                theme,
+                mark,
+                RECIPE_WIDTH,
+                RECIPE_HEIGHT,
+                RECIPE_CATALYST_X + 8,
+                centerY,
+                INFO_TOP
+        );
+        drawArrow(graphics, 56, 79, centerY, theme.arrowColor());
+        drawArrow(graphics, 104, 127, centerY, theme.arrowColor());
+    }
+
     static void drawCustomBase(
             GuiGraphicsExtractor graphics,
             Theme theme,
@@ -96,6 +121,12 @@ final class AlchemicalJeiGraphics {
         drawCentered(graphics, font, Component.translatable("jei.transmutatoria.input"), INPUT_X + 8, 5, theme.headerTextColor());
         drawCentered(graphics, font, Component.translatable("jei.transmutatoria.catalyst"), CATALYST_X + 8, 5, theme.headerTextColor());
         drawCentered(graphics, font, Component.translatable("jei.transmutatoria.output"), OUTPUT_X + 8, 5, theme.headerTextColor());
+    }
+
+    static void drawRecipeSlotLabels(GuiGraphicsExtractor graphics, Font font, Theme theme) {
+        drawCentered(graphics, font, Component.translatable("jei.transmutatoria.input"), 31, 5, theme.headerTextColor());
+        drawCentered(graphics, font, Component.translatable("jei.transmutatoria.catalyst"), RECIPE_CATALYST_X + 8, 5, theme.headerTextColor());
+        drawCentered(graphics, font, Component.translatable("jei.transmutatoria.output"), RECIPE_OUTPUT_X + 8, 5, theme.headerTextColor());
     }
 
     static void drawCentered(GuiGraphicsExtractor graphics, Font font, Component text, int centerX, int y, int color) {

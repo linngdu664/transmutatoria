@@ -155,6 +155,12 @@
   "jei.transmutatoria.transmutation_decomposition": "嬗变分解",
   "jei.transmutatoria.chaos_decomposition": "混沌分解",
   "jei.transmutatoria.essence_fusion": "源质融合",
+  "jei.transmutatoria.crystal_essence_fusion": "源质反应",
+  "jei.transmutatoria.crystal_essence_fusion.description": "两种源质根据彼此关系改变状态；输入顺序不限，每种具体状态组合均单独展示。",
+  "jei.transmutatoria.crystal_essence_fusion.water.short": "水 20",
+  "jei.transmutatoria.crystal_essence_fusion.water.tooltip": "每次反应消耗 20 mB 水",
+  "jei.transmutatoria.crystal_essence_fusion.polarity.short": "极性 %s",
+  "jei.transmutatoria.crystal_essence_fusion.polarity.tooltip": "本次反应使锅极性变化 %s",
   "jei.transmutatoria.essence_fusion.description": "同时投入催化源质所克制和双倍克制的全部源质；输入源质的状态不限。",
   "jei.transmutatoria.essence_fusion.required": "所需源质",
   "jei.transmutatoria.essence_fusion.water.short": "水 20",
@@ -186,5 +192,6 @@
   "jei.transmutatoria.info.level.unknown.tooltip": "未知等级函数：%s",
   "jei.transmutatoria.info.polarity.short": "极性 %s",
   "jei.transmutatoria.info.polarity.tooltip": "允许的锅极性：%s 至 %s",
-  "jei.transmutatoria.info.one_time.tooltip": "一次性配方：反应后会消耗卷轴"
+  "jei.transmutatoria.info.one_time.tooltip": "一次性配方：反应后会消耗卷轴",
+  "jei.transmutatoria.info.all_essence_metals.tooltip": "需求数量由炼金等级决定，源质种类未知且状态不限"
 }

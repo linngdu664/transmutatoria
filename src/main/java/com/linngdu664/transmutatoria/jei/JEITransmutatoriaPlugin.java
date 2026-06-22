@@ -36,6 +36,7 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
         registration.addRecipeCategories(new ChaosDecompositionCategory(guiHelper));
         registration.addRecipeCategories(new EssenceFusionCategory(guiHelper));
         registration.addRecipeCategories(new TransmutationCrystalCauldronCategory(guiHelper));
+        registration.addRecipeCategories(new CrystalEssenceFusionCategory(guiHelper));
     }
 
     @Override
@@ -64,6 +65,10 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
                 AlchemicalJeiTypes.TRANSMUTATION_CRYSTAL_CAULDRON,
                 Items.CAULDRON,
                 Blocks.EMERALD_BLOCK
+        );
+        registration.addCraftingStation(
+                AlchemicalJeiTypes.CRYSTAL_ESSENCE_FUSION,
+                InitBlocks.TRANSMUTATION_CRUCIBLE.get()
         );
     }
 
@@ -98,5 +103,31 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
                 AlchemicalJeiTypes.TRANSMUTATION_CRYSTAL_CAULDRON,
                 List.of(TransmutationCrystalCauldronJeiRecipe.INSTANCE)
         );
+        registration.addRecipes(
+                AlchemicalJeiTypes.CRYSTAL_ESSENCE_FUSION,
+                getCrystalEssenceFusionRecipes()
+        );
+    }
+
+    private static List<CrystalEssenceFusionJeiRecipe> getCrystalEssenceFusionRecipes() {
+        EssenceMetal[] essences = EssenceMetal.values();
+        int distinctPairCount = essences.length * (essences.length - 1) / 2;
+        List<CrystalEssenceFusionJeiRecipe> recipes = new ArrayList<>(distinctPairCount * 16);
+        for (int first = 0; first < essences.length; first++) {
+            for (int second = first + 1; second < essences.length; second++) {
+                if (essences[first].getRelationTo(essences[second]) == EssenceMetal.Relation.NEUTRAL) {
+                    continue;
+                }
+                for (int firstState = -1; firstState <= 2; firstState++) {
+                    for (int secondState = -1; secondState <= 2; secondState++) {
+                        recipes.add(new CrystalEssenceFusionJeiRecipe(
+                                essences[first], firstState,
+                                essences[second], secondState
+                        ));
+                    }
+                }
+            }
+        }
+        return recipes;
     }
 }
