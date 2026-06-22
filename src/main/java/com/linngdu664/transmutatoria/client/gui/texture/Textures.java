@@ -28,7 +28,8 @@ public class Textures {
     public static final GuiSubSprite ROMAN_X = new GuiSubSprite(SLOTS_FULL_SPRITE, 42, 53, 3, 8);
 
     public static final GuiSprite SLOT_SELECTED = new GuiSprite("hud/slot_selected", 29, 29);
-    public static final GuiSprite SIMPLE_FRAME = new GuiSprite("hud/simple_frame", 22, 22);
+    public static final GuiSprite SIMPLE_FRAME = new GuiSprite("hud/simple_frame", 24, 24);
+    public static final GuiSprite SIMPLE_FRAME_MASK = new GuiSprite("hud/simple_frame_mask", 24, 24);
 
     public static final GuiSprite DASHBOARD_BG = new GuiSprite("hud/dashboard_bg", 80, 80);
     public static final GuiSprite DASHBOARD_BG_POINTER = new GuiSprite("hud/dashboard_bg_pointer", 83, 5);

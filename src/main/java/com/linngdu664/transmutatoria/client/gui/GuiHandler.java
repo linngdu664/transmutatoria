@@ -25,7 +25,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -182,12 +181,11 @@ public class GuiHandler {
             }
 
             // 蒙版
-            guiGraphics.fill(
+            Textures.SIMPLE_FRAME_MASK.render(
+                    guiGraphics,
+                    TextureOption.withAlpha((int) (STORAGE_BOX_STYLE.maxOverlayAlpha() * (1 - depths[i]))),
                     -frameSize / 2,
-                    -frameSize / 2,
-                    frameSize / 2,
-                    frameSize / 2,
-                    ARGB.black((int) (STORAGE_BOX_STYLE.maxOverlayAlpha() * (1 - depths[i])))
+                    -frameSize / 2
             );
 
             guiGraphics.pose().popMatrix();
