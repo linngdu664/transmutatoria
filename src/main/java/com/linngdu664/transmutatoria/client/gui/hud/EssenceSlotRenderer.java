@@ -35,7 +35,7 @@ public final class EssenceSlotRenderer {
     static long[] calcPosEssenceMetal(Window window, int size) {
         long[] xys = new long[size];
         int x = PosUtil.widthFrameCenter(window, Textures.NORMAL_SLOT.width()) - 10 * (size - 1);
-        int y = PosUtil.heightFrameRatio(window, 0, 0.6f);
+        int y = PosUtil.heightFrameRatio(window, Textures.NORMAL_SLOT.height(), 0.5f);
         for (int i = 0; i < size; i++) {
             xys[i] = ScreenPos.pack(x, y);
             x += 20;
@@ -46,13 +46,13 @@ public final class EssenceSlotRenderer {
 
     static long[] calcPosCrystal(Window window) {
         int x = PosUtil.widthFrameCenter(window, Textures.NORMAL_SLOT.width());
-        int y = PosUtil.heightFrameRatio(window, Textures.NORMAL_SLOT.height(), 0.6f);
-        return new long[]{ScreenPos.pack(x, y), ScreenPos.pack(x, y + 24)};
+        int y = PosUtil.heightFrameCenter(window, Textures.NORMAL_SLOT.height());
+        return new long[]{ScreenPos.pack(x, y - 12), ScreenPos.pack(x, y + 12)};
     }
 
     static long[] calcPosPhilosophersStone(Window window) {
         long[] xys = new long[24];
-        V2I origin = PosUtil.v2IRatio(window, Textures.NORMAL_SLOT.width(), Textures.NORMAL_SLOT.height(), 0.5f, 0.6f);
+        V2I origin = PosUtil.v2IRatio(window, Textures.NORMAL_SLOT.width(), Textures.NORMAL_SLOT.height(), 0.5f, 0.5f);
         int index = appendHollowTriangle(xys, 0, 1, 1, 3, false, origin);
         appendHollowTriangle(xys, index, 0, 0, 6, true, origin);
         return xys;
@@ -91,7 +91,7 @@ public final class EssenceSlotRenderer {
             minY = Math.min(slot.getY(), minY);
             maxY = Math.max(slot.getY(), maxY);
         }
-        V2I origin = PosUtil.v2IRatio(window, Textures.NORMAL_SLOT.width(), Textures.NORMAL_SLOT.height(), 0.5f, 0.6f);
+        V2I origin = PosUtil.v2IRatio(window, Textures.NORMAL_SLOT.width(), Textures.NORMAL_SLOT.height(), 0.5f, 0.5f);
         int initX = origin.x() - 10 * (maxX - minX);
         int initY = origin.y() - 6 * (maxY - minY);
 
