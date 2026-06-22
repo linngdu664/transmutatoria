@@ -26,6 +26,10 @@ import java.util.Map;
 
 public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMenu> {
     private static final int IMAGE_SIZE = 256;
+    private static final int LEGEND_WIDTH = 256;
+    private static final int LEGEND_HEIGHT = 34;
+    private static final int LEGEND_COLUMN_WIDTH = LEGEND_WIDTH / 2;
+    private static final int LEGEND_LINE_LENGTH = 28;
     private static final int NODE_SIZE = 28;
     private static final int ESSENCE_SIZE = 16;
     private static final float NODE_RADIUS = 13.5F;
@@ -73,11 +77,12 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
         EssenceMetal hovered = hoveredMetal(mouseX, mouseY, center);
         drawRelationTexture(graphics, hovered);
         drawNodes(graphics, center, hovered, mouseX, mouseY);
+        drawRelationLegend(graphics);
     }
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        graphics.text(font, title, titleLabelX, titleLabelY, 0xffd9f4d0, true);
+//        graphics.text(font, title, titleLabelX, titleLabelY, 0xffd9f4d0, true);
     }
 
     private Vec2 center() {
@@ -351,6 +356,62 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
         BSFGuiTool.renderGradientLine(graphics, start, end, thickness + 1.6F, glow, glow);
     }
 
+    private void drawRelationLegend(GuiGraphicsExtractor graphics) {
+        int legendX = (width - LEGEND_WIDTH) / 2;
+        int legendY = Math.max(3, topPos - LEGEND_HEIGHT - 2);
+        graphics.fill(legendX, legendY, legendX + LEGEND_WIDTH, legendY + LEGEND_HEIGHT, 0xc0101812);
+        graphics.outline(legendX, legendY, LEGEND_WIDTH, LEGEND_HEIGHT, 0xb05ba768);
+
+        drawLegendEntry(graphics, legendX + 7, legendY + 9, RelationKind.RESTRAIN,
+                Component.translatable("gui.transmutatoria.emerald_tablet.legend.restrain"));
+        drawLegendEntry(graphics, legendX + LEGEND_COLUMN_WIDTH + 3, legendY + 9, RelationKind.DOUBLE_RESTRAIN,
+                Component.translatable("gui.transmutatoria.emerald_tablet.legend.double_restrain"));
+        drawLegendEntry(graphics, legendX + 7, legendY + 24, RelationKind.MUTUAL_RESTRAINED,
+                Component.translatable("gui.transmutatoria.emerald_tablet.legend.mutual_restrained"));
+        drawLegendEntry(graphics, legendX + LEGEND_COLUMN_WIDTH + 3, legendY + 24, RelationKind.SYMBIOSIS,
+                Component.translatable("gui.transmutatoria.emerald_tablet.legend.symbiosis"));
+    }
+
+    private void drawLegendEntry(GuiGraphicsExtractor graphics, int x, int centerY, RelationKind kind, Component label) {
+        int middleX = x + LEGEND_LINE_LENGTH / 2;
+        int endX = x + LEGEND_LINE_LENGTH;
+        int alpha = ACTIVE_ALPHA;
+        int red = ARGB.color(alpha, RED_RGB);
+        int black = ARGB.color(alpha, BLACK_RGB);
+        int blue = ARGB.color(alpha, BLUE_RGB);
+        int green = ARGB.color(alpha, GREEN_RGB);
+        int glow = ARGB.color(Math.max(22, alpha / 4), RELATION_GLOW_RGB);
+
+        graphics.fill(x, centerY - 3, endX, centerY + 3, glow);
+        switch (kind) {
+            case RESTRAIN -> drawLegendGradient(graphics, x, endX, centerY, 3, red, black);
+            case DOUBLE_RESTRAIN -> {
+                drawLegendGradient(graphics, x, middleX, centerY, 3, red, black);
+                drawLegendGradient(graphics, middleX, endX, centerY, 3, black, blue);
+            }
+            case MUTUAL_RESTRAINED -> {
+                drawLegendGradient(graphics, x, middleX, centerY, 4, black, blue);
+                drawLegendGradient(graphics, middleX, endX, centerY, 4, blue, black);
+            }
+            case SYMBIOSIS -> {
+                drawLegendGradient(graphics, x, middleX, centerY, 3, red, green);
+                drawLegendGradient(graphics, middleX, endX, centerY, 3, green, red);
+            }
+        }
+        graphics.text(font, label, x + LEGEND_LINE_LENGTH + 6, centerY - font.lineHeight / 2, 0xffd9f4d0, true);
+    }
+
+    private static void drawLegendGradient(GuiGraphicsExtractor graphics, int startX, int endX, int centerY,
+                                           int thickness, int startColor, int endColor) {
+        int length = endX - startX;
+        int top = centerY - thickness / 2;
+        for (int i = 0; i < length; i++) {
+            float amount = length <= 1 ? 0.0F : (float)i / (length - 1);
+            graphics.fill(startX + i, top, startX + i + 1, top + thickness,
+                    lerpColor(startColor, endColor, amount));
+        }
+    }
+
     private void drawNodes(GuiGraphicsExtractor graphics, Vec2 center, EssenceMetal hovered, int mouseX, int mouseY) {
         for (EssenceMetal metal : METALS) {
             Vec2 nodeCenter = metalCenter(center, metal);
@@ -362,9 +423,9 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
             int iconY = Math.round(nodeCenter.y - ESSENCE_SIZE * 0.5F);
 
             Textures.EMERALD_TABLET_ESSENCE_NODE.render(graphics, TextureOption.withAlpha(alpha), nodeX, nodeY);
-            if (metal == hovered) {
-                Textures.SLOT_SELECTED.render(graphics, nodeX, nodeY);
-            }
+//            if (metal == hovered) {
+//                Textures.SLOT_SELECTED.render(graphics, nodeX, nodeY);
+//            }
             metal.getDefaultTexture().render(graphics, TextureOption.withAlpha(alpha), iconX + 2, iconY + 1);
         }
 

@@ -83,6 +83,10 @@
   "item.transmutatoria.philosophers_stone": "Philosopher's Stone",
 
   "item.transmutatoria.emerald_tablet": "Emerald Tablet",
+  "gui.transmutatoria.emerald_tablet.legend.restrain": "Restrains",
+  "gui.transmutatoria.emerald_tablet.legend.double_restrain": "Double restrain",
+  "gui.transmutatoria.emerald_tablet.legend.mutual_restrained": "Mutual restraint",
+  "gui.transmutatoria.emerald_tablet.legend.symbiosis": "Symbiosis",
   "item.transmutatoria.liber_transmutationis_ars_transmutatoria": "Liber Transmutationis: Ars Transmutatoria",
 
   "item.transmutatoria.transmutation_sigil_scroll": "Transmutation Sigil Scroll",

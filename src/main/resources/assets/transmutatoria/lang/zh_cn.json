@@ -83,6 +83,10 @@
   "item.transmutatoria.philosophers_stone": "贤者之石",
 
   "item.transmutatoria.emerald_tablet": "翠绿石板",
+  "gui.transmutatoria.emerald_tablet.legend.restrain": "克制",
+  "gui.transmutatoria.emerald_tablet.legend.double_restrain": "双重克制",
+  "gui.transmutatoria.emerald_tablet.legend.mutual_restrained": "互克",
+  "gui.transmutatoria.emerald_tablet.legend.symbiosis": "共生",
   "item.transmutatoria.liber_transmutationis_ars_transmutatoria": "《转化秘典：混沌炼金术》",
 
   "item.transmutatoria.transmutation_sigil_scroll": "嬗变印记卷",
