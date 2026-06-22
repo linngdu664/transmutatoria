@@ -43,13 +43,14 @@ public class GuiHandler {
     private static final StorageBoxHudStyle STORAGE_BOX_STYLE = new StorageBoxHudStyle(
             Textures.SIMPLE_FRAME.height(),
             0.4f,
-            0.0f,
             0.5f,
             1.3f,
             0xc0
     );
     // 储物盒环形 HUD 的平滑旋转状态。
     private static final RingRotationState storageBoxRotation = new RingRotationState();
+    // 按住 Alt 时，储物盒圆盘绕当前选中槽位向屏幕前方展开的动画进度。
+    private static final SmoothValue storageBoxExpansion = new SmoothValue();
     // 炼金锅当前选中源质槽高亮框的平滑位置。
     private static final SmoothPoint selectedSlotHighlight = new SmoothPoint();
     // 炼金锅 HUD 出入场缩放动画进度。
@@ -113,25 +114,31 @@ public class GuiHandler {
         hudIntro.moveTo(target, delta, 0.005f);
     }
 
-    // todo 如果后续确定椭圆短轴恒为0，可进一步优化
     public static void renderCrucibleStorageBoxHud(GuiGraphicsExtractor guiGraphics, ItemStack boxStack, DeltaTracker delta) {
         Minecraft mc = SafeInstance.getMC();
 
         int componentRotation = boxStack.getOrDefault(InitDataComponents.ROTATION, 0);
         float smoothRotation = storageBoxRotation.update(componentRotation, delta);
+        storageBoxExpansion.moveTo(mc.hasAltDown() ? 1.0f : 0.0f, delta, 0.005f);
+        float expansion = storageBoxExpansion.value();
 
         int screenW = mc.getWindow().getGuiScaledWidth();
         int screenH = mc.getWindow().getGuiScaledHeight();
 
         float centerX = screenW * 0.5f;
-        float centerY = screenH * 0.1f;
-        float radiusX = screenW * 0.5f * STORAGE_BOX_STYLE.radiusRateX();
-        float radiusY = screenH * 0.5f * STORAGE_BOX_STYLE.radiusRateY();
+        float collapsedCenterY = screenH * 0.1f;
+        float expandedCenterY = screenH * 0.5f;
         int frameSize = STORAGE_BOX_STYLE.frameSize();
+        float desiredRadius = screenW * 0.5f * STORAGE_BOX_STYLE.radiusRate();
+        float edgePadding = frameSize * STORAGE_BOX_STYLE.maxScale() * 0.5f;
+        float radius = Math.min(desiredRadius, Math.max(0.0f, expandedCenterY - edgePadding));
 
         ItemContainerContents contents = boxStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
         NonNullList<ItemStack> items = NonNullList.withSize(12, ItemStack.EMPTY);
         contents.copyInto(items);
+
+        int selectedSlot = Math.floorMod(componentRotation + 6, 12);
+        EssenceMetal selectedEssence = EssenceMetal.values()[selectedSlot];
 
         // 第一阶段：预计算所有槽位的位置和缩放
         long[] slotXYs = new long[12];
@@ -140,13 +147,16 @@ public class GuiHandler {
 
         for (int i = 0; i < 12; i++) {
             float angle = ((i - smoothRotation) * 30.0f - 90.0f) * Mth.DEG_TO_RAD;
-            int slotX = (int) (centerX + radiusX * Mth.cos(angle));
-            int slotY = (int) (centerY + radiusY * Mth.sin(angle));
-            slotXYs[i] = packXY(slotX, slotY);
+            int slotX = Math.round(centerX + radius * Mth.cos(angle));
             // sin(angle): -1 at 12 o'clock (far), +1 at 6 o'clock (near)
             depths[i] = (Mth.sin(angle) + 1.0f) * 0.5f; // 因此最近深度为 1，最远深度为 0
-            scales[i] = STORAGE_BOX_STYLE.minScale()
+            // 展开时将负 Z 深度旋转到 Y 轴，同时把圆心从屏幕上方向屏幕正中心移动。
+            float expandedSlotY = expandedCenterY - radius * Mth.sin(angle);
+            int slotY = Math.round(Mth.lerp(expansion, collapsedCenterY, expandedSlotY));
+            slotXYs[i] = packXY(slotX, slotY);
+            float perspectiveScale = STORAGE_BOX_STYLE.minScale()
                     + (STORAGE_BOX_STYLE.maxScale() - STORAGE_BOX_STYLE.minScale()) * depths[i];
+            scales[i] = Mth.lerp(expansion, perspectiveScale, STORAGE_BOX_STYLE.maxScale());
         }
 
         // 第二阶段：直接生成渲染顺序（远→近，二渲三），无需排序
@@ -170,6 +180,16 @@ public class GuiHandler {
             guiGraphics.pose().translate(getXFromPacked(packed), getYFromPacked(packed));
             guiGraphics.pose().scale(scale, scale);
 
+            TextureRenderable relationBorder = getStorageBoxRelationBorder(selectedEssence, EssenceMetal.values()[i]);
+            if (relationBorder != null && expansion > 0.005f) {
+                relationBorder.render(
+                        guiGraphics,
+                        TextureOption.withAlpha(Math.round(255.0f * expansion)),
+                        -relationBorder.width() / 2,
+                        -relationBorder.height() / 2
+                );
+            }
+
             // 槽位
             Textures.SIMPLE_FRAME.render(guiGraphics, -frameSize / 2, -frameSize / 2);
 
@@ -181,15 +201,33 @@ public class GuiHandler {
             }
 
             // 蒙版
-            Textures.SIMPLE_FRAME_MASK.render(
-                    guiGraphics,
-                    TextureOption.withAlpha((int) (STORAGE_BOX_STYLE.maxOverlayAlpha() * (1 - depths[i]))),
-                    -frameSize / 2,
-                    -frameSize / 2
-            );
+            int collapsedMaskAlpha = Math.round(STORAGE_BOX_STYLE.maxOverlayAlpha() * (1.0f - depths[i]));
+            int expandedMaskAlpha = i != selectedSlot && relationBorder == null
+                    ? STORAGE_BOX_STYLE.maxOverlayAlpha()
+                    : 0;
+            int maskAlpha = Math.round(Mth.lerp(expansion, collapsedMaskAlpha, expandedMaskAlpha));
+            if (maskAlpha > 0) {
+                Textures.SIMPLE_FRAME_MASK.render(
+                        guiGraphics,
+                        TextureOption.withAlpha(maskAlpha),
+                        -frameSize / 2,
+                        -frameSize / 2
+                );
+            }
 
             guiGraphics.pose().popMatrix();
         }
+    }
+
+    private static TextureRenderable getStorageBoxRelationBorder(EssenceMetal selected, EssenceMetal other) {
+        return switch (selected.getRelationTo(other)) {
+            // 紫色表示目标源质被当前选中源质克制；互克时也优先表达这个方向。
+            case RESTRAIN, DOUBLE_RESTRAIN, MUTUAL_RESTRAINED -> Textures.STORAGE_BOX_RESTRAINED_BORDER;
+            // 红色表示目标源质会克制当前选中源质。
+            case BE_RESTRAINED, DOUBLE_BE_RESTRAINED -> Textures.STORAGE_BOX_RESTRAINING_BORDER;
+            // 本功能只突出克制关系；相同、相生和无关源质均不加关系边框。
+            case SAME, SYMBIOSIS, NEUTRAL -> null;
+        };
     }
 
     public static void renderCrucibleCommonHud(GuiGraphicsExtractor guiGraphics, BlockEntity be, DeltaTracker delta) {
@@ -869,8 +907,7 @@ public class GuiHandler {
 
     private record StorageBoxHudStyle(
             int frameSize,
-            float radiusRateX,
-            float radiusRateY,
+            float radiusRate,
             float minScale,
             float maxScale,
             int maxOverlayAlpha
