@@ -1,6 +1,5 @@
 package com.linngdu664.transmutatoria.client.gui;
 
-import com.linngdu664.transmutatoria.util.SafeInstance;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -24,7 +23,7 @@ public class CoordinateConverter {
     private final float tanHalfFovx;
 
     public CoordinateConverter(float partialTicks) {
-        Minecraft mc = SafeInstance.getMC();
+        Minecraft mc = Minecraft.getInstance();
         Window window = mc.getWindow();
         GameRenderer gameRenderer = mc.gameRenderer;
         Camera camera = gameRenderer.getMainCamera();

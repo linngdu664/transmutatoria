@@ -6,7 +6,6 @@ import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.AlchemistStorageBoxItem;
 import com.linngdu664.transmutatoria.network.to_server.ChangeCrucibleSelectedSlotPayload;
 import com.linngdu664.transmutatoria.network.to_server.RotateStorageBoxPayload;
-import com.linngdu664.transmutatoria.util.SafeInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +22,7 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 public class InputEventHandler {
     @SubscribeEvent
     public static void onMouseScroll(InputEvent.MouseScrollingEvent event) {
-        Minecraft mc = SafeInstance.getMC();
+        Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         if (player == null) {
             return;

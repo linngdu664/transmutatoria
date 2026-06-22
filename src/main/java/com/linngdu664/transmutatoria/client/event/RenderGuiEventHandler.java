@@ -1,10 +1,12 @@
 package com.linngdu664.transmutatoria.client.event;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.client.gui.GuiHandler;
+import com.linngdu664.transmutatoria.client.gui.hud.CrucibleCommonHudRenderer;
+import com.linngdu664.transmutatoria.client.gui.hud.CrucibleHudState;
+import com.linngdu664.transmutatoria.client.gui.hud.StorageBoxRingRenderer;
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.item.AlchemistStorageBoxItem;
-import com.linngdu664.transmutatoria.util.SafeInstance;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
@@ -22,10 +24,12 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 
 @EventBusSubscriber(modid = ArsTransmutatoria.MODID, value = Dist.CLIENT)
 public class RenderGuiEventHandler {
+    private static final CrucibleHudState state = new CrucibleHudState();
+
     // 是 jade 不讲武德在先的
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderGuiPost(RenderGuiEvent.Post event) {
-        Minecraft mc = SafeInstance.getMC();
+        Minecraft mc = Minecraft.getInstance();
         if (mc.options.hideGui) {
             return;
         }
@@ -56,13 +60,14 @@ public class RenderGuiEventHandler {
             }
         }
 
-        GuiHandler.updateHudAnimation(isLookingAtCrucible, event.getPartialTick());
+        DeltaTracker delta = event.getPartialTick();
+        state.updateHudAnimation(isLookingAtCrucible, delta);
 
-        if (isLookingAtCrucible && crucibleBe != null) {
+        if (isLookingAtCrucible) {
             GuiGraphicsExtractor guiGraphics = event.getGuiGraphics();
-            GuiHandler.renderCrucibleCommonHud(guiGraphics, crucibleBe, event.getPartialTick());
+            CrucibleCommonHudRenderer.render(guiGraphics, crucibleBe, delta, state);
             if (boxStack != null) {
-                GuiHandler.renderCrucibleStorageBoxHud(guiGraphics, boxStack, event.getPartialTick());
+                StorageBoxRingRenderer.render(guiGraphics, boxStack, delta, state.storageBoxRotation(), state.storageBoxExpansion());
             }
         }
     }

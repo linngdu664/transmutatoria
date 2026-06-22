@@ -13,7 +13,6 @@ import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.TransmutationEquationScrollItem;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
-import com.linngdu664.transmutatoria.util.SafeInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -73,7 +72,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
         int xo = (this.width - this.imageWidth) / 2;
         int yo = (this.height - this.imageHeight) / 2;
-        ItemStack scrollStack = getScrollFromPlayer(SafeInstance.getMC().player);
+        ItemStack scrollStack = getScrollFromPlayer(Minecraft.getInstance().player);
         renderOpeningScroll(graphics, xo, yo, advanceOpenAnim(partialTick), getGemTexture(scrollStack));
         Textures.SCROLL_CONTAINER.render(graphics, xo + SCROLL_CONTAINER_X, yo + SCROLL_CONTAINER_Y);
     }
@@ -94,7 +93,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         int fadeAlpha = Mth.clamp(Mth.ceil(255.0f * fadeProgress), 0, 255);
         TextureOption fadeOption = TextureOption.withAlpha(fadeAlpha);
 
-        Minecraft mc = SafeInstance.getMC();
+        Minecraft mc = Minecraft.getInstance();
         // 从玩家手上获取卷轴（客户端菜单没有 scrollStack）
         ItemStack scrollStack = getScrollFromPlayer(mc.player);
         if (scrollStack.isEmpty()) return;
