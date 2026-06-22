@@ -9,6 +9,8 @@ import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
+import com.linngdu664.transmutatoria.item.TransmutationEquationScrollItem;
+import com.linngdu664.transmutatoria.item.TransmutationSigilScrollItem;
 import com.linngdu664.transmutatoria.item.component.ExpireInfo;
 import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
@@ -514,7 +516,23 @@ public class GuiHandler {
     }
 
     private static void drawBackground(GuiGraphicsExtractor guiGraphics, Window window, ItemStack catalyst) {
-        Textures.ALCHEMY_ARRAYS[Math.floorMod(catalyst.hashCode(), Textures.ALCHEMY_ARRAYS.length)].renderRatio(guiGraphics, window, 0.5f, 0.5f);
+        TextureRenderable background;
+        if (catalyst.is(Items.ENDER_EYE)) {
+            background = Textures.ALCHEMY_ARRAY_2;
+        } else if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
+            background = Textures.ALCHEMY_ARRAY_1;
+        } else if (catalyst.getItem() instanceof EssenceMetalItem) {
+            background = Textures.ALCHEMY_ARRAY_8;
+        } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
+            background = Textures.ALCHEMY_ARRAY_6;
+        } else if (catalyst.getItem() instanceof TransmutationEquationScrollItem) {
+            background = Textures.ALCHEMY_ARRAY_5;
+        } else if (catalyst.getItem() instanceof TransmutationSigilScrollItem) {
+            background = Textures.ALCHEMY_ARRAY_7;
+        } else {
+            return;
+        }
+        background.renderRatio(guiGraphics, window, 0.5f, 0.5f);
     }
 
     private static void drawEssenceSlotsWithItemsAndSelection(
