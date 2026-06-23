@@ -1,0 +1,9 @@
+{
+  "output_items": "minecraft:pufferfish",
+  "level": {
+    "min": 4,
+    "max": 5,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

@@ -1,0 +1,14 @@
+{
+  "input_items": "minecraft:netherite_ingot",
+  "output": {
+    "id": "minecraft:nether_star"
+  },
+  "level": {
+    "min": 20,
+    "max": 20,
+    "type": "transmutatoria:fixed"
+  },
+  "min_polarity": 30,
+  "max_polarity": 40,
+  "type": "transmutatoria:alchemical_transformation"
+}

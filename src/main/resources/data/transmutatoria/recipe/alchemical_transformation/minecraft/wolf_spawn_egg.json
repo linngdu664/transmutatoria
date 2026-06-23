@@ -1,0 +1,12 @@
+{
+  "input_items": "minecraft:bone",
+  "output": {
+    "id": "minecraft:wolf_spawn_egg"
+  },
+  "level": {
+    "min": 5,
+    "max": 5,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_transformation"
+}

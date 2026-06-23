@@ -1,0 +1,9 @@
+{
+  "output_items": "minecraft:armadillo_scute",
+  "level": {
+    "min": 3,
+    "max": 4,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

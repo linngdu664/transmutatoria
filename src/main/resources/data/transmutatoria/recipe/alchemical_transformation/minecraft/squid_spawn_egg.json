@@ -1,0 +1,12 @@
+{
+  "input_items": "minecraft:ink_sac",
+  "output": {
+    "id": "minecraft:squid_spawn_egg"
+  },
+  "level": {
+    "min": 5,
+    "max": 5,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_transformation"
+}

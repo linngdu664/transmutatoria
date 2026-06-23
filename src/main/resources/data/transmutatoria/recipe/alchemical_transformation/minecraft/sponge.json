@@ -1,0 +1,14 @@
+{
+  "input_items": "minecraft:yellow_wool",
+  "output": {
+    "id": "minecraft:sponge"
+  },
+  "level": {
+    "min": 5,
+    "max": 6,
+    "type": "transmutatoria:fixed"
+  },
+  "min_polarity": -40,
+  "max_polarity": 20,
+  "type": "transmutatoria:alchemical_transformation"
+}

@@ -1,0 +1,12 @@
+{
+  "input": {
+    "id": "minecraft:gold_ingot"
+  },
+  "output_items": "#c:ores/netherite_scrap",
+  "level": {
+    "min": 16,
+    "max": 16,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

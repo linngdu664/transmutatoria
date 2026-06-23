@@ -1,0 +1,12 @@
+{
+  "input_items": "minecraft:armadillo_scute",
+  "output": {
+    "id": "minecraft:armadillo_spawn_egg"
+  },
+  "level": {
+    "min": 6,
+    "max": 6,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_transformation"
+}

@@ -1,0 +1,12 @@
+{
+  "input_items": "minecraft:zombie_head",
+  "output": {
+    "id": "minecraft:zombie_spawn_egg"
+  },
+  "level": {
+    "min": 3,
+    "max": 3,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_transformation"
+}

@@ -1,0 +1,9 @@
+{
+  "output_items": "minecraft:dragon_egg",
+  "level": {
+    "min": 20,
+    "max": 20,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

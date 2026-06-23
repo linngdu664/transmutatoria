@@ -1,0 +1,12 @@
+{
+  "input": {
+    "id": "minecraft:trial_key"
+  },
+  "output_items": "minecraft:ominous_trial_key",
+  "level": {
+    "min": 6,
+    "max": 6,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

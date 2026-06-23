@@ -1,0 +1,9 @@
+{
+  "output_items": "minecraft:music_disc_tears",
+  "level": {
+    "min": 5,
+    "max": 5,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

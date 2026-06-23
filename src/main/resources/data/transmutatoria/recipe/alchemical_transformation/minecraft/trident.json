@@ -1,0 +1,14 @@
+{
+  "input_items": "minecraft:diamond_spear",
+  "output": {
+    "id": "minecraft:trident"
+  },
+  "level": {
+    "min": 14,
+    "max": 15,
+    "type": "transmutatoria:fixed"
+  },
+  "min_polarity": -10,
+  "max_polarity": 10,
+  "type": "transmutatoria:alchemical_transformation"
+}

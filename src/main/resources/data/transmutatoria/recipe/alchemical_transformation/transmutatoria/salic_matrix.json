@@ -1,0 +1,13 @@
+{
+  "input_items": "#minecraft:sand",
+  "output": {
+    "id": "transmutatoria:salic_matrix"
+  },
+  "level": {
+    "min": 4,
+    "max": 4,
+    "type": "transmutatoria:fixed"
+  },
+  "max_polarity": 0,
+  "type": "transmutatoria:alchemical_transformation"
+}

@@ -1,0 +1,9 @@
+{
+  "output_items": "minecraft:nautilus_shell",
+  "level": {
+    "min": 6,
+    "max": 6,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

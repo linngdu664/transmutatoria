@@ -1,0 +1,9 @@
+{
+  "output_items": "minecraft:heart_of_the_sea",
+  "level": {
+    "min": 8,
+    "max": 10,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

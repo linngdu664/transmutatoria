@@ -1,0 +1,9 @@
+{
+  "output_items": "minecraft:slime_ball",
+  "level": {
+    "min": 3,
+    "max": 3,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

@@ -1,0 +1,14 @@
+{
+  "input_items": "transmutatoria:mercurial_matrix",
+  "output": {
+    "id": "transmutatoria:sulfuric_matrix"
+  },
+  "level": {
+    "min": 13,
+    "max": 13,
+    "type": "transmutatoria:fixed"
+  },
+  "min_polarity": -1,
+  "max_polarity": 1,
+  "type": "transmutatoria:alchemical_transformation"
+}

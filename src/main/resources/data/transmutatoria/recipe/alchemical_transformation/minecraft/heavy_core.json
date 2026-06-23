@@ -1,0 +1,14 @@
+{
+  "input_items": "minecraft:iron_block",
+  "output": {
+    "id": "minecraft:heavy_core"
+  },
+  "level": {
+    "min": 17,
+    "max": 17,
+    "type": "transmutatoria:fixed"
+  },
+  "min_polarity": -20,
+  "max_polarity": -10,
+  "type": "transmutatoria:alchemical_transformation"
+}

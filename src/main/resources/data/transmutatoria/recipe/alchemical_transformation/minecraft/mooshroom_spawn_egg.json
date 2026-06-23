@@ -1,0 +1,12 @@
+{
+  "input_items": "minecraft:mushroom_stew",
+  "output": {
+    "id": "minecraft:mooshroom_spawn_egg"
+  },
+  "level": {
+    "min": 8,
+    "max": 8,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_transformation"
+}

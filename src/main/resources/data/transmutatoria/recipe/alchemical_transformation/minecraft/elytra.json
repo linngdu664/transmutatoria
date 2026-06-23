@@ -1,0 +1,13 @@
+{
+  "input_items": "minecraft:phantom_membrane",
+  "output": {
+    "id": "minecraft:elytra"
+  },
+  "level": {
+    "min": 16,
+    "max": 16,
+    "type": "transmutatoria:fixed"
+  },
+  "max_polarity": 0,
+  "type": "transmutatoria:alchemical_transformation"
+}

@@ -1,0 +1,9 @@
+{
+  "output_items": "minecraft:wither_skeleton_skull",
+  "level": {
+    "min": 10,
+    "max": 10,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

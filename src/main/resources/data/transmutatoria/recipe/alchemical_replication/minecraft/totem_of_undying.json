@@ -1,0 +1,9 @@
+{
+  "output_items": "minecraft:totem_of_undying",
+  "level": {
+    "min": 16,
+    "max": 16,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

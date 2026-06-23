@@ -80,7 +80,7 @@ public final class AlchemyRecipeGenerator {
             recipe = new AlchemicalTransformationRecipe(ingredient, template(normalizedOutput), oneTime, level, minEp, maxEp);
         }
 
-        Identifier recipeId = recipeId(kind, normalizedInput, normalizedOutput);
+        Identifier recipeId = recipeId(kind, normalizedOutput, ingredientTag);
         Path packRoot = server.getWorldPath(LevelResource.DATAPACK_DIR).resolve(PACK_FOLDER).normalize();
         ensurePackMetadata(packRoot);
         Path recipeFile = packRoot.resolve("data")
@@ -103,18 +103,23 @@ public final class AlchemyRecipeGenerator {
         return new SaveResult(recipeId, recipeFile, overwroteFile, relatedRecipeExists);
     }
 
-    public static Identifier recipeId(AlchemyRecipeGeneratorMenu.Kind kind, ItemStack input, ItemStack output) {
-        ItemStack namingStack;
+    public static Identifier recipeId(
+            AlchemyRecipeGeneratorMenu.Kind kind,
+            ItemStack output,
+            @Nullable Identifier ingredientTag
+    ) {
+        Identifier namingId;
         String prefix;
         if (kind == AlchemyRecipeGeneratorMenu.Kind.REPLICATION) {
-            namingStack = input.isEmpty() ? output : input;
-            prefix = input.isEmpty() ? "alchemical_replication/no_input/" : "alchemical_replication/";
+            namingId = ingredientTag != null
+                    ? ingredientTag
+                    : BuiltInRegistries.ITEM.getKey(output.getItem());
+            prefix = "alchemical_replication/";
         } else {
-            namingStack = output;
+            namingId = BuiltInRegistries.ITEM.getKey(output.getItem());
             prefix = "alchemical_transformation/";
         }
-        Identifier itemId = BuiltInRegistries.ITEM.getKey(namingStack.getItem());
-        return ArsTransmutatoria.makeMyIdentifier(prefix + itemId.getNamespace() + "/" + itemId.getPath());
+        return ArsTransmutatoria.makeMyIdentifier(prefix + namingId.getNamespace() + "/" + namingId.getPath());
     }
 
     private static void validate(

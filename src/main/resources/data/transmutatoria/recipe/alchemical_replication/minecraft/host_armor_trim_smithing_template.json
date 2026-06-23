@@ -1,0 +1,12 @@
+{
+  "input": {
+    "id": "minecraft:iron_ingot"
+  },
+  "output_items": "minecraft:host_armor_trim_smithing_template",
+  "level": {
+    "min": 16,
+    "max": 16,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

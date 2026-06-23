@@ -1,0 +1,12 @@
+{
+  "input_items": "#c:storage_blocks/emerald",
+  "output": {
+    "id": "minecraft:villager_spawn_egg"
+  },
+  "level": {
+    "min": 10,
+    "max": 10,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_transformation"
+}

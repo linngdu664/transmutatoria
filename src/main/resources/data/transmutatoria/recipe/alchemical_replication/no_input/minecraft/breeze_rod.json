@@ -1,0 +1,9 @@
+{
+  "output_items": "minecraft:breeze_rod",
+  "level": {
+    "min": 6,
+    "max": 8,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}

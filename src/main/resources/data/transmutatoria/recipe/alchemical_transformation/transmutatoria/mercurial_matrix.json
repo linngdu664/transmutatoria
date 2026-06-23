@@ -1,0 +1,13 @@
+{
+  "input_items": "transmutatoria:salic_matrix",
+  "output": {
+    "id": "transmutatoria:mercurial_matrix"
+  },
+  "level": {
+    "min": 8,
+    "max": 8,
+    "type": "transmutatoria:fixed"
+  },
+  "min_polarity": 20,
+  "type": "transmutatoria:alchemical_transformation"
+}

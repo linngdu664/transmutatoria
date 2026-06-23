@@ -1,0 +1,12 @@
+{
+  "input_items": "minecraft:piglin_head",
+  "output": {
+    "id": "minecraft:piglin_spawn_egg"
+  },
+  "level": {
+    "min": 3,
+    "max": 3,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_transformation"
+}

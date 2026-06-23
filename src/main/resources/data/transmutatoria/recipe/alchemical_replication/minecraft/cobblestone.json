@@ -1,0 +1,12 @@
+{
+  "input": {
+    "id": "minecraft:cobblestone"
+  },
+  "output_items": "#c:raw_materials/gold",
+  "level": {
+    "min": 4,
+    "max": 4,
+    "type": "transmutatoria:fixed"
+  },
+  "type": "transmutatoria:alchemical_replication"
+}
