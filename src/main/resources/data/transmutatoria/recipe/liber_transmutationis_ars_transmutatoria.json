@@ -2,6 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
+    "minecraft:book",
     "minecraft:emerald",
     "minecraft:gold_nugget"
   ],
