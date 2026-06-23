@@ -30,13 +30,13 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         var guiHelper = registration.getJeiHelpers().getGuiHelper();
+        registration.addRecipeCategories(new TransmutationCrystalCauldronCategory(guiHelper));
+        registration.addRecipeCategories(new TransmutationDecompositionCategory(guiHelper));
+        registration.addRecipeCategories(new CrystalEssenceFusionCategory(guiHelper));
+        registration.addRecipeCategories(new EssenceFusionCategory(guiHelper));
         registration.addRecipeCategories(new AlchemicalReplicationCategory(guiHelper));
         registration.addRecipeCategories(new AlchemicalTransformationCategory(guiHelper));
-        registration.addRecipeCategories(new TransmutationDecompositionCategory(guiHelper));
         registration.addRecipeCategories(new ChaosDecompositionCategory(guiHelper));
-        registration.addRecipeCategories(new EssenceFusionCategory(guiHelper));
-        registration.addRecipeCategories(new TransmutationCrystalCauldronCategory(guiHelper));
-        registration.addRecipeCategories(new CrystalEssenceFusionCategory(guiHelper));
     }
 
     @Override
@@ -82,30 +82,30 @@ public class JEITransmutatoriaPlugin implements IModPlugin {
         repList.addAll(ClientRecipeManager.replicationPrecises);
         repList.addAll(ClientRecipeManager.replications);
 
-        registration.addRecipes(AlchemicalJeiTypes.ALCHEMICAL_TRANSFORMATION, transList);
-        registration.addRecipes(AlchemicalJeiTypes.ALCHEMICAL_REPLICATION, repList);
-        registration.addRecipes(
-                AlchemicalJeiTypes.TRANSMUTATION_DECOMPOSITION,
-                List.of(TransmutationDecompositionJeiRecipe.INSTANCE)
-        );
-        registration.addRecipes(
-                AlchemicalJeiTypes.CHAOS_DECOMPOSITION,
-                repList.stream().map(ChaosDecompositionJeiRecipe::new).toList()
-        );
-        registration.addRecipes(
-                AlchemicalJeiTypes.ESSENCE_FUSION,
-                Arrays.stream(EssenceMetal.values())
-                        .flatMap(essence -> IntStream.rangeClosed(-1, 2)
-                        .mapToObj(state -> new EssenceFusionJeiRecipe(essence, state)))
-                        .toList()
-        );
         registration.addRecipes(
                 AlchemicalJeiTypes.TRANSMUTATION_CRYSTAL_CAULDRON,
                 List.of(TransmutationCrystalCauldronJeiRecipe.INSTANCE)
         );
         registration.addRecipes(
+                AlchemicalJeiTypes.TRANSMUTATION_DECOMPOSITION,
+                List.of(TransmutationDecompositionJeiRecipe.INSTANCE)
+        );
+        registration.addRecipes(
                 AlchemicalJeiTypes.CRYSTAL_ESSENCE_FUSION,
                 getCrystalEssenceFusionRecipes()
+        );
+        registration.addRecipes(
+                AlchemicalJeiTypes.ESSENCE_FUSION,
+                Arrays.stream(EssenceMetal.values())
+                        .flatMap(essence -> IntStream.rangeClosed(-1, 2)
+                                .mapToObj(state -> new EssenceFusionJeiRecipe(essence, state)))
+                        .toList()
+        );
+        registration.addRecipes(AlchemicalJeiTypes.ALCHEMICAL_TRANSFORMATION, transList);
+        registration.addRecipes(AlchemicalJeiTypes.ALCHEMICAL_REPLICATION, repList);
+        registration.addRecipes(
+                AlchemicalJeiTypes.CHAOS_DECOMPOSITION,
+                repList.stream().map(ChaosDecompositionJeiRecipe::new).toList()
         );
     }
 

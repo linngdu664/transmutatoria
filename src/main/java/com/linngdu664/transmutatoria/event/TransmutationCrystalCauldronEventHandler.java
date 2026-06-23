@@ -11,7 +11,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -37,7 +36,7 @@ public final class TransmutationCrystalCauldronEventHandler {
                 || !isIngredient(trigger.getItem())) {
             return;
         }
-        ServerLevel level = (ServerLevel)trigger.level();
+        ServerLevel level = (ServerLevel) trigger.level();
         BlockPos cauldronPos = findCauldron(level, trigger);
         if (cauldronPos == null) {
             return;

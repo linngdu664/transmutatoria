@@ -5,8 +5,6 @@ import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalReplicationPreciseRecipe;
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalReplicationRecipe;
-import com.linngdu664.transmutatoria.recipe.crucible.level_function.EnchantmentLevel;
-import com.linngdu664.transmutatoria.recipe.crucible.level_function.FixedLevel;
 import com.linngdu664.transmutatoria.recipe.crucible.level_function.LevelFunction;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
@@ -75,12 +73,7 @@ public class ChaosDecompositionCategory extends AbstractRecipeCategory<ChaosDeco
         AlchemicalJeiGraphics.drawSlotLabels(graphics, font, theme);
 
         LevelFunction level = display.recipe().level();
-        Component water = Component.translatable("jei.transmutatoria.chaos_decomposition.water.short");
-        Component count = Component.translatable(
-                "jei.transmutatoria.chaos_decomposition.count.short",
-                level.toCompactString()
-        );
-        graphics.text(font, water, 7, 63, theme.textColor(), false);
+        Component count = Component.translatable("jei.transmutatoria.chaos_decomposition.count.short", level.toCompactString());
         graphics.text(font, count, AlchemicalJeiGraphics.WIDTH - 7 - font.width(count), 63, theme.textColor(), false);
     }
 
@@ -93,11 +86,7 @@ public class ChaosDecompositionCategory extends AbstractRecipeCategory<ChaosDeco
             double mouseY
     ) {
         if (mouseY >= AlchemicalJeiGraphics.INFO_TOP) {
-            if (mouseX < AlchemicalJeiGraphics.WIDTH / 2.0) {
-                tooltip.add(Component.translatable("jei.transmutatoria.chaos_decomposition.water.tooltip"));
-            } else {
-                tooltip.add(display.recipe().level().getDecompTooltipComponent());
-            }
+            tooltip.add(display.recipe().level().getDecompTooltipComponent());
         } else if (mouseY >= AlchemicalJeiGraphics.HEADER_BOTTOM && mouseX >= 35 && mouseX < 115) {
             tooltip.add(Component.translatable("jei.transmutatoria.chaos_decomposition.description"));
         }
@@ -106,10 +95,7 @@ public class ChaosDecompositionCategory extends AbstractRecipeCategory<ChaosDeco
     @Override
     public Identifier getIdentifier(ChaosDecompositionJeiRecipe display) {
         Identifier source = display.replicationRecipe().id().identifier();
-        return Identifier.fromNamespaceAndPath(
-                ArsTransmutatoria.MODID,
-                "chaos_decomposition/" + source.getNamespace() + "/" + source.getPath()
-        );
+        return ArsTransmutatoria.makeMyIdentifier("chaos_decomposition/" + source.getNamespace() + "/" + source.getPath());
     }
 
     @Override

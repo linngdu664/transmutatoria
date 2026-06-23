@@ -22,8 +22,7 @@ import java.util.List;
 
 public class EssenceFusionCategory extends AbstractRecipeCategory<EssenceFusionJeiRecipe> {
     private static final int WIDTH = 166;
-    private static final int HEIGHT = 120;
-    private static final int INFO_TOP = 100;
+    private static final int HEIGHT = 100;
     private static final int INPUT_X = 6;
     private static final int INPUT_Y = 22;
     private static final int INPUT_COLUMNS = 3;
@@ -79,46 +78,16 @@ public class EssenceFusionCategory extends AbstractRecipeCategory<EssenceFusionJ
                 WIDTH,
                 HEIGHT,
                 WIDTH / 2,
-                (AlchemicalJeiGraphics.HEADER_BOTTOM + INFO_TOP) / 2,
-                INFO_TOP
+                (AlchemicalJeiGraphics.HEADER_BOTTOM + HEIGHT) / 2
         );
         int arrowY = CENTER_SLOT_Y + 8;
         AlchemicalJeiGraphics.drawArrowBetween(graphics, 66, 85, arrowY, theme.arrowColor());
         AlchemicalJeiGraphics.drawArrowBetween(graphics, 112, 131, arrowY, theme.arrowColor());
 
         Font font = Minecraft.getInstance().font;
-        AlchemicalJeiGraphics.drawCentered(
-                graphics,
-                font,
-                Component.translatable("jei.transmutatoria.essence_fusion.required"),
-                32,
-                5,
-                theme.headerTextColor()
-        );
-        AlchemicalJeiGraphics.drawCentered(
-                graphics,
-                font,
-                Component.translatable("jei.transmutatoria.catalyst"),
-                CATALYST_X + 8,
-                5,
-                theme.headerTextColor()
-        );
-        AlchemicalJeiGraphics.drawCentered(
-                graphics,
-                font,
-                Component.translatable("jei.transmutatoria.output"),
-                OUTPUT_X + 8,
-                5,
-                theme.headerTextColor()
-        );
-
-        Component water = Component.translatable("jei.transmutatoria.essence_fusion.water.short");
-        Component count = Component.translatable(
-                "jei.transmutatoria.essence_fusion.input_count.short",
-                recipe.requiredEssences().size()
-        );
-        graphics.text(font, water, 7, 107, theme.textColor(), false);
-        graphics.text(font, count, WIDTH - 7 - font.width(count), 107, theme.textColor(), false);
+        AlchemicalJeiGraphics.drawCentered(graphics, font, Component.translatable("jei.transmutatoria.essence_fusion.required"), 32, 5, theme.headerTextColor());
+        AlchemicalJeiGraphics.drawCentered(graphics, font, Component.translatable("jei.transmutatoria.catalyst"), CATALYST_X + 8, 5, theme.headerTextColor());
+        AlchemicalJeiGraphics.drawCentered(graphics, font, Component.translatable("jei.transmutatoria.output"), OUTPUT_X + 8, 5, theme.headerTextColor());
     }
 
     @Override
@@ -129,26 +98,14 @@ public class EssenceFusionCategory extends AbstractRecipeCategory<EssenceFusionJ
             double mouseX,
             double mouseY
     ) {
-        if (mouseY >= INFO_TOP) {
-            if (mouseX < WIDTH / 2.0) {
-                tooltip.add(Component.translatable("jei.transmutatoria.essence_fusion.water.tooltip"));
-            } else {
-                tooltip.add(Component.translatable(
-                        "jei.transmutatoria.essence_fusion.input_count.tooltip",
-                        recipe.requiredEssences().size()
-                ));
-            }
-        } else if (mouseY >= AlchemicalJeiGraphics.HEADER_BOTTOM) {
+        if (mouseY >= AlchemicalJeiGraphics.HEADER_BOTTOM) {
             tooltip.add(Component.translatable("jei.transmutatoria.essence_fusion.description"));
         }
     }
 
     @Override
     public Identifier getIdentifier(EssenceFusionJeiRecipe recipe) {
-        return Identifier.fromNamespaceAndPath(
-                ArsTransmutatoria.MODID,
-                "essence_fusion/" + recipe.essence().getKey() + "/" + recipe.state()
-        );
+        return ArsTransmutatoria.makeMyIdentifier("essence_fusion/" + recipe.essence().getKey() + "/" + recipe.state());
     }
 
     @Override

@@ -66,12 +66,8 @@ public class TransmutationDecompositionCategory extends AbstractRecipeCategory<T
         var theme = AlchemicalJeiGraphics.DECOMPOSITION_THEME;
         AlchemicalJeiGraphics.drawSlotLabels(graphics, font, theme);
 
-        Component water = Component.translatable("jei.transmutatoria.transmutation_decomposition.water.short");
         Component chance = Component.translatable("jei.transmutatoria.transmutation_decomposition.chance.short");
-        Component time = Component.translatable("jei.transmutatoria.transmutation_decomposition.time.short");
-        graphics.text(font, water, 7, 63, theme.textColor(), false);
-        AlchemicalJeiGraphics.drawCentered(graphics, font, chance, AlchemicalJeiGraphics.WIDTH / 2, 63, theme.textColor());
-        graphics.text(font, time, AlchemicalJeiGraphics.WIDTH - 7 - font.width(time), 63, theme.textColor(), false);
+        graphics.text(font, chance, AlchemicalJeiGraphics.WIDTH - 7 - font.width(chance), 63, theme.textColor(), false);
     }
 
     @Override
@@ -83,13 +79,7 @@ public class TransmutationDecompositionCategory extends AbstractRecipeCategory<T
             double mouseY
     ) {
         if (mouseY >= AlchemicalJeiGraphics.INFO_TOP) {
-            if (mouseX < AlchemicalJeiGraphics.WIDTH / 3.0) {
-                tooltip.add(Component.translatable("jei.transmutatoria.transmutation_decomposition.water.tooltip"));
-            } else if (mouseX < AlchemicalJeiGraphics.WIDTH * (2.0 / 3.0)) {
-                tooltip.add(Component.translatable("jei.transmutatoria.transmutation_decomposition.chance.tooltip"));
-            } else {
-                tooltip.add(Component.translatable("jei.transmutatoria.transmutation_decomposition.time.tooltip"));
-            }
+            tooltip.add(Component.translatable("jei.transmutatoria.transmutation_decomposition.chance.tooltip"));
         } else if (mouseY >= AlchemicalJeiGraphics.HEADER_BOTTOM && mouseX >= 35 && mouseX < 115) {
             tooltip.add(Component.translatable("jei.transmutatoria.transmutation_decomposition.description"));
         }
