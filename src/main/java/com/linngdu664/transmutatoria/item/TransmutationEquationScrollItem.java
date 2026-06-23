@@ -9,6 +9,7 @@ import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import com.linngdu664.transmutatoria.util.AlchemySlotGenerator;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -42,6 +43,7 @@ public class TransmutationEquationScrollItem extends AbstractTransmutationScroll
                     (containerId, playerInventory, p) -> new TransmutationEquationScrollMenu(containerId, playerInventory, stack),
                     stack.getHoverName()
             ));
+            level.playSound(null, player, SoundEvents.BOOK_PAGE_TURN, player.getSoundSource(), 1.0F, 1.0F);
         }
         return InteractionResult.SUCCESS;
     }

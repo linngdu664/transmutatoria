@@ -7,6 +7,7 @@ import com.linngdu664.transmutatoria.item.AlchemistStorageBoxItem;
 import com.linngdu664.transmutatoria.network.to_server.ChangeCrucibleSelectedSlotPayload;
 import com.linngdu664.transmutatoria.network.to_server.RotateStorageBoxPayload;
 import net.minecraft.client.Minecraft;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
@@ -71,6 +72,7 @@ public class InputEventHandler {
 
         // 更新客户端 ItemStack 组件，并同步到服务端
         boxStack.set(InitDataComponents.ROTATION, newRotation);
+        player.playSound(SoundEvents.DISPENSER_FAIL, 0.5F, 1.0F);
         ClientPacketDistributor.sendToServer(new RotateStorageBoxPayload(hand, newRotation));
     }
 }

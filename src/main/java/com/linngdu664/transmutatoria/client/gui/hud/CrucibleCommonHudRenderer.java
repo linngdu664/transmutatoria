@@ -37,7 +37,10 @@ public final class CrucibleCommonHudRenderer {
 
         Minecraft mc = Minecraft.getInstance();
         Window window = mc.getWindow();
-        state.crucibleSlotAnimation().update(crucible, delta);
+        ItemStack catalyst = crucible.getCatalyst();
+        List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
+        int reactionSlotCount = getReactionSlotCount(catalyst, alchemySlots);
+        state.crucibleSlotAnimation().update(crucible, delta, reactionSlotCount);
 
         if (state.hudIntro().value() < 0.995f) {
             int sw = window.getGuiScaledWidth();
@@ -47,9 +50,6 @@ public final class CrucibleCommonHudRenderer {
             guiGraphics.pose().scale(state.hudIntro().value(), state.hudIntro().value());
             guiGraphics.pose().translate(-sw / 2f, -sh / 2f);
         }
-
-        ItemStack catalyst = crucible.getCatalyst();
-        List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
 
         V2I stripCenter = PosUtil.v2IRatio(window, 0.05f, 0.5f);
         if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
@@ -149,5 +149,21 @@ public final class CrucibleCommonHudRenderer {
                 || input.is(InitItems.NIGREDO_ESSENCE) && output.is(InitItems.ALBEDO_ESSENCE)
                 || input.is(InitItems.ALBEDO_ESSENCE) && output.is(InitItems.CITRINITAS_ESSENCE)
                 || input.is(InitItems.CITRINITAS_ESSENCE) && output.is(InitItems.RUBEDO_ESSENCE);
+    }
+
+    private static int getReactionSlotCount(ItemStack catalyst, List<AbstractAlchemySlot> alchemySlots) {
+        if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
+            return essenceMetalItem.getEssenceMetal().getRestrainsAndDoubleRestrains().size();
+        }
+        if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
+            return 2;
+        }
+        if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
+            return 24;
+        }
+        if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
+            return alchemySlots.size();
+        }
+        return 0;
     }
 }
