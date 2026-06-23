@@ -9,14 +9,21 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 public class TransmutationCrucibleRenderer
         implements BlockEntityRenderer<TransmutationCrucibleBlockEntity, TransmutationCrucibleRenderState> {
@@ -34,7 +41,10 @@ public class TransmutationCrucibleRenderer
     private static final int NEGATIVE_WATER_COLOR = ARGB.color(190, 18, 45, 160);
     private static final int POSITIVE_WATER_COLOR = ARGB.color(190, 240, 42, 32);
 
+    private final ItemModelResolver itemModelResolver;
+
     public TransmutationCrucibleRenderer(BlockEntityRendererProvider.Context context) {
+        this.itemModelResolver = context.itemModelResolver();
     }
 
     @Override
@@ -53,6 +63,43 @@ public class TransmutationCrucibleRenderer
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.waterAmount = blockEntity.getWaterAmount();
         state.waterColor = getWaterColor(blockEntity);
+
+        state.gameTime = blockEntity.getLevel().getGameTime() + partialTicks;
+        int idx = 0;
+        List<ItemStack> essences = blockEntity.getInputEssences();
+        List<ItemStack> outputEssences = blockEntity.getOutputEssences();
+        Level level = blockEntity.getLevel();
+
+        // 1. Output (slot 50)
+        ItemStack output = blockEntity.getOutput();
+        if (!output.isEmpty()) {
+            updateFloatingItem(state.floatingItems[idx++], level, output);
+        }
+        // 2. Output essences (slots 24-47, from high to low)
+        for (int i = 23; i >= 0 && idx < 8; i--) {
+            ItemStack stack = outputEssences.get(i);
+            if (!stack.isEmpty()) {
+                updateFloatingItem(state.floatingItems[idx++], level, stack);
+            }
+        }
+        // 3. Input essences (slots 0-23, from high to low)
+        for (int i = 23; i >= 0 && idx < 8; i--) {
+            ItemStack stack = essences.get(i);
+            if (!stack.isEmpty()) {
+                updateFloatingItem(state.floatingItems[idx++], level, stack);
+            }
+        }
+        // 4. Input (slot 49)
+        ItemStack input = blockEntity.getInput();
+        if (!input.isEmpty() && idx < 8) {
+            updateFloatingItem(state.floatingItems[idx++], level, input);
+        }
+        // 5. Catalyst (slot 48)
+        ItemStack catalyst = blockEntity.getCatalyst();
+        if (!catalyst.isEmpty() && idx < 8) {
+            updateFloatingItem(state.floatingItems[idx++], level, catalyst);
+        }
+        state.floatingItemCount = idx;
     }
 
     @Override
@@ -76,6 +123,39 @@ public class TransmutationCrucibleRenderer
                 poseStack,
                 RenderTypes.entityTranslucent(WATER_TEXTURE, false),
                 (pose, buffer) -> renderWater(pose, buffer, waterY, topColor, sideColor, lightCoords));
+
+        // Render floating items
+        int count = state.floatingItemCount;
+        if (count > 0) {
+            float angularSpeed = Mth.TWO_PI * 0.002F;
+            float radius = 0.25F;
+            float amplitude = 0.05F;
+            float yOffset = 0.06F;
+            float itemScale = 0.25F;
+
+            for (int i = 0; i < count; i++) {
+                ItemStackRenderState itemState = state.floatingItems[i];
+                if (itemState.isEmpty()) {
+                    continue;
+                }
+                float phase = Mth.TWO_PI * i / (float) count;
+                float angle = angularSpeed * state.gameTime + phase;
+                float x = 0.5F + radius * Mth.cos(angle);
+                float y = waterY + yOffset + amplitude * Mth.sin(angle);
+                float z = 0.5F + radius * Mth.sin(angle);
+
+                poseStack.pushPose();
+                poseStack.translate(x, y, z);
+                poseStack.scale(itemScale, itemScale, itemScale);
+                itemState.submit(poseStack, submitNodeCollector, lightCoords, OverlayTexture.NO_OVERLAY, 0);
+                poseStack.popPose();
+            }
+        }
+    }
+
+    private void updateFloatingItem(ItemStackRenderState renderState, Level level, ItemStack stack) {
+//        renderState.clear();
+        itemModelResolver.updateForTopItem(renderState, stack, ItemDisplayContext.GROUND, level, null, 0);
     }
 
     private static int getWaterColor(TransmutationCrucibleBlockEntity blockEntity) {
