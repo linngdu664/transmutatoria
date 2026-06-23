@@ -663,7 +663,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 polarity += result.getPolarityIncrease();
                 entropy += result.getEntropyIncrease();
                 if (result.isTriggerDamage()) {
-                    catalyst.hurtAndBreak(1 + entropy, (ServerLevel) level, null, _ -> {});
+                    catalyst.hurtAndBreak(1 + entropy / 4, (ServerLevel) level, null, _ -> {});
                     annihilationCnt++;
                 }
             }

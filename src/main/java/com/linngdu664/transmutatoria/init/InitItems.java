@@ -135,9 +135,9 @@ public class InitItems {
     public static DeferredItem<Item> TERRESTRIAL_SIGIL_SCROLL = ITEMS.register("terrestrial_sigil_scroll",
             () -> new TransmutationSigilScrollItem(ArsTransmutatoria.makeMyIdentifier("terrestrial_sigil_scroll"), ExpireInfo.DEFAULT, 64));
     public static DeferredItem<Item> LUNAR_SIGIL_SCROLL = ITEMS.register("lunar_sigil_scroll",
-            () -> new TransmutationSigilScrollItem(ArsTransmutatoria.makeMyIdentifier("lunar_sigil_scroll"), ExpireInfo.LUNAR, 96));
+            () -> new TransmutationSigilScrollItem(ArsTransmutatoria.makeMyIdentifier("lunar_sigil_scroll"), ExpireInfo.LUNAR, 128));
     public static DeferredItem<Item> SOLAR_SIGIL_SCROLL = ITEMS.register("solar_sigil_scroll",
-            () -> new TransmutationSigilScrollItem(ArsTransmutatoria.makeMyIdentifier("solar_sigil_scroll"), 128));
+            () -> new TransmutationSigilScrollItem(ArsTransmutatoria.makeMyIdentifier("solar_sigil_scroll"), 256));
     public static DeferredItem<Item> VOID_SIGIL_SCROLL = ITEMS.register("void_sigil_scroll",
             () -> new TransmutationSigilScrollItem(ArsTransmutatoria.makeMyIdentifier("void_sigil_scroll")));
 
@@ -147,9 +147,9 @@ public class InitItems {
     public static DeferredItem<Item> TERRESTRIAL_EQUATION_SCROLL = ITEMS.register("terrestrial_equation_scroll",
             () -> new TransmutationEquationScrollItem(ArsTransmutatoria.makeMyIdentifier("terrestrial_equation_scroll"), ExpireInfo.DEFAULT, 64));
     public static DeferredItem<Item> LUNAR_EQUATION_SCROLL = ITEMS.register("lunar_equation_scroll",
-            () -> new TransmutationEquationScrollItem(ArsTransmutatoria.makeMyIdentifier("lunar_equation_scroll"), ExpireInfo.LUNAR, 96));
+            () -> new TransmutationEquationScrollItem(ArsTransmutatoria.makeMyIdentifier("lunar_equation_scroll"), ExpireInfo.LUNAR, 128));
     public static DeferredItem<Item> SOLAR_EQUATION_SCROLL = ITEMS.register("solar_equation_scroll",
-            () -> new TransmutationEquationScrollItem(ArsTransmutatoria.makeMyIdentifier("solar_equation_scroll"), 128));
+            () -> new TransmutationEquationScrollItem(ArsTransmutatoria.makeMyIdentifier("solar_equation_scroll"), 256));
     public static DeferredItem<Item> VOID_EQUATION_SCROLL = ITEMS.register("void_equation_scroll",
             () -> new TransmutationEquationScrollItem(ArsTransmutatoria.makeMyIdentifier("void_equation_scroll")));
 
