@@ -11,6 +11,7 @@ import com.linngdu664.transmutatoria.util.SlotType;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,8 +26,8 @@ public class UnstableSlot extends AbstractAlchemySlot {
         if (result.getEssenceStateIncrease() != 0) {
             deferredTasks.add(() -> {
                 List<AbstractAlchemySlot> slotsInScroll = scroll.get(InitDataComponents.ALCHEMY_SLOTS);
-                // 通常来说不可能为 null
                 if (slotsInScroll != null) {
+                    slotsInScroll = new ArrayList<>(slotsInScroll); // 拷贝一份列表避免 UnsupportedOperationException
                     int thisSlot = posToOutputSlot.get(getPackedXY(x, y));
                     int targetSlot = Math.floorMod(getSlotMagicNumber(scroll.getOrDefault(InitDataComponents.MAGIC_NUMBER, 0), posToOutputSlot.get(getPackedXY())), slotsInScroll.size() - 1);
                     if (targetSlot >= thisSlot) {
