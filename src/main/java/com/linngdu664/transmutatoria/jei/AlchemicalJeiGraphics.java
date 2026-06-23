@@ -117,6 +117,20 @@ final class AlchemicalJeiGraphics {
         drawPanelForeground(graphics, theme, width, height, infoTop);
     }
 
+    static void drawCustomBase(
+            GuiGraphicsExtractor graphics,
+            Theme theme,
+            TextureRenderable mark,
+            int width,
+            int height,
+            int markCenterX,
+            int markCenterY
+    ) {
+        drawPanelBackground(graphics, theme, width, height);
+        drawAlchemyMark(graphics, theme, mark, markCenterX, markCenterY);
+        drawPanelForeground(graphics, theme, width);
+    }
+
     static void drawSlotLabels(GuiGraphicsExtractor graphics, Font font, Theme theme) {
         drawCentered(graphics, font, Component.translatable("jei.transmutatoria.input"), INPUT_X + 8, 5, theme.headerTextColor());
         drawCentered(graphics, font, Component.translatable("jei.transmutatoria.catalyst"), CATALYST_X + 8, 5, theme.headerTextColor());
@@ -143,6 +157,11 @@ final class AlchemicalJeiGraphics {
         graphics.fill(2, HEADER_BOTTOM - 1, width - 2, HEADER_BOTTOM, theme.accentColor());
         graphics.fill(2, infoTop, width - 2, height - 2, theme.infoColor());
         graphics.fill(2, infoTop, width - 2, infoTop + 1, theme.accentColor());
+    }
+
+    private static void drawPanelForeground(GuiGraphicsExtractor graphics, Theme theme, int width) {
+        graphics.fill(2, 2, width - 2, HEADER_BOTTOM, theme.headerColor());
+        graphics.fill(2, HEADER_BOTTOM - 1, width - 2, HEADER_BOTTOM, theme.accentColor());
     }
 
     private static void drawAlchemyMark(

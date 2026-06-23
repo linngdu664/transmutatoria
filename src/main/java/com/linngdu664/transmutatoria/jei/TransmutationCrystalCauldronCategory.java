@@ -20,16 +20,15 @@ import net.minecraft.world.level.block.Blocks;
 
 public class TransmutationCrystalCauldronCategory extends AbstractRecipeCategory<TransmutationCrystalCauldronJeiRecipe> {
     private static final int WIDTH = 180;
-    private static final int HEIGHT = 112;
+    private static final int HEIGHT = 94;
     private static final int HEADER_BOTTOM = 16;
-    private static final int INFO_TOP = 94;
-    private static final int INPUT_Y = 47;
+    private static final int INPUT_Y = 50;
     private static final int STATION_X = 94;
-    private static final int WATER_Y = 20;
-    private static final int CAULDRON_Y = 47;
-    private static final int EMERALD_Y = 74;
+    private static final int WATER_Y = 23;
+    private static final int CAULDRON_Y = 50;
+    private static final int EMERALD_Y = 68;
     private static final int OUTPUT_X = 154;
-    private static final int OUTPUT_Y = 47;
+    private static final int OUTPUT_Y = 50;
 
     private static final int OUTER_COLOR = 0xFF123528;
     private static final int BODY_COLOR = 0xFFE7F4EA;
@@ -92,18 +91,12 @@ public class TransmutationCrystalCauldronCategory extends AbstractRecipeCategory
         drawPanel(graphics);
         drawRightArrow(graphics, 73, 91, INPUT_Y + 8);
         drawRightArrow(graphics, 116, 149, CAULDRON_Y + 8);
-        drawDownArrow(graphics, STATION_X + 8, 39, 46);
-        drawDownArrow(graphics, STATION_X + 8, 66, 73);
+        drawDownArrow(graphics, STATION_X + 8, 42, 49);
 
         Font font = Minecraft.getInstance().font;
         drawCentered(graphics, font, Component.translatable("jei.transmutatoria.transmutation_crystal_cauldron.ingredients"), 42, 5, HEADER_TEXT_COLOR);
         drawCentered(graphics, font, Component.translatable("jei.transmutatoria.transmutation_crystal_cauldron.apparatus"), STATION_X + 8, 5, HEADER_TEXT_COLOR);
         drawCentered(graphics, font, Component.translatable("jei.transmutatoria.output"), OUTPUT_X + 8, 5, HEADER_TEXT_COLOR);
-
-        Component drop = Component.translatable("jei.transmutatoria.transmutation_crystal_cauldron.drop.short");
-        Component water = Component.translatable("jei.transmutatoria.transmutation_crystal_cauldron.water.short");
-        graphics.text(font, drop, 7, 101, TEXT_COLOR, false);
-        graphics.text(font, water, WIDTH - 7 - font.width(water), 101, TEXT_COLOR, false);
     }
 
     @Override
@@ -114,12 +107,8 @@ public class TransmutationCrystalCauldronCategory extends AbstractRecipeCategory
             double mouseX,
             double mouseY
     ) {
-        if (mouseY >= INFO_TOP) {
-            if (mouseX < WIDTH * 0.5) {
-                tooltip.add(Component.translatable("jei.transmutatoria.transmutation_crystal_cauldron.drop.tooltip"));
-            } else {
-                tooltip.add(Component.translatable("jei.transmutatoria.transmutation_crystal_cauldron.water.tooltip"));
-            }
+        if (mouseY >= HEADER_BOTTOM) {
+            tooltip.add(Component.translatable("jei.transmutatoria.transmutation_crystal_cauldron.drop.tooltip"));
         }
     }
 
@@ -138,8 +127,6 @@ public class TransmutationCrystalCauldronCategory extends AbstractRecipeCategory
         graphics.fill(1, 1, WIDTH - 1, HEIGHT - 1, BODY_COLOR);
         graphics.fill(2, 2, WIDTH - 2, HEADER_BOTTOM, HEADER_COLOR);
         graphics.fill(2, HEADER_BOTTOM - 1, WIDTH - 2, HEADER_BOTTOM, ACCENT_COLOR);
-        graphics.fill(2, INFO_TOP, WIDTH - 2, HEIGHT - 2, INFO_COLOR);
-        graphics.fill(2, INFO_TOP, WIDTH - 2, INFO_TOP + 1, ACCENT_COLOR);
     }
 
     private static void drawRightArrow(GuiGraphicsExtractor graphics, int startX, int endX, int centerY) {

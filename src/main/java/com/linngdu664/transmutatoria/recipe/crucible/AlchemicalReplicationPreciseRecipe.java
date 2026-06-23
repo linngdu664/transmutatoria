@@ -79,11 +79,6 @@ public record AlchemicalReplicationPreciseRecipe(
     }
 
     @Override
-    public boolean isSpecial() {
-        return false;
-    }
-
-    @Override
     public boolean showNotification() {
         return false;
     }

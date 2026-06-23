@@ -98,12 +98,10 @@ public class CrystalEssenceFusionCategory extends AbstractRecipeCategory<Crystal
         AlchemicalJeiGraphics.drawCentered(graphics, font, Component.translatable("jei.transmutatoria.catalyst"), CATALYST_X + 8, 5, THEME.headerTextColor());
         AlchemicalJeiGraphics.drawCentered(graphics, font, Component.translatable("jei.transmutatoria.output"), 153, 5, THEME.headerTextColor());
 
-        Component water = Component.translatable("jei.transmutatoria.crystal_essence_fusion.water.short");
         Component polarity = Component.translatable(
                 "jei.transmutatoria.crystal_essence_fusion.polarity.short",
-                signed(recipe.relation().self + recipe.relation().other)
+                signed(-(recipe.relation().self + recipe.relation().other))
         );
-        graphics.text(font, water, 7, 69, THEME.textColor(), false);
         graphics.text(font, polarity, WIDTH - 7 - font.width(polarity), 69, THEME.textColor(), false);
     }
 
@@ -116,14 +114,10 @@ public class CrystalEssenceFusionCategory extends AbstractRecipeCategory<Crystal
             double mouseY
     ) {
         if (mouseY >= INFO_TOP) {
-            if (mouseX < WIDTH / 2.0) {
-                tooltip.add(Component.translatable("jei.transmutatoria.crystal_essence_fusion.water.tooltip"));
-            } else {
-                tooltip.add(Component.translatable(
+            tooltip.add(Component.translatable(
                         "jei.transmutatoria.crystal_essence_fusion.polarity.tooltip",
-                        signed(recipe.relation().self + recipe.relation().other)
+                        signed(-(recipe.relation().self + recipe.relation().other))
                 ));
-            }
         } else if (mouseY >= AlchemicalJeiGraphics.HEADER_BOTTOM && mouseX >= 54 && mouseX < 130) {
             tooltip.add(Component.translatable("jei.transmutatoria.crystal_essence_fusion.description"));
         }
@@ -131,12 +125,9 @@ public class CrystalEssenceFusionCategory extends AbstractRecipeCategory<Crystal
 
     @Override
     public Identifier getIdentifier(CrystalEssenceFusionJeiRecipe recipe) {
-        return Identifier.fromNamespaceAndPath(
-                ArsTransmutatoria.MODID,
-                "crystal_essence_fusion/"
-                        + recipe.first().getKey() + "/" + recipe.firstState() + "/"
-                        + recipe.second().getKey() + "/" + recipe.secondState()
-        );
+        return ArsTransmutatoria.makeMyIdentifier("crystal_essence_fusion/"
+                + recipe.first().getKey() + "/" + recipe.firstState() + "/"
+                + recipe.second().getKey() + "/" + recipe.secondState());
     }
 
     @Override
