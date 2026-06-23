@@ -1,0 +1,13 @@
+{
+  "type": "transmutatoria:alchemical_transformation",
+  "input_items": "transmutatoria:citrinitas_essence",
+  "output": "transmutatoria:rubedo_essence",
+  "one_time": true,
+  "level": {
+    "type": "transmutatoria:fixed",
+    "min": 24,
+    "max": 24
+  },
+  "min_polarity": 49,
+  "max_polarity": 50
+}

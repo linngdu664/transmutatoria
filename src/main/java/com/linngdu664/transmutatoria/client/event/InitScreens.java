@@ -2,6 +2,7 @@ package com.linngdu664.transmutatoria.client.event;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.client.gui.screens.ScreenAlchemistStorageBox;
+import com.linngdu664.transmutatoria.client.gui.screens.ScreenAlchemyRecipeGenerator;
 import com.linngdu664.transmutatoria.client.gui.screens.ScreenEmeraldTablet;
 import com.linngdu664.transmutatoria.client.gui.screens.ScreenTransmutationScroll;
 import com.linngdu664.transmutatoria.init.InitMenuTypes;
@@ -21,5 +22,7 @@ public class InitScreens {
         event.register(InitMenuTypes.TRANSMUTATION_SIGIL_SCROLL_MENU.get(), ScreenTransmutationScroll::new);
         event.register(InitMenuTypes.TRANSMUTATION_EQUATION_SCROLL_MENU.get(), ScreenTransmutationScroll::new);
         event.register(InitMenuTypes.EMERALD_TABLET_MENU.get(), ScreenEmeraldTablet::new);
+        event.register(InitMenuTypes.ALCHEMICAL_REPLICATION_GENERATOR_MENU.get(), ScreenAlchemyRecipeGenerator::new);
+        event.register(InitMenuTypes.ALCHEMICAL_TRANSFORMATION_GENERATOR_MENU.get(), ScreenAlchemyRecipeGenerator::new);
     }
 }

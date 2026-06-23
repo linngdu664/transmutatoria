@@ -5,6 +5,14 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
+    public static final ModConfigSpec.BooleanValue ENABLE_RECIPE_GENERATOR_COMMANDS = BUILDER
+            .comment(
+                    "Whether to register the in-game alchemy recipe generator commands.",
+                    "When disabled, the commands are absent from command suggestions and cannot open the generator GUI.",
+                    "Requires a server restart or command reload after changing."
+            )
+            .define("enableRecipeGeneratorCommands", false);
+
 //    public static final int DEFAULT_TRANSMUTATION_SCROLL_DURABILITY = 32;
 //    public static final int DEFAULT_TERRESTRIAL_SCROLL_DURABILITY = 64;
 //    public static final int DEFAULT_LUNAR_SCROLL_DURABILITY = 96;

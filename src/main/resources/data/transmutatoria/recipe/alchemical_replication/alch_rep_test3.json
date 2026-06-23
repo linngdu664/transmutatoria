@@ -1,9 +1,0 @@
-{
-  "type": "transmutatoria:alchemical_replication",
-  "output_items": "minecraft:diamond",
-  "level": {
-    "type": "transmutatoria:fixed",
-    "min": 9,
-    "max": 24
-  }
-}

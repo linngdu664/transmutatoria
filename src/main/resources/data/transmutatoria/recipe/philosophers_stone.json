@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.0,
+  "ingredient": "transmutatoria:rubedo_essence",
+  "result": {
+    "id": "transmutatoria:philosophers_stone"
+  }
+}

@@ -1,6 +1,7 @@
 package com.linngdu664.transmutatoria.init;
 
 import com.linngdu664.transmutatoria.inventory.AlchemistStorageBoxMenu;
+import com.linngdu664.transmutatoria.inventory.AlchemyRecipeGeneratorMenu;
 import com.linngdu664.transmutatoria.inventory.EmeraldTabletMenu;
 import com.linngdu664.transmutatoria.inventory.TransmutationEquationScrollMenu;
 import com.linngdu664.transmutatoria.inventory.TransmutationSigilScrollMenu;
@@ -44,4 +45,14 @@ public class InitMenuTypes {
     public static final DeferredHolder<MenuType<?>, MenuType<EmeraldTabletMenu>> EMERALD_TABLET_MENU =
             MENU_TYPES.register("emerald_tablet",
                     () -> new MenuType<>(EmeraldTabletMenu::new, FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<AlchemyRecipeGeneratorMenu>> ALCHEMICAL_REPLICATION_GENERATOR_MENU =
+            MENU_TYPES.register("alchemical_replication_generator",
+                    () -> new MenuType<>((containerId, inventory) -> new AlchemyRecipeGeneratorMenu(
+                            containerId, inventory, AlchemyRecipeGeneratorMenu.Kind.REPLICATION), FeatureFlags.DEFAULT_FLAGS));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<AlchemyRecipeGeneratorMenu>> ALCHEMICAL_TRANSFORMATION_GENERATOR_MENU =
+            MENU_TYPES.register("alchemical_transformation_generator",
+                    () -> new MenuType<>((containerId, inventory) -> new AlchemyRecipeGeneratorMenu(
+                            containerId, inventory, AlchemyRecipeGeneratorMenu.Kind.TRANSFORMATION), FeatureFlags.DEFAULT_FLAGS));
 }

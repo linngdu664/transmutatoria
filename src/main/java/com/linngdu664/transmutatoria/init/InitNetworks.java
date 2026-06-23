@@ -4,6 +4,7 @@ import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.network.to_client.*;
 import com.linngdu664.transmutatoria.network.to_server.ChangeCrucibleSelectedSlotPayload;
 import com.linngdu664.transmutatoria.network.to_server.RotateStorageBoxPayload;
+import com.linngdu664.transmutatoria.network.to_server.SaveAlchemyRecipePayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -22,6 +23,11 @@ public class InitNetworks {
         registrar.playToServer(
                 ChangeCrucibleSelectedSlotPayload.TYPE,
                 ChangeCrucibleSelectedSlotPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
+        );
+        registrar.playToServer(
+                SaveAlchemyRecipePayload.TYPE,
+                SaveAlchemyRecipePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
         );
         registrar.playToClient(

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": "#transmutatoria:essence_metals",
+    "G": "minecraft:gold_nugget",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "GPG",
+    "PEP",
+    "GPG"
+  ],
+  "result": {
+    "id": "transmutatoria:alchemist_storage_box"
+  }
+}

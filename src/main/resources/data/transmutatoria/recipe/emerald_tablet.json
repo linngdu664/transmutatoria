@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": "minecraft:emerald",
+    "X": "transmutatoria:transmutation_crystal"
+  },
+  "pattern": [
+    " E ",
+    "EXE",
+    " E "
+  ],
+  "result": {
+    "id": "transmutatoria:emerald_tablet"
+  }
+}

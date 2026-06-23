@@ -1,9 +1,0 @@
-{
-  "type": "transmutatoria:alchemical_replication",
-  "output_items": "#minecraft:wool",
-  "level": {
-    "type": "transmutatoria:fixed",
-    "min": 4,
-    "max": 4
-  }
-}

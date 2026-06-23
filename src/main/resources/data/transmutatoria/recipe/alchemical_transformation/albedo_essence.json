@@ -1,0 +1,12 @@
+{
+  "type": "transmutatoria:alchemical_transformation",
+  "input_items": "transmutatoria:nigredo_essence",
+  "output": "transmutatoria:albedo_essence",
+  "level": {
+    "type": "transmutatoria:fixed",
+    "min": 6,
+    "max": 6
+  },
+  "min_polarity": 20,
+  "max_polarity": 50
+}

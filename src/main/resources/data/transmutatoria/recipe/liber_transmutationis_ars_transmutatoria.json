@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:emerald",
+    "minecraft:gold_nugget"
+  ],
+  "result": {
+    "id": "transmutatoria:liber_transmutationis_ars_transmutatoria"
+  }
+}
