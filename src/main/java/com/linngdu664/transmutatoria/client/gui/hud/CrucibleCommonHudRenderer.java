@@ -17,9 +17,11 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.List;
@@ -126,12 +128,26 @@ public final class CrucibleCommonHudRenderer {
         } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
             background = Textures.ALCHEMY_ARRAY_6;
         } else if (catalyst.getItem() instanceof TransmutationEquationScrollItem) {
-            background = Textures.ALCHEMY_ARRAY_5;
+            background = isPhilosophersStoneRecipe(catalyst) ? Textures.ALCHEMY_ARRAY_3 : Textures.ALCHEMY_ARRAY_5;
         } else if (catalyst.getItem() instanceof TransmutationSigilScrollItem) {
             background = Textures.ALCHEMY_ARRAY_7;
         } else {
             return;
         }
         background.renderRatio(guiGraphics, window, 0.5f, 0.5f);
+    }
+
+    private static boolean isPhilosophersStoneRecipe(ItemStack catalyst) {
+        ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+        if (container.getSlots() < 2) {
+            return false;
+        }
+
+        ItemStack input = container.getStackInSlot(0);
+        ItemStack output = container.getStackInSlot(1);
+        return input.is(InitItems.PRIMA_MATERIA) && output.is(InitItems.NIGREDO_ESSENCE)
+                || input.is(InitItems.NIGREDO_ESSENCE) && output.is(InitItems.ALBEDO_ESSENCE)
+                || input.is(InitItems.ALBEDO_ESSENCE) && output.is(InitItems.CITRINITAS_ESSENCE)
+                || input.is(InitItems.CITRINITAS_ESSENCE) && output.is(InitItems.RUBEDO_ESSENCE);
     }
 }
