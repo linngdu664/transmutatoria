@@ -30,6 +30,15 @@ public class TransmutationCrucibleRenderer
     private static final float WATER_Z0 = 2.0625F / 16.0F;
     private static final float WATER_Z1 = 13.9375F / 16.0F;
     private static final int DEFAULT_WATER_COLOR = ARGB.color(190, 120, 210, 255);
+    private static final int DEFAULT_R = 120;
+    private static final int DEFAULT_G = 210;
+    private static final int DEFAULT_B = 255;
+    private static final int POLARITY_R = 255;
+    private static final int POLARITY_G = 60;
+    private static final int POLARITY_B = 60;
+    private static final int POLARITY_BLUE_R = 60;
+    private static final int POLARITY_BLUE_G = 60;
+    private static final int POLARITY_BLUE_B = 255;
 
     public TransmutationCrucibleRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -49,7 +58,7 @@ public class TransmutationCrucibleRenderer
     ) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.waterAmount = blockEntity.getWaterAmount();
-        state.waterColor = getWaterColor(blockEntity);
+        state.waterColor = getWaterColor(blockEntity.getPolarity());
     }
 
     @Override
@@ -75,8 +84,19 @@ public class TransmutationCrucibleRenderer
                 (pose, buffer) -> renderWater(pose, buffer, waterY, topColor, sideColor, lightCoords));
     }
 
-    private static int getWaterColor(TransmutationCrucibleBlockEntity blockEntity) {
-        return DEFAULT_WATER_COLOR;
+    private static int getWaterColor(int polarity) {
+        float t = Mth.clamp(polarity / 50.0f, -1.0f, 1.0f);
+        int r, g, b;
+        if (t <= 0.0f) {
+            r = Mth.lerpInt(t + 1.0f, POLARITY_BLUE_R, DEFAULT_R);
+            g = Mth.lerpInt(t + 1.0f, POLARITY_BLUE_G, DEFAULT_G);
+            b = DEFAULT_B;
+        } else {
+            r = Mth.lerpInt(t, DEFAULT_R, POLARITY_R);
+            g = Mth.lerpInt(t, DEFAULT_G, POLARITY_G);
+            b = Mth.lerpInt(t, DEFAULT_B, POLARITY_B);
+        }
+        return ARGB.color(190, r, g, b);
     }
 
     private static void renderWater(
