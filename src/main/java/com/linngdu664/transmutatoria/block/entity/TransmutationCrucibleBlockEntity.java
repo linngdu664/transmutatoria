@@ -607,7 +607,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             EssenceMetal.Relation relation = essence1.getEssenceMetal().getRelationTo(essence2.getEssenceMetal());
             setItemAndRecordChange(ESSENCE_OUTPUT_SLOT_BEGIN, essence1.change(relation.self), itemStackWithSlotsUpdate);
             setItemAndRecordChange(ESSENCE_OUTPUT_SLOT_BEGIN + 1, essence2.change(relation.other), itemStackWithSlotsUpdate);
-            polarity += relation.self + relation.other;
+            polarity -= relation.self + relation.other;
         }
     }
 
