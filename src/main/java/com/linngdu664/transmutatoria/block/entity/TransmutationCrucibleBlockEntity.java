@@ -27,6 +27,9 @@ import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.ContainerHelper;
@@ -329,6 +332,12 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return this.saveWithoutMetadata(registries);
+    }
+
+    // 方块更新时的同步（粗粒度同步，细粒度用自定义网络包）
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     public ResourceHandler<ItemResource> getUpDownItemHandler() {
