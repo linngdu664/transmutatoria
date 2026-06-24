@@ -204,5 +204,6 @@
   "gui.transmutatoria.recipe_generator.saved_related_warning": "注意：该物品已有其他相关配方；生成配方已设为较高优先级。",
   "gui.transmutatoria.recipe_generator.error.invalid_tag": "选择的物品标签无效。",
   "gui.transmutatoria.recipe_generator.error.save": "生成炼金配方失败：%s",
-  "gui.transmutatoria.recipe_generator.error.reload": "JSON 已写入 %s，但数据包重载失败，请查看日志。"
+  "gui.transmutatoria.recipe_generator.error.reload": "JSON 已写入 %s，但数据包重载失败，请查看日志。",
+  "tooltip.transmutatoria.scroll.one_time": "一次性卷轴：成功反应后消耗"
 }
