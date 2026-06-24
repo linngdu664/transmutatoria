@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "transmutatoria:item/albedo_essence"
+    "layer0": "transmutatoria:item/rubedo_matter"
   }
 }

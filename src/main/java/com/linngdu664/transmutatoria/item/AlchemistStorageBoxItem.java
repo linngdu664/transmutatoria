@@ -10,6 +10,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
@@ -61,12 +63,14 @@ public class AlchemistStorageBoxItem extends BlockItem {
 
         if (blockState.is(InitBlocks.TRANSMUTATION_CRUCIBLE)) {
             ItemStack stack = context.getItemInHand();
-            if (!level.isClientSide()) {
-                int rotation = (stack.getOrDefault(InitDataComponents.ROTATION, 0) + 6) % 12;
-                ItemContainerContents container = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-                if (rotation < container.getSlots()) {
-                    ItemStack slotStack = container.getStackInSlot(rotation);
-                    if (!slotStack.isEmpty()) {
+            int rotation = (stack.getOrDefault(InitDataComponents.ROTATION, 0) + 6) % 12;
+            ItemContainerContents container = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+            if (rotation < container.getSlots()) {
+                ItemStack slotStack = container.getStackInSlot(rotation);
+                if (!slotStack.isEmpty()) {
+                    if (level.isClientSide()) {
+                        level.playLocalSound(pos, SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.UI, 0.25F, 1.0F, false);
+                    } else {
                         ItemStack toDrop = slotStack.copyWithCount(1);
                         NonNullList<ItemStack> items = NonNullList.withSize(container.getSlots(), ItemStack.EMPTY);
                         container.copyInto(items);

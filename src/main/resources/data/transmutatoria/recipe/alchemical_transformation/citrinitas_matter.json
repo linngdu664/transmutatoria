@@ -1,7 +1,7 @@
 {
   "type": "transmutatoria:alchemical_transformation",
-  "input_items": "transmutatoria:albedo_essence",
-  "output": "transmutatoria:citrinitas_essence",
+  "input_items": "transmutatoria:albedo_matter",
+  "output": "transmutatoria:citrinitas_matter",
   "level": {
     "type": "transmutatoria:fixed",
     "min": 12,

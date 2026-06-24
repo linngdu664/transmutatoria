@@ -119,10 +119,10 @@ public class InitItems {
 
     // ================= [ 源质与贤者之石 ] =================
     public static DeferredItem<Item> PRIMA_MATERIA = ITEMS.registerSimpleItem("prima_materia");
-    public static DeferredItem<Item> NIGREDO_ESSENCE = ITEMS.registerSimpleItem("nigredo_essence");
-    public static DeferredItem<Item> ALBEDO_ESSENCE = ITEMS.registerSimpleItem("albedo_essence");
-    public static DeferredItem<Item> CITRINITAS_ESSENCE = ITEMS.registerSimpleItem("citrinitas_essence");
-    public static DeferredItem<Item> RUBEDO_ESSENCE = ITEMS.registerSimpleItem("rubedo_essence");
+    public static DeferredItem<Item> NIGREDO_MATTER = ITEMS.registerSimpleItem("nigredo_matter");
+    public static DeferredItem<Item> ALBEDO_MATTER = ITEMS.registerSimpleItem("albedo_matter");
+    public static DeferredItem<Item> CITRINITAS_MATTER = ITEMS.registerSimpleItem("citrinitas_matter");
+    public static DeferredItem<Item> RUBEDO_MATTER = ITEMS.registerSimpleItem("rubedo_matter");
     public static DeferredItem<Item> PHILOSOPHERS_STONE = ITEMS.register("philosophers_stone", PhilosophersStoneItem::new);
 
     public static DeferredItem<Item> EMERALD_TABLET = ITEMS.register("emerald_tablet", EmeraldTabletItem::new);
@@ -239,10 +239,10 @@ public class InitItems {
 
                 // 源质
                 output.accept(new ItemStack(PRIMA_MATERIA.get()));
-                output.accept(new ItemStack(NIGREDO_ESSENCE.get()));
-                output.accept(new ItemStack(ALBEDO_ESSENCE.get()));
-                output.accept(new ItemStack(CITRINITAS_ESSENCE.get()));
-                output.accept(new ItemStack(RUBEDO_ESSENCE.get()));
+                output.accept(new ItemStack(NIGREDO_MATTER.get()));
+                output.accept(new ItemStack(ALBEDO_MATTER.get()));
+                output.accept(new ItemStack(CITRINITAS_MATTER.get()));
+                output.accept(new ItemStack(RUBEDO_MATTER.get()));
                 output.accept(new ItemStack(PHILOSOPHERS_STONE.get()));
 
                 output.accept(new ItemStack(EMERALD_TABLET.get()));

@@ -1,7 +1,7 @@
 {
   "type": "transmutatoria:alchemical_transformation",
-  "input_items": "transmutatoria:citrinitas_essence",
-  "output": "transmutatoria:rubedo_essence",
+  "input_items": "transmutatoria:citrinitas_matter",
+  "output": "transmutatoria:rubedo_matter",
   "one_time": true,
   "level": {
     "type": "transmutatoria:fixed",

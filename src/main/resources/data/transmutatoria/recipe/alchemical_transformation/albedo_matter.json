@@ -1,7 +1,7 @@
 {
   "type": "transmutatoria:alchemical_transformation",
-  "input_items": "transmutatoria:nigredo_essence",
-  "output": "transmutatoria:albedo_essence",
+  "input_items": "transmutatoria:nigredo_matter",
+  "output": "transmutatoria:albedo_matter",
   "level": {
     "type": "transmutatoria:fixed",
     "min": 6,

@@ -17,9 +17,11 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.List;
@@ -35,7 +37,10 @@ public final class CrucibleCommonHudRenderer {
 
         Minecraft mc = Minecraft.getInstance();
         Window window = mc.getWindow();
-        state.crucibleSlotAnimation().update(crucible, delta);
+        ItemStack catalyst = crucible.getCatalyst();
+        List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
+        int reactionSlotCount = getReactionSlotCount(catalyst, alchemySlots);
+        state.crucibleSlotAnimation().update(crucible, delta, reactionSlotCount);
 
         if (state.hudIntro().value() < 0.995f) {
             int sw = window.getGuiScaledWidth();
@@ -45,9 +50,6 @@ public final class CrucibleCommonHudRenderer {
             guiGraphics.pose().scale(state.hudIntro().value(), state.hudIntro().value());
             guiGraphics.pose().translate(-sw / 2f, -sh / 2f);
         }
-
-        ItemStack catalyst = crucible.getCatalyst();
-        List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
 
         V2I stripCenter = PosUtil.v2IRatio(window, 0.05f, 0.5f);
         if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
@@ -126,12 +128,42 @@ public final class CrucibleCommonHudRenderer {
         } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
             background = Textures.ALCHEMY_ARRAY_6;
         } else if (catalyst.getItem() instanceof TransmutationEquationScrollItem) {
-            background = Textures.ALCHEMY_ARRAY_5;
+            background = isPhilosophersStoneRecipe(catalyst) ? Textures.ALCHEMY_ARRAY_3 : Textures.ALCHEMY_ARRAY_5;
         } else if (catalyst.getItem() instanceof TransmutationSigilScrollItem) {
             background = Textures.ALCHEMY_ARRAY_7;
         } else {
             return;
         }
         background.renderRatio(guiGraphics, window, 0.5f, 0.5f);
+    }
+
+    private static boolean isPhilosophersStoneRecipe(ItemStack catalyst) {
+        ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+        if (container.getSlots() < 2) {
+            return false;
+        }
+
+        ItemStack input = container.getStackInSlot(0);
+        ItemStack output = container.getStackInSlot(1);
+        return input.is(InitItems.PRIMA_MATERIA) && output.is(InitItems.NIGREDO_MATTER)
+                || input.is(InitItems.NIGREDO_MATTER) && output.is(InitItems.ALBEDO_MATTER)
+                || input.is(InitItems.ALBEDO_MATTER) && output.is(InitItems.CITRINITAS_MATTER)
+                || input.is(InitItems.CITRINITAS_MATTER) && output.is(InitItems.RUBEDO_MATTER);
+    }
+
+    private static int getReactionSlotCount(ItemStack catalyst, List<AbstractAlchemySlot> alchemySlots) {
+        if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
+            return essenceMetalItem.getEssenceMetal().getRestrainsAndDoubleRestrains().size();
+        }
+        if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
+            return 2;
+        }
+        if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
+            return 24;
+        }
+        if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
+            return alchemySlots.size();
+        }
+        return 0;
     }
 }

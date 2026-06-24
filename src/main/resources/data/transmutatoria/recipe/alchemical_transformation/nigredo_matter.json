@@ -1,7 +1,7 @@
 {
   "type": "transmutatoria:alchemical_transformation",
   "input_items": "transmutatoria:prima_materia",
-  "output": "transmutatoria:nigredo_essence",
+  "output": "transmutatoria:nigredo_matter",
   "level": {
     "type": "transmutatoria:fixed",
     "min": 3,

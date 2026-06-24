@@ -30,6 +30,8 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
@@ -403,6 +405,9 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         } else {
             itemStack.setCount(itemStack.getCount() - 1);
         }
+        level.playSound(null, getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5,
+                SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F,
+                (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 1.4F + 2.0F);
     }
 
     private void setAndCondSyncTargetTimer(int targetTimer, TransactionContext txContext) {
@@ -431,6 +436,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         if (polarity != 0) {
             polarity += polarity < 0 ? 1 : -1;
             PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetPolarityPayload(getBlockPos(), polarity));
+            level.playSound(null, getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5,
+                    SoundEvents.END_PORTAL_FRAME_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
             setChanged();
         }
     }
@@ -589,6 +596,10 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             // 先重置 timer，否则 waterHandler 可能会多发一个包，虽然无伤大雅
             setAndSyncReset(true);
             PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlotsUpdate));
+            if (hasAnyOutput()) {
+                level.playSound(null, getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5,
+                        SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
             // 消耗水
             try (var tx = Transaction.openRoot()) {
                 waterHandler.extract(0, FluidResource.of(Fluids.WATER), WATER_PER_REACTION, tx);
@@ -866,21 +877,12 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     }
 
     public void serverScrollSelectedSlot(boolean isIncrease) {
-        ItemStack catalyst = getCatalyst();
-        if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
-            setAndSyncSelectedSlot(selectedSlot == 0 ? 1 : 0);
-            setChanged();
-        } else if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
-            int size = essenceMetalItem.getEssenceMetal().getRestrainsAndDoubleRestrains().size();
+        int size = getRequiredEssenceCount();
+        if (size > 1) {
             setAndSyncSelectedSlot(Math.floorMod(selectedSlot + (isIncrease ? 1 : -1), size));
+            level.playSound(null, getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5,
+                    SoundEvents.STONE_PRESSURE_PLATE_CLICK_ON, SoundSource.BLOCKS, 0.5F, 0.6F);
             setChanged();
-        } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
-            List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
-            if (!alchemySlots.isEmpty()) {
-                int size = alchemySlots.size();
-                setAndSyncSelectedSlot(Math.floorMod(selectedSlot + (isIncrease ? 1 : -1), size));
-                setChanged();
-            }
         }
     }
 
