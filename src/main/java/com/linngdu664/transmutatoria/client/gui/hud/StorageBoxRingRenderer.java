@@ -8,6 +8,7 @@ import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -16,15 +17,12 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+import org.joml.Matrix3x2fStack;
 
 public final class StorageBoxRingRenderer {
-    private static final StorageBoxHudStyle STYLE = new StorageBoxHudStyle(
-            Textures.SIMPLE_FRAME.height(),
-            0.4f,
-            0.5f,
-            1.3f,
-            0xc0
-    );
+    private static final float SLOT_MIN_SCALE = 0.5f;
+    private static final float SLOT_MAX_SCALE = 1.25f;
+    private static final int SLOT_MAX_OVERLAY_ALPHA = 0xc0;
 
     private StorageBoxRingRenderer() {
     }
@@ -37,15 +35,16 @@ public final class StorageBoxRingRenderer {
         storageBoxExpansion.moveTo(mc.hasAltDown() ? 1.0f : 0.0f, delta, 0.005f);
         float expansion = storageBoxExpansion.value();
 
-        int screenW = mc.getWindow().getGuiScaledWidth();
-        int screenH = mc.getWindow().getGuiScaledHeight();
+        Window window = mc.getWindow();
+        int screenW = window.getGuiScaledWidth();
+        int screenH = window.getGuiScaledHeight();
 
         float centerX = screenW * 0.5f;
         float collapsedCenterY = screenH * 0.1f;
         float expandedCenterY = screenH * 0.5f;
-        int frameSize = STYLE.frameSize();
-        float desiredRadius = screenW * 0.5f * STYLE.radiusRate();
-        float edgePadding = frameSize * STYLE.maxScale() * 0.5f;
+        float desiredRadius = screenH * 0.4f;
+        int frameSize = Textures.SIMPLE_FRAME.height();
+        float edgePadding = frameSize * SLOT_MAX_SCALE * 0.5f;
         float radius = Math.min(desiredRadius, Math.max(0.0f, expandedCenterY - edgePadding));
 
         ItemContainerContents contents = boxStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
@@ -66,8 +65,8 @@ public final class StorageBoxRingRenderer {
             float expandedSlotY = expandedCenterY - radius * Mth.sin(angle);
             int slotY = Math.round(Mth.lerp(expansion, collapsedCenterY, expandedSlotY));
             slotXYs[i] = ScreenPos.pack(slotX, slotY);
-            float perspectiveScale = STYLE.minScale() + (STYLE.maxScale() - STYLE.minScale()) * depths[i];
-            scales[i] = Mth.lerp(expansion, perspectiveScale, STYLE.maxScale());
+            float perspectiveScale = SLOT_MIN_SCALE + (SLOT_MAX_SCALE - SLOT_MIN_SCALE) * depths[i];
+            scales[i] = i != selectedSlot ? Mth.lerp(expansion, perspectiveScale, 1.0f) : perspectiveScale;
         }
 
         int centerIdx = Math.floorMod(Math.round(smoothRotation), 12);
@@ -80,14 +79,16 @@ public final class StorageBoxRingRenderer {
         }
         renderOrder[ri] = Math.floorMod(centerIdx + 6, 12);
 
+        Matrix3x2fStack pose = guiGraphics.pose();
+
         for (int idx = 0; idx < 12; idx++) {
             int i = renderOrder[idx];
             long packed = slotXYs[i];
             float scale = scales[i];
 
-            guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(ScreenPos.unpackX(packed), ScreenPos.unpackY(packed));
-            guiGraphics.pose().scale(scale, scale);
+            pose.pushMatrix();
+            pose.translate(ScreenPos.unpackX(packed), ScreenPos.unpackY(packed));
+            pose.scale(scale, scale);
 
             TextureRenderable relationBorder = getRelationBorder(selectedEssence, EssenceMetal.values()[i]);
             if (relationBorder != null && expansion > 0.005f) {
@@ -107,8 +108,8 @@ public final class StorageBoxRingRenderer {
                 guiGraphics.itemDecorations(mc.font, stack, -8, -8);
             }
 
-            int collapsedMaskAlpha = Math.round(STYLE.maxOverlayAlpha() * (1.0f - depths[i]));
-            int expandedMaskAlpha = i != selectedSlot && relationBorder == null ? STYLE.maxOverlayAlpha() : 0;
+            int collapsedMaskAlpha = Math.round(SLOT_MAX_OVERLAY_ALPHA * (1.0f - depths[i]));
+            int expandedMaskAlpha = i != selectedSlot && relationBorder == null ? SLOT_MAX_OVERLAY_ALPHA : 0;
             int maskAlpha = Math.round(Mth.lerp(expansion, collapsedMaskAlpha, expandedMaskAlpha));
             if (maskAlpha > 0) {
                 Textures.SIMPLE_FRAME_MASK.render(
@@ -119,8 +120,10 @@ public final class StorageBoxRingRenderer {
                 );
             }
 
-            guiGraphics.pose().popMatrix();
+            pose.popMatrix();
         }
+
+        Textures.STORAGE_BOX_INSERT_ARROW.render(guiGraphics, (int) (centerX - Textures.STORAGE_BOX_INSERT_ARROW.width() * 0.5f), (int) (collapsedCenterY + 16));
     }
 
     private static TextureRenderable getRelationBorder(EssenceMetal selected, EssenceMetal other) {
@@ -134,8 +137,5 @@ public final class StorageBoxRingRenderer {
             case SAME -> Textures.STORAGE_BOX_SAME_BORDER;
             case NEUTRAL -> null;
         };
-    }
-
-    private record StorageBoxHudStyle(int frameSize, float radiusRate, float minScale, float maxScale, int maxOverlayAlpha) {
     }
 }

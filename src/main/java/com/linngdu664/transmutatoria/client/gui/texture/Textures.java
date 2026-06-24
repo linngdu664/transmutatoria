@@ -30,6 +30,7 @@ public class Textures {
     public static final GuiSprite SLOT_SELECTED = new GuiSprite("hud/slot_selected", 29, 29);
     public static final GuiSprite SIMPLE_FRAME = new GuiSprite("hud/simple_frame", 24, 24);
     public static final GuiSprite SIMPLE_FRAME_MASK = new GuiSprite("hud/simple_frame_mask", 24, 24);
+    public static final GuiSprite STORAGE_BOX_INSERT_ARROW = new GuiSprite("hud/storage_box_insert_arrow", 16, 10);
     public static final GuiSprite STORAGE_BOX_RESTRAINED_BORDER = new GuiSprite("hud/storage_box_restrained_border", 26, 26);
     public static final GuiSprite STORAGE_BOX_RESTRAINING_BORDER = new GuiSprite("hud/storage_box_restraining_border", 26, 26);
     public static final GuiSprite STORAGE_BOX_SYMBIOSIS_BORDER = new GuiSprite("hud/storage_box_symbiosis_border", 26, 26);
@@ -41,7 +42,6 @@ public class Textures {
     public static final GuiSprite DASHBOARD_BG = new GuiSprite("hud/dashboard_bg", 80, 80);
     public static final GuiSprite DASHBOARD_BG_POINTER = new GuiSprite("hud/dashboard_bg_pointer", 83, 5);
     public static final GuiSprite DASHBOARD_BG_POINTER_FLAG = new GuiSprite("hud/dashboard_bg_pointer_flag", 83, 5);
-//    public static final GuiSprite DASHBOARD_HOURGLASS_BG = new GuiSprite("hud/dashboard_hourglass_bg", 80, 80);
     public static final GuiSprite DASHBOARD_HOURGLASS_DOWN = new GuiSprite("hud/dashboard_hourglass_down", 14, 19);
     public static final GuiSprite DASHBOARD_HOURGLASS_UP = new GuiSprite("hud/dashboard_hourglass_up", 14, 19);
     public static final GuiSprite DURABILITY_STRIP = new GuiSprite("hud/durability_strip", 23, 181);
@@ -105,14 +105,6 @@ public class Textures {
         ALCHEMY_ARRAY_1, ALCHEMY_ARRAY_2, ALCHEMY_ARRAY_3, ALCHEMY_ARRAY_4,
         ALCHEMY_ARRAY_5, ALCHEMY_ARRAY_6, ALCHEMY_ARRAY_7, ALCHEMY_ARRAY_8
     };
-
-//    public static final GuiSubSprite[] ROMAN_NUMBERS = new GuiSubSprite[24];
-//    static {
-//        GuiSprite roman124 = new GuiSprite("hud/roman1-24", 13, 192);
-//        for (int i = 0; i < ROMAN_NUMBERS.length; i++) {
-//            ROMAN_NUMBERS[i] = new GuiSubSprite(roman124, 0, i * 8, 13, 8);
-//        }
-//    }
 
 
     public static final GuiSprite EMERALD_TABLET_ESSENCE_NODE = new GuiSprite("tablet/essence_node", 28, 28);
