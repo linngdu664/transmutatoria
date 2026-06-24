@@ -75,11 +75,11 @@
   "item.transmutatoria.mercurial_matrix": "汞化基质",
   "item.transmutatoria.sulfuric_matrix": "硫化基质",
 
-  "item.transmutatoria.prima_materia": "第一原质",
-  "item.transmutatoria.nigredo_essence": "黑化源质",
-  "item.transmutatoria.albedo_essence": "白化源质",
-  "item.transmutatoria.citrinitas_essence": "黄化源质",
-  "item.transmutatoria.rubedo_essence": "红化源质",
+  "item.transmutatoria.prima_materia": "原初质料",
+  "item.transmutatoria.nigredo_matter": "黑化质料",
+  "item.transmutatoria.albedo_matter": "白化质料",
+  "item.transmutatoria.citrinitas_matter": "黄化质料",
+  "item.transmutatoria.rubedo_matter": "赤化质料",
   "item.transmutatoria.philosophers_stone": "贤者之石",
 
   "item.transmutatoria.emerald_tablet": "翠绿石板",

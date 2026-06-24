@@ -145,10 +145,10 @@ public final class CrucibleCommonHudRenderer {
 
         ItemStack input = container.getStackInSlot(0);
         ItemStack output = container.getStackInSlot(1);
-        return input.is(InitItems.PRIMA_MATERIA) && output.is(InitItems.NIGREDO_ESSENCE)
-                || input.is(InitItems.NIGREDO_ESSENCE) && output.is(InitItems.ALBEDO_ESSENCE)
-                || input.is(InitItems.ALBEDO_ESSENCE) && output.is(InitItems.CITRINITAS_ESSENCE)
-                || input.is(InitItems.CITRINITAS_ESSENCE) && output.is(InitItems.RUBEDO_ESSENCE);
+        return input.is(InitItems.PRIMA_MATERIA) && output.is(InitItems.NIGREDO_MATTER)
+                || input.is(InitItems.NIGREDO_MATTER) && output.is(InitItems.ALBEDO_MATTER)
+                || input.is(InitItems.ALBEDO_MATTER) && output.is(InitItems.CITRINITAS_MATTER)
+                || input.is(InitItems.CITRINITAS_MATTER) && output.is(InitItems.RUBEDO_MATTER);
     }
 
     private static int getReactionSlotCount(ItemStack catalyst, List<AbstractAlchemySlot> alchemySlots) {
