@@ -125,9 +125,14 @@ public final class StorageBoxRingRenderer {
 
     private static TextureRenderable getRelationBorder(EssenceMetal selected, EssenceMetal other) {
         return switch (selected.getRelationTo(other)) {
-            case RESTRAIN, DOUBLE_RESTRAIN, MUTUAL_RESTRAINED -> Textures.STORAGE_BOX_RESTRAINED_BORDER;
-            case BE_RESTRAINED, DOUBLE_BE_RESTRAINED -> Textures.STORAGE_BOX_RESTRAINING_BORDER;
-            case SAME, SYMBIOSIS, NEUTRAL -> null;
+            case RESTRAIN -> Textures.STORAGE_BOX_RESTRAINED_BORDER;
+            case BE_RESTRAINED -> Textures.STORAGE_BOX_RESTRAINING_BORDER;
+            case SYMBIOSIS -> Textures.STORAGE_BOX_SYMBIOSIS_BORDER;
+            case MUTUAL_RESTRAINED -> Textures.STORAGE_BOX_MUTUAL_RESTRAINED_BORDER;
+            case DOUBLE_RESTRAIN -> Textures.STORAGE_BOX_DOUBLE_RESTRAINED_BORDER;
+            case DOUBLE_BE_RESTRAINED -> Textures.STORAGE_BOX_DOUBLE_RESTRAINING_BORDER;
+            case SAME -> Textures.STORAGE_BOX_SAME_BORDER;
+            case NEUTRAL -> null;
         };
     }
 

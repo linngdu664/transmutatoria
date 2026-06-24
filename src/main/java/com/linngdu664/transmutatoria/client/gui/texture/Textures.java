@@ -32,6 +32,11 @@ public class Textures {
     public static final GuiSprite SIMPLE_FRAME_MASK = new GuiSprite("hud/simple_frame_mask", 24, 24);
     public static final GuiSprite STORAGE_BOX_RESTRAINED_BORDER = new GuiSprite("hud/storage_box_restrained_border", 26, 26);
     public static final GuiSprite STORAGE_BOX_RESTRAINING_BORDER = new GuiSprite("hud/storage_box_restraining_border", 26, 26);
+    public static final GuiSprite STORAGE_BOX_SYMBIOSIS_BORDER = new GuiSprite("hud/storage_box_symbiosis_border", 26, 26);
+    public static final GuiSprite STORAGE_BOX_MUTUAL_RESTRAINED_BORDER = new GuiSprite("hud/storage_box_mutual_restrained_border", 26, 26);
+    public static final GuiSprite STORAGE_BOX_DOUBLE_RESTRAINED_BORDER = new GuiSprite("hud/storage_box_double_restrained_border", 26, 26);
+    public static final GuiSprite STORAGE_BOX_DOUBLE_RESTRAINING_BORDER = new GuiSprite("hud/storage_box_double_restraining_border", 26, 26);
+    public static final GuiSprite STORAGE_BOX_SAME_BORDER = new GuiSprite("hud/storage_box_same_border", 26, 26);
 
     public static final GuiSprite DASHBOARD_BG = new GuiSprite("hud/dashboard_bg", 80, 80);
     public static final GuiSprite DASHBOARD_BG_POINTER = new GuiSprite("hud/dashboard_bg_pointer", 83, 5);
