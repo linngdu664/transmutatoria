@@ -34,8 +34,8 @@ public final class EssenceSlotRenderer {
 
     static long[] calcPosEssenceMetal(Window window, int size) {
         long[] xys = new long[size];
-        int x = PosUtil.widthFrameCenter(window, Textures.NORMAL_SLOT.width()) - 10 * (size - 1);
-        int y = PosUtil.heightFrameRatio(window, Textures.NORMAL_SLOT.height(), 0.5f);
+        int x = PosUtil.widthCenter(window, Textures.NORMAL_SLOT.width()) - 10 * (size - 1);
+        int y = PosUtil.heightCenter(window, Textures.NORMAL_SLOT.height()) - 6;
         for (int i = 0; i < size; i++) {
             xys[i] = ScreenPos.pack(x, y);
             x += 20;
@@ -45,8 +45,8 @@ public final class EssenceSlotRenderer {
     }
 
     static long[] calcPosCrystal(Window window) {
-        int x = PosUtil.widthFrameCenter(window, Textures.NORMAL_SLOT.width());
-        int y = PosUtil.heightFrameCenter(window, Textures.NORMAL_SLOT.height());
+        int x = PosUtil.widthCenter(window, Textures.NORMAL_SLOT.width());
+        int y = PosUtil.heightCenter(window, Textures.NORMAL_SLOT.height());
         return new long[]{ScreenPos.pack(x, y - 12), ScreenPos.pack(x, y + 12)};
     }
 
@@ -208,18 +208,6 @@ public final class EssenceSlotRenderer {
         guiGraphics.pose().popMatrix();
     }
 
-    private static void drawSlot(GuiGraphicsExtractor guiGraphics, int x, int y, TextureRenderable texture) {
-        texture.render(guiGraphics, x, y);
-    }
-
-    private static void drawItem(GuiGraphicsExtractor guiGraphics, int x, int y, Object itemDraw) {
-        if (itemDraw instanceof ItemStack itemStack) {
-            guiGraphics.item(itemStack, x + 6, y + 5);
-        } else if (itemDraw instanceof TextureRenderable texture) {
-            texture.render(guiGraphics, VIRTUAL_ITEM, x + 6, y + 5);
-        }
-    }
-
     private static void drawPulsedSlot(
             GuiGraphicsExtractor guiGraphics,
             long[] xys,
@@ -244,6 +232,18 @@ public final class EssenceSlotRenderer {
         drawSlot(guiGraphics, -Textures.NORMAL_SLOT.width() / 2, -Textures.NORMAL_SLOT.height() / 2, textureGetter.get(pulsedSlotIndex));
         drawItem(guiGraphics, -Textures.NORMAL_SLOT.width() / 2, -Textures.NORMAL_SLOT.height() / 2, itemGetter.get(pulsedSlotIndex));
         guiGraphics.pose().popMatrix();
+    }
+
+    private static void drawSlot(GuiGraphicsExtractor guiGraphics, int x, int y, TextureRenderable texture) {
+        texture.render(guiGraphics, x, y);
+    }
+
+    private static void drawItem(GuiGraphicsExtractor guiGraphics, int x, int y, Object itemDraw) {
+        if (itemDraw instanceof ItemStack itemStack) {
+            guiGraphics.item(itemStack, x + 6, y + 5);
+        } else if (itemDraw instanceof TextureRenderable texture) {
+            texture.render(guiGraphics, VIRTUAL_ITEM, x + 6, y + 5);
+        }
     }
 
     private static void drawSelectedSlot(GuiGraphicsExtractor guiGraphics, long[] xys, TransmutationCrucibleBlockEntity crucible, DeltaTracker delta, SmoothPoint selectedSlotHighlight, CrucibleSlotAnimation slotAnimation) {

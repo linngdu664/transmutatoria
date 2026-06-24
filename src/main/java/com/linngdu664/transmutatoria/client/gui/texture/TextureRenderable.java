@@ -44,7 +44,7 @@ public interface TextureRenderable {
     }
 
     default V2I renderVerticalCenter(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, int x) {
-        int y = PosUtil.heightFrameCenter(window, height());
+        int y = PosUtil.heightCenter(window, height());
         render(guiGraphics, option, x, y);
         return new V2I(x, y);
     }
@@ -54,7 +54,7 @@ public interface TextureRenderable {
     }
 
     default V2I renderHorizontalCenter(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, int y) {
-        int x = PosUtil.widthFrameCenter(window, width());
+        int x = PosUtil.widthCenter(window, width());
         render(guiGraphics, option, x, y);
         return new V2I(x, y);
     }
@@ -72,8 +72,8 @@ public interface TextureRenderable {
     }
 
     default V2I renderRatio(GuiGraphicsExtractor guiGraphics, TextureOption option, Window window, float widthRatio, float heightRatio, int xOffset, int yOffset) {
-        int x = PosUtil.widthFrameRatio(window, width(), widthRatio) + xOffset;
-        int y = PosUtil.heightFrameRatio(window, height(), heightRatio) + yOffset;
+        int x = PosUtil.widthRatio(window, width(), widthRatio) + xOffset;
+        int y = PosUtil.heightRatio(window, height(), heightRatio) + yOffset;
         render(guiGraphics, option, x, y);
         return new V2I(x, y);
     }
