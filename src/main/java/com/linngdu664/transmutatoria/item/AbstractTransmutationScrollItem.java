@@ -3,12 +3,15 @@ package com.linngdu664.transmutatoria.item;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.inventory.AbstractTransmutationScrollMenu;
 import com.linngdu664.transmutatoria.item.component.ExpireInfo;
+import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -18,11 +21,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class AbstractTransmutationScrollItem extends Item {
     protected AbstractTransmutationScrollItem(Identifier id, ExpireInfo expireInfo, int durability) {
@@ -127,6 +133,14 @@ public abstract class AbstractTransmutationScrollItem extends Item {
 
         // 当前时间超出过期时间，正常计算
         return (int) ((clockTime - currentNextExpire) / expireInfo.period()) + 1;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        RecipeConditions conditions = stack.get(InitDataComponents.RECIPE_CONDITIONS);
+        if (conditions != null && conditions.oneTime()) {
+            tooltipAdder.accept(Component.translatable("tooltip.transmutatoria.scroll.one_time").withStyle(ChatFormatting.RED));
+        }
     }
 
     @Override

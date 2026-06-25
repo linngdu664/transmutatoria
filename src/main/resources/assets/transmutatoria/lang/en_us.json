@@ -205,5 +205,6 @@
   "gui.transmutatoria.recipe_generator.saved_related_warning": "Note: another related recipe exists; the generated recipe was assigned higher priority.",
   "gui.transmutatoria.recipe_generator.error.invalid_tag": "The selected item tag is invalid.",
   "gui.transmutatoria.recipe_generator.error.save": "Failed to generate alchemy recipe: %s",
-  "gui.transmutatoria.recipe_generator.error.reload": "JSON was written to %s, but datapack reload failed. Check the log."
+  "gui.transmutatoria.recipe_generator.error.reload": "JSON was written to %s, but datapack reload failed. Check the log.",
+  "tooltip.transmutatoria.scroll.one_time": "One-time scroll: consumed after a successful reaction"
 }

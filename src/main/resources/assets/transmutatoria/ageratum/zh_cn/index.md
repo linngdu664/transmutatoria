@@ -9,31 +9,6 @@ items: "transmutatoria:liber_transmutationis_ars_transmutatoria"
 
 ![](transmutatoria:item/liber_transmutationis_ars_transmutatoria.png)
 
-*真实不虚，永不说谎，必然带来真理；*
-
-*下如同上，上如同下，依此成全太一的奇迹；*
-
-*万物本是太一，借由分化从太一创造出来；*
-
-*太阳为父，月亮为母，从风孕育，从地养护；*
-
-*世间一切完美之源就在此处，其能力从地上获取；*
-
-*分土于火，萃精于糙，谨慎行之；*
-
-*从地升天，又从天而降，获得其上、其下的能力；*
-
-*如此可得世界的荣耀，远离黑暗蒙昧；*
-
-*此为万力之王，摧坚拔韧；*
-
-*世界即如此创造；依此可达奇迹；*
-
-*我被称为三重伟大的赫尔墨斯，因我拥有世界三重的智慧；*
-
-*这就是我所说的伟大工作;*
-
-
 
 *真实不虚，永不说谎，必然带来真理；*
 
@@ -51,27 +26,27 @@ items: "transmutatoria:liber_transmutationis_ars_transmutatoria"
 
 当嬗变结晶在混沌炼金锅里被末影之眼观测到后，即可显现其原本的样子：源质金属。
 
-## [源质基础]()
+## [源质基础](1_essence/index.md)
 
 基础的源质合成与源质关系。
 
-## [基础炼金]()
+## [基础炼金](2_basic_alchemy/index.md)
 
 学徒炼金术士需要掌握的基础炼金术知识，包括如何使用炼金锅，卷轴和储物盒。
 
-## [炼金复制与炼金转化]()
+## [炼金复制与炼金转化](3_replication_and_transformation/index.md)
 
 使用源质合成万物。
 
-## [源质转化与反应]()
+## [源质转化与反应](4_essence_conversion_and_reaction/index.md)
 
 源质之间的相互转化与手动反应。
 
-## [高级炼金]()
+## [高级炼金](5_advanced/index.md)
 
 高级炼金术士需要掌握的知识。
 
-## [伟大之作]()
+## [伟大之作](6_great_work/index.md)
 
 传说中贤者之石的炼制方案与使用方法。
 
