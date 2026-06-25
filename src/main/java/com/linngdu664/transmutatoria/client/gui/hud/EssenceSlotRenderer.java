@@ -100,8 +100,7 @@ public final class EssenceSlotRenderer {
         for (AbstractAlchemySlot alchemySlot : alchemySlots) {
             int x = initX + 20 * (alchemySlot.getX() - minX);
             int y = initY + 12 * (alchemySlot.getY() - minY);
-            xys[i] = ScreenPos.pack(x, y);
-            i++;
+            xys[i++] = ScreenPos.pack(x, y);
         }
         return xys;
     }

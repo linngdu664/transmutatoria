@@ -110,11 +110,11 @@
   "gui.transmutatoria.scroll_stability.near_collapse": "濒临崩解",
 
   "gui.transmutatoria.crucible_hint.water.title": "炼金锅缺水",
-  "gui.transmutatoria.crucible_hint.water.description": "炼金锅至少需要%s mB水，之后才能选择源质槽位。",
+  "gui.transmutatoria.crucible_hint.water.description": "炼金锅完成此反应至少需要%s mB水。",
   "gui.transmutatoria.crucible_hint.catalyst.title": "等待催化剂",
-  "gui.transmutatoria.crucible_hint.catalyst.description": "请先向炼金锅投入催化剂，之后才能选择源质槽位。",
+  "gui.transmutatoria.crucible_hint.catalyst.description": "请先向炼金锅投入催化剂。",
   "gui.transmutatoria.crucible_hint.input.title": "等待输入物品",
-  "gui.transmutatoria.crucible_hint.input.description": "请先投入与当前催化剂匹配的输入物品，之后才能选择源质槽位。",
+  "gui.transmutatoria.crucible_hint.input.description": "请先投入与当前催化剂匹配的输入物品。",
 
   "gui.transmutatoria.alchemy_slot.normal": "普通槽位",
   "gui.transmutatoria.alchemy_slot.deterioration": "劣化槽位",
@@ -179,6 +179,7 @@
   "jei.transmutatoria.info.polarity.tooltip": "允许的锅极性：%s 至 %s",
   "jei.transmutatoria.info.one_time.tooltip": "一次性配方：反应后会消耗卷轴",
   "jei.transmutatoria.info.all_essence_metals.tooltip": "需求数量由炼金等级决定，种类未知",
+
   "gui.transmutatoria.recipe_generator.replication": "炼金复制配方生成器",
   "gui.transmutatoria.recipe_generator.transformation": "炼金转化配方生成器",
   "gui.transmutatoria.recipe_generator.input": "输入样品",

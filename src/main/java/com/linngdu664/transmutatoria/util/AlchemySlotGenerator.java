@@ -15,8 +15,14 @@ public class AlchemySlotGenerator {
 
         for (V2I pos : positions) {
             SlotType slotType = pickSlotType(positions.size(), random);
-            slots.add(AbstractAlchemySlot.create(slotType, allMetals[random.nextInt(allMetals.length)],
-                    pos.x(), pos.y(), shouldSetShowType(slotType, positions.size(), random)));
+            // todo 概率要在配置文件里调吗？
+            EssenceMetal metal;
+            if (random.nextFloat() <= 0.02f) {
+                metal = EssenceMetal.L;
+            } else {
+                metal = allMetals[random.nextInt(allMetals.length - 1)];
+            }
+            slots.add(AbstractAlchemySlot.create(slotType, metal, pos.x(), pos.y(), shouldSetShowType(slotType, positions.size(), random)));
         }
 
         scrollStack.set(InitDataComponents.ALCHEMY_SLOTS, slots);

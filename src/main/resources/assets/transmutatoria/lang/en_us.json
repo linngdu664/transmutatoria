@@ -110,11 +110,11 @@
   "gui.transmutatoria.scroll_stability.near_collapse": "Near Collapse",
 
   "gui.transmutatoria.crucible_hint.water.title": "Crucible Needs Water",
-  "gui.transmutatoria.crucible_hint.water.description": "The crucible needs at least %s mB of water before an essence slot can be selected.",
+  "gui.transmutatoria.crucible_hint.water.description": "The crucible needs at least %s mB of water for this reaction.",
   "gui.transmutatoria.crucible_hint.catalyst.title": "Waiting for Catalyst",
-  "gui.transmutatoria.crucible_hint.catalyst.description": "Add a catalyst to the crucible before selecting an essence slot.",
+  "gui.transmutatoria.crucible_hint.catalyst.description": "Add a catalyst to the crucible.",
   "gui.transmutatoria.crucible_hint.input.title": "Waiting for Input",
-  "gui.transmutatoria.crucible_hint.input.description": "Add an input item matching the current catalyst before selecting an essence slot.",
+  "gui.transmutatoria.crucible_hint.input.description": "Add an input item matching the current catalyst.",
 
   "gui.transmutatoria.alchemy_slot.normal": "Normal Slot",
   "gui.transmutatoria.alchemy_slot.deterioration": "Deterioration Slot",
@@ -179,6 +179,7 @@
   "jei.transmutatoria.info.polarity.tooltip": "Allowed crucible polarity: %s to %s",
   "jei.transmutatoria.info.one_time.tooltip": "One-time recipe: the scroll is consumed after the reaction",
   "jei.transmutatoria.info.all_essence_metals.tooltip": "Required quantity is determined by the alchemy level and type is unknown",
+
   "gui.transmutatoria.recipe_generator.replication": "Alchemical Replication Recipe Generator",
   "gui.transmutatoria.recipe_generator.transformation": "Alchemical Transformation Recipe Generator",
   "gui.transmutatoria.recipe_generator.input": "Input Sample",

@@ -9,9 +9,8 @@ import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.network.to_client.*;
 import com.linngdu664.transmutatoria.recipe.CrucibleRecipeManager;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
-import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
-import com.linngdu664.transmutatoria.util.AlchemyReactResult;
-import com.linngdu664.transmutatoria.util.EssenceMetal;
+import com.linngdu664.transmutatoria.util.*;
+import net.minecraft.util.Mth;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
@@ -35,7 +34,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
-import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -58,25 +56,31 @@ import java.util.*;
 
 public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private static final AABB SUCK_AABB = Block.column(16.0F, 5.0F, 16.0F).toAabbs().getFirst();
-    public static final int WATER_PER_REACTION = 20;
+    private static final int WATER_PER_ESSENCE = 15;
     private static final int ESSENCE_INPUT_SLOT_BEGIN = 0;
     private static final int ESSENCE_OUTPUT_SLOT_BEGIN = 24;
     private static final int CATALYST_SLOT = 48;
     private static final int INPUT_SLOT = 49;
     private static final int OUTPUT_SLOT = 50;
-    private static final int SLOT_COUNT = 51;
+    public static final int SLOT_COUNT = 51;
+    public static final int RENDERER_SLOT_COUNT = 27;
+    private static final int INVALID_RENDERER_SLOT = 127;
 
     // 源质输入 - 源质输出 - 催化剂 - 转化输入 - 转化输出
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
-    private IntArrayList inputOrder = new IntArrayList();
+    private int[] realSlotToRendererSlot = new int[SLOT_COUNT];
+    private IntArrayList inputOrder = new IntArrayList();   // server only
+    private int rendererSlotUsage;  // server only
     private int polarity;
     private int selectedSlot;
     private int processTimer;
     private int targetTimer;
     private int essenceInputPulseSlot = -1; // client only
     private long essenceInputPulseStartedAtMillis;  // client only
+    private CrucibleRendererSlotParas[] rendererSlotParas0;  // client only
+    private CrucibleRendererSlotParas[] rendererSlotParas1;  // client only
 
-    private record ItemsSnapshot(ItemStack[] items, int[] inputOrder, int targetTimer) {}
+    private record ItemsSnapshot(ItemStack[] items, int[] realSlotToRendererSlot, int[] inputOrder, int rendererSlotUsage, int targetTimer) {}
 
     private final SnapshotJournal<ItemsSnapshot> itemsJournal = new SnapshotJournal<>() {
         @Override
@@ -85,7 +89,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             for (int i = 0; i < SLOT_COUNT; i++) {
                 copy[i] = items.get(i).copy();
             }
-            return new ItemsSnapshot(copy, inputOrder.toIntArray(), targetTimer);
+            return new ItemsSnapshot(copy, Arrays.copyOf(realSlotToRendererSlot, realSlotToRendererSlot.length), inputOrder.toIntArray(), rendererSlotUsage, targetTimer);
         }
 
         @Override
@@ -94,7 +98,9 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             for (int i = 0; i < snapItems.length; i++) {
                 items.set(i, snapItems[i]);
             }
+            realSlotToRendererSlot = snapshot.realSlotToRendererSlot;
             inputOrder = new IntArrayList(snapshot.inputOrder());
+            rendererSlotUsage = snapshot.rendererSlotUsage;
             targetTimer = snapshot.targetTimer;
         }
 
@@ -102,11 +108,11 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         protected void onRootCommit(ItemsSnapshot snapshot) {
             // todo 疑问：onRootCommit 只在服务端被调用吗？
             if (level instanceof ServerLevel serverLevel) {
-                ArrayList<ItemStackWithSlot> changes = new ArrayList<>();
+                ArrayList<ItemStackWithTwoSlots> changes = new ArrayList<>();
                 ItemStack[] snapItems = snapshot.items;
                 for (int i = 0; i < snapItems.length; i++) {
                     if (!ItemStack.isSameItemSameComponents(items.get(i), snapItems[i])) {
-                        changes.add(new ItemStackWithSlot(i, items.get(i)));
+                        changes.add(new ItemStackWithTwoSlots(i, realSlotToRendererSlot[i], items.get(i)));
                     }
                 }
                 if (!changes.isEmpty()) {
@@ -129,7 +135,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 PacketDistributor.sendToPlayersTrackingChunk(serverLevel, getChunkPos(), new CrucibleSetWaterPayload(getBlockPos(), water));
                 if (targetTimer == 0 && !hasAnyOutput()) {
                     tryReact(null);
-                } else if (targetTimer != 0 && water < WATER_PER_REACTION) {
+                } else if (targetTimer != 0 && water < getRequiredWater()) {
                     setAndSyncReset(false);
                 }
             }
@@ -179,6 +185,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 ItemStack itemStack = resource.toStack();
                 if (canAddCatalyst(itemStack)) {
                     itemsJournal.updateSnapshots(transaction);
+                    allocateRendererSlot(CATALYST_SLOT);
                     items.set(CATALYST_SLOT, itemStack);
                     return 1;
                 }
@@ -188,6 +195,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 ItemStack itemStack = resource.toStack();
                 if (canAddInput(itemStack)) {
                     itemsJournal.updateSnapshots(transaction);
+                    allocateRendererSlot(INPUT_SLOT);
                     items.set(INPUT_SLOT, itemStack);
                     tryReact(transaction);
                     return 1;
@@ -206,6 +214,9 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             int toExtract = Math.min(amount, stack.getCount());
             itemsJournal.updateSnapshots(transaction);
             ItemStack result = ContainerHelper.removeItem(items, slot, toExtract);
+            if (stack.isEmpty()) {
+                releaseRendererSlot(slot);
+            }
             return result.getCount();
         }
     };
@@ -245,6 +256,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 ItemStack itemStack = resource.toStack();
                 if (canAddEssence(index, itemStack)) {
                     itemsJournal.updateSnapshots(transaction);
+                    allocateRendererSlot(index);
                     items.set(index, itemStack);
                     inputOrder.add(index);
                     tryReact(transaction);
@@ -263,16 +275,37 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             int toExtract = Math.min(amount, stack.getCount());
             itemsJournal.updateSnapshots(transaction);
             ItemStack result = ContainerHelper.removeItem(items, slot, toExtract);
+            if (stack.isEmpty()) {
+                releaseRendererSlot(slot);
+            }
             return result.getCount();
         }
     };
 
-    public TransmutationCrucibleBlockEntity(BlockPos pos, BlockState state) {
-        super(InitBlocks.TRANSMUTATION_CRUCIBLE_BLOCK_ENTITY.get(), pos, state);
-    }
-
     public static <T> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
-        if (level.isClientSide() || !(blockEntity instanceof TransmutationCrucibleBlockEntity crucible)) {
+        if (!(blockEntity instanceof TransmutationCrucibleBlockEntity crucible)) {
+            return;
+        }
+        if (level.isClientSide()) {
+            if (crucible.targetTimer != 0) {
+                // 转圈圈，带clamp的公转、自转、缩放
+                // todo 客户端需要再来个计时器字段（反应结束后渐变）
+                crucible.rendererSlotParas0 = crucible.rendererSlotParas1;
+                if (crucible.processTimer < crucible.targetTimer) {
+                    crucible.rendererSlotParas1 = new CrucibleRendererSlotParas[RENDERER_SLOT_COUNT];
+                    float startupPercent = crucible.processTimer >= 10 ? 1f : (float) crucible.processTimer * 0.1f;
+                    int i = 0;
+                    for (; i < 9; i++) {
+                        crucible.rendererSlotParas1[i] = crucible.rendererSlotParas0[i].tick(0.06f, 0.018f, startupPercent);
+                    }
+                    for (; i < 18; i++) {
+                        crucible.rendererSlotParas1[i] = crucible.rendererSlotParas0[i].tick(0.05f, 0.02f, startupPercent);
+                    }
+                    for (; i < RENDERER_SLOT_COUNT; i++) {
+                        crucible.rendererSlotParas1[i] = crucible.rendererSlotParas0[i].tick(0.04f, 0.022f, startupPercent);
+                    }
+                }
+            }
             return;
         }
         if (crucible.targetTimer != 0) {
@@ -289,13 +322,40 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             ItemStack itemStack = crucible.getCatalyst();
             long nextExpire = itemStack.getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE);
             int times = AbstractTransmutationScrollItem.checkAndSetExpire(level, itemStack);
-            if (times > 0) {
-                AbstractTransmutationScrollItem.changeEssence(level, itemStack, times);
-                PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, crucible.getChunkPos(), new CrucibleSetItemPayload(pos, List.of(new ItemStackWithSlot(CATALYST_SLOT, itemStack))));
+
+            if (times > 0 || nextExpire != itemStack.getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE)) {
+                if (times > 0) {
+                    AbstractTransmutationScrollItem.changeEssence(level, itemStack, times);
+                }
+                PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, crucible.getChunkPos(), new CrucibleSetItemPayload(pos, List.of(new ItemStackWithTwoSlots(CATALYST_SLOT, crucible.realSlotToRendererSlot[CATALYST_SLOT], itemStack))));
                 crucible.setChanged();
-            } else if (nextExpire != itemStack.getOrDefault(InitDataComponents.NEXT_EXPIRE, Long.MAX_VALUE)) {
-                PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, crucible.getChunkPos(), new CrucibleSetItemPayload(pos, List.of(new ItemStackWithSlot(CATALYST_SLOT, itemStack))));
-                crucible.setChanged();
+            }
+        }
+    }
+
+    public TransmutationCrucibleBlockEntity(BlockPos pos, BlockState state) {
+        super(InitBlocks.TRANSMUTATION_CRUCIBLE_BLOCK_ENTITY.get(), pos, state);
+        rendererSlotParas0 = new CrucibleRendererSlotParas[RENDERER_SLOT_COUNT];
+        rendererSlotParas1 = rendererSlotParas0;
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        if (level.isClientSide()) {
+            RandomSource random = level.getRandom();
+            float[] baseXZ = new float[]{-0.2f, 0.0f, 0.2f};
+            float[] baseY = new float[]{0.35f, 0.4f, 0.45f};
+            float[] baseR = new float[]{0.28f, 0.25f, 0.28f, 0.25f, 0.04f, 0.25f, 0.28f, 0.25f, 0.28f};
+            for (int i = 0; i < RENDERER_SLOT_COUNT; i++) {
+                rendererSlotParas0[i] = new CrucibleRendererSlotParas(
+                        baseXZ[i % 3] - 0.075f + random.nextFloat() * 0.15f,
+                        baseY[i / 9],
+                        baseXZ[i / 3 % 3] - 0.075f + random.nextFloat() * 0.15f,
+                        baseR[i % 9],
+                        -0.4f + random.nextFloat() * 0.8f,
+                        -Mth.PI + random.nextFloat() * Mth.TWO_PI
+                );
             }
         }
     }
@@ -309,6 +369,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         output.putInt("ProcessTimer", processTimer);
         output.putInt("TargetTimer", targetTimer);
         output.putIntArray("InputOrder", inputOrder.toIntArray());
+        output.putIntArray("RealSlotToRendererSlot", realSlotToRendererSlot);
+        output.putInt("RendererSlotUsage", rendererSlotUsage);
     }
 
     @Override
@@ -320,6 +382,12 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         processTimer = input.getIntOr("ProcessTimer", 0);
         targetTimer = input.getIntOr("TargetTimer", 0);
         inputOrder = new IntArrayList(input.getIntArray("InputOrder").orElse(new int[0]));
+        realSlotToRendererSlot = input.getIntArray("RealSlotToRendererSlot").orElseGet(() -> {
+            int[] arr = new int[SLOT_COUNT];
+            Arrays.fill(arr, INVALID_RENDERER_SLOT);
+            return arr;
+        });
+        rendererSlotUsage = input.getIntOr("RendererSlotUsage", 0);
     }
 
     @Override
@@ -398,7 +466,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         ItemStack itemStack = entity.getItem();
         ItemStack copy = itemStack.copyWithCount(1);
         items.set(slot, copy);
-        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(slot, copy))));
+        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithTwoSlots(slot, allocateRendererSlot(slot), copy))));
         if (itemStack.getCount() == 1) {
             entity.setItem(ItemStack.EMPTY);
             entity.discard();
@@ -522,7 +590,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     }
 
     private void tryReact(TransactionContext txContext) {
-        if (waterHandler.getAmountAsInt(0) < WATER_PER_REACTION) {
+        if (waterHandler.getAmountAsInt(0) < getRequiredWater()) {
             return;
         }
         ItemStack catalyst = getCatalyst();
@@ -571,21 +639,49 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         }
     }
 
-    private void clearInputAndSetAllOutput() {
-        ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate = new ArrayList<>();
+    public int getRequiredWater() {
         ItemStack catalyst = getCatalyst();
         if (catalyst.is(Items.ENDER_EYE)) {
-            handleEnderEyeReaction(itemStackWithSlotsUpdate);   // 嬗变分解的反应结果
-        } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
-            handleCrystalReaction(itemStackWithSlotsUpdate);    // 源质反应的反应结果
-        } else if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
-            handlePhilosophersStoneReaction(itemStackWithSlotsUpdate); // 混沌分解的反应结果
-        } else if (catalyst.getItem() instanceof EssenceMetalItem) {
-            setItemAndRecordChange(OUTPUT_SLOT, getCatalyst().copy(), itemStackWithSlotsUpdate);    // 源质融合的反应结果
-        } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
-            handleScrollReaction(itemStackWithSlotsUpdate);   // 炼金复制/炼金转化的反应结果
+            return WATER_PER_ESSENCE;
         }
-        clearInputEssencesAndRecordChange(itemStackWithSlotsUpdate);    // 无论何种反应，输入的源质都得清空
+        if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
+            ItemStack input = getInput();
+            CrucibleRecipe recipe = CrucibleRecipeManager.findMatchRep(level, input);
+            if (recipe != null) {
+                IntIntImmutablePair minMax = recipe.level().getMinMax(level, input);
+                return WATER_PER_ESSENCE * 5 * (minMax.leftInt() + minMax.rightInt());
+            }
+            return WATER_PER_ESSENCE;
+        }
+        if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
+            return WATER_PER_ESSENCE * 2;
+        }
+        if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
+            List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
+            return alchemySlots.isEmpty() ? WATER_PER_ESSENCE : WATER_PER_ESSENCE * alchemySlots.size();
+        }
+        if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
+            return WATER_PER_ESSENCE * essenceMetalItem.getEssenceMetal().getRestrainsAndDoubleRestrains().size();
+        }
+        return WATER_PER_ESSENCE;
+    }
+
+    private void clearInputAndSetAllOutput() {
+        int requiredWater = getRequiredWater();
+
+        ArrayList<ItemStackWithTwoSlots> itemStackUpdate = new ArrayList<>();
+        ItemStack catalyst = getCatalyst();
+        if (catalyst.is(Items.ENDER_EYE)) {
+            handleEnderEyeReaction(itemStackUpdate);   // 嬗变分解的反应结果
+        } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
+            handleCrystalReaction(itemStackUpdate);    // 源质反应的反应结果
+        } else if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
+            handlePhilosophersStoneReaction(itemStackUpdate); // 混沌分解的反应结果
+        } else if (catalyst.getItem() instanceof EssenceMetalItem) {
+            handleEssenceMetalReaction(itemStackUpdate);    // 源质融合的反应结果
+        } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
+            handleScrollReaction(itemStackUpdate);   // 炼金复制/炼金转化的反应结果
+        }
 
         // 检查锅的极性，超过了就爆掉
         if (polarity > 50) {
@@ -593,66 +689,106 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         } else if (polarity < -50) {
             level.setBlock(getBlockPos(), InitBlocks.ALCHEMICAL_DROSS_BLOCK.get().defaultBlockState(), 3);
         } else {
-            // 先重置 timer，否则 waterHandler 可能会多发一个包，虽然无伤大雅
-            setAndSyncReset(true);
-            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlotsUpdate));
+            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackUpdate));
             if (hasAnyOutput()) {
                 level.playSound(null, getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5,
-                        SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                        SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 0.5F, 1.0F);
             }
+            // 先重置 timer，否则 waterHandler 可能会多发一个包，虽然无伤大雅
+            setAndSyncReset(true);
             // 消耗水
             try (var tx = Transaction.openRoot()) {
-                waterHandler.extract(0, FluidResource.of(Fluids.WATER), WATER_PER_REACTION, tx);
+                waterHandler.extract(0, FluidResource.of(Fluids.WATER), requiredWater, tx);
                 tx.commit();
             }
         }
     }
 
-    // todo 概率要在配置文件里调吗？
-    private void handleEnderEyeReaction(ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate) {
+    private void handleEnderEyeReaction(ArrayList<ItemStackWithTwoSlots> updates) {
         if (getInput().is(InitItems.TRANSMUTATION_CRYSTAL)) {
+            // 清空输入
+            clearItemAndRecordChange(INPUT_SLOT, updates);
+            // 设置输出
+            int rendererSlot = allocateRendererSlot(OUTPUT_SLOT);
+            ItemStack itemStack;
             RandomSource randomSource = level.getRandom();
-            if (randomSource.nextFloat() < 0.01f) {
-                setItemAndRecordChange(OUTPUT_SLOT, InitItems.PANDEMONIUM.toStack(), itemStackWithSlotsUpdate);
+            // todo 概率要在配置文件里调吗？
+            if (randomSource.nextFloat() <= 0.01f) {
+                itemStack = InitItems.PANDEMONIUM.toStack();
             } else {
-                setItemAndRecordChange(OUTPUT_SLOT, InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(InitItems.ESSENCE_METAL_ITEMS.length - 1)].toStack(), itemStackWithSlotsUpdate);
+                itemStack = InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(InitItems.ESSENCE_METAL_ITEMS.length - 1)].toStack();
             }
-            setItemAndRecordChange(INPUT_SLOT, ItemStack.EMPTY, itemStackWithSlotsUpdate);
+            updates.add(new ItemStackWithTwoSlots(OUTPUT_SLOT, rendererSlot, itemStack));
         }
     }
 
-    private void handleCrystalReaction(ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate) {
+    private void handleCrystalReaction(ArrayList<ItemStackWithTwoSlots> updates) {
         if (items.get(ESSENCE_INPUT_SLOT_BEGIN).getItem() instanceof EssenceMetalItem essence1 && items.get(ESSENCE_INPUT_SLOT_BEGIN + 1).getItem() instanceof EssenceMetalItem essence2) {
             EssenceMetal.Relation relation = essence1.getEssenceMetal().getRelationTo(essence2.getEssenceMetal());
-            setItemAndRecordChange(ESSENCE_OUTPUT_SLOT_BEGIN, essence1.change(relation.self), itemStackWithSlotsUpdate);
-            setItemAndRecordChange(ESSENCE_OUTPUT_SLOT_BEGIN + 1, essence2.change(relation.other), itemStackWithSlotsUpdate);
+            ItemStack essence1Stack = essence1.change(relation.self);
+            ItemStack essence2Stack = essence2.change(relation.other);
+            int rendererSlot1 = realSlotToRendererSlot[ESSENCE_INPUT_SLOT_BEGIN];
+            int rendererSlot2 = realSlotToRendererSlot[ESSENCE_INPUT_SLOT_BEGIN + 1];
+
+            realSlotToRendererSlot[ESSENCE_INPUT_SLOT_BEGIN] = INVALID_RENDERER_SLOT;
+            items.set(ESSENCE_INPUT_SLOT_BEGIN, ItemStack.EMPTY);
+            updates.add(new ItemStackWithTwoSlots(ESSENCE_INPUT_SLOT_BEGIN, INVALID_RENDERER_SLOT, ItemStack.EMPTY));
+            realSlotToRendererSlot[ESSENCE_OUTPUT_SLOT_BEGIN] = rendererSlot1;
+            items.set(ESSENCE_OUTPUT_SLOT_BEGIN, essence1Stack);
+            updates.add(new ItemStackWithTwoSlots(ESSENCE_OUTPUT_SLOT_BEGIN, rendererSlot1, essence1Stack));
+
+            realSlotToRendererSlot[ESSENCE_INPUT_SLOT_BEGIN + 1] = INVALID_RENDERER_SLOT;
+            items.set(ESSENCE_INPUT_SLOT_BEGIN + 1, ItemStack.EMPTY);
+            updates.add(new ItemStackWithTwoSlots(ESSENCE_INPUT_SLOT_BEGIN + 1, INVALID_RENDERER_SLOT, ItemStack.EMPTY));
+            realSlotToRendererSlot[ESSENCE_OUTPUT_SLOT_BEGIN + 1] = rendererSlot2;
+            items.set(ESSENCE_OUTPUT_SLOT_BEGIN + 1, essence2Stack);
+            updates.add(new ItemStackWithTwoSlots(ESSENCE_OUTPUT_SLOT_BEGIN + 1, rendererSlot2, essence2Stack));
+
             polarity -= relation.self + relation.other;
         }
     }
 
-    private void handlePhilosophersStoneReaction(ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate) {
+    private void handlePhilosophersStoneReaction(ArrayList<ItemStackWithTwoSlots> updates) {
         CrucibleRecipe recipe = CrucibleRecipeManager.findMatchRep(level, getInput());
         if (recipe != null) {
             RandomSource randomSource = level.getRandom();
             IntIntImmutablePair minMax = recipe.level().getMinMax(level, getInput());
-            int[] outputSlots = new int[CATALYST_SLOT - ESSENCE_OUTPUT_SLOT_BEGIN];
-            for (int i = 0; i < outputSlots.length; i++) {
-                outputSlots[i] = i;
+
+            // 随机选取槽位产出（升序）
+            int essenceCnt = Math.min(randomSource.nextInt(minMax.leftInt(), minMax.rightInt() + 1), CATALYST_SLOT - ESSENCE_OUTPUT_SLOT_BEGIN);
+            int[] outputSlots = new int[essenceCnt];
+            int idx = 0;
+            int remaining = essenceCnt;
+            for (int i = 0; i < 24 && remaining > 0; i++) {
+                // 当前剩余数字个数为 n - i
+                if (randomSource.nextInt(24 - i) < remaining) {
+                    outputSlots[idx++] = i + ESSENCE_OUTPUT_SLOT_BEGIN;
+                    remaining--;
+                }
             }
-            int essenceCnt = Math.min(randomSource.nextInt(minMax.leftInt(), minMax.rightInt() + 1), outputSlots.length);
+
+            // 清空输入
+            clearItemAndRecordChange(INPUT_SLOT, updates);
+
+            // 设置输出（高槽位优先选低层渲染槽位）
             int len = InitItems.ESSENCE_METAL_ITEMS.length;
-            for (int i = 0; i < essenceCnt; i++) {
-                int randomSlotIndex = randomSource.nextInt(i, outputSlots.length);
-                int outputSlot = outputSlots[randomSlotIndex];
-                outputSlots[randomSlotIndex] = outputSlots[i];
-                outputSlots[i] = outputSlot;
-                setItemAndRecordChange(ESSENCE_OUTPUT_SLOT_BEGIN + outputSlot, InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(len)].toStack(), itemStackWithSlotsUpdate);
+            for (int i = essenceCnt - 1; i >= 0; i--) {
+                ItemStack itemStack = InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(len)].toStack();
+                int slot = outputSlots[i];
+                items.set(slot, itemStack);
+                updates.add(new ItemStackWithTwoSlots(slot, allocateRendererSlot(slot), itemStack));
             }
-            setItemAndRecordChange(INPUT_SLOT, ItemStack.EMPTY, itemStackWithSlotsUpdate);
         }
     }
 
-    private void handleScrollReaction(ArrayList<ItemStackWithSlot> itemStackWithSlotsUpdate) {
+    private void handleEssenceMetalReaction(ArrayList<ItemStackWithTwoSlots> updates) {
+        ItemStack outStack = getCatalyst().copy();
+        clearInputEssencesAndRecordChange(updates);
+        items.set(OUTPUT_SLOT, outStack);
+        updates.add(new ItemStackWithTwoSlots(OUTPUT_SLOT, allocateRendererSlot(OUTPUT_SLOT), outStack));
+    }
+
+    private void handleScrollReaction(ArrayList<ItemStackWithTwoSlots> updates) {
         ItemStack catalyst = getCatalyst();
         List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
         if (!alchemySlots.isEmpty() && inputOrder.size() == alchemySlots.size()) {
@@ -682,51 +818,95 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 polarity += result.getPolarityIncrease();
                 entropy += result.getEntropyIncrease();
                 if (result.isTriggerDamage()) {
-                    catalyst.hurtAndBreak(1 + entropy / 4, (ServerLevel) level, null, _ -> {});
+                    if (catalyst.isDamageableItem() && catalyst.getDamageValue() < catalyst.getMaxDamage()) {
+                        catalyst.setDamageValue(catalyst.getDamageValue() + 1 + entropy / 8);
+                    }
                     annihilationCnt++;
                 }
             }
             for (Runnable deferredTask : deferredTasks) {
                 deferredTask.run();
             }
-            catalyst.set(InitDataComponents.ALCHEMY_SLOTS, alchemySlots);
-            catalyst.set(InitDataComponents.ENTROPY, entropy);
 
-            // 如果全湮灭则消耗输入，如果极性满足条件则产出输出
+            if (catalyst.isBroken()) {
+                releaseRendererSlot(CATALYST_SLOT); // 如果卷轴爆了，释放催化剂槽
+                items.set(CATALYST_SLOT, ItemStack.EMPTY);
+            } else {
+                catalyst.set(InitDataComponents.ALCHEMY_SLOTS, alchemySlots);
+                catalyst.set(InitDataComponents.ENTROPY, entropy);
+            }
+
+            clearInputEssencesAndRecordChange(updates); // 删掉所有的输入源质
+
+            // 如果全湮灭且极性满足条件则消耗输入产出输出
             if (annihilationCnt == alchemySlots.size()) {
-                RecipeConditions conditions = getCatalyst().getOrDefault(InitDataComponents.RECIPE_CONDITIONS, RecipeConditions.DEFAULT);
+                RecipeConditions conditions = catalyst.getOrDefault(InitDataComponents.RECIPE_CONDITIONS, RecipeConditions.DEFAULT);
                 ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
                 if (polarity >= conditions.minPolarity() && polarity <= conditions.maxPolarity() && container.getSlots() >= 2 && ItemStack.isSameItemSameComponents(getInput(), container.getStackInSlot(0))) {
-                    setItemAndRecordChange(OUTPUT_SLOT, container.getStackInSlot(1), itemStackWithSlotsUpdate);
                     if (conditions.oneTime()) {
+                        // 额外判定一次性配方并释放渲染槽
+                        releaseRendererSlot(CATALYST_SLOT);
                         items.set(CATALYST_SLOT, ItemStack.EMPTY);
                     }
+                    clearItemAndRecordChange(INPUT_SLOT, updates);  // 释放输入槽
+                    // 输出槽位最高，先设置输出
+                    ItemStack outStack = container.getStackInSlot(1);
+                    items.set(OUTPUT_SLOT, outStack);
+                    updates.add(new ItemStackWithTwoSlots(OUTPUT_SLOT, allocateRendererSlot(OUTPUT_SLOT), outStack));
                 }
-                setItemAndRecordChange(INPUT_SLOT, ItemStack.EMPTY, itemStackWithSlotsUpdate);
             }
 
-            for (int j = ESSENCE_OUTPUT_SLOT_BEGIN, upper = ESSENCE_OUTPUT_SLOT_BEGIN + alchemySlots.size(); j < upper; j++) {
-                recordItemChange(j, itemStackWithSlotsUpdate);
+            updates.add(new ItemStackWithTwoSlots(CATALYST_SLOT, realSlotToRendererSlot[CATALYST_SLOT], items.get(CATALYST_SLOT)));
+            for (int j = ESSENCE_OUTPUT_SLOT_BEGIN + alchemySlots.size() - 1; j >= ESSENCE_OUTPUT_SLOT_BEGIN; j--) {
+                ItemStack itemStack = items.get(j);
+                if (!itemStack.isEmpty()) {
+                    updates.add(new ItemStackWithTwoSlots(j, allocateRendererSlot(j), itemStack));
+                }
             }
-            recordItemChange(CATALYST_SLOT, itemStackWithSlotsUpdate);
         }
     }
 
-    private void clearInputEssencesAndRecordChange(List<ItemStackWithSlot> itemStackWithSlots) {
+    private void clearInputEssencesAndRecordChange(List<ItemStackWithTwoSlots> updates) {
         for (int i = ESSENCE_INPUT_SLOT_BEGIN; i < ESSENCE_OUTPUT_SLOT_BEGIN; i++) {
             if (!items.get(i).isEmpty()) {
-                setItemAndRecordChange(i, ItemStack.EMPTY, itemStackWithSlots);
+                clearItemAndRecordChange(i, updates);
             }
         }
     }
 
-    private void setItemAndRecordChange(int slot, ItemStack itemStack, List<ItemStackWithSlot> itemStackWithSlots) {
-        items.set(slot, itemStack);
-        itemStackWithSlots.add(new ItemStackWithSlot(slot, itemStack));
+    private int allocateRendererSlot(int realSlot) {
+        int[] availableSlots = new int[9];
+        for (int layer = 0; layer < 3; layer++) {
+            int base = layer * 9;
+            int cnt = 0;
+            for (int i = base; i < base + 9; i++) {
+                if ((rendererSlotUsage & (1 << i)) == 0) {
+                    availableSlots[cnt++] = i;
+                }
+            }
+            if (cnt > 0) {
+                int slot = availableSlots[level.getRandom().nextInt(cnt)];
+                rendererSlotUsage |= 1 << slot;
+                realSlotToRendererSlot[realSlot] = slot;
+                return slot;
+            }
+        }
+        // 分配失败兜底（除非用户乱调方块数据，通常不会走到这里）
+        realSlotToRendererSlot[realSlot] = INVALID_RENDERER_SLOT;
+        return INVALID_RENDERER_SLOT;
     }
 
-    private void recordItemChange(int slot, List<ItemStackWithSlot> itemStackWithSlots) {
-        itemStackWithSlots.add(new ItemStackWithSlot(slot, items.get(slot)));
+    private void releaseRendererSlot(int realSlot) {
+        int slot = realSlotToRendererSlot[realSlot];
+        rendererSlotUsage &= ~(1 << slot);
+        realSlotToRendererSlot[realSlot] = INVALID_RENDERER_SLOT;
+    }
+
+    private List<ItemStackWithTwoSlots> clearItemAndRecordChange(int slot, List<ItemStackWithTwoSlots> updates) {
+        releaseRendererSlot(slot);
+        items.set(slot, ItemStack.EMPTY);
+        updates.add(new ItemStackWithTwoSlots(slot, INVALID_RENDERER_SLOT, ItemStack.EMPTY));
+        return updates;
     }
 
     /**
@@ -767,6 +947,22 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
      */
     public List<ItemStack> getOutputEssences() {
         return Collections.unmodifiableList(items.subList(ESSENCE_OUTPUT_SLOT_BEGIN, CATALYST_SLOT));
+    }
+
+    public List<ItemStack> getItems() {
+        return Collections.unmodifiableList(items);
+    }
+
+    public int[] getRealSlotToRendererSlot() {
+        return realSlotToRendererSlot;
+    }
+
+    public CrucibleRendererSlotParas[] getRendererSlotParas0() {
+        return rendererSlotParas0;
+    }
+
+    public CrucibleRendererSlotParas[] getRendererSlotParas1() {
+        return rendererSlotParas1;
     }
 
     public int getPolarity() {
@@ -828,50 +1024,48 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     public void takeCatalyst(Player player) {
         ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getCatalyst());
-        items.set(CATALYST_SLOT, ItemStack.EMPTY);
         level.addFreshEntity(itemEntity);
-        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(CATALYST_SLOT, ItemStack.EMPTY))));
+        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), clearItemAndRecordChange(CATALYST_SLOT, new ArrayList<>())));
         setAndSyncReset(true);
         setChanged();
     }
 
     public void takeInput(Player player) {
         ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getInput());
-        items.set(INPUT_SLOT, ItemStack.EMPTY);
         level.addFreshEntity(itemEntity);
-        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), List.of(new ItemStackWithSlot(INPUT_SLOT, ItemStack.EMPTY))));
+        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), clearItemAndRecordChange(INPUT_SLOT, new ArrayList<>())));
         setAndSyncReset(true);
         setChanged();
     }
 
     public void takeEssenceInput(Player player) {
-        ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(ESSENCE_OUTPUT_SLOT_BEGIN - ESSENCE_INPUT_SLOT_BEGIN);
+        ArrayList<ItemStackWithTwoSlots> updates = new ArrayList<>(ESSENCE_OUTPUT_SLOT_BEGIN - ESSENCE_INPUT_SLOT_BEGIN);
         for (int i = ESSENCE_INPUT_SLOT_BEGIN; i < ESSENCE_OUTPUT_SLOT_BEGIN; i++) {
             if (!items.get(i).isEmpty()) {
                 ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), items.get(i));
-                setItemAndRecordChange(i, ItemStack.EMPTY, itemStackWithSlots);
                 level.addFreshEntity(itemEntity);
+                clearItemAndRecordChange(i, updates);
             }
         }
-        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots));
+        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), updates));
         setAndSyncReset(true);
         setChanged();
     }
 
     public void takeAllOutput(Player player) {
-        ArrayList<ItemStackWithSlot> itemStackWithSlots = new ArrayList<>(CATALYST_SLOT - ESSENCE_OUTPUT_SLOT_BEGIN);
+        ArrayList<ItemStackWithTwoSlots> updates = new ArrayList<>(CATALYST_SLOT - ESSENCE_OUTPUT_SLOT_BEGIN);
         for (int i = ESSENCE_OUTPUT_SLOT_BEGIN; i < CATALYST_SLOT; i++) {
             if (!items.get(i).isEmpty()) {
                 ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), items.get(i));
-                setItemAndRecordChange(i, ItemStack.EMPTY, itemStackWithSlots);
                 level.addFreshEntity(itemEntity);
+                clearItemAndRecordChange(i, updates);
             }
         }
         ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getOutput());
-        setItemAndRecordChange(OUTPUT_SLOT, ItemStack.EMPTY, itemStackWithSlots);
         level.addFreshEntity(itemEntity);
+        clearItemAndRecordChange(OUTPUT_SLOT, updates);
 
-        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackWithSlots));
+        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), updates));
         setAndSyncReset(true);
         setChanged();
     }
@@ -887,10 +1081,11 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     }
 
     // ======================客户端网络同步=========================
-    public void clientSetItem(int slot, ItemStack itemStack) {
+    public void clientSetItem(int slot, int rendererSlot, ItemStack itemStack) {
         boolean filledEmptyEssenceInputSlot = slot >= ESSENCE_INPUT_SLOT_BEGIN && slot < ESSENCE_OUTPUT_SLOT_BEGIN
                 && items.get(slot).isEmpty() && !itemStack.isEmpty();
-        this.items.set(slot, itemStack);
+        items.set(slot, itemStack);
+        realSlotToRendererSlot[slot] = rendererSlot;
         if (filledEmptyEssenceInputSlot) {
             essenceInputPulseSlot = slot - ESSENCE_INPUT_SLOT_BEGIN;
             essenceInputPulseStartedAtMillis = System.currentTimeMillis();

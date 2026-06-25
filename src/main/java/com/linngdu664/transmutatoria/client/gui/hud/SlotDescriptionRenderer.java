@@ -43,15 +43,6 @@ final class SlotDescriptionRenderer {
             TransmutationCrucibleBlockEntity crucible
     ) {
         if (crucible.getTargetTimer() == 0 && !crucible.hasAnyOutput()) {
-            if (crucible.getWaterAmount() < TransmutationCrucibleBlockEntity.WATER_PER_REACTION) {
-                drawPanel(
-                        guiGraphics, window, font,
-                        Component.translatable("gui.transmutatoria.crucible_hint.water.title"),
-                        Component.translatable("gui.transmutatoria.crucible_hint.water.description", TransmutationCrucibleBlockEntity.WATER_PER_REACTION),
-                        true
-                );
-                return;
-            }
             if (catalyst.isEmpty()) {
                 drawPanel(
                         guiGraphics, window, font,
@@ -66,6 +57,16 @@ final class SlotDescriptionRenderer {
                         guiGraphics, window, font,
                         Component.translatable("gui.transmutatoria.crucible_hint.input.title"),
                         Component.translatable("gui.transmutatoria.crucible_hint.input.description"),
+                        true
+                );
+                return;
+            }
+            int requiredWater = crucible.getRequiredWater();
+            if (crucible.getWaterAmount() < requiredWater) {
+                drawPanel(
+                        guiGraphics, window, font,
+                        Component.translatable("gui.transmutatoria.crucible_hint.water.title"),
+                        Component.translatable("gui.transmutatoria.crucible_hint.water.description", requiredWater),
                         true
                 );
                 return;
