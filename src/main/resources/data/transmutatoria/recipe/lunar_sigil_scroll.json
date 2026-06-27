@@ -4,7 +4,9 @@
   "ingredients": [
     "transmutatoria:lunargent",
     "transmutatoria:mercurial_matrix",
-    "minecraft:paper"
+    "minecraft:paper",
+    "minecraft:gold_nugget",
+    "minecraft:glowstone_dust"
   ],
   "result": {
     "id": "transmutatoria:lunar_sigil_scroll"

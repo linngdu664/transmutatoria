@@ -4,7 +4,9 @@
   "ingredients": [
     "transmutatoria:eclipsium",
     "transmutatoria:sulfuric_matrix",
-    "minecraft:paper"
+    "minecraft:paper",
+    "minecraft:gold_nugget",
+    "minecraft:glowstone_dust"
   ],
   "result": {
     "id": "transmutatoria:solar_sigil_scroll"

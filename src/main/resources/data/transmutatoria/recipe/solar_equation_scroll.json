@@ -4,6 +4,8 @@
   "ingredients": [
     "transmutatoria:eclipsium",
     "transmutatoria:sulfuric_matrix",
+    "minecraft:paper",
+    "minecraft:gold_nugget",
     "minecraft:redstone"
   ],
   "result": {

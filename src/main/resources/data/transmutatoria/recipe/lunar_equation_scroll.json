@@ -4,6 +4,8 @@
   "ingredients": [
     "transmutatoria:lunargent",
     "transmutatoria:mercurial_matrix",
+    "minecraft:paper",
+    "minecraft:gold_nugget",
     "minecraft:redstone"
   ],
   "result": {

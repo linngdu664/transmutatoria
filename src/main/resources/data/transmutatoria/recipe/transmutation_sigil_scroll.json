@@ -4,7 +4,9 @@
   "ingredients": [
     "#transmutatoria:essence_metals",
     "transmutatoria:transmutation_crystal",
-    "minecraft:paper"
+    "minecraft:paper",
+    "minecraft:gold_nugget",
+    "minecraft:glowstone_dust"
   ],
   "result": {
     "id": "transmutatoria:transmutation_sigil_scroll"

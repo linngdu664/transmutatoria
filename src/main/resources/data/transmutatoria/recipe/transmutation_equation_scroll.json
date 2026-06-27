@@ -4,6 +4,8 @@
   "ingredients": [
     "#transmutatoria:essence_metals",
     "transmutatoria:transmutation_crystal",
+    "minecraft:paper",
+    "minecraft:gold_nugget",
     "minecraft:redstone"
   ],
   "result": {

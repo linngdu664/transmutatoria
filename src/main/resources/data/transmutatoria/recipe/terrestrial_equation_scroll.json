@@ -4,6 +4,8 @@
   "ingredients": [
     "transmutatoria:astrotite",
     "transmutatoria:salic_matrix",
+    "minecraft:paper",
+    "minecraft:gold_nugget",
     "minecraft:redstone"
   ],
   "result": {

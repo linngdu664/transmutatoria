@@ -4,7 +4,9 @@
   "ingredients": [
     "transmutatoria:astrotite",
     "transmutatoria:salic_matrix",
-    "minecraft:paper"
+    "minecraft:paper",
+    "minecraft:gold_nugget",
+    "minecraft:glowstone_dust"
   ],
   "result": {
     "id": "transmutatoria:terrestrial_sigil_scroll"
