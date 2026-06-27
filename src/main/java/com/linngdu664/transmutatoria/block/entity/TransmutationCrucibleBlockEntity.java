@@ -23,6 +23,8 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.core.*;
+import net.minecraft.core.component.DataComponentGetter;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -57,6 +59,7 @@ import java.util.*;
 public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private static final AABB SUCK_AABB = Block.column(16.0F, 5.0F, 16.0F).toAabbs().getFirst();
     private static final int WATER_PER_ESSENCE = 15;
+    private static final int TIME_PER_ESSENCE = 10;
     private static final int ESSENCE_INPUT_SLOT_BEGIN = 0;
     private static final int ESSENCE_OUTPUT_SLOT_BEGIN = 24;
     private static final int CATALYST_SLOT = 48;
@@ -391,6 +394,21 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     }
 
     @Override
+    protected void applyImplicitComponents(DataComponentGetter getter) {
+        polarity = getter.getOrDefault(InitDataComponents.POLARITY, 0);
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder builder) {
+        builder.set(InitDataComponents.POLARITY, polarity);
+    }
+
+    @Override
+    public void removeComponentsFromTag(ValueOutput output) {
+        output.discard("Polarity");
+    }
+
+    @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         if (level != null) {
             Containers.dropContents(level, pos, items);
@@ -598,41 +616,42 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         if (catalyst.is(Items.ENDER_EYE)) {
             // 嬗变分解
             if (input.is(InitItems.TRANSMUTATION_CRYSTAL)) {
-                setAndCondSyncTargetTimer(10, txContext);
+                setAndCondSyncTargetTimer(TIME_PER_ESSENCE, txContext);
             }
         } else if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
             // 混沌分解
             CrucibleRecipe recipe = CrucibleRecipeManager.findMatchRep(level, input);
             if (recipe != null) {
                 IntIntImmutablePair minMax = recipe.level().getMinMax(level, input);
-                setAndCondSyncTargetTimer(5 * (minMax.leftInt() + minMax.rightInt()), txContext);
+                setAndCondSyncTargetTimer(TIME_PER_ESSENCE / 2 * (minMax.leftInt() + minMax.rightInt()), txContext);
             }
         } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
             // 源质反应：无输入 && 加了 2 个源质金属
             if (input.isEmpty() && inputOrder.size() == 2) {
-                setAndCondSyncTargetTimer(20, txContext);
+                setAndCondSyncTargetTimer(TIME_PER_ESSENCE * 2, txContext);
             }
         } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
             // 炼金复制/炼金合成：输入正确 && 源质金属加够了
             List<AbstractAlchemySlot> alchemySlots = catalyst.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
+            int essenceSize = alchemySlots.size();
             ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-            if (container.getSlots() > 0 && ItemStack.isSameItemSameComponents(input, container.getStackInSlot(0)) && inputOrder.size() == alchemySlots.size()) {
-                setAndCondSyncTargetTimer(10 * alchemySlots.size(), txContext);
+            if (container.getSlots() > 0 && ItemStack.isSameItemSameComponents(input, container.getStackInSlot(0)) && inputOrder.size() == essenceSize) {
+                setAndCondSyncTargetTimer(TIME_PER_ESSENCE * essenceSize, txContext);
             }
         } else if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
             // 源质融合：无输入 && 源质金属加够了 && 覆盖所有克制
             if (input.isEmpty()) {
                 Set<EssenceMetal> essenceRequired = essenceMetalItem.getEssenceMetal().getRestrainsAndDoubleRestrains();
-                int size = essenceRequired.size();
-                if (inputOrder.size() == size) {
+                int essenceSize = essenceRequired.size();
+                if (inputOrder.size() == essenceSize) {
                     HashSet<EssenceMetal> essenceRequired1 = new HashSet<>(essenceRequired);
-                    for (int i = ESSENCE_INPUT_SLOT_BEGIN, upper = ESSENCE_OUTPUT_SLOT_BEGIN + size; i < upper; i++) {
+                    for (int i = ESSENCE_INPUT_SLOT_BEGIN, upper = ESSENCE_OUTPUT_SLOT_BEGIN + essenceSize; i < upper; i++) {
                         if (items.get(i).getItem() instanceof EssenceMetalItem inputEssenceMetalItem) {
                             essenceRequired1.remove(inputEssenceMetalItem.getEssenceMetal());
                         }
                     }
                     if (essenceRequired1.isEmpty()) {
-                        setAndCondSyncTargetTimer(20, txContext);
+                        setAndCondSyncTargetTimer(TIME_PER_ESSENCE * essenceSize, txContext);
                     }
                 }
             }
@@ -684,14 +703,17 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         }
 
         // 检查锅的极性，超过了就爆掉
+        BlockPos blockPos = getBlockPos();
         if (polarity > 50) {
-            level.setBlock(getBlockPos(), Blocks.REDSTONE_BLOCK.defaultBlockState(), 3);
+            level.setBlock(blockPos, Blocks.REDSTONE_BLOCK.defaultBlockState(), 3);
+            level.explode(null, blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5, 1f, Level.ExplosionInteraction.NONE);
         } else if (polarity < -50) {
-            level.setBlock(getBlockPos(), InitBlocks.ALCHEMICAL_DROSS_BLOCK.get().defaultBlockState(), 3);
+            level.setBlock(blockPos, InitBlocks.ALCHEMICAL_DROSS_BLOCK.get().defaultBlockState(), 3);
+            level.explode(null, blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5, 1f, Level.ExplosionInteraction.NONE);
         } else {
-            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), itemStackUpdate));
+            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(blockPos, itemStackUpdate));
             if (hasAnyOutput()) {
-                level.playSound(null, getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5,
+                level.playSound(null, blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5,
                         SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 0.5F, 1.0F);
             }
             // 先重置 timer，否则 waterHandler 可能会多发一个包，虽然无伤大雅
@@ -804,6 +826,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             // 反应
             int annihilationCnt = 0;
             int entropy = catalyst.getOrDefault(InitDataComponents.ENTROPY, 0);
+            float damage = 0;
             // 避免装箱拆箱
             for (int j = 0, size = inputOrder.size(); j < size; j++) {
                 int slot = inputOrder.getInt(j);
@@ -818,22 +841,22 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 polarity += result.getPolarityIncrease();
                 entropy += result.getEntropyIncrease();
                 if (result.isTriggerDamage()) {
-                    if (catalyst.isDamageableItem() && catalyst.getDamageValue() < catalyst.getMaxDamage()) {
-                        catalyst.setDamageValue(catalyst.getDamageValue() + 1 + entropy / 8);
+                    if (catalyst.isDamageableItem()) {
+                        damage += 1f + entropy * 0.125f;
                     }
                     annihilationCnt++;
                 }
             }
+            catalyst.set(InitDataComponents.ENTROPY, entropy);
+            if (catalyst.isDamageableItem()) {
+                catalyst.setDamageValue(catalyst.getDamageValue() + (int) damage);
+                if (catalyst.isBroken()) {
+                    releaseRendererSlot(CATALYST_SLOT); // 如果卷轴爆了，释放催化剂槽
+                    items.set(CATALYST_SLOT, ItemStack.EMPTY);
+                }
+            }
             for (Runnable deferredTask : deferredTasks) {
                 deferredTask.run();
-            }
-
-            if (catalyst.isBroken()) {
-                releaseRendererSlot(CATALYST_SLOT); // 如果卷轴爆了，释放催化剂槽
-                items.set(CATALYST_SLOT, ItemStack.EMPTY);
-            } else {
-                catalyst.set(InitDataComponents.ALCHEMY_SLOTS, alchemySlots);
-                catalyst.set(InitDataComponents.ENTROPY, entropy);
             }
 
             clearInputEssencesAndRecordChange(updates); // 删掉所有的输入源质

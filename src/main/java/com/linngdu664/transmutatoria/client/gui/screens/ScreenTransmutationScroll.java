@@ -198,24 +198,24 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
     private static String getStabilityTranslationKey(ItemStack scrollStack) {
         int maxDurability = scrollStack.getOrDefault(DataComponents.MAX_DAMAGE, 0);
         int entropy = scrollStack.getOrDefault(InitDataComponents.ENTROPY, 0);
-        if (maxDurability <= 0 || entropy < 8) {
+        if (maxDurability <= 0 || entropy <= 0) {
             return "gui.transmutatoria.scroll_stability.stable";
         }
 
-        double ratio = (double) entropy * 0.125 / maxDurability;
-        if (ratio <= 0.025) {
+        float ratio = entropy * 0.125f / maxDurability;
+        if (ratio <= 0.025f) {
             return "gui.transmutatoria.scroll_stability.slight_disturbance";
         }
-        if (ratio <= 0.05) {
+        if (ratio <= 0.05f) {
             return "gui.transmutatoria.scroll_stability.slightly_unstable";
         }
-        if (ratio <= 0.10) {
+        if (ratio <= 0.10f) {
             return "gui.transmutatoria.scroll_stability.unstable";
         }
-        if (ratio <= 0.175) {
+        if (ratio <= 0.175f) {
             return "gui.transmutatoria.scroll_stability.clearly_unstable";
         }
-        if (ratio <= 0.25) {
+        if (ratio <= 0.25f) {
             return "gui.transmutatoria.scroll_stability.very_unstable";
         }
         return "gui.transmutatoria.scroll_stability.near_collapse";

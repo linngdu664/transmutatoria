@@ -58,7 +58,7 @@ final class DurabilityProgressRenderer {
 
     private static int getPredictedScrollDamage(ItemStack catalyst, List<AbstractAlchemySlot> alchemySlots) {
         int entropy = catalyst.getOrDefault(InitDataComponents.ENTROPY, 0);
-        int damagePerSlot = Math.max(1, 1 + entropy / 8);
-        return alchemySlots.size() * damagePerSlot;
+        float damagePerSlot = Math.max(1f, 1f + entropy * 0.125f);
+        return (int) (alchemySlots.size() * damagePerSlot);
     }
 }

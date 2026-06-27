@@ -8,6 +8,15 @@
           "type": "minecraft:item",
           "name": "transmutatoria:transmutation_crucible"
         }
+      ],
+      "functions": [
+        {
+          "function": "minecraft:copy_components",
+          "source": "block_entity",
+          "components": [
+            "transmutatoria:polarity"
+          ]
+        }
       ]
     }
   ]

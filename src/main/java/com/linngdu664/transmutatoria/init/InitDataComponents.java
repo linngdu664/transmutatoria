@@ -51,4 +51,9 @@ public class InitDataComponents {
                     "alchemy_slots",
                     builder -> builder.persistent(AbstractAlchemySlot.LIST_CODEC).networkSynchronized(AbstractAlchemySlot.LIST_STREAM_CODEC)
             );
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> POLARITY =
+            DATA_COMPONENTS.registerComponentType(
+                    "polarity",
+                    builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+            );
 }
