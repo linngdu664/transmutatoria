@@ -10,7 +10,8 @@ import com.linngdu664.transmutatoria.network.to_client.*;
 import com.linngdu664.transmutatoria.recipe.CrucibleRecipeManager;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import com.linngdu664.transmutatoria.util.*;
-import net.minecraft.util.Mth;
+import com.linngdu664.transmutatoria.client.tool.CrucibleItemAnimator;
+import org.jspecify.annotations.Nullable;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
@@ -58,16 +59,16 @@ import java.util.*;
 
 public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private static final AABB SUCK_AABB = Block.column(16.0F, 5.0F, 16.0F).toAabbs().getFirst();
-    private static final int WATER_PER_ESSENCE = 15;
-    private static final int TIME_PER_ESSENCE = 10;
-    private static final int ESSENCE_INPUT_SLOT_BEGIN = 0;
-    private static final int ESSENCE_OUTPUT_SLOT_BEGIN = 24;
-    private static final int CATALYST_SLOT = 48;
-    private static final int INPUT_SLOT = 49;
-    private static final int OUTPUT_SLOT = 50;
+    public static final int WATER_PER_ESSENCE = 15;
+    public static final int TIME_PER_ESSENCE = 10;
+    public static final int ESSENCE_INPUT_SLOT_BEGIN = 0;
+    public static final int ESSENCE_OUTPUT_SLOT_BEGIN = 24;
+    public static final int CATALYST_SLOT = 48;
+    public static final int INPUT_SLOT = 49;
+    public static final int OUTPUT_SLOT = 50;
     public static final int SLOT_COUNT = 51;
     public static final int RENDERER_SLOT_COUNT = 27;
-    private static final int INVALID_RENDERER_SLOT = 127;
+    public static final int NO_RENDERER_SLOT = 127;
 
     // 源质输入 - 源质输出 - 催化剂 - 转化输入 - 转化输出
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
@@ -80,8 +81,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private int targetTimer;
     private int essenceInputPulseSlot = -1; // client only
     private long essenceInputPulseStartedAtMillis;  // client only
-    private CrucibleRendererSlotParas[] rendererSlotParas0;  // client only
-    private CrucibleRendererSlotParas[] rendererSlotParas1;  // client only
+    @Nullable
+    private CrucibleItemAnimator animator;  // client only
 
     private record ItemsSnapshot(ItemStack[] items, int[] realSlotToRendererSlot, int[] inputOrder, int rendererSlotUsage, int targetTimer) {}
 
@@ -290,24 +291,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             return;
         }
         if (level.isClientSide()) {
-            if (crucible.targetTimer != 0) {
-                // 转圈圈，带clamp的公转、自转、缩放
-                // todo 客户端需要再来个计时器字段（反应结束后渐变）
-                crucible.rendererSlotParas0 = crucible.rendererSlotParas1;
-                if (crucible.processTimer < crucible.targetTimer) {
-                    crucible.rendererSlotParas1 = new CrucibleRendererSlotParas[RENDERER_SLOT_COUNT];
-                    float startupPercent = crucible.processTimer >= 10 ? 1f : (float) crucible.processTimer * 0.1f;
-                    int i = 0;
-                    for (; i < 9; i++) {
-                        crucible.rendererSlotParas1[i] = crucible.rendererSlotParas0[i].tick(0.06f, 0.018f, startupPercent);
-                    }
-                    for (; i < 18; i++) {
-                        crucible.rendererSlotParas1[i] = crucible.rendererSlotParas0[i].tick(0.05f, 0.02f, startupPercent);
-                    }
-                    for (; i < RENDERER_SLOT_COUNT; i++) {
-                        crucible.rendererSlotParas1[i] = crucible.rendererSlotParas0[i].tick(0.04f, 0.022f, startupPercent);
-                    }
-                }
+            if (crucible.animator != null) {
+                crucible.animator.tick(crucible.processTimer, crucible.targetTimer);
             }
             return;
         }
@@ -338,28 +323,14 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     public TransmutationCrucibleBlockEntity(BlockPos pos, BlockState state) {
         super(InitBlocks.TRANSMUTATION_CRUCIBLE_BLOCK_ENTITY.get(), pos, state);
-        rendererSlotParas0 = new CrucibleRendererSlotParas[RENDERER_SLOT_COUNT];
-        rendererSlotParas1 = rendererSlotParas0;
+        Arrays.fill(realSlotToRendererSlot, NO_RENDERER_SLOT);
     }
 
     @Override
     public void setLevel(Level level) {
         super.setLevel(level);
         if (level.isClientSide()) {
-            RandomSource random = level.getRandom();
-            float[] baseXZ = new float[]{-0.2f, 0.0f, 0.2f};
-            float[] baseY = new float[]{0.35f, 0.4f, 0.45f};
-            float[] baseR = new float[]{0.28f, 0.25f, 0.28f, 0.25f, 0.04f, 0.25f, 0.28f, 0.25f, 0.28f};
-            for (int i = 0; i < RENDERER_SLOT_COUNT; i++) {
-                rendererSlotParas0[i] = new CrucibleRendererSlotParas(
-                        baseXZ[i % 3] - 0.075f + random.nextFloat() * 0.15f,
-                        baseY[i / 9],
-                        baseXZ[i / 3 % 3] - 0.075f + random.nextFloat() * 0.15f,
-                        baseR[i % 9],
-                        -0.4f + random.nextFloat() * 0.8f,
-                        -Mth.PI + random.nextFloat() * Mth.TWO_PI
-                );
-            }
+            animator = new CrucibleItemAnimator(level.getRandom());
         }
     }
 
@@ -387,7 +358,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         inputOrder = new IntArrayList(input.getIntArray("InputOrder").orElse(new int[0]));
         realSlotToRendererSlot = input.getIntArray("RealSlotToRendererSlot").orElseGet(() -> {
             int[] arr = new int[SLOT_COUNT];
-            Arrays.fill(arr, INVALID_RENDERER_SLOT);
+            Arrays.fill(arr, NO_RENDERER_SLOT);
             return arr;
         });
         rendererSlotUsage = input.getIntOr("RendererSlotUsage", 0);
@@ -620,10 +591,12 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             }
         } else if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
             // 混沌分解
-            CrucibleRecipe recipe = CrucibleRecipeManager.findMatchRep(level, input);
-            if (recipe != null) {
-                IntIntImmutablePair minMax = recipe.level().getMinMax(level, input);
-                setAndCondSyncTargetTimer(TIME_PER_ESSENCE / 2 * (minMax.leftInt() + minMax.rightInt()), txContext);
+            if (!input.isEmpty()) {
+                CrucibleRecipe recipe = CrucibleRecipeManager.findMatchRep(level, input);
+                if (recipe != null) {
+                    IntIntImmutablePair minMax = recipe.level().getMinMax(level, input);
+                    setAndCondSyncTargetTimer(TIME_PER_ESSENCE * minMax.rightInt(), txContext);
+                }
             }
         } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
             // 源质反应：无输入 && 加了 2 个源质金属
@@ -665,10 +638,12 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         }
         if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
             ItemStack input = getInput();
-            CrucibleRecipe recipe = CrucibleRecipeManager.findMatchRep(level, input);
-            if (recipe != null) {
-                IntIntImmutablePair minMax = recipe.level().getMinMax(level, input);
-                return WATER_PER_ESSENCE * 5 * (minMax.leftInt() + minMax.rightInt());
+            if (!input.isEmpty()) {
+                CrucibleRecipe recipe = CrucibleRecipeManager.findMatchRep(level, input);
+                if (recipe != null) {
+                    IntIntImmutablePair minMax = recipe.level().getMinMax(level, input);
+                    return WATER_PER_ESSENCE * minMax.rightInt();
+                }
             }
             return WATER_PER_ESSENCE;
         }
@@ -732,14 +707,9 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             clearItemAndRecordChange(INPUT_SLOT, updates);
             // 设置输出
             int rendererSlot = allocateRendererSlot(OUTPUT_SLOT);
-            ItemStack itemStack;
-            RandomSource randomSource = level.getRandom();
             // todo 概率要在配置文件里调吗？
-            if (randomSource.nextFloat() <= 0.01f) {
-                itemStack = InitItems.PANDEMONIUM.toStack();
-            } else {
-                itemStack = InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(InitItems.ESSENCE_METAL_ITEMS.length - 1)].toStack();
-            }
+            ItemStack itemStack = generateEssence(0.01f);
+            items.set(OUTPUT_SLOT, itemStack);
             updates.add(new ItemStackWithTwoSlots(OUTPUT_SLOT, rendererSlot, itemStack));
         }
     }
@@ -752,16 +722,16 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             int rendererSlot1 = realSlotToRendererSlot[ESSENCE_INPUT_SLOT_BEGIN];
             int rendererSlot2 = realSlotToRendererSlot[ESSENCE_INPUT_SLOT_BEGIN + 1];
 
-            realSlotToRendererSlot[ESSENCE_INPUT_SLOT_BEGIN] = INVALID_RENDERER_SLOT;
+            realSlotToRendererSlot[ESSENCE_INPUT_SLOT_BEGIN] = NO_RENDERER_SLOT;
             items.set(ESSENCE_INPUT_SLOT_BEGIN, ItemStack.EMPTY);
-            updates.add(new ItemStackWithTwoSlots(ESSENCE_INPUT_SLOT_BEGIN, INVALID_RENDERER_SLOT, ItemStack.EMPTY));
+            updates.add(new ItemStackWithTwoSlots(ESSENCE_INPUT_SLOT_BEGIN, NO_RENDERER_SLOT, ItemStack.EMPTY));
             realSlotToRendererSlot[ESSENCE_OUTPUT_SLOT_BEGIN] = rendererSlot1;
             items.set(ESSENCE_OUTPUT_SLOT_BEGIN, essence1Stack);
             updates.add(new ItemStackWithTwoSlots(ESSENCE_OUTPUT_SLOT_BEGIN, rendererSlot1, essence1Stack));
 
-            realSlotToRendererSlot[ESSENCE_INPUT_SLOT_BEGIN + 1] = INVALID_RENDERER_SLOT;
+            realSlotToRendererSlot[ESSENCE_INPUT_SLOT_BEGIN + 1] = NO_RENDERER_SLOT;
             items.set(ESSENCE_INPUT_SLOT_BEGIN + 1, ItemStack.EMPTY);
-            updates.add(new ItemStackWithTwoSlots(ESSENCE_INPUT_SLOT_BEGIN + 1, INVALID_RENDERER_SLOT, ItemStack.EMPTY));
+            updates.add(new ItemStackWithTwoSlots(ESSENCE_INPUT_SLOT_BEGIN + 1, NO_RENDERER_SLOT, ItemStack.EMPTY));
             realSlotToRendererSlot[ESSENCE_OUTPUT_SLOT_BEGIN + 1] = rendererSlot2;
             items.set(ESSENCE_OUTPUT_SLOT_BEGIN + 1, essence2Stack);
             updates.add(new ItemStackWithTwoSlots(ESSENCE_OUTPUT_SLOT_BEGIN + 1, rendererSlot2, essence2Stack));
@@ -793,9 +763,9 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             clearItemAndRecordChange(INPUT_SLOT, updates);
 
             // 设置输出（高槽位优先选低层渲染槽位）
-            int len = InitItems.ESSENCE_METAL_ITEMS.length;
             for (int i = essenceCnt - 1; i >= 0; i--) {
-                ItemStack itemStack = InitItems.ESSENCE_METAL_ITEMS[randomSource.nextInt(len)].toStack();
+                // todo 概率要在配置文件里调吗？
+                ItemStack itemStack = generateEssence(0.02f);
                 int slot = outputSlots[i];
                 items.set(slot, itemStack);
                 updates.add(new ItemStackWithTwoSlots(slot, allocateRendererSlot(slot), itemStack));
@@ -915,21 +885,30 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             }
         }
         // 分配失败兜底（除非用户乱调方块数据，通常不会走到这里）
-        realSlotToRendererSlot[realSlot] = INVALID_RENDERER_SLOT;
-        return INVALID_RENDERER_SLOT;
+        realSlotToRendererSlot[realSlot] = NO_RENDERER_SLOT;
+        return NO_RENDERER_SLOT;
     }
 
     private void releaseRendererSlot(int realSlot) {
         int slot = realSlotToRendererSlot[realSlot];
         rendererSlotUsage &= ~(1 << slot);
-        realSlotToRendererSlot[realSlot] = INVALID_RENDERER_SLOT;
+        realSlotToRendererSlot[realSlot] = NO_RENDERER_SLOT;
     }
 
     private List<ItemStackWithTwoSlots> clearItemAndRecordChange(int slot, List<ItemStackWithTwoSlots> updates) {
         releaseRendererSlot(slot);
         items.set(slot, ItemStack.EMPTY);
-        updates.add(new ItemStackWithTwoSlots(slot, INVALID_RENDERER_SLOT, ItemStack.EMPTY));
+        updates.add(new ItemStackWithTwoSlots(slot, NO_RENDERER_SLOT, ItemStack.EMPTY));
         return updates;
+    }
+
+    private ItemStack generateEssence(float panProb) {
+        RandomSource random = level.getRandom();
+        if (random.nextFloat() <= panProb) {
+            return InitItems.PANDEMONIUM.toStack();
+        } else {
+            return InitItems.ESSENCE_METAL_ITEMS[random.nextInt(InitItems.ESSENCE_METAL_ITEMS.length - 1)].toStack();
+        }
     }
 
     /**
@@ -980,12 +959,9 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         return realSlotToRendererSlot;
     }
 
-    public CrucibleRendererSlotParas[] getRendererSlotParas0() {
-        return rendererSlotParas0;
-    }
-
-    public CrucibleRendererSlotParas[] getRendererSlotParas1() {
-        return rendererSlotParas1;
+    @Nullable
+    public CrucibleItemAnimator getAnimator() {
+        return animator;
     }
 
     public int getPolarity() {
@@ -1105,13 +1081,16 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     // ======================客户端网络同步=========================
     public void clientSetItem(int slot, int rendererSlot, ItemStack itemStack) {
-        boolean filledEmptyEssenceInputSlot = slot >= ESSENCE_INPUT_SLOT_BEGIN && slot < ESSENCE_OUTPUT_SLOT_BEGIN
-                && items.get(slot).isEmpty() && !itemStack.isEmpty();
         items.set(slot, itemStack);
         realSlotToRendererSlot[slot] = rendererSlot;
+        boolean filledEmptyEssenceInputSlot = slot < ESSENCE_OUTPUT_SLOT_BEGIN && items.get(slot).isEmpty() && !itemStack.isEmpty();
         if (filledEmptyEssenceInputSlot) {
             essenceInputPulseSlot = slot - ESSENCE_INPUT_SLOT_BEGIN;
             essenceInputPulseStartedAtMillis = System.currentTimeMillis();
+        }
+        boolean filledEmptyInputSlot = slot == INPUT_SLOT && items.get(slot).isEmpty() && !itemStack.isEmpty();
+        if (filledEmptyInputSlot && animator != null) {
+            animator.onInputSlotFilled();
         }
     }
 

@@ -67,8 +67,7 @@ public class InputEventHandler {
 
         // 计算新旋转值：滚轮方向 ±1，模12环绕
         int current = boxStack.getOrDefault(InitDataComponents.ROTATION, 0);
-        int dir = (int) Math.signum(event.getScrollDeltaY());
-        int newRotation = Math.floorMod(current + dir, 12);
+        int newRotation = Math.floorMod(current + (event.getScrollDeltaY() < 0 ? 1 : -1), 12);
 
         // 更新客户端 ItemStack 组件，并同步到服务端
         boxStack.set(InitDataComponents.ROTATION, newRotation);

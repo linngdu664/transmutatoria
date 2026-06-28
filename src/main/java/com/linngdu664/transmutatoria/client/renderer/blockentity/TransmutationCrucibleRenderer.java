@@ -2,11 +2,12 @@ package com.linngdu664.transmutatoria.client.renderer.blockentity;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
+import com.linngdu664.transmutatoria.client.tool.CrucibleItemAnimator;
 import com.linngdu664.transmutatoria.client.renderer.state.blockentity.TransmutationCrucibleRenderState;
-import com.linngdu664.transmutatoria.util.CrucibleRendererSlotParas;
+import com.linngdu664.transmutatoria.client.renderer.state.blockentity.CrucibleRSlotPose;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.ints.IntObjectImmutablePair;
+import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -64,17 +65,25 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.waterAmount = blockEntity.getWaterAmount();
         state.waterColor = getWaterColor(blockEntity);
-        state.partialTicks = partialTicks;
-        state.realSlotToRendererSlot = blockEntity.getRealSlotToRendererSlot();
-        state.rendererSlotParas0 = blockEntity.getRendererSlotParas0();
-        state.rendererSlotParas1 = blockEntity.getRendererSlotParas1();
+
+        CrucibleItemAnimator animator = blockEntity.getAnimator();
+        if (animator == null) {
+            return;
+        }
+
         List<ItemStack> items = blockEntity.getItems();
+        int[] realSlotToRendererSlot = blockEntity.getRealSlotToRendererSlot();
+
         for (int i = 0; i < TransmutationCrucibleBlockEntity.SLOT_COUNT; i++) {
             ItemStack itemStack = items.get(i);
             if (!itemStack.isEmpty()) {
-                ItemStackRenderState itemStackRenderState = new ItemStackRenderState();
-                itemModelResolver.updateForTopItem(itemStackRenderState, itemStack, ItemDisplayContext.GUI, null, null, 0);
-                state.items.add(new IntObjectImmutablePair<>(i, itemStackRenderState));
+                int rendererSlot = realSlotToRendererSlot[i];
+                if (rendererSlot >= 0 && rendererSlot < TransmutationCrucibleBlockEntity.RENDERER_SLOT_COUNT) {
+                    ItemStackRenderState itemStackRenderState = new ItemStackRenderState();
+                    itemModelResolver.updateForTopItem(itemStackRenderState, itemStack, ItemDisplayContext.GUI, null, null, 0);
+                    CrucibleRSlotPose pose = animator.extractPose(rendererSlot, i, partialTicks);
+                    state.itemAndPoses.add(new ObjectObjectImmutablePair<>(itemStackRenderState, pose));
+                }
             }
         }
     }
@@ -87,24 +96,16 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
             CameraRenderState camera
     ) {
         int lightCoords = state.lightCoords;
-        float partialTicks = state.partialTicks;
-        for (var pair : state.items) {
-            int slot = pair.leftInt();
-            int rendererSlot = state.realSlotToRendererSlot[slot];
-            if (rendererSlot < 0 || rendererSlot >= TransmutationCrucibleBlockEntity.RENDERER_SLOT_COUNT) continue;
-            CrucibleRendererSlotParas paras0 = state.rendererSlotParas0[rendererSlot];
-            CrucibleRendererSlotParas paras1 = state.rendererSlotParas1[rendererSlot];
+
+        for (var pair : state.itemAndPoses) {
+            CrucibleRSlotPose slotPose = pair.right();
             poseStack.pushPose();
-            poseStack.translate(
-                    0.5f + Mth.lerp(partialTicks, paras0.getX(), paras1.getX()),
-                    Mth.lerp(partialTicks, paras0.getY(), paras1.getY()),
-                    0.5f + Mth.lerp(partialTicks, paras0.getZ(), paras1.getZ())
-            );
-            float scale = Mth.lerp(partialTicks, paras0.getScale(), paras1.getScale());
+            poseStack.translate(0.5f + slotPose.x(), slotPose.y(), 0.5f + slotPose.z());
+            float scale = slotPose.scale();
             poseStack.scale(scale, scale, scale);
-            poseStack.mulPose(new Quaternionf(new AxisAngle4f(Mth.rotLerpRad(partialTicks, paras0.getYaw(), paras1.getYaw()), 0, 1, 0))
-                    .rotateAxis(Mth.HALF_PI + Mth.rotLerpRad(partialTicks, paras0.getPitch(), paras1.getPitch()), 1, 0, 0));
-            pair.right().submit(poseStack, submitNodeCollector, lightCoords, OverlayTexture.NO_OVERLAY, 0);
+            poseStack.mulPose(new Quaternionf(new AxisAngle4f(slotPose.yaw(), 0, 1, 0))
+                    .rotateAxis(Mth.HALF_PI + slotPose.pitch(), 1, 0, 0));
+            pair.left().submit(poseStack, submitNodeCollector, lightCoords, OverlayTexture.NO_OVERLAY, 0);
             poseStack.popPose();
         }
 
@@ -125,7 +126,7 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
 
     private static int getWaterColor(TransmutationCrucibleBlockEntity blockEntity) {
         int polarity = Mth.clamp(blockEntity.getPolarity(), MIN_POLARITY, MAX_POLARITY);
-        float progress = (float) (polarity - MIN_POLARITY) / (MAX_POLARITY - MIN_POLARITY);
+        float progress = (float) (polarity - MIN_POLARITY) * (1f / (MAX_POLARITY - MIN_POLARITY));
         return ARGB.srgbLerp(progress, NEGATIVE_WATER_COLOR, POSITIVE_WATER_COLOR);
     }
 

@@ -59,7 +59,7 @@ public final class StorageBoxRingRenderer {
         float[] depths = new float[12];
 
         for (int i = 0; i < 12; i++) {
-            float angle = ((i - smoothRotation) * 30.0f - 90.0f) * Mth.DEG_TO_RAD;
+            float angle = ((smoothRotation - i) * 30.0f - 90.0f) * Mth.DEG_TO_RAD;
             int slotX = Math.round(centerX + radius * Mth.cos(angle));
             depths[i] = (Mth.sin(angle) + 1.0f) * 0.5f;
             float expandedSlotY = expandedCenterY - radius * Mth.sin(angle);
