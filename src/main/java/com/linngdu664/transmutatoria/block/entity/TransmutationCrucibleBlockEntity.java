@@ -467,11 +467,12 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 1.4F + 2.0F);
     }
 
-    private void setAndCondSyncTargetTimer(int targetTimer, TransactionContext txContext) {
+    private void startReact(int targetTimer, TransactionContext txContext) {
         this.targetTimer = targetTimer;
         if (txContext == null) {
             PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetTargetTimerPayload(getBlockPos(), targetTimer));
         }
+        level.playSound(null, getBlockPos(), SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.5f, 1.0f);
     }
 
     private void setAndSyncSelectedSlot(int selectedSlot) {
@@ -587,7 +588,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         if (catalyst.is(Items.ENDER_EYE)) {
             // 嬗变分解
             if (input.is(InitItems.TRANSMUTATION_CRYSTAL)) {
-                setAndCondSyncTargetTimer(TIME_PER_ESSENCE, txContext);
+                startReact(TIME_PER_ESSENCE, txContext);
             }
         } else if (catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
             // 混沌分解
@@ -595,13 +596,13 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 CrucibleRecipe recipe = CrucibleRecipeManager.findMatchRep(level, input);
                 if (recipe != null) {
                     IntIntImmutablePair minMax = recipe.level().getMinMax(level, input);
-                    setAndCondSyncTargetTimer(TIME_PER_ESSENCE * minMax.rightInt(), txContext);
+                    startReact(TIME_PER_ESSENCE * minMax.rightInt(), txContext);
                 }
             }
         } else if (catalyst.is(InitItems.TRANSMUTATION_CRYSTAL)) {
             // 源质反应：无输入 && 加了 2 个源质金属
             if (input.isEmpty() && inputOrder.size() == 2) {
-                setAndCondSyncTargetTimer(TIME_PER_ESSENCE * 2, txContext);
+                startReact(TIME_PER_ESSENCE * 2, txContext);
             }
         } else if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
             // 炼金复制/炼金合成：输入正确 && 源质金属加够了
@@ -609,7 +610,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             int essenceSize = alchemySlots.size();
             ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
             if (container.getSlots() > 0 && ItemStack.isSameItemSameComponents(input, container.getStackInSlot(0)) && inputOrder.size() == essenceSize) {
-                setAndCondSyncTargetTimer(TIME_PER_ESSENCE * essenceSize, txContext);
+                startReact(TIME_PER_ESSENCE * essenceSize, txContext);
             }
         } else if (catalyst.getItem() instanceof EssenceMetalItem essenceMetalItem) {
             // 源质融合：无输入 && 源质金属加够了 && 覆盖所有克制
@@ -624,7 +625,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                         }
                     }
                     if (essenceRequired1.isEmpty()) {
-                        setAndCondSyncTargetTimer(TIME_PER_ESSENCE * essenceSize, txContext);
+                        startReact(TIME_PER_ESSENCE * essenceSize, txContext);
                     }
                 }
             }
