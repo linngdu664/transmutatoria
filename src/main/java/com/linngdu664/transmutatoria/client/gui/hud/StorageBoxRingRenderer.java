@@ -22,7 +22,7 @@ import org.joml.Matrix3x2fStack;
 public final class StorageBoxRingRenderer {
     private static final float SLOT_MIN_SCALE = 0.5f;
     private static final float SLOT_MAX_SCALE = 1.25f;
-    private static final int SLOT_MAX_OVERLAY_ALPHA = 0xc0;
+    private static final int SLOT_MAX_OVERLAY_ALPHA = 0xcc;
 
     private StorageBoxRingRenderer() {
     }
@@ -35,16 +35,18 @@ public final class StorageBoxRingRenderer {
         storageBoxExpansion.moveTo(mc.hasAltDown() ? 1.0f : 0.0f, delta, 0.005f);
         float expansion = storageBoxExpansion.value();
 
+        int frameSize = Textures.SIMPLE_FRAME.height();
+        float edgePadding = frameSize * (0.5f * SLOT_MAX_SCALE);
+
         Window window = mc.getWindow();
         int screenW = window.getGuiScaledWidth();
         int screenH = window.getGuiScaledHeight();
 
         float centerX = screenW * 0.5f;
-        float collapsedCenterY = screenH * 0.1f;
+        float collapsedCenterY = screenH * 0.04f + edgePadding;
         float expandedCenterY = screenH * 0.5f;
-        float desiredRadius = screenH * 0.4f;
-        int frameSize = Textures.SIMPLE_FRAME.height();
-        float edgePadding = frameSize * SLOT_MAX_SCALE * 0.5f;
+        float desiredRadius = expandedCenterY - collapsedCenterY;
+
         float radius = Math.min(desiredRadius, Math.max(0.0f, expandedCenterY - edgePadding));
 
         ItemContainerContents contents = boxStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);

@@ -206,5 +206,10 @@
   "gui.transmutatoria.recipe_generator.error.invalid_tag": "选择的物品标签无效。",
   "gui.transmutatoria.recipe_generator.error.save": "生成炼金配方失败：%s",
   "gui.transmutatoria.recipe_generator.error.reload": "JSON 已写入 %s，但数据包重载失败，请查看日志。",
-  "tooltip.transmutatoria.scroll.one_time": "一次性卷轴：成功反应后消耗"
+  "tooltip.transmutatoria.scroll.one_time": "一次性卷轴：成功反应后消耗",
+
+  "key.categories.transmutatoria.main": "混沌炼金",
+  "key.transmutatoria.toggle_crucible_hud": "开关炼金锅HUD",
+  "gui.transmutatoria.crucible_hint.hud_on": "<%s> 开启HUD",
+  "gui.transmutatoria.crucible_hint.hud_off": "<%s> 关闭HUD"
 }

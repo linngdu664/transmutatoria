@@ -24,9 +24,10 @@ final class DashboardRenderer {
     }
 
     static void render(GuiGraphicsExtractor guiGraphics, Window window, TransmutationCrucibleBlockEntity crucible, ItemStack catalyst, DeltaTracker delta, SmoothValue dashboardPolarity) {
-        V2I center = PosUtil.v2IRatio(window, 0.85f, 0.2f);
-        float centerX = center.x();
-        float centerY = center.y();
+        int screenW = window.getGuiScaledWidth();
+        int screenH = window.getGuiScaledHeight();
+        float centerX = screenW * 0.975f - Textures.DASHBOARD_BG.width() * 0.5f;
+        float centerY = screenH * 0.04f + Textures.DASHBOARD_BG.height() * 0.5f;
 
         Textures.DASHBOARD_BG.render(
                 guiGraphics,

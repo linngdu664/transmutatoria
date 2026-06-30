@@ -797,6 +797,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             // 反应
             int annihilationCnt = 0;
             int entropy = catalyst.getOrDefault(InitDataComponents.ENTROPY, 0);
+            boolean canDamage = catalyst.isDamageableItem();
             float damage = 0;
             // 避免装箱拆箱
             for (int j = 0, size = inputOrder.size(); j < size; j++) {
@@ -812,14 +813,14 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 polarity += result.getPolarityIncrease();
                 entropy += result.getEntropyIncrease();
                 if (result.isTriggerDamage()) {
-                    if (catalyst.isDamageableItem()) {
-                        damage += 1f + entropy * 0.125f;
+                    if (canDamage) {
+                        damage += 1f + entropy * 0.2f;
                     }
                     annihilationCnt++;
                 }
             }
             catalyst.set(InitDataComponents.ENTROPY, entropy);
-            if (catalyst.isDamageableItem()) {
+            if (canDamage) {
                 catalyst.setDamageValue(catalyst.getDamageValue() + (int) damage);
                 if (catalyst.isBroken()) {
                     releaseRendererSlot(CATALYST_SLOT); // 如果卷轴爆了，释放催化剂槽

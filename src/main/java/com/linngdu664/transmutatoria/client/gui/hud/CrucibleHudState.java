@@ -13,9 +13,18 @@ public final class CrucibleHudState {
     private final SmoothValue hudIntro = new SmoothValue();
     private final SmoothValue dashboardPolarity = new SmoothValue();
     private final CrucibleSlotAnimation crucibleSlotAnimation = new CrucibleSlotAnimation();
+    private boolean hudManuallyHidden = true;
 
     public void updateHudAnimation(boolean isVisible, DeltaTracker delta) {
         hudIntro.moveTo(isVisible ? 1.0f : 0.0f, delta, 0.005f);
+    }
+
+    public boolean isHudManuallyHidden() {
+        return hudManuallyHidden;
+    }
+
+    public void setHudManuallyHidden(boolean hudManuallyHidden) {
+        this.hudManuallyHidden = hudManuallyHidden;
     }
 
     public RingRotationState storageBoxRotation() {

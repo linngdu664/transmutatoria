@@ -18,7 +18,6 @@ import net.minecraft.world.item.component.ItemContainerContents;
 import java.util.List;
 
 final class SlotDescriptionRenderer {
-    private static final int MARGIN = 20;
     private static final int PADDING = 6;
     private static final int MAX_WIDTH = 130;
     private static final int LINE_HEIGHT = 9;
@@ -113,22 +112,21 @@ final class SlotDescriptionRenderer {
             Component description,
             boolean isWarning
     ) {
-        int availableContentWidth = window.getGuiScaledWidth() - (MARGIN + PADDING) * 2;
-        if (availableContentWidth <= 0) {
-            return;
-        }
-
-        int contentMaxWidth = Math.min(MAX_WIDTH, availableContentWidth);
-        List<FormattedCharSequence> descriptionLines = font.split(description, contentMaxWidth);
-        int contentWidth = Math.min(font.width(title), contentMaxWidth);
+//        int availableContentWidth = window.getGuiScaledWidth() - (MARGIN + PADDING) * 2;
+//        if (availableContentWidth <= 0) {
+//            return;
+//        }
+//        int contentMaxWidth = Math.min(MAX_WIDTH, availableContentWidth);
+        List<FormattedCharSequence> descriptionLines = font.split(description, MAX_WIDTH);
+        int contentWidth = Math.min(font.width(title), MAX_WIDTH);
         for (FormattedCharSequence line : descriptionLines) {
             contentWidth = Math.max(contentWidth, font.width(line));
         }
 
         int panelWidth = contentWidth + PADDING * 2;
         int panelHeight = PADDING * 2 + LINE_HEIGHT + TITLE_GAP + descriptionLines.size() * LINE_HEIGHT;
-        int x = window.getGuiScaledWidth() - panelWidth - MARGIN;
-        int y = window.getGuiScaledHeight() - panelHeight - MARGIN;
+        int x = Math.round(window.getGuiScaledWidth() * 0.975f) - panelWidth;
+        int y = Math.round(window.getGuiScaledHeight() * 0.96f) - panelHeight;
 
         guiGraphics.fill(x, y, x + panelWidth, y + panelHeight, BG_COLOR);
         int borderColor = isWarning ? HINT_BORDER_COLOR : BORDER_COLOR;

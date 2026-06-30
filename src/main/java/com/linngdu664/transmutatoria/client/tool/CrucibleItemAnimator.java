@@ -109,6 +109,7 @@ public class CrucibleItemAnimator {
             scale *= calcOutputScale(partialTicks);
         } else if (realSlot == INPUT_SLOT) {
             if (suppressInputSlotScale) {
+                // todo 输入物品还是有bug，反应后立刻进入锅的输入物品还是放缩小的动画
                 scale *= Mth.lerp(partialTicks, inputScale0, inputScale1);
             } else {
                 float outputScale = calcOutputScale(partialTicks);

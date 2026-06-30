@@ -10,7 +10,7 @@ public class PosUtil {
     }
 
     public static int heightRatio(Window window, int textureHeight, float heightRatio) {
-        return (int) (window.getGuiScaledHeight() * heightRatio - textureHeight * 0.5f);
+        return Math.round(window.getGuiScaledHeight() * heightRatio - textureHeight * 0.5f);
     }
 
     public static int widthCenter(Window window, int textureWidth) {
@@ -18,7 +18,7 @@ public class PosUtil {
     }
 
     public static int widthRatio(Window window, int textureWidth, float widthRatio) {
-        return (int) (window.getGuiScaledWidth() * widthRatio - textureWidth * 0.5f);
+        return Math.round(window.getGuiScaledWidth() * widthRatio - textureWidth * 0.5f);
     }
 
     public static V2I v2IRatio(Window window, int textureWidth, int textureHeight, float widthRatio, float heightRatio) {
@@ -30,7 +30,7 @@ public class PosUtil {
     }
 
     public static V2I v2IRatio(Window window, float widthRatio, float heightRatio) {
-        return new V2I((int) (window.getGuiScaledWidth() * widthRatio), (int) (window.getGuiScaledHeight() * heightRatio));
+        return new V2I(Math.round(window.getGuiScaledWidth() * widthRatio), Math.round(window.getGuiScaledHeight() * heightRatio));
     }
 
     public static boolean isInScreen(Vec2 point, Window window) {

@@ -30,7 +30,7 @@ public final class CrucibleCommonHudRenderer {
     private CrucibleCommonHudRenderer() {
     }
 
-    public static void render(GuiGraphicsExtractor guiGraphics, BlockEntity be, DeltaTracker delta, CrucibleHudState state) {
+    public static void render(GuiGraphicsExtractor guiGraphics, BlockEntity be, ItemStack boxStack, DeltaTracker delta, CrucibleHudState state) {
         if (!(be instanceof TransmutationCrucibleBlockEntity crucible)) {
             return;
         }
@@ -50,24 +50,6 @@ public final class CrucibleCommonHudRenderer {
             guiGraphics.pose().scale(state.hudIntro().value(), state.hudIntro().value());
             guiGraphics.pose().translate(-sw / 2f, -sh / 2f);
         }
-
-        V2I stripCenter = PosUtil.v2IRatio(window, 0.05f, 0.5f);
-        if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
-            V2I stripPos = new V2I(stripCenter.x() - Textures.DURABILITY_STRIP.wholeWidth() / 2, stripCenter.y() - Textures.DURABILITY_STRIP.wholeHeight() / 2);
-            Textures.DURABILITY_STRIP.render(guiGraphics, stripPos.x(), stripPos.y());
-            DurabilityProgressRenderer.renderDurabilityStrip(guiGraphics, catalyst, alchemySlots, stripPos.x() + DurabilityProgressRenderer.DURABILITY_STRIP_CONTENT_X, stripPos.y() + DurabilityProgressRenderer.DURABILITY_STRIP_CONTENT_Y);
-        }
-
-        V2I barCenter = new V2I(stripCenter.x() + 35, stripCenter.y());
-        V2I barPos = new V2I(barCenter.x() - Textures.PROGRESS_BAR.wholeWidth() / 2, barCenter.y() - Textures.PROGRESS_BAR.wholeHeight() / 2);
-        Textures.PROGRESS_BAR.render(guiGraphics, barPos.x(), barPos.y());
-        DurabilityProgressRenderer.renderProgressBar(guiGraphics, alchemySlots, barPos.x() + DurabilityProgressRenderer.PROGRESS_BAR_CONTENT_X, barPos.y() + DurabilityProgressRenderer.PROGRESS_BAR_CONTENT_Y);
-
-        guiGraphics.item(catalyst, barPos.x() + 13, barPos.y() + 19);
-        guiGraphics.item(crucible.getInput(), barPos.x() + 13, barPos.y() + 47);
-        guiGraphics.item(crucible.getOutput(), barPos.x() + 13, barPos.y() + 169);
-
-        DashboardRenderer.render(guiGraphics, window, crucible, catalyst, delta, state.dashboardPolarity());
 
         drawBackground(guiGraphics, window, catalyst);
 
@@ -110,6 +92,24 @@ public final class CrucibleCommonHudRenderer {
             EssenceSlotRenderer.drawNumbers(guiGraphics, mc.font, xys, crucible, delta, state.crucibleSlotAnimation());
         }
 
+        if (boxStack != null) {
+            StorageBoxRingRenderer.render(guiGraphics, boxStack, delta, state.storageBoxRotation(), state.storageBoxExpansion());
+        }
+
+        V2I stripLeftCenter = PosUtil.v2IRatio(window, 0.025f, 0.5f);
+        V2I stripPos = new V2I(stripLeftCenter.x(), stripLeftCenter.y() - Textures.DURABILITY_STRIP.wholeHeight() / 2);
+        Textures.DURABILITY_STRIP.render(guiGraphics, stripPos.x(), stripPos.y());
+        DurabilityProgressRenderer.renderDurabilityStrip(guiGraphics, catalyst, alchemySlots, stripPos.x() + DurabilityProgressRenderer.DURABILITY_STRIP_CONTENT_X, stripPos.y() + DurabilityProgressRenderer.DURABILITY_STRIP_CONTENT_Y);
+        V2I barCenter = new V2I(stripLeftCenter.x() + 46, stripLeftCenter.y());
+        V2I barPos = new V2I(barCenter.x() - Textures.PROGRESS_BAR.wholeWidth() / 2, barCenter.y() - Textures.PROGRESS_BAR.wholeHeight() / 2);
+        Textures.PROGRESS_BAR.render(guiGraphics, barPos.x(), barPos.y());
+        DurabilityProgressRenderer.renderProgressBar(guiGraphics, alchemySlots, barPos.x() + DurabilityProgressRenderer.PROGRESS_BAR_CONTENT_X, barPos.y() + DurabilityProgressRenderer.PROGRESS_BAR_CONTENT_Y);
+
+        guiGraphics.item(catalyst, barPos.x() + 13, barPos.y() + 19);
+        guiGraphics.item(crucible.getInput(), barPos.x() + 13, barPos.y() + 47);
+        guiGraphics.item(crucible.getOutput(), barPos.x() + 13, barPos.y() + 169);
+
+        DashboardRenderer.render(guiGraphics, window, crucible, catalyst, delta, state.dashboardPolarity());
         SlotDescriptionRenderer.render(guiGraphics, window, mc.font, catalyst, alchemySlots, crucible);
 
         if (state.hudIntro().value() < 0.995f) {

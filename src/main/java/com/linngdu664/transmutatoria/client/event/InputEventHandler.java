@@ -17,6 +17,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import org.lwjgl.glfw.GLFW;
 
 // 处理手持炼金术士储物盒对准炼金锅时的滚轮事件，旋转外圈刻度
 @EventBusSubscriber(modid = ArsTransmutatoria.MODID, value = Dist.CLIENT)
@@ -36,6 +37,10 @@ public class InputEventHandler {
         }
         BlockHitResult blockHit = (BlockHitResult) hit;
         if (!(player.level().getBlockState(blockHit.getBlockPos()).is(InitBlocks.TRANSMUTATION_CRUCIBLE))) {
+            return;
+        }
+
+        if (RenderGuiEventHandler.state.isHudManuallyHidden()) {
             return;
         }
 
@@ -73,5 +78,34 @@ public class InputEventHandler {
         boxStack.set(InitDataComponents.ROTATION, newRotation);
         player.playSound(SoundEvents.DISPENSER_FAIL, 0.5F, 1.0F);
         ClientPacketDistributor.sendToServer(new RotateStorageBoxPayload(hand, newRotation));
+    }
+
+    @SubscribeEvent
+    public static void onKeyInput(InputEvent.Key event) {
+        if (event.getAction() != GLFW.GLFW_PRESS) {
+            return;
+        }
+
+        if (!ModKeyMappings.TOGGLE_CRUCIBLE_HUD.matches(event.getKeyEvent())) {
+            return;
+        }
+
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        if (player == null) {
+            return;
+        }
+
+        HitResult hit = mc.hitResult;
+        if (hit == null || hit.getType() != HitResult.Type.BLOCK) {
+            return;
+        }
+        BlockHitResult blockHit = (BlockHitResult) hit;
+        if (!player.level().getBlockState(blockHit.getBlockPos()).is(InitBlocks.TRANSMUTATION_CRUCIBLE)) {
+            return;
+        }
+
+        var state = RenderGuiEventHandler.state;
+        state.setHudManuallyHidden(!state.isHudManuallyHidden());
     }
 }
