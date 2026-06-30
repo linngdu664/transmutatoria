@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
 
-// region 连通六边形槽位生成
+// 连通六边形槽位生成
 public class AlchemySlotGenerator {
     public static void generate(ItemStack scrollStack, int count, RandomSource random) {
         List<V2I> positions = generateConnectedHexPositions(count, random);
@@ -22,7 +22,7 @@ public class AlchemySlotGenerator {
             } else {
                 metal = allMetals[random.nextInt(allMetals.length - 1)];
             }
-            slots.add(AbstractAlchemySlot.create(slotType, metal, pos.x(), pos.y(), shouldSetShowType(slotType, positions.size(), random)));
+            slots.add(AbstractAlchemySlot.create(slotType, metal, pos.x(), pos.y(), true));
         }
 
         scrollStack.set(InitDataComponents.ALCHEMY_SLOTS, slots);
@@ -88,8 +88,9 @@ public class AlchemySlotGenerator {
     // todo 后续可能在配置文件中加入特殊槽位概率？
     private static SlotType pickSlotType(int slotCount, RandomSource random) {
         if (slotCount <= 8) return SlotType.NORMAL;
-        // 24 级时 50% 概率为特殊槽位
-        if (random.nextFloat() < 16f / (slotCount + 8)) return SlotType.NORMAL;
+        // 24 级时 25% 概率为特殊槽位
+        // 8 级时 0% 概率为特殊槽位
+        if (random.nextFloat() < 48f / (slotCount + 40)) return SlotType.NORMAL;
         return SPECIAL_TYPES[random.nextInt(SPECIAL_TYPES.length)];
     }
 

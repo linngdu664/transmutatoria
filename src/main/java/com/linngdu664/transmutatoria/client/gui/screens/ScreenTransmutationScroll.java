@@ -197,28 +197,22 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
 
     private static String getStabilityTranslationKey(ItemStack scrollStack) {
         int maxDurability = scrollStack.getOrDefault(DataComponents.MAX_DAMAGE, 0);
-        int entropy = scrollStack.getOrDefault(InitDataComponents.ENTROPY, 0);
-        if (maxDurability <= 0 || entropy <= 0) {
-            return "gui.transmutatoria.scroll_stability.stable";
-        }
+        if (maxDurability <= 0) return "gui.transmutatoria.scroll_stability.stable";
 
-        float ratio = entropy * 0.125f / maxDurability;
-        if (ratio <= 0.025f) {
-            return "gui.transmutatoria.scroll_stability.slight_disturbance";
-        }
-        if (ratio <= 0.05f) {
-            return "gui.transmutatoria.scroll_stability.slightly_unstable";
-        }
-        if (ratio <= 0.10f) {
-            return "gui.transmutatoria.scroll_stability.unstable";
-        }
-        if (ratio <= 0.175f) {
-            return "gui.transmutatoria.scroll_stability.clearly_unstable";
-        }
-        if (ratio <= 0.25f) {
-            return "gui.transmutatoria.scroll_stability.very_unstable";
-        }
-        return "gui.transmutatoria.scroll_stability.near_collapse";
+        int entropy = scrollStack.getOrDefault(InitDataComponents.ENTROPY, 0);
+        if (entropy <= 0) return "gui.transmutatoria.scroll_stability.stable";
+
+        int slotSize = scrollStack.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of()).size();
+        if (slotSize == 0) return "gui.transmutatoria.scroll_stability.stable";
+
+        float ratio = (1f + entropy * 0.2f) * slotSize / maxDurability;
+        if (ratio < (1f / 12f)) return "gui.transmutatoria.scroll_stability.stable";    // > 12
+        if (ratio < (1f / 8f)) return "gui.transmutatoria.scroll_stability.slight_disturbance";    // 9, 10, 11, 12
+        if (ratio < (1f / 5f)) return "gui.transmutatoria.scroll_stability.slightly_unstable"; // 6, 7, 8
+        if (ratio < (1f / 3f)) return "gui.transmutatoria.scroll_stability.unstable";  // 4, 5
+        if (ratio < (1f / 2f)) return "gui.transmutatoria.scroll_stability.clearly_unstable";  // 3
+        if (ratio < 1f) return "gui.transmutatoria.scroll_stability.very_unstable"; // 2
+        return "gui.transmutatoria.scroll_stability.near_collapse"; // 1
     }
 
     private V2I renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDeco, float fadeProgress){

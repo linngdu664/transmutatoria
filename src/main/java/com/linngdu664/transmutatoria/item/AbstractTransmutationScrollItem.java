@@ -34,21 +34,23 @@ public abstract class AbstractTransmutationScrollItem extends Item {
     protected AbstractTransmutationScrollItem(Identifier id, ExpireInfo expireInfo, int durability) {
         super(getCommonProperties(id)
                 .component(InitDataComponents.EXPIRE_INFO, expireInfo)
+                .setNoCombineRepair()
                 .durability(durability));
     }
 
     protected AbstractTransmutationScrollItem(Identifier id, ExpireInfo expireInfo) {
         super(getCommonProperties(id)
                 .component(InitDataComponents.EXPIRE_INFO, expireInfo)
-                .component(DataComponents.UNBREAKABLE, Unit.INSTANCE));
+                .component(DataComponents.UNBREAKABLE, Unit.INSTANCE)
+                .setNoCombineRepair());
     }
 
     protected AbstractTransmutationScrollItem(Identifier id, int durability) {
-        super(getCommonProperties(id).durability(durability));
+        super(getCommonProperties(id).durability(durability).setNoCombineRepair());
     }
 
     protected AbstractTransmutationScrollItem(Identifier id) {
-        super(getCommonProperties(id).component(DataComponents.UNBREAKABLE, Unit.INSTANCE));
+        super(getCommonProperties(id).component(DataComponents.UNBREAKABLE, Unit.INSTANCE).setNoCombineRepair());
     }
 
     private static Item.Properties getCommonProperties(Identifier id) {

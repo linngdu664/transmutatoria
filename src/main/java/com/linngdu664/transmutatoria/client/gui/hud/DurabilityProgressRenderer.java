@@ -52,13 +52,13 @@ final class DurabilityProgressRenderer {
             }
         }
 
-        float visibleHeight = Textures.PROGRESS_BAR_CONTENT.height() * unlockedSlots / (float) alchemySlots.size();
+        float visibleHeight = Textures.PROGRESS_BAR_CONTENT.height() * ((float) unlockedSlots / alchemySlots.size());
         BSFGuiTool.renderTopCropped(guiGraphics, Textures.PROGRESS_BAR_CONTENT, barX, barY, visibleHeight);
     }
 
     private static int getPredictedScrollDamage(ItemStack catalyst, List<AbstractAlchemySlot> alchemySlots) {
         int entropy = catalyst.getOrDefault(InitDataComponents.ENTROPY, 0);
-        float damagePerSlot = Math.max(1f, 1f + entropy * 0.125f);
+        float damagePerSlot = Math.max(1f, 1f + entropy * 0.2f);
         return (int) (alchemySlots.size() * damagePerSlot);
     }
 }
