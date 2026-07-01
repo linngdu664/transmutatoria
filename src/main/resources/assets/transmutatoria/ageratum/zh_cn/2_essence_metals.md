@@ -9,9 +9,9 @@ items:
 
 # 源质金属
 
-*太阳为父，月亮为母，从风孕育，从地养护；*
+<color=#941400>太阳为父，月亮为母，从风孕育，从地养护；</color>
 
-*世间一切完美之源就在此处，其能力从地上获取；*
+<color=#941400>世间一切完美之源就在此处，其能力从地上获取；</color>
 
 ## 概述
 
@@ -29,6 +29,30 @@ items:
 | 渊水 | 渊海钢、幻魂汞、冥沼铅 |
 | 腐土 | 棘血铜、鸩林锡、骸骨锑 |
 | 劫风 | 怒雷锌、凝时铂、无相源金 |
+
+<row>
+<item id="transmutatoria:eclipsium"/>
+<item id="transmutatoria:lunargent"/>
+<item id="transmutatoria:astrotite"/>
+</row>
+
+<row>
+<item id="transmutatoria:abyssion"/>
+<item id="transmutatoria:animercury"/>
+<item id="transmutatoria:necroplumb"/>
+</row>
+
+<row>
+<item id="transmutatoria:sanguibronze"/>
+<item id="transmutatoria:venotite"/>
+<item id="transmutatoria:ossantimony"/>
+</row>
+
+<row>
+<item id="transmutatoria:fulgurzinc"/>
+<item id="transmutatoria:chronoplatinum"/>
+<item id="transmutatoria:pandemonium"/>
+</row>
 
 柱与柱之间存在固定的克制循环：
 
@@ -54,6 +78,10 @@ items:
 
 由 1 个嬗变结晶和 4 个绿宝石在工作台合成。
 
+<row>
+<item id="transmutatoria:emerald_tablet"/>
+</row>
+
 手持翠绿石板右键使用，可以查阅任意两种源质金属之间的完整克制关系。当你需要确认某种反应的结果时，它是最可靠的参考工具。
 
 ## 源质状态
@@ -67,11 +95,30 @@ items:
 | 白化 | 1 | 活化一阶 |
 | 黄化 | 2 | 活化二阶 |
 
+<row>
+<item id="transmutatoria:nigredo_eclipsium"/>
+<item id="transmutatoria:eclipsium"/>
+<item id="transmutatoria:albedo_eclipsium"/>
+<item id="transmutatoria:citrinitas_eclipsium"/>
+</row>
+
 状态超出范围后，金属被破坏：**低于 -1 变为残渣**，**高于 +2 变为红石粉**，两者都失去炼金用途。
+
+<row>
+<item id="transmutatoria:alchemical_dross"/>
+<item id="minecraft:redstone"/>
+</row>
 
 源质的状态不影响其本质——黑化蚀日金和黄化蚀日金的克制关系和效力完全相同。
 
 ## 炼金术士储物盒
+
+<row>
+<item id="transmutatoria:nigredo_alchemist_storage_box"/>
+<item id="transmutatoria:alchemist_storage_box"/>
+<item id="transmutatoria:albedo_alchemist_storage_box"/>
+<item id="transmutatoria:citrinitas_alchemist_storage_box"/>
+</row>
 
 储物盒是管理源质库存的核心工具，同时是物品和可放置的方块。
 

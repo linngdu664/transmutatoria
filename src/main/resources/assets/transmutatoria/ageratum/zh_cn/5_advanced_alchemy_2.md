@@ -9,9 +9,9 @@ items:
 
 # 进阶炼金 · 下
 
-*故我获称三重伟大的赫尔墨斯，因我拥有关于整个宇宙的三个部分的智慧；*
+<color=#941400>故我获称三重伟大的赫尔墨斯，因我拥有关于整个宇宙的三个部分的智慧；</color>
 
-*关于太阳运行之工的我言已毕；*
+<color=#941400>关于太阳运行之工的我言已毕；</color>
 
 ## 概述
 
@@ -26,6 +26,13 @@ items:
 | 双倍克制 / 被双倍克制 | +2 |
 | 普通克制 / 被克制 / 互相克制 / 共生 | +1 |
 | 中性 / 相同（湮灭） | +0 |
+
+<row>
+<item id="transmutatoria:nigredo_venotite"/>
+<item id="transmutatoria:venotite"/>
+<item id="transmutatoria:albedo_venotite"/>
+<item id="transmutatoria:citrinitas_venotite"/>
+</row>
 
 卷轴的熵值越高，后续湮灭对卷轴的耐久消耗越大。这意味着暴力穷举——把每种源质都试一遍——会付出沉重代价。聪明的炼金术士会利用相生相克规则，从反应结果中推断目标源质的身份。
 

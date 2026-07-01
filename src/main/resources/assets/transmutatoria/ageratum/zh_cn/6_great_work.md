@@ -9,9 +9,9 @@ items:
 
 # 伟大之作
 
-*此即完成，我为此作证，凭这世界的审判；*
+<color=#941400>此即完成，我为此作证，凭这世界的审判；</color>
 
-*此即完成，凭借万能神力的奇迹；*
+<color=#941400>此即完成，凭借万能神力的奇迹；</color>
 
 ## 概述
 
@@ -27,11 +27,21 @@ items:
 | 汞化基质 | 盐化基质 | 8 | ≥ 20 |
 | 硫化基质 | 汞化基质 | 13 | -1 ~ 1 |
 
+<row>
+<item id="transmutatoria:salic_matrix"/>
+<item id="transmutatoria:mercurial_matrix"/>
+<item id="transmutatoria:sulfuric_matrix"/>
+</row>
+
 注意硫化基质要求极性在 -1 到 1 之间——窗口极窄，需要精确调控。
 
 ## 原初质料
 
 用 1 个嬗变结晶和 4 个圆石在工作台合成**原初质料**。它是伟大之作四阶段的起点原料。
+
+<row>
+<item id="transmutatoria:prima_materia"/>
+</row>
 
 ## 四个阶段
 
@@ -40,6 +50,10 @@ items:
 > *"下如同上，上如同下"*
 
 物质在黑暗中被分解，归为混沌。
+
+<row>
+<item id="transmutatoria:nigredo_matter"/>
+</row>
 
 | 条件 | 值 |
 |------|-----|
@@ -56,6 +70,10 @@ items:
 
 黑暗被洗净，物质提纯为银白之光。
 
+<row>
+<item id="transmutatoria:albedo_matter"/>
+</row>
+
 | 条件 | 值 |
 |------|-----|
 | 转化原料 | 黑化质料 |
@@ -70,6 +88,10 @@ items:
 > *"太阳为父，月亮为母"*
 
 银白之光被太阳染为金黄，物质获得转化之力。
+
+<row>
+<item id="transmutatoria:citrinitas_matter"/>
+</row>
 
 | 条件 | 值 |
 |------|-----|
@@ -86,6 +108,10 @@ items:
 
 金色被点燃为赤红，贤者之石的雏形在此诞生。这是一次性转化。
 
+<row>
+<item id="transmutatoria:rubedo_matter"/>
+</row>
+
 | 条件 | 值 |
 |------|-----|
 | 转化原料 | 黄化质料 |
@@ -99,6 +125,10 @@ items:
 ### 煅烧
 
 将赤化质料放入**熔炉**煅烧，即可得到贤者之石。
+
+<row>
+<item id="transmutatoria:philosophers_stone"/>
+</row>
 
 ## 贤者之石的权能
 

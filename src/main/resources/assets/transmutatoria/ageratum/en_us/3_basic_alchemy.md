@@ -8,9 +8,9 @@ items:
 
 # Basic Alchemy
 
-*Separate earth from fire, the subtle from the gross, gently and with great care;*
+<color=#941400>Separate earth from fire, the subtle from the gross, gently and with great care;</color>
 
-*It ascends from the earth to the heavens, and again descends to the earth, receiving the power of things above and things below;*
+<color=#941400>It ascends from the earth to the heavens, and again descends to the earth, receiving the power of things above and things below;</color>
 
 ## Overview
 
@@ -22,6 +22,10 @@ You already used the crucible in the first chapter, gaining an initial impressio
 
 The two reactions in this chapter operate in the same way as Transmutation Decomposition. The difference is that after you put in a Transmutation Crystal or essence metal as the catalyst, an **essence slot diagram** appears in the middle of the HUD.
 
+<row>
+<item id="transmutatoria:transmutation_crucible"/>
+</row>
+
 Here are two additional useful operations:
 
 - Holding a storage box and right-clicking the crucible can put the currently selected essence directly into an essence slot. Use the **mouse wheel** to switch the storage box's currently selected essence.
@@ -30,6 +34,10 @@ Here are two additional useful operations:
 ## Essence Reaction
 
 **Catalyst: Transmutation Crystal**
+
+<row>
+<item id="transmutatoria:transmutation_crystal"/>
+</row>
 
 This is the most basic reaction type - two essence metals directly react and change state according to their relationship.
 
@@ -51,11 +59,30 @@ After the reaction ends, right-click the crucible to take out the two changed me
 
 **Example**: Animercury restrains Eclipsium. Citrinitas-infused Animercury reacting with Nigredo-tainted Eclipsium results in: Citrinitas-infused Animercury **-1** -> Albedo-infused Animercury; Nigredo-tainted Eclipsium **+1** -> Eclipsium.
 
+<row>
+<item id="transmutatoria:citrinitas_animercury"/>
+<item id="transmutatoria:nigredo_eclipsium"/>
+</row>
+
+<row>
+<item id="transmutatoria:albedo_animercury"/>
+<item id="transmutatoria:eclipsium"/>
+</row>
+
 ## Essence Fusion
 
 **Catalyst: any essence metal**
 
 Use the catalyst metal's restraint relationship to gather all of its restrained targets and synthesize the catalyst metal itself.
+
+Any essence metal can be used as a fusion catalyst, for example:
+
+<row>
+<item id="transmutatoria:eclipsium"/>
+<item id="transmutatoria:abyssion"/>
+<item id="transmutatoria:fulgurzinc"/>
+<item id="transmutatoria:pandemonium"/>
+</row>
 
 1. Drop one **essence metal** into the catalyst slot.
 2. Drop all metals **restrained and doubly restrained** by the catalyst metal into the essence slots (all must be covered).

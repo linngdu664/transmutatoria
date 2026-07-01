@@ -8,11 +8,11 @@ items:
 
 # Getting Started
 
-*True, without falsehood, certain and most true;*
+<color=#941400>True, without falsehood, certain and most true;</color>
 
-*That which is below is like that which is above, and that which is above is like that which is below, to accomplish the miracles of the One;*
+<color=#941400>That which is below is like that which is above, and that which is above is like that which is below, to accomplish the miracles of the One;</color>
 
-*And all things were from the One, by the mediation of the One;*
+<color=#941400>And all things were from the One, by the mediation of the One;</color>
 
 ## Overview
 
@@ -22,6 +22,14 @@ The first step of alchemy is obtaining a **Transmutation Crystal** - the startin
 
 Place an **emerald block** on the ground, place a **cauldron** above it, and fill the cauldron with a water bucket. Drop one each of redstone dust, gunpowder, and glowstone dust into the cauldron. After the three touch the water surface, they transform into a Transmutation Crystal.
 
+<row>
+<item id="minecraft:redstone"/>
+<item id="minecraft:gunpowder"/>
+<item id="minecraft:glowstone_dust"/>
+<item id="transmutatoria:transmutation_crystal"/>
+</row>
+<structure id="../structures/cauldron_crystal.nbt"/>
+
 The emerald block and cauldron are not consumed, so the same apparatus can be reused for batch production.
 
 Use a Transmutation Crystal, two gold ingots, and a cauldron in a crafting table to craft a **Transmutation Crucible**.
@@ -29,6 +37,12 @@ Use a Transmutation Crystal, two gold ingots, and a cauldron in a crafting table
 ## Transmutation Decomposition
 
 This is the only initial way to obtain essence metals. The Eye of Ender acts as a catalyst to "observe" the Transmutation Crystal, revealing the essence nature within it.
+
+<row>
+<item id="transmutatoria:transmutation_crystal"/>
+<item id="minecraft:ender_eye"/>
+<item id="transmutatoria:eclipsium"/>
+</row>
 
 1. Place the Transmutation Crucible on the ground and fill it with water using a water bucket.
 2. Drop an **Eye of Ender** into the crucible as the catalyst (it will not be consumed).
@@ -47,6 +61,30 @@ There are **12** essence metals in total, belonging to the four elemental pillar
 | Abyssal Water | Abyssion, Animercury, Necroplumb |
 | Rotten Earth | Sanguibronze, Venotite, Ossantimony |
 | Calamitous Wind | Fulgurzinc, Chronoplatinum, Pandemonium |
+
+<row>
+<item id="transmutatoria:eclipsium"/>
+<item id="transmutatoria:lunargent"/>
+<item id="transmutatoria:astrotite"/>
+</row>
+
+<row>
+<item id="transmutatoria:abyssion"/>
+<item id="transmutatoria:animercury"/>
+<item id="transmutatoria:necroplumb"/>
+</row>
+
+<row>
+<item id="transmutatoria:sanguibronze"/>
+<item id="transmutatoria:venotite"/>
+<item id="transmutatoria:ossantimony"/>
+</row>
+
+<row>
+<item id="transmutatoria:fulgurzinc"/>
+<item id="transmutatoria:chronoplatinum"/>
+<item id="transmutatoria:pandemonium"/>
+</row>
 
 Among them, **Pandemonium** is extremely rare (only a 1% chance from Transmutation Decomposition) and is a key material for many advanced recipes and ultimate alchemy.
 

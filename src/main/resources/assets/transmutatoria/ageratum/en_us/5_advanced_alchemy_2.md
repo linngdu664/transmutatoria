@@ -9,9 +9,9 @@ items:
 
 # Advanced Alchemy - Part II
 
-*Thus I am called Hermes Trismegistus, having the three parts of the philosophy of the whole world;*
+<color=#941400>Thus I am called Hermes Trismegistus, having the three parts of the philosophy of the whole world;</color>
 
-*What I have said of the operation of the Sun is complete;*
+<color=#941400>What I have said of the operation of the Sun is complete;</color>
 
 ## Overview
 
@@ -26,6 +26,13 @@ Each time a slot reacts, if the relationship between the inserted essence and th
 | Double restrain / doubly restrained | +2 |
 | Normal restraint / restrained / mutual restraint / symbiosis | +1 |
 | Neutral / same (annihilation) | +0 |
+
+<row>
+<item id="transmutatoria:nigredo_venotite"/>
+<item id="transmutatoria:venotite"/>
+<item id="transmutatoria:albedo_venotite"/>
+<item id="transmutatoria:citrinitas_venotite"/>
+</row>
 
 The higher the scroll's entropy, the greater the durability cost of later annihilation. This means brute-force guessing - trying every kind of essence - comes at a heavy price. A clever alchemist uses the restraint and symbiosis rules to infer the identity of the target essence from reaction results.
 

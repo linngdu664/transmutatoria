@@ -8,9 +8,9 @@ items:
 
 # 基础炼金
 
-*分土于火，萃精于糙，谨慎从事；*
+<color=#941400>分土于火，萃精于糙，谨慎从事；</color>
 
-*它自地面升到天空，复下降至地，承纳上界与下界之力；*
+<color=#941400>它自地面升到天空，复下降至地，承纳上界与下界之力；</color>
 
 ## 概述
 
@@ -22,6 +22,10 @@ items:
 
 本章的两个反应操作方式与炼金分解相同，区别在于：投入嬗变结晶或源质金属作为催化剂后，HUD 中部会显示对应的**源质槽位图**。
 
+<row>
+<item id="transmutatoria:transmutation_crucible"/>
+</row>
+
 这里额外补充两个实用操作：
 
 - 手持储物盒对着炼金锅右键，可以将当前选中的源质直接投入源质槽位。**滚轮**切换储物盒当前选中的源质。
@@ -30,6 +34,10 @@ items:
 ## 源质反应
 
 **催化剂：嬗变结晶**
+
+<row>
+<item id="transmutatoria:transmutation_crystal"/>
+</row>
 
 这是最基础的反应类型——让两种源质金属直接发生反应，根据彼此的关系各自改变状态。
 
@@ -51,11 +59,30 @@ items:
 
 **实例**：幻魂汞克制蚀日金。黄化幻魂汞与黑化蚀日金反应，结果为：黄化幻魂汞 **-1** → 白化幻魂汞；黑化蚀日金 **+1** → 常态蚀日金。
 
+<row>
+<item id="transmutatoria:citrinitas_animercury"/>
+<item id="transmutatoria:nigredo_eclipsium"/>
+</row>
+
+<row>
+<item id="transmutatoria:albedo_animercury"/>
+<item id="transmutatoria:eclipsium"/>
+</row>
+
 ## 源质融合
 
 **催化剂：任意源质金属**
 
 用催化金属的克制关系，聚合其所有克制对象，合成催化金属本身。
+
+任意源质金属都可以作为融合催化剂，例如：
+
+<row>
+<item id="transmutatoria:eclipsium"/>
+<item id="transmutatoria:abyssion"/>
+<item id="transmutatoria:fulgurzinc"/>
+<item id="transmutatoria:pandemonium"/>
+</row>
 
 1. 将一种**源质金属**丢入催化剂槽。
 2. 将催化金属**所有克制和双倍克制**的金属丢入源质槽（必须全部覆盖）。

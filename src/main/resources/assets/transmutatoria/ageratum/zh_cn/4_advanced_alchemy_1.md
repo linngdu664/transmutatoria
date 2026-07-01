@@ -9,9 +9,9 @@ items:
 
 # 进阶炼金 · 上
 
-*以此你将获得全世界荣耀，远离所有黑暗；*
+<color=#941400>以此你将获得全世界荣耀，远离所有黑暗；</color>
 
-*这便是万力之力和无穷之力；*
+<color=#941400>这便是万力之力和无穷之力；</color>
 
 ## 概述
 
@@ -23,6 +23,11 @@ items:
 
 - **嬗变印记卷**：用于**炼金复制**——以一件物品为模板，在炼金锅中复制出一份新的。
 - **嬗变方程卷**：用于**炼金转化**——将一种物品转化为另一种。
+
+<row>
+<item id="transmutatoria:transmutation_sigil_scroll"/>
+<item id="transmutatoria:transmutation_equation_scroll"/>
+</row>
 
 各有五个等级：
 
@@ -36,11 +41,36 @@ items:
 
 高级卷轴需要更多资源制作，但提供更高的耐久和更宽松的过期规则。
 
+<row>
+<item id="transmutatoria:transmutation_sigil_scroll"/>
+<item id="transmutatoria:terrestrial_sigil_scroll"/>
+<item id="transmutatoria:lunar_sigil_scroll"/>
+<item id="transmutatoria:solar_sigil_scroll"/>
+<item id="transmutatoria:void_sigil_scroll"/>
+</row>
+
+<row>
+<item id="transmutatoria:transmutation_equation_scroll"/>
+<item id="transmutatoria:terrestrial_equation_scroll"/>
+<item id="transmutatoria:lunar_equation_scroll"/>
+<item id="transmutatoria:solar_equation_scroll"/>
+<item id="transmutatoria:void_equation_scroll"/>
+</row>
+
 ## 制作与激活
 
 ### 合成
 
 两种卷轴的基础配方几乎相同——任意源质金属、嬗变结晶、纸、金粒。唯一的区别是印记卷需要萤石粉，而方程卷需要红石粉。
+
+<row>
+<item id="transmutatoria:eclipsium"/>
+<item id="transmutatoria:transmutation_crystal"/>
+<item id="minecraft:paper"/>
+<item id="minecraft:gold_nugget"/>
+<item id="minecraft:glowstone_dust"/>
+<item id="minecraft:redstone"/>
+</row>
 
 ### 激活
 
@@ -63,6 +93,10 @@ items:
 每个配方都有**等级**。等级越高，需要的源质越多。等级较低的配方适合初期上手练习。
 
 ## 在炼金锅中使用
+
+<row>
+<item id="transmutatoria:transmutation_crucible"/>
+</row>
 
 ### 操作步骤
 

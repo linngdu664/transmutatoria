@@ -9,9 +9,9 @@ items:
 
 # Advanced Alchemy - Part I
 
-*By this you will obtain the glory of the whole world, and all darkness will flee from you;*
+<color=#941400>By this you will obtain the glory of the whole world, and all darkness will flee from you;</color>
 
-*This is the force of all forces and the strength of all strength;*
+<color=#941400>This is the force of all forces and the strength of all strength;</color>
 
 ## Overview
 
@@ -23,6 +23,11 @@ Scrolls are divided into two types:
 
 - **Transmutation Sigil Scroll**: used for **Alchemical Replication** - using one item as a template to replicate a new copy in the crucible.
 - **Transmutation Equation Scroll**: used for **Alchemical Transformation** - transforming one item into another.
+
+<row>
+<item id="transmutatoria:transmutation_sigil_scroll"/>
+<item id="transmutatoria:transmutation_equation_scroll"/>
+</row>
 
 Each has five tiers:
 
@@ -36,11 +41,36 @@ Each has five tiers:
 
 Advanced scrolls require more resources to craft, but provide higher durability and more lenient expiration rules.
 
+<row>
+<item id="transmutatoria:transmutation_sigil_scroll"/>
+<item id="transmutatoria:terrestrial_sigil_scroll"/>
+<item id="transmutatoria:lunar_sigil_scroll"/>
+<item id="transmutatoria:solar_sigil_scroll"/>
+<item id="transmutatoria:void_sigil_scroll"/>
+</row>
+
+<row>
+<item id="transmutatoria:transmutation_equation_scroll"/>
+<item id="transmutatoria:terrestrial_equation_scroll"/>
+<item id="transmutatoria:lunar_equation_scroll"/>
+<item id="transmutatoria:solar_equation_scroll"/>
+<item id="transmutatoria:void_equation_scroll"/>
+</row>
+
 ## Crafting and Activation
 
 ### Crafting
 
 The basic recipes for the two scrolls are almost the same - any essence metal, Transmutation Crystal, paper, and gold nugget. The only difference is that the Sigil Scroll requires glowstone dust, while the Equation Scroll requires redstone dust.
+
+<row>
+<item id="transmutatoria:eclipsium"/>
+<item id="transmutatoria:transmutation_crystal"/>
+<item id="minecraft:paper"/>
+<item id="minecraft:gold_nugget"/>
+<item id="minecraft:glowstone_dust"/>
+<item id="minecraft:redstone"/>
+</row>
 
 ### Activation
 
@@ -63,6 +93,10 @@ These essences correspond to the scroll's **essence slots** - each slot is bound
 Every recipe has a **level**. The higher the level, the more essences are required. Lower-level recipes are suitable for early practice.
 
 ## Using It in the Crucible
+
+<row>
+<item id="transmutatoria:transmutation_crucible"/>
+</row>
 
 ### Operation Steps
 

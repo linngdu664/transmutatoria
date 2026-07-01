@@ -9,9 +9,9 @@ items:
 
 # Essence Metals
 
-*The Sun is its father, the Moon its mother; the wind carried it in its womb, the earth nourished it;*
+<color=#941400>The Sun is its father, the Moon its mother; the wind carried it in its womb, the earth nourished it;</color>
 
-*Here is the source of every perfection in the world, and its power is obtained from the earth;*
+<color=#941400>Here is the source of every perfection in the world, and its power is obtained from the earth;</color>
 
 ## Overview
 
@@ -29,6 +29,30 @@ Review the twelve metals and their four-pillar affiliations from the previous ch
 | Abyssal Water | Abyssion, Animercury, Necroplumb |
 | Rotten Earth | Sanguibronze, Venotite, Ossantimony |
 | Calamitous Wind | Fulgurzinc, Chronoplatinum, Pandemonium |
+
+<row>
+<item id="transmutatoria:eclipsium"/>
+<item id="transmutatoria:lunargent"/>
+<item id="transmutatoria:astrotite"/>
+</row>
+
+<row>
+<item id="transmutatoria:abyssion"/>
+<item id="transmutatoria:animercury"/>
+<item id="transmutatoria:necroplumb"/>
+</row>
+
+<row>
+<item id="transmutatoria:sanguibronze"/>
+<item id="transmutatoria:venotite"/>
+<item id="transmutatoria:ossantimony"/>
+</row>
+
+<row>
+<item id="transmutatoria:fulgurzinc"/>
+<item id="transmutatoria:chronoplatinum"/>
+<item id="transmutatoria:pandemonium"/>
+</row>
 
 There is a fixed restraint cycle between the pillars:
 
@@ -54,6 +78,10 @@ The above are the core rules of restraint and symbiosis. For the complete table 
 
 Crafted from 1 Transmutation Crystal and 4 emeralds in a crafting table.
 
+<row>
+<item id="transmutatoria:emerald_tablet"/>
+</row>
+
 Right-click while holding the Emerald Tablet to check the complete restraint relationship between any two essence metals. When you need to confirm the result of a reaction, it is the most reliable reference tool.
 
 ## Essence States
@@ -67,11 +95,30 @@ Every essence metal has four states:
 | Albedo | 1 | Activated by one stage |
 | Citrinitas | 2 | Activated by two stages |
 
+<row>
+<item id="transmutatoria:nigredo_eclipsium"/>
+<item id="transmutatoria:eclipsium"/>
+<item id="transmutatoria:albedo_eclipsium"/>
+<item id="transmutatoria:citrinitas_eclipsium"/>
+</row>
+
 After the state exceeds the range, the metal is destroyed: **below -1 becomes Alchemical Dross**, and **above +2 becomes redstone dust**. Both lose their alchemical use.
+
+<row>
+<item id="transmutatoria:alchemical_dross"/>
+<item id="minecraft:redstone"/>
+</row>
 
 The state of an essence does not affect its nature - Nigredo-tainted Eclipsium and Citrinitas-infused Eclipsium have exactly the same restraint relationships and potency.
 
 ## Alchemist's Storage Box
+
+<row>
+<item id="transmutatoria:nigredo_alchemist_storage_box"/>
+<item id="transmutatoria:alchemist_storage_box"/>
+<item id="transmutatoria:albedo_alchemist_storage_box"/>
+<item id="transmutatoria:citrinitas_alchemist_storage_box"/>
+</row>
 
 The storage box is the core tool for managing essence stock. It is both an item and a placeable block.
 

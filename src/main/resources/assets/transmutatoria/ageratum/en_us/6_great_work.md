@@ -9,9 +9,9 @@ items:
 
 # The Great Work
 
-*This is complete; I testify to it by the judgment of the world;*
+<color=#941400>This is complete; I testify to it by the judgment of the world;</color>
 
-*This is complete, by the miracle of almighty power;*
+<color=#941400>This is complete, by the miracle of almighty power;</color>
 
 ## Overview
 
@@ -27,11 +27,21 @@ Ancient alchemy holds that all things are composed of the three matrices of Salt
 | Mercurial Matrix | Salic Matrix | 8 | >= 20 |
 | Sulfuric Matrix | Mercurial Matrix | 13 | -1 to 1 |
 
+<row>
+<item id="transmutatoria:salic_matrix"/>
+<item id="transmutatoria:mercurial_matrix"/>
+<item id="transmutatoria:sulfuric_matrix"/>
+</row>
+
 Note that Sulfuric Matrix requires polarity between -1 and 1 - the window is extremely narrow and requires precise control.
 
 ## Prima Materia
 
 Use 1 Transmutation Crystal and 4 cobblestone in a crafting table to craft **Prima Materia**. It is the starting material for the four stages of the Great Work.
+
+<row>
+<item id="transmutatoria:prima_materia"/>
+</row>
 
 ## Four Stages
 
@@ -40,6 +50,10 @@ Use 1 Transmutation Crystal and 4 cobblestone in a crafting table to craft **Pri
 > *"That which is below is like that which is above, and that which is above is like that which is below"*
 
 Matter is decomposed in darkness and returns to chaos.
+
+<row>
+<item id="transmutatoria:nigredo_matter"/>
+</row>
 
 | Condition | Value |
 |------|-----|
@@ -56,6 +70,10 @@ The slots are few and the operation is simple, but it requires the crucible pola
 
 Darkness is washed clean, and matter is purified into silver-white light.
 
+<row>
+<item id="transmutatoria:albedo_matter"/>
+</row>
+
 | Condition | Value |
 |------|-----|
 | Transformation Input | Nigredo Matter |
@@ -70,6 +88,10 @@ Polarity reverses - after the Nigredo stage, you need to greatly raise polarity 
 > *"The Sun is its father, the Moon its mother"*
 
 The silver-white light is dyed golden by the sun, and matter gains the power of transformation.
+
+<row>
+<item id="transmutatoria:citrinitas_matter"/>
+</row>
 
 | Condition | Value |
 |------|-----|
@@ -86,6 +108,10 @@ The slot count doubles to 12, special slots begin to appear, and the polarity wi
 
 The gold is ignited into crimson, and the embryo of the Philosopher's Stone is born here. This is a one-time transformation.
 
+<row>
+<item id="transmutatoria:rubedo_matter"/>
+</row>
+
 | Condition | Value |
 |------|-----|
 | Transformation Input | Citrinitas Matter |
@@ -99,6 +125,10 @@ This is the most difficult step in the entire Great Work: 24 slots, about a 50% 
 ### Calcination
 
 Smelt Rubedo Matter in a **furnace** to obtain the Philosopher's Stone.
+
+<row>
+<item id="transmutatoria:philosophers_stone"/>
+</row>
 
 ## Powers of the Philosopher's Stone
 
