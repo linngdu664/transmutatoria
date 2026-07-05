@@ -1,4 +1,4 @@
-package com.linngdu664.transmutatoria.client.event;
+package com.linngdu664.transmutatoria.client.init;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.client.gui.screens.ScreenAlchemistStorageBox;

@@ -1,7 +1,6 @@
-package com.linngdu664.transmutatoria.client.event;
+package com.linngdu664.transmutatoria.client.init;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -10,7 +9,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = ArsTransmutatoria.MODID, value = Dist.CLIENT)
-public class ModKeyMappings {
+public class InitKeyMappings {
     public static final KeyMapping.Category TRANSMUTATORIA_CATEGORY = new KeyMapping.Category(ArsTransmutatoria.makeMyIdentifier("main"));
 
     public static final KeyMapping TOGGLE_CRUCIBLE_HUD = new KeyMapping(

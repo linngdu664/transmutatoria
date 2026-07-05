@@ -1,7 +1,8 @@
 package com.linngdu664.transmutatoria.client.event;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.init.InitBlocks;
+import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
+import com.linngdu664.transmutatoria.client.init.InitKeyMappings;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.AlchemistStorageBoxItem;
 import com.linngdu664.transmutatoria.network.to_server.ChangeCrucibleSelectedSlotPayload;
@@ -36,11 +37,11 @@ public class InputEventHandler {
             return;
         }
         BlockHitResult blockHit = (BlockHitResult) hit;
-        if (!(player.level().getBlockState(blockHit.getBlockPos()).is(InitBlocks.TRANSMUTATION_CRUCIBLE))) {
+        if (!(player.level().getBlockEntity(blockHit.getBlockPos()) instanceof TransmutationCrucibleBlockEntity)) {
             return;
         }
 
-        if (RenderGuiEventHandler.state.isHudManuallyHidden()) {
+        if (RenderGuiEventHandler.isHudManuallyHidden) {
             return;
         }
 
@@ -86,7 +87,7 @@ public class InputEventHandler {
             return;
         }
 
-        if (!ModKeyMappings.TOGGLE_CRUCIBLE_HUD.matches(event.getKeyEvent())) {
+        if (!InitKeyMappings.TOGGLE_CRUCIBLE_HUD.matches(event.getKeyEvent())) {
             return;
         }
 
@@ -101,11 +102,10 @@ public class InputEventHandler {
             return;
         }
         BlockHitResult blockHit = (BlockHitResult) hit;
-        if (!player.level().getBlockState(blockHit.getBlockPos()).is(InitBlocks.TRANSMUTATION_CRUCIBLE)) {
+        if (!(player.level().getBlockEntity(blockHit.getBlockPos()) instanceof TransmutationCrucibleBlockEntity)) {
             return;
         }
 
-        var state = RenderGuiEventHandler.state;
-        state.setHudManuallyHidden(!state.isHudManuallyHidden());
+        RenderGuiEventHandler.isHudManuallyHidden = !RenderGuiEventHandler.isHudManuallyHidden;
     }
 }

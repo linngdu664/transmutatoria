@@ -718,8 +718,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private void handleCrystalReaction(ArrayList<ItemStackWithTwoSlots> updates) {
         if (items.get(ESSENCE_INPUT_SLOT_BEGIN).getItem() instanceof EssenceMetalItem essence1 && items.get(ESSENCE_INPUT_SLOT_BEGIN + 1).getItem() instanceof EssenceMetalItem essence2) {
             EssenceMetal.Relation relation = essence1.getEssenceMetal().getRelationTo(essence2.getEssenceMetal());
-            ItemStack essence1Stack = essence1.change(relation.self);
-            ItemStack essence2Stack = essence2.change(relation.other);
+            ItemStack essence1Stack = essence1.change(relation.self());
+            ItemStack essence2Stack = essence2.change(relation.other());
             int rendererSlot1 = realSlotToRendererSlot[ESSENCE_INPUT_SLOT_BEGIN];
             int rendererSlot2 = realSlotToRendererSlot[ESSENCE_INPUT_SLOT_BEGIN + 1];
 
@@ -737,7 +737,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             items.set(ESSENCE_OUTPUT_SLOT_BEGIN + 1, essence2Stack);
             updates.add(new ItemStackWithTwoSlots(ESSENCE_OUTPUT_SLOT_BEGIN + 1, rendererSlot2, essence2Stack));
 
-            polarity -= relation.self + relation.other;
+            polarity -= relation.self() + relation.other();
         }
     }
 
@@ -799,7 +799,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             int entropy = catalyst.getOrDefault(InitDataComponents.ENTROPY, 0);
             boolean canDamage = catalyst.isDamageableItem();
             float damage = 0;
-            // 避免装箱拆箱
+            // 用下标而不是 foreach 避免装箱拆箱
             for (int j = 0, size = inputOrder.size(); j < size; j++) {
                 int slot = inputOrder.getInt(j);
                 AlchemyReactResult result = alchemySlots.get(slot).react(
@@ -1023,6 +1023,33 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         return false;
     }
 
+    public boolean requiresTransformationInput() {
+        ItemStack catalyst = getCatalyst();
+        if (catalyst.is(Items.ENDER_EYE) || catalyst.is(InitItems.PHILOSOPHERS_STONE)) {
+            return true;
+        }
+        if (catalyst.getItem() instanceof AbstractTransmutationScrollItem) {
+            ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+            return container.getSlots() > 0 && !container.getStackInSlot(0).isEmpty();
+        }
+        return false;
+    }
+
+    public boolean isPhilosophersStoneRecipe() {
+        ItemStack catalyst = getCatalyst();
+        ItemContainerContents container = catalyst.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+        if (container.getSlots() < 2) {
+            return false;
+        }
+
+        ItemStack input = container.getStackInSlot(0);
+        ItemStack output = container.getStackInSlot(1);
+        return input.is(InitItems.PRIMA_MATERIA) && output.is(InitItems.NIGREDO_MATTER)
+                || input.is(InitItems.NIGREDO_MATTER) && output.is(InitItems.ALBEDO_MATTER)
+                || input.is(InitItems.ALBEDO_MATTER) && output.is(InitItems.CITRINITAS_MATTER)
+                || input.is(InitItems.CITRINITAS_MATTER) && output.is(InitItems.RUBEDO_MATTER);
+    }
+
     public void takeCatalyst(Player player) {
         ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getCatalyst());
         level.addFreshEntity(itemEntity);
@@ -1083,9 +1110,10 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     // ======================客户端网络同步=========================
     public void clientSetItem(int slot, int rendererSlot, ItemStack itemStack) {
+        // 这个 boolean 必须在 items.set 前计算，否则 items.get(slot).isEmpty() && !itemStack.isEmpty() 可能永远为 false！
+        boolean filledEmptyEssenceInputSlot = slot < ESSENCE_OUTPUT_SLOT_BEGIN && items.get(slot).isEmpty() && !itemStack.isEmpty();
         items.set(slot, itemStack);
         realSlotToRendererSlot[slot] = rendererSlot;
-        boolean filledEmptyEssenceInputSlot = slot < ESSENCE_OUTPUT_SLOT_BEGIN && items.get(slot).isEmpty() && !itemStack.isEmpty();
         if (filledEmptyEssenceInputSlot) {
             essenceInputPulseSlot = slot - ESSENCE_INPUT_SLOT_BEGIN;
             essenceInputPulseStartedAtMillis = System.currentTimeMillis();

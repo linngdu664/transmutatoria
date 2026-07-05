@@ -105,10 +105,10 @@ public abstract class AbstractAlchemySlot {
     protected AlchemyReactResult internalReact(ItemStack scroll, EssenceMetalItem inputEssence, List<ItemStack> outputs, boolean[] inhibitionStates, Int2IntMap posToOutputSlot, List<Runnable> deferredTasks) {
         EssenceMetal.Relation relation = inputEssence.getRelation(essenceMetal);
         return switch (relation) {
-            case DOUBLE_RESTRAIN, DOUBLE_BE_RESTRAINED -> new AlchemyReactResult(relation.self, relation.other, 2, false, false);
-            case NEUTRAL -> new AlchemyReactResult(relation.self, relation.other, 0, false, false);
-            case SAME -> new AlchemyReactResult(relation.self, relation.other, 0, true, true);
-            default -> new AlchemyReactResult(relation.self, relation.other, 1, false, false);
+            case DOUBLE_RESTRAIN, DOUBLE_BE_RESTRAINED -> new AlchemyReactResult(relation.self(), relation.other(), 2, false, false);
+            case NEUTRAL -> new AlchemyReactResult(relation.self(), relation.other(), 0, false, false);
+            case SAME -> new AlchemyReactResult(relation.self(), relation.other(), 0, true, true);
+            default -> new AlchemyReactResult(relation.self(), relation.other(), 1, false, false);
         };
     }
 

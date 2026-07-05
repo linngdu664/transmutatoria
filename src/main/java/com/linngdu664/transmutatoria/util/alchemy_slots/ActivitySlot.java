@@ -35,9 +35,9 @@ public class ActivitySlot extends AbstractAlchemySlot {
                     result.setClearItemStack(true);
                     outputs.set(slot, ItemStack.EMPTY);
                 } else {
-                    result.setEssenceStateIncrease(result.getEssenceStateIncrease() + relation.self);
+                    result.setEssenceStateIncrease(result.getEssenceStateIncrease() + relation.self());
                     if (!inhibitionStates[slot]) {
-                        outputs.set(slot, outEssenceMetal.change(relation.other));
+                        outputs.set(slot, outEssenceMetal.change(relation.other()));
                     }
                 }
             }

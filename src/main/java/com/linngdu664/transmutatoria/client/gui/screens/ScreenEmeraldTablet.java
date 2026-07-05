@@ -1,7 +1,7 @@
 package com.linngdu664.transmutatoria.client.gui.screens;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.client.gui.BSFGuiTool;
+import com.linngdu664.transmutatoria.client.gui.HudUtil;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.inventory.EmeraldTabletMenu;
@@ -99,7 +99,7 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
             float angle = Mth.TWO_PI * i / 12.0F - Mth.HALF_PI;
             Vec2 inner = pointOnCircle(center, angle, 42.0F);
             Vec2 outer = pointOnCircle(center, angle, OUTER_RING_RADIUS - 15.0F);
-            BSFGuiTool.renderGradientLine(graphics, inner, outer, 0.8F, 0x204f9f5e, 0x805ba768);
+            HudUtil.renderGradientLine(graphics, inner, outer, 0.8F, 0x204f9f5e, 0x805ba768);
         }
     }
 
@@ -319,8 +319,8 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
         int green = ARGB.color(alpha, GREEN_RGB);
         Vec2 middle = lerp(start, end, 0.5F);
         drawRelationGlow(graphics, start, end, thickness, alpha);
-        BSFGuiTool.renderGradientLine(graphics, start, middle, thickness, red, green);
-        BSFGuiTool.renderGradientLine(graphics, middle, end, thickness, green, red);
+        HudUtil.renderGradientLine(graphics, start, middle, thickness, red, green);
+        HudUtil.renderGradientLine(graphics, middle, end, thickness, green, red);
     }
 
     private void drawMutualRestrained(GuiGraphicsExtractor graphics, Vec2 a, Vec2 b, float thickness, int alpha) {
@@ -330,8 +330,8 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
         int blue = ARGB.color(alpha, BLUE_RGB);
         Vec2 middle = lerp(start, end, 0.5F);
         drawRelationGlow(graphics, start, end, thickness, alpha);
-        BSFGuiTool.renderGradientLine(graphics, start, middle, thickness + 1.2F, black, blue);
-        BSFGuiTool.renderGradientLine(graphics, middle, end, thickness + 1.2F, blue, black);
+        HudUtil.renderGradientLine(graphics, start, middle, thickness + 1.2F, black, blue);
+        HudUtil.renderGradientLine(graphics, middle, end, thickness + 1.2F, blue, black);
     }
 
     private void drawRestrainLine(GuiGraphicsExtractor graphics, Vec2 restrainer, Vec2 restrained, float thickness, int alpha, boolean doubled) {
@@ -344,16 +344,16 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
         if (doubled) {
             int blue = ARGB.color(alpha, BLUE_RGB);
             Vec2 middle = lerp(start, end, 0.5F);
-            BSFGuiTool.renderGradientLine(graphics, start, middle, thickness, red, black);
-            BSFGuiTool.renderGradientLine(graphics, middle, end, thickness, black, blue);
+            HudUtil.renderGradientLine(graphics, start, middle, thickness, red, black);
+            HudUtil.renderGradientLine(graphics, middle, end, thickness, black, blue);
         } else {
-            BSFGuiTool.renderGradientLine(graphics, start, end, thickness, red, black);
+            HudUtil.renderGradientLine(graphics, start, end, thickness, red, black);
         }
     }
 
     private void drawRelationGlow(GuiGraphicsExtractor graphics, Vec2 start, Vec2 end, float thickness, int alpha) {
         int glow = ARGB.color(Math.max(22, alpha / 4), RELATION_GLOW_RGB);
-        BSFGuiTool.renderGradientLine(graphics, start, end, thickness + 1.6F, glow, glow);
+        HudUtil.renderGradientLine(graphics, start, end, thickness + 1.6F, glow, glow);
     }
 
     private void drawRelationLegend(GuiGraphicsExtractor graphics) {
@@ -494,7 +494,7 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
         for (int i = 1; i <= segments; i++) {
             float angle = Mth.TWO_PI * i / segments;
             Vec2 current = pointOnCircle(center, angle, radius);
-            BSFGuiTool.renderGradientLine(graphics, previous, current, thickness, color, color);
+            HudUtil.renderGradientLine(graphics, previous, current, thickness, color, color);
             previous = current;
         }
     }

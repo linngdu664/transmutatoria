@@ -65,10 +65,10 @@ public class CrystalEssenceFusionCategory extends AbstractRecipeCategory<Crystal
                 .add(InitItems.TRANSMUTATION_CRYSTAL.get());
         builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_1_X, SLOT_Y)
                 .setOutputSlotBackground()
-                .add(recipe.first().getItemStack(recipe.firstState() + relation.self));
+                .add(recipe.first().getItemStack(recipe.firstState() + relation.self()));
         builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_2_X, SLOT_Y)
                 .setOutputSlotBackground()
-                .add(recipe.second().getItemStack(recipe.secondState() + relation.other));
+                .add(recipe.second().getItemStack(recipe.secondState() + relation.other()));
     }
 
     @Override
@@ -100,7 +100,7 @@ public class CrystalEssenceFusionCategory extends AbstractRecipeCategory<Crystal
 
         Component polarity = Component.translatable(
                 "jei.transmutatoria.crystal_essence_fusion.polarity.short",
-                signed(-(recipe.relation().self + recipe.relation().other))
+                signed(-(recipe.relation().self() + recipe.relation().other()))
         );
         graphics.text(font, polarity, WIDTH - 7 - font.width(polarity), 69, THEME.textColor(), false);
     }
@@ -116,7 +116,7 @@ public class CrystalEssenceFusionCategory extends AbstractRecipeCategory<Crystal
         if (mouseY >= INFO_TOP) {
             tooltip.add(Component.translatable(
                         "jei.transmutatoria.crystal_essence_fusion.polarity.tooltip",
-                        signed(-(recipe.relation().self + recipe.relation().other))
+                        signed(-(recipe.relation().self() + recipe.relation().other()))
                 ));
         } else if (mouseY >= AlchemicalJeiGraphics.HEADER_BOTTOM && mouseX >= 54 && mouseX < 130) {
             tooltip.add(Component.translatable("jei.transmutatoria.crystal_essence_fusion.description"));

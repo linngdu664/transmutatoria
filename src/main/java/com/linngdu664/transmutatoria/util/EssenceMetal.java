@@ -138,11 +138,21 @@ public enum EssenceMetal implements StringRepresentable {
         MUTUAL_RESTRAINED(-1,-1),
         NEUTRAL(0,0),
         SAME(0,0);
-        public final int self;
-        public final int other;
+
+        private final int self;
+        private final int other;
+
         Relation(int self, int other) {
             this.self = self;
             this.other = other;
+        }
+
+        public int self() {
+            return self;
+        }
+
+        public int other() {
+            return other;
         }
     }
 }

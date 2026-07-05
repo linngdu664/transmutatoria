@@ -137,6 +137,13 @@ public abstract class AbstractTransmutationScrollItem extends Item {
         return (int) ((clockTime - currentNextExpire) / expireInfo.period()) + 1;
     }
 
+    public static int getPredictedScrollDamage(ItemStack itemStack) {
+        int entropy = itemStack.getOrDefault(InitDataComponents.ENTROPY, 0);
+        int slotSize = itemStack.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of()).size();
+        float damagePerSlot = Math.max(1f, 1f + entropy * 0.2f);
+        return (int) (slotSize * damagePerSlot);
+    }
+
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
         RecipeConditions conditions = stack.get(InitDataComponents.RECIPE_CONDITIONS);

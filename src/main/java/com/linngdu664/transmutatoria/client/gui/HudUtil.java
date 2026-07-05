@@ -12,7 +12,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 import org.joml.Matrix3x2f;
 
-public class BSFGuiTool {
+public class HudUtil {
     /**
      * 渲染进度条
      * @param guiGraphics GuiGraphicsExtractor

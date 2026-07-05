@@ -4,6 +4,7 @@ import com.linngdu664.transmutatoria.util.V2I;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.world.phys.Vec2;
 
+@Deprecated
 public class PosUtil {
     public static int heightCenter(Window window, int textureHeight) {
         return heightRatio(window, textureHeight, 0.5f);
