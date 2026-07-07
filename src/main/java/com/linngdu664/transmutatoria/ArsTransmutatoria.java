@@ -1,16 +1,13 @@
 package com.linngdu664.transmutatoria;
 
 import com.linngdu664.transmutatoria.init.*;
-import com.linngdu664.transmutatoria.network.to_client.*;
-import net.minecraft.resources.Identifier;
-import org.slf4j.Logger;
-
 import com.mojang.logging.LogUtils;
-
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.ModContainer;
+import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(ArsTransmutatoria.MODID)

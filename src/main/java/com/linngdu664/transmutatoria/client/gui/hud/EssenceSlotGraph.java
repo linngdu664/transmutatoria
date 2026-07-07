@@ -12,8 +12,8 @@ import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
 import com.linngdu664.transmutatoria.item.TransmutationSigilScrollItem;
-import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
+import com.linngdu664.transmutatoria.util.alchemy_slots.AbstractAlchemySlot;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -25,7 +25,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Matrix3x2fStack;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class EssenceSlotGraph implements HudComponent {
     private static final TextureOption VIRTUAL_ITEM = TextureOption.withAlpha(48);

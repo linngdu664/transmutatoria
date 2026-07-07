@@ -3,7 +3,6 @@ package com.linngdu664.transmutatoria.client.gui;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
 import com.linngdu664.transmutatoria.client.renderer.state.gui.FloatGradientQuadRenderState;
-import com.linngdu664.transmutatoria.util.V2I;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.render.TextureSetup;
@@ -11,6 +10,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 import org.joml.Matrix3x2f;
+import org.joml.Vector2i;
 
 public class HudUtil {
     /**
@@ -23,7 +23,7 @@ public class HudUtil {
      * @param innerColor  内框颜色
      * @param percent     进度条进度(0-1)
      */
-    public static void renderProgressBar(GuiGraphicsExtractor guiGraphics, V2I pos, V2I frame, int padding, int frameColor, int innerColor, float percent) {
+    public static void renderProgressBar(GuiGraphicsExtractor guiGraphics, Vector2i pos, Vector2i frame, int padding, int frameColor, int innerColor, float percent) {
         guiGraphics.fill(pos.x() + 1, pos.y() + 1, pos.x() + frame.x() - 1, pos.y() + frame.y() - 1, 0x80000000);
         guiGraphics.outline(pos.x(), pos.y(), frame.x(), frame.y(), frameColor);
         int innerW = (int) ((frame.x() - padding - padding) * percent);

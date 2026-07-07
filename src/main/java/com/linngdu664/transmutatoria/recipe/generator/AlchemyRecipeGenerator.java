@@ -1,11 +1,6 @@
 package com.linngdu664.transmutatoria.recipe.generator;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.mojang.serialization.JsonOps;
+import com.google.gson.*;
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.init.InitRecipes;
 import com.linngdu664.transmutatoria.inventory.AlchemyRecipeGeneratorMenu;
@@ -13,12 +8,12 @@ import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalReplicationRecipe
 import com.linngdu664.transmutatoria.recipe.crucible.AlchemicalTransformationRecipe;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import com.linngdu664.transmutatoria.recipe.crucible.level_function.FixedLevel;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;

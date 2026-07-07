@@ -39,7 +39,7 @@ public class Dashboard implements HudComponent {
         RecipeConditions conditions = catalyst.getOrDefault(InitDataComponents.RECIPE_CONDITIONS, RecipeConditions.DEFAULT);
         minPolarityDegree = polarityToDegrees(conditions.minPolarity());
         maxPolarityDegree = polarityToDegrees(conditions.maxPolarity());
-        dashboardPolarity.moveTo(crucible.getPolarity(), delta, 0.05F);
+        dashboardPolarity.moveTo(polarityToDegrees(crucible.getPolarity()), delta, 0.05F);
 
         ExpireInfo expireInfo = catalyst.get(InitDataComponents.EXPIRE_INFO);
         if (expireInfo == null || expireInfo.period() <= 0) {

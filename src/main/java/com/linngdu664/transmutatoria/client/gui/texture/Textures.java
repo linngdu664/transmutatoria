@@ -83,15 +83,6 @@ public class Textures {
     public static final GuiSprite SCROLL_ARR_SG_LIGHT = new GuiSprite("scroll/scroll_arr_sg_light", 128, 128);
     public static final GuiSprite SCROLL_ARR_SG_SHINE = new GuiSprite("scroll/scroll_arr_sg_shine", 128, 128);
 
-    public static final GuiSprite[] SCROLL_MARKS = {
-        SCROLL_TRANSMUTATION,
-        SCROLL_TERRESTRIAL,
-        SCROLL_LUNAR,
-        SCROLL_SOLAR,
-        SCROLL_VOID
-    };
-
-
 
     public static final GuiTexture ALCHEMY_ARRAY_1 = new GuiTexture("textures/gui/alchemy_array1.png", 256, 256);
     public static final GuiTexture ALCHEMY_ARRAY_2 = new GuiTexture("textures/gui/alchemy_array2.png", 256, 256);
@@ -101,10 +92,6 @@ public class Textures {
     public static final GuiTexture ALCHEMY_ARRAY_6 = new GuiTexture("textures/gui/alchemy_array6.png", 256, 256);
     public static final GuiTexture ALCHEMY_ARRAY_7 = new GuiTexture("textures/gui/alchemy_array7.png", 256, 256);
     public static final GuiTexture ALCHEMY_ARRAY_8 = new GuiTexture("textures/gui/alchemy_array8.png", 256, 256);
-    public static final GuiTexture[] ALCHEMY_ARRAYS = {
-        ALCHEMY_ARRAY_1, ALCHEMY_ARRAY_2, ALCHEMY_ARRAY_3, ALCHEMY_ARRAY_4,
-        ALCHEMY_ARRAY_5, ALCHEMY_ARRAY_6, ALCHEMY_ARRAY_7, ALCHEMY_ARRAY_8
-    };
 
 
     public static final GuiSprite EMERALD_TABLET_ESSENCE_NODE = new GuiSprite("tablet/essence_node", 28, 28);

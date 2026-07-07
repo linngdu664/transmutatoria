@@ -1,9 +1,9 @@
 package com.linngdu664.transmutatoria.init;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
-import com.linngdu664.transmutatoria.item.component.RecipeConditions;
-import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.item.component.ExpireInfo;
+import com.linngdu664.transmutatoria.item.component.RecipeConditions;
+import com.linngdu664.transmutatoria.util.alchemy_slots.AbstractAlchemySlot;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;

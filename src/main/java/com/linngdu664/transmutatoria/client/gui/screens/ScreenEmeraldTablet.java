@@ -380,6 +380,7 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
         int black = ARGB.color(alpha, BLACK_RGB);
         int blue = ARGB.color(alpha, BLUE_RGB);
         int green = ARGB.color(alpha, GREEN_RGB);
+        // TODO max 的结果就是第 2 个实参，使调用毫无意义
         int glow = ARGB.color(Math.max(22, alpha / 4), RELATION_GLOW_RGB);
 
         graphics.fill(x, centerY - 3, endX, centerY + 3, glow);

@@ -2,9 +2,9 @@ package com.linngdu664.transmutatoria.client.renderer.blockentity;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
-import com.linngdu664.transmutatoria.client.tool.CrucibleItemAnimator;
-import com.linngdu664.transmutatoria.client.renderer.state.blockentity.TransmutationCrucibleRenderState;
 import com.linngdu664.transmutatoria.client.renderer.state.blockentity.CrucibleRSlotPose;
+import com.linngdu664.transmutatoria.client.renderer.state.blockentity.TransmutationCrucibleRenderState;
+import com.linngdu664.transmutatoria.client.tool.CrucibleItemAnimator;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
@@ -187,27 +187,14 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
     private static void quad(
             PoseStack.Pose pose,
             VertexConsumer buffer,
-            float x0,
-            float y0,
-            float z0,
-            float x1,
-            float y1,
-            float z1,
-            float x2,
-            float y2,
-            float z2,
-            float x3,
-            float y3,
-            float z3,
-            float u0,
-            float v0,
-            float u1,
-            float v1,
-            int color,
-            int lightCoords,
-            float normalX,
-            float normalY,
-            float normalZ
+            float x0, float y0, float z0,
+            float x1, float y1, float z1,
+            float x2, float y2, float z2,
+            float x3, float y3, float z3,
+            float u0, float v0,
+            float u1, float v1,
+            int color, int lightCoords,
+            float normalX, float normalY, float normalZ
     ) {
         vertex(pose, buffer, x0, y0, z0, u0, v0, color, lightCoords, normalX, normalY, normalZ);
         vertex(pose, buffer, x1, y1, z1, u0, v1, color, lightCoords, normalX, normalY, normalZ);
@@ -218,16 +205,10 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
     private static void vertex(
             PoseStack.Pose pose,
             VertexConsumer buffer,
-            float x,
-            float y,
-            float z,
-            float u,
-            float v,
-            int color,
-            int lightCoords,
-            float normalX,
-            float normalY,
-            float normalZ
+            float x, float y, float z,
+            float u, float v,
+            int color, int lightCoords,
+            float normalX, float normalY, float normalZ
     ) {
         buffer.addVertex(pose, x, y, z)
                 .setColor(color)

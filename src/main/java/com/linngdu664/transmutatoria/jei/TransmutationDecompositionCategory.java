@@ -1,7 +1,7 @@
 package com.linngdu664.transmutatoria.jei;
 
-import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;
+import com.linngdu664.transmutatoria.init.InitItems;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;

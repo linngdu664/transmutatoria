@@ -26,14 +26,14 @@ public class CrucibleItemAnimator {
     public CrucibleItemAnimator(RandomSource random) {
         float[] baseXZ = new float[]{-0.2f, 0.0f, 0.2f};
         float[] baseY = new float[]{0.34f, 0.39f, 0.44f};
-        float[] baseR = new float[]{0.28f, 0.25f, 0.28f, 0.25f, 0.05f, 0.25f, 0.28f, 0.25f, 0.28f};
+//        float[] baseR = new float[]{0.28f, 0.28f, 0.28f, 0.28f, 0.05f, 0.28f, 0.28f, 0.28f, 0.28f};
         states0 = new CrucibleRSlotState[RENDERER_SLOT_COUNT];
         for (int i = 0; i < RENDERER_SLOT_COUNT; i++) {
             states0[i] = new CrucibleRSlotState(
                     baseXZ[i % 3] - 0.075f + random.nextFloat() * 0.15f,
                     baseY[i / 9],
                     baseXZ[i / 3 % 3] - 0.075f + random.nextFloat() * 0.15f,
-                    baseR[i % 9],
+                    i % 9 == 4 ? 0.05f : 0.28f,
                     -0.4f + random.nextFloat() * 0.8f,
                     -Mth.PI + random.nextFloat() * Mth.TWO_PI
             );
@@ -109,11 +109,9 @@ public class CrucibleItemAnimator {
             scale *= calcOutputScale(partialTicks);
         } else if (realSlot == INPUT_SLOT) {
             if (suppressInputSlotScale) {
-                // todo 输入物品还是有bug，反应后立刻进入锅的输入物品还是放缩小的动画
                 scale *= Mth.lerp(partialTicks, inputScale0, inputScale1);
             } else {
-                float outputScale = calcOutputScale(partialTicks);
-                scale *= outputScale >= 1f ? Mth.lerp(partialTicks, inputScale0, inputScale1) : outputScale;
+                scale *= stopTimer <= 0 ? Mth.lerp(partialTicks, inputScale0, inputScale1) : calcOutputScale(partialTicks);
             }
         }
         return scale;

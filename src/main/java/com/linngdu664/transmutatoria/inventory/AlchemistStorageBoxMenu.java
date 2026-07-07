@@ -10,8 +10,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -32,21 +32,6 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
     private final Container container;
     private final @Nullable InteractionHand openingHand;
     public final int boxState;
-
-    // Client-side constructor
-    public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory) {
-        this(containerId, playerInventory, new SimpleContainer(CONTAINER_SLOTS), 0, null);
-    }
-
-    // Client-side constructor with boxState
-    public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory, int boxState) {
-        this(containerId, playerInventory, new SimpleContainer(CONTAINER_SLOTS), boxState, null);
-    }
-
-    // Server-side constructor
-    public AlchemistStorageBoxMenu(int containerId, Inventory playerInventory, ItemStack boxStack, int boxState) {
-        this(containerId, playerInventory, boxStack, boxState, null);
-    }
 
     public AlchemistStorageBoxMenu(
             int containerId,

@@ -1,12 +1,10 @@
 package com.linngdu664.transmutatoria.util.alchemy_slots;
 
-import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
+import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
-import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
 import com.linngdu664.transmutatoria.util.AlchemyReactResult;
 import com.linngdu664.transmutatoria.util.EssenceMetal;
-import com.linngdu664.transmutatoria.util.SlotType;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import net.minecraft.world.item.ItemStack;
 

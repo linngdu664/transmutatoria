@@ -1,8 +1,8 @@
 package com.linngdu664.transmutatoria.client.gui.hud;
 
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
-import com.linngdu664.transmutatoria.client.init.InitKeyMappings;
 import com.linngdu664.transmutatoria.client.event.RenderGuiEventHandler;
+import com.linngdu664.transmutatoria.client.init.InitKeyMappings;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;

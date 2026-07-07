@@ -3,8 +3,6 @@ package com.linngdu664.transmutatoria.client.gui.animation;
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
 import com.linngdu664.transmutatoria.client.tool.Easing;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 
 public final class CrucibleSlotAnimation {

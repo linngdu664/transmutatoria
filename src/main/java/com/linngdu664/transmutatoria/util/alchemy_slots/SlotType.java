@@ -1,4 +1,4 @@
-package com.linngdu664.transmutatoria.util;
+package com.linngdu664.transmutatoria.util.alchemy_slots;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.network.FriendlyByteBuf;

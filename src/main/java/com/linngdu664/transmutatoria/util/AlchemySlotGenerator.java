@@ -1,19 +1,22 @@
 package com.linngdu664.transmutatoria.util;
 
 import com.linngdu664.transmutatoria.init.InitDataComponents;
+import com.linngdu664.transmutatoria.util.alchemy_slots.AbstractAlchemySlot;
+import com.linngdu664.transmutatoria.util.alchemy_slots.SlotType;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Vector2i;
 
 import java.util.*;
 
 // 连通六边形槽位生成
 public class AlchemySlotGenerator {
     public static void generate(ItemStack scrollStack, int count, RandomSource random) {
-        List<V2I> positions = generateConnectedHexPositions(count, random);
+        List<Vector2i> positions = generateConnectedHexPositions(count, random);
         List<AbstractAlchemySlot> slots = new ArrayList<>(positions.size());
         EssenceMetal[] allMetals = EssenceMetal.values();
 
-        for (V2I pos : positions) {
+        for (Vector2i pos : positions) {
             SlotType slotType = pickSlotType(positions.size(), random);
             // todo 概率要在配置文件里调吗？
             EssenceMetal metal;
@@ -42,11 +45,11 @@ public class AlchemySlotGenerator {
      * 用 frontier 扩张算法生成 count 个连通的六边形坐标，从 (0,0) 开始。
      * 约束生成区域的总宽度和总高度均不超过 {@value MAX_GRID_EXTENT}。
      */
-    private static List<V2I> generateConnectedHexPositions(int count, RandomSource random) {
-        Set<V2I> placed = new HashSet<>();
-        List<V2I> frontier = new ArrayList<>();
+    private static List<Vector2i> generateConnectedHexPositions(int count, RandomSource random) {
+        Set<Vector2i> placed = new HashSet<>();
+        List<Vector2i> frontier = new ArrayList<>();
 
-        V2I origin = new V2I(0, 0);
+        Vector2i origin = new Vector2i(0, 0);
         placed.add(origin);
         int minX = origin.x(), maxX = origin.x();
         int minY = origin.y(), maxY = origin.y();
@@ -54,7 +57,7 @@ public class AlchemySlotGenerator {
 
         while (placed.size() < count && !frontier.isEmpty()) {
             int idx = random.nextInt(frontier.size());
-            V2I pos = frontier.remove(idx);
+            Vector2i pos = frontier.remove(idx);
             if (placed.contains(pos)) {
                 continue;
             }
@@ -76,9 +79,9 @@ public class AlchemySlotGenerator {
         return new ArrayList<>(placed);
     }
 
-    private static void addFrontier(V2I pos, Set<V2I> placed, List<V2I> frontier) {
+    private static void addFrontier(Vector2i pos, Set<Vector2i> placed, List<Vector2i> frontier) {
         for (int[] off : HEX_OFFSETS) {
-            V2I neighbor = new V2I(pos.x() + off[0], pos.y() + off[1]);
+            Vector2i neighbor = new Vector2i(pos.x() + off[0], pos.y() + off[1]);
             if (!placed.contains(neighbor) && !frontier.contains(neighbor)) {
                 frontier.add(neighbor);
             }

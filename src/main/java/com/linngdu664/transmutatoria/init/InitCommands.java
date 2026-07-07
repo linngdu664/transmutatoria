@@ -1,4 +1,4 @@
-package com.linngdu664.transmutatoria.event;
+package com.linngdu664.transmutatoria.init;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.Config;
@@ -12,7 +12,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 @EventBusSubscriber(modid = ArsTransmutatoria.MODID)
-public class AlchemyRecipeGeneratorCommand {
+public class InitCommands {
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent event) {
         if (!Config.ENABLE_RECIPE_GENERATOR_COMMANDS.get()) {
@@ -21,16 +21,16 @@ public class AlchemyRecipeGeneratorCommand {
         event.getDispatcher().register(
                 Commands.literal("transmutatoria_replication")
                         .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                        .executes(context -> open(context.getSource().getPlayerOrException(), AlchemyRecipeGeneratorMenu.Kind.REPLICATION))
+                        .executes(context -> openRecipeGenerator(context.getSource().getPlayerOrException(), AlchemyRecipeGeneratorMenu.Kind.REPLICATION))
         );
         event.getDispatcher().register(
                 Commands.literal("transmutatoria_transformation")
                         .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                        .executes(context -> open(context.getSource().getPlayerOrException(), AlchemyRecipeGeneratorMenu.Kind.TRANSFORMATION))
+                        .executes(context -> openRecipeGenerator(context.getSource().getPlayerOrException(), AlchemyRecipeGeneratorMenu.Kind.TRANSFORMATION))
         );
     }
 
-    private static int open(ServerPlayer player, AlchemyRecipeGeneratorMenu.Kind kind) {
+    private static int openRecipeGenerator(ServerPlayer player, AlchemyRecipeGeneratorMenu.Kind kind) {
         Component title = Component.translatable(kind == AlchemyRecipeGeneratorMenu.Kind.REPLICATION
                 ? "gui.transmutatoria.recipe_generator.replication"
                 : "gui.transmutatoria.recipe_generator.transformation");

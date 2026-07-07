@@ -2,8 +2,8 @@ package com.linngdu664.transmutatoria.client.gui.hud;
 
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
-import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
-import com.linngdu664.transmutatoria.util.SlotType;
+import com.linngdu664.transmutatoria.util.alchemy_slots.AbstractAlchemySlot;
+import com.linngdu664.transmutatoria.util.alchemy_slots.SlotType;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;

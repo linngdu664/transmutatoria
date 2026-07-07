@@ -2,17 +2,16 @@ package com.linngdu664.transmutatoria.client.gui.screens;
 
 import com.linngdu664.transmutatoria.client.gui.texture.TextureOption;
 import com.linngdu664.transmutatoria.client.gui.texture.TextureRenderable;
+import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.client.tool.Easing;
 import com.linngdu664.transmutatoria.client.tool.RomanNumberRenderer;
-import com.linngdu664.transmutatoria.util.V2I;
-import com.linngdu664.transmutatoria.client.gui.texture.Textures;
-import com.linngdu664.transmutatoria.inventory.AbstractTransmutationScrollMenu;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.init.InitItems;
+import com.linngdu664.transmutatoria.inventory.AbstractTransmutationScrollMenu;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.TransmutationEquationScrollItem;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
-import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
+import com.linngdu664.transmutatoria.util.alchemy_slots.AbstractAlchemySlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -27,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.neoforged.neoforge.registries.DeferredItem;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector2i;
 
 import java.util.List;
 
@@ -113,14 +113,14 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         container.copyInto(items);
         ItemStack leftStack = items.getFirst();
         if (!leftStack.isEmpty()) {
-            V2I p = renderSlotItem(graphics, leftStack, true, true, fadeProgress);
+            Vector2i p = renderSlotItem(graphics, leftStack, true, true, fadeProgress);
             if (mouseX >= p.x() && mouseX < p.x() + 16 && mouseY >= p.y() && mouseY < p.y() + 16) {
                 graphics.setComponentTooltipForNextFrame(font, List.of(leftStack.getHoverName()), mouseX, mouseY);
             }
         }
         ItemStack rightStack = items.getLast();
         if (!rightStack.isEmpty()) {    //只要右边有东西那就是激活了
-            V2I p = renderSlotItem(graphics, rightStack, false, true, fadeProgress);
+            Vector2i p = renderSlotItem(graphics, rightStack, false, true, fadeProgress);
             if (mouseX >= p.x() && mouseX < p.x() + 16 && mouseY >= p.y() && mouseY < p.y() + 16) {
                 graphics.setComponentTooltipForNextFrame(font, List.of(rightStack.getHoverName()), mouseX, mouseY);
             }
@@ -215,11 +215,11 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         return "gui.transmutatoria.scroll_stability.near_collapse"; // 1
     }
 
-    private V2I renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDeco, float fadeProgress){
+    private Vector2i renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDeco, float fadeProgress){
         return renderSlotItem(graphics, item, isLeft, needDeco, fadeProgress, 1.0f);
     }
 
-    private V2I renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDeco, float fadeProgress, float opacity){
+    private Vector2i renderSlotItem(GuiGraphicsExtractor graphics, ItemStack item, boolean isLeft, boolean needDeco, float fadeProgress, float opacity){
         int px = leftPos + (isLeft ? AbstractTransmutationScrollMenu.SLOT0_X : AbstractTransmutationScrollMenu.SLOT1_X);
         int py = topPos + (isLeft ? AbstractTransmutationScrollMenu.SLOT0_Y : AbstractTransmutationScrollMenu.SLOT1_Y);
         graphics.item(item, px, py);
@@ -227,7 +227,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
             graphics.itemDecorations(font, item, px, py);
         }
         coverSlotItemWithPage(graphics, px, py, fadeProgress, opacity);
-        return new V2I(px, py);
+        return new Vector2i(px, py);
     }
 
     private void renderOpeningScroll(GuiGraphicsExtractor graphics, int x, int y, float progress, TextureRenderable gemTexture) {
@@ -242,36 +242,6 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
             int scrollHeight = Textures.SCROLL_PAGE.height();
             Textures.SCROLL_PAGE.render(graphics, TextureOption.DEFAULT, pageLeftX, pageY, pageHalfWidth - visibleHalfWidth, 0, visibleHalfWidth, scrollHeight);
             Textures.SCROLL_PAGE.render(graphics, TextureOption.DEFAULT, pageCenterX, pageY, pageHalfWidth, 0, visibleHalfWidth, scrollHeight);
-//            GuiUtil.blit(
-//                    graphics,
-//                    RenderPipelines.GUI_TEXTURED,
-//                    SCROLL_PAGE.identifier(),
-//                    pageLeftX,
-//                    pageY,
-//                    pageHalfWidth - visibleHalfWidth,
-//                    0,
-//                    visibleHalfWidth,
-//                    SCROLL_PAGE.height(),
-//                    visibleHalfWidth,
-//                    SCROLL_PAGE.height(),
-//                    SCROLL_PAGE.width(),
-//                    SCROLL_PAGE.height()
-//            );
-//            GuiUtil.blit(
-//                    graphics,
-//                    RenderPipelines.GUI_TEXTURED,
-//                    SCROLL_PAGE.identifier(),
-//                    pageCenterX,
-//                    pageY,
-//                    pageHalfWidth,
-//                    0,
-//                    visibleHalfWidth,
-//                    SCROLL_PAGE.height(),
-//                    visibleHalfWidth,
-//                    SCROLL_PAGE.height(),
-//                    SCROLL_PAGE.width(),
-//                    SCROLL_PAGE.height()
-//            );
         }
 
         float leftGripX = pageLeftX - LEFT_GRIP_TO_PAGE_OFFSET;
@@ -282,16 +252,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         Textures.SCROLL_GRIP_RIGHT.render(graphics, rightGripX, gripY);
         gemTexture.render(graphics, leftGripX + SCROLL_GEM_OFFSET_X, gemY);
         gemTexture.render(graphics, rightGripX + SCROLL_GEM_OFFSET_X, gemY);
-
-//        renderTexture(graphics, SCROLL_GRIP_LEFT, leftGripX, gripY);
-//        renderTexture(graphics, SCROLL_GRIP_RIGHT, rightGripX, gripY);
-//        renderTexture(graphics, gemTexture, leftGripX + SCROLL_GEM_OFFSET_X, y + SCROLL_GEM_OFFSET_Y);
-//        renderTexture(graphics, gemTexture, rightGripX + SCROLL_GEM_OFFSET_X, y + SCROLL_GEM_OFFSET_Y);
     }
-
-//    private void renderTexture(GuiGraphicsExtractor graphics, GuiTexture texture, float x, float y) {
-//        GuiUtil.blit(graphics, texture.identifier(), x, y, 0, 0, texture.width(), texture.height(), texture.width(), texture.height());
-//    }
 
     private void coverSlotItemWithPage(GuiGraphicsExtractor graphics, int x, int y, float fadeProgress, float opacity) {
         int alpha = Mth.clamp(Mth.ceil(255.0f * (1.0f - fadeProgress * opacity)), 0, 255);
@@ -301,22 +262,6 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         float u = x - leftPos - SCROLL_PAGE_X;
         float v = y - topPos - SCROLL_PAGE_Y;
         Textures.SCROLL_PAGE.render(graphics, TextureOption.withAlpha(alpha), x, y, u, v, 16, 16);
-//        GuiUtil.blit(
-//                graphics,
-//                RenderPipelines.GUI_TEXTURED,
-//                SCROLL_PAGE.identifier(),
-//                x,
-//                y,
-//                u,
-//                v,
-//                16,
-//                16,
-//                16,
-//                16,
-//                SCROLL_PAGE.width(),
-//                SCROLL_PAGE.height(),
-//                colorWithAlpha(-1, alpha)
-//        );
     }
 
     private float advanceOpenAnim(float partialTick) {

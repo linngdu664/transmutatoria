@@ -2,9 +2,9 @@ package com.linngdu664.transmutatoria.init;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.block.AlchemistStorageBoxBlock;
-import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
-import com.linngdu664.transmutatoria.block.entity.AlchemistStorageBoxBlockEntity;
 import com.linngdu664.transmutatoria.block.TransmutationCrucibleBlock;
+import com.linngdu664.transmutatoria.block.entity.AlchemistStorageBoxBlockEntity;
+import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;

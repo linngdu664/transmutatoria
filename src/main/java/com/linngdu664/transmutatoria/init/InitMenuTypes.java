@@ -1,10 +1,6 @@
 package com.linngdu664.transmutatoria.init;
 
-import com.linngdu664.transmutatoria.inventory.AlchemistStorageBoxMenu;
-import com.linngdu664.transmutatoria.inventory.AlchemyRecipeGeneratorMenu;
-import com.linngdu664.transmutatoria.inventory.EmeraldTabletMenu;
-import com.linngdu664.transmutatoria.inventory.TransmutationEquationScrollMenu;
-import com.linngdu664.transmutatoria.inventory.TransmutationSigilScrollMenu;
+import com.linngdu664.transmutatoria.inventory.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;

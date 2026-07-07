@@ -5,7 +5,7 @@ import com.linngdu664.transmutatoria.client.gui.HudUtil;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
-import com.linngdu664.transmutatoria.util.AbstractAlchemySlot;
+import com.linngdu664.transmutatoria.util.alchemy_slots.AbstractAlchemySlot;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
