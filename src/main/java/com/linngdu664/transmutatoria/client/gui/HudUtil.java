@@ -82,20 +82,20 @@ public class HudUtil {
         if (height <= 0.001f) return;
         float srcY = texture.height() - height;
         float destY = y + texture.height() - height;
-        texture.render(guiGraphics, TextureOption.DEFAULT, x, destY, 0, srcY, texture.width(), height);
+        texture.render(guiGraphics, x, destY, 0, srcY, texture.width(), height, TextureOption.DEFAULT);
     }
 
     public static void renderTopCropped(GuiGraphicsExtractor guiGraphics, TextureRenderable texture, float x, float y, float visibleHeight) {
         float height = Mth.clamp(visibleHeight, 0.0f, texture.height());
         if (height <= 0.001f) return;
-        texture.render(guiGraphics, TextureOption.DEFAULT, x, y, 0, 0, texture.width(), height);
+        texture.render(guiGraphics, x, y, 0, 0, texture.width(), height, TextureOption.DEFAULT);
     }
 
     public static void renderVerticalSlice(GuiGraphicsExtractor guiGraphics, TextureRenderable texture, float x, float y, float yOffset, float visibleHeight) {
         float top = Mth.clamp(yOffset, 0.0f, texture.height());
         float height = Mth.clamp(visibleHeight, 0.0f, texture.height() - top);
         if (height <= 0.001f) return;
-        texture.render(guiGraphics, TextureOption.DEFAULT, x, y + top, 0, top, texture.width(), height);
+        texture.render(guiGraphics, x, y + top, 0, top, texture.width(), height, TextureOption.DEFAULT);
     }
 
     public static void renderRotatedCentered(GuiGraphicsExtractor guiGraphics, TextureRenderable texture, float centerX, float centerY, float angleDegrees) {

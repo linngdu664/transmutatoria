@@ -12,16 +12,16 @@ public final class RomanNumberRenderer {
     }
 
     public static int render(GuiGraphicsExtractor guiGraphics, int number, int x, int y) {
-        return render(guiGraphics, TextureOption.DEFAULT, number, x, y);
+        return render(guiGraphics, number, x, y, TextureOption.DEFAULT);
     }
 
-    public static int render(GuiGraphicsExtractor guiGraphics, TextureOption option, int number, int x, int y) {
+    public static int render(GuiGraphicsExtractor guiGraphics, int number, int x, int y, TextureOption option) {
         if (number < 1 || number > 39) return 0;
         int cursorX = x;
         String roman = toRomanNumber(number);
         for (int i = 0; i < roman.length(); i++) {
             GuiSubSprite sprite = getSprite(roman.charAt(i));
-            sprite.render(guiGraphics, option, cursorX, y);
+            sprite.render(guiGraphics, cursorX, y, option);
             cursorX += sprite.width() + SPACING;
         }
         return cursorX - x - SPACING;

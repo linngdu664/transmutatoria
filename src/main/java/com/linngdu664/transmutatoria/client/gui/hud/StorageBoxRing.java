@@ -146,7 +146,7 @@ public class StorageBoxRing implements HudComponent {
 
             TextureRenderable relationBorder = relationTextures[i];
             if (relationBorder != null) {
-                relationBorder.render(guiGraphics, TextureOption.withAlpha(relationTextureAlpha), -relationBorder.width() / 2, -relationBorder.height() / 2);
+                relationBorder.render(guiGraphics, -relationBorder.width() / 2, -relationBorder.height() / 2, TextureOption.withAlpha(relationTextureAlpha));
             }
 
             Textures.SIMPLE_FRAME.render(guiGraphics, -frameSize / 2, -frameSize / 2);
@@ -159,7 +159,7 @@ public class StorageBoxRing implements HudComponent {
 
             int maskAlpha = maskAlphas[i];
             if (maskAlpha > 0) {
-                Textures.SIMPLE_FRAME_MASK.render(guiGraphics, TextureOption.withAlpha(maskAlpha), -frameSize / 2, -frameSize / 2);
+                Textures.SIMPLE_FRAME_MASK.render(guiGraphics, -frameSize / 2, -frameSize / 2, TextureOption.withAlpha(maskAlpha));
             }
 
             pose.popMatrix();

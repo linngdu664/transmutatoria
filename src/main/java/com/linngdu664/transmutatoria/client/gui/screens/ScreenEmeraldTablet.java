@@ -423,11 +423,11 @@ public class ScreenEmeraldTablet extends AbstractContainerScreen<EmeraldTabletMe
             int iconX = Math.round(nodeCenter.x - ESSENCE_SIZE * 0.5F);
             int iconY = Math.round(nodeCenter.y - ESSENCE_SIZE * 0.5F);
 
-            Textures.EMERALD_TABLET_ESSENCE_NODE.render(graphics, TextureOption.withAlpha(alpha), nodeX, nodeY);
+            Textures.EMERALD_TABLET_ESSENCE_NODE.render(graphics, nodeX, nodeY, TextureOption.withAlpha(alpha));
 //            if (metal == hovered) {
 //                Textures.SLOT_SELECTED.render(graphics, nodeX, nodeY);
 //            }
-            metal.getDefaultTexture().render(graphics, TextureOption.withAlpha(alpha), iconX + 2, iconY + 1);
+            metal.getDefaultTexture().render(graphics, iconX + 2, iconY + 1, TextureOption.withAlpha(alpha));
         }
 
         if (hovered != null) {

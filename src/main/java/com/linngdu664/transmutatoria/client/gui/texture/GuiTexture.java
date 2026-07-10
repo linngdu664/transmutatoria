@@ -11,17 +11,17 @@ public record GuiTexture(Identifier identifier, int wholeWidth, int wholeHeight)
     }
 
     @Override
-    public void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y, int u, int v) {
+    public void render(GuiGraphicsExtractor guiGraphics, int x, int y, int u, int v, TextureOption option) {
         guiGraphics.blit(option.renderPipeline(), identifier, x, y, u, v, wholeWidth, wholeHeight, wholeWidth, wholeHeight, option.color());
     }
 
     @Override
-    public void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y, float u, float v) {
+    public void render(GuiGraphicsExtractor guiGraphics, float x, float y, float u, float v, TextureOption option) {
         FloatGuiGraphics.blit(guiGraphics, option.renderPipeline(), identifier, x, y, u, v, wholeWidth, wholeHeight, wholeWidth, wholeHeight, wholeWidth, wholeHeight, option.color());
     }
 
     @Override
-    public void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y, float u, float v, float widthOverride, float heightOverride) {
+    public void render(GuiGraphicsExtractor guiGraphics, float x, float y, float u, float v, float widthOverride, float heightOverride, TextureOption option) {
         FloatGuiGraphics.blit(guiGraphics, option.renderPipeline(), identifier, x, y, u, v, widthOverride, heightOverride, widthOverride, heightOverride, wholeWidth, wholeHeight, option.color());
     }
 

@@ -18,6 +18,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -102,9 +103,9 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         int yo = -4 + (this.height - this.imageHeight) / 2;
         boolean isEquationScroll = scrollStack.getItem() instanceof TransmutationEquationScrollItem;
         if (isEquationScroll) {
-            Textures.SCROLL_ARR_EQ_BASE.render(graphics, fadeOption, xo, yo);
+            Textures.SCROLL_ARR_EQ_BASE.render(graphics, xo, yo, fadeOption);
         } else {
-            Textures.SCROLL_ARR_SG_BASE.render(graphics, fadeOption, xo, yo);
+            Textures.SCROLL_ARR_SG_BASE.render(graphics, xo, yo, fadeOption);
         }
 
         // 渲染配方物品（从 CONTAINER 组件读取）
@@ -125,9 +126,9 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
                 graphics.setComponentTooltipForNextFrame(font, List.of(rightStack.getHoverName()), mouseX, mouseY);
             }
             if (isEquationScroll) {
-                Textures.SCROLL_ARR_EQ_LIGHT.render(graphics, fadeOption, xo, yo);
+                Textures.SCROLL_ARR_EQ_LIGHT.render(graphics, xo, yo, fadeOption);
             } else {
-                Textures.SCROLL_ARR_SG_LIGHT.render(graphics, fadeOption, xo, yo);
+                Textures.SCROLL_ARR_SG_LIGHT.render(graphics, xo, yo, fadeOption);
             }
         } else if (this.hoveredSlot != null && this.hoveredSlot.hasItem()) {//右边没东西那就是没激活，判断鼠标所在物品是否可以激活
             ItemStack item = this.hoveredSlot.getItem();
@@ -137,14 +138,14 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
                     ItemStack visualRightStack = recipe.getOtherSideItemStack();
                     renderSlotItem(graphics, visualRightStack, false, false, fadeProgress, 0.5f);
                     renderSlotItem(graphics, item, true, false, fadeProgress, 0.5f);
-                    Textures.SCROLL_ARR_EQ_LIGHT.render(graphics, fadeOption, xo, yo);
-                    Textures.SCROLL_ARR_EQ_SHINE.render(graphics, fadeOption, xo, yo);
+                    Textures.SCROLL_ARR_EQ_LIGHT.render(graphics, xo, yo, fadeOption);
+                    Textures.SCROLL_ARR_EQ_SHINE.render(graphics, xo, yo, fadeOption);
                 } else {
                     ItemStack visualLeftStack = recipe.getOtherSideItemStack();
                     renderSlotItem(graphics, visualLeftStack, true, false, fadeProgress, 0.5f);
                     renderSlotItem(graphics, item, false, false, fadeProgress, 0.5f);
-                    Textures.SCROLL_ARR_SG_LIGHT.render(graphics, fadeOption, xo, yo);
-                    Textures.SCROLL_ARR_SG_SHINE.render(graphics, fadeOption, xo, yo);
+                    Textures.SCROLL_ARR_SG_LIGHT.render(graphics, xo, yo, fadeOption);
+                    Textures.SCROLL_ARR_SG_SHINE.render(graphics, xo, yo, fadeOption);
                 }
 
             }
@@ -168,9 +169,9 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
                 boolean unlocked = slot.isShowEssence();
 
                 if (unlocked) {
-                    slot.getEssenceMetal().getDefaultTexture().render(graphics, fadeOption, curX, curY);
+                    slot.getEssenceMetal().getDefaultTexture().render(graphics, curX, curY, fadeOption);
                 } else {
-                    Textures.UNKNOWN_ESSENCE.render(graphics, fadeOption, curX, curY);
+                    Textures.UNKNOWN_ESSENCE.render(graphics, curX, curY, fadeOption);
                 }
 
                 // 鼠标检测用动画后的位置和大小
@@ -183,7 +184,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
             }
             int romanX = xo + Textures.SCROLL_ARR_EQ_BASE.width() / 2 - RomanNumberRenderer.width(size) / 2;
             int romanY = yo + Textures.SCROLL_ARR_EQ_BASE.height() / 2 - Textures.ROMAN_I.height() / 2;
-            RomanNumberRenderer.render(graphics, fadeOption, size, romanX, romanY);
+            RomanNumberRenderer.render(graphics, size, romanX, romanY, fadeOption);
         }
 
         renderStabilityText(graphics, scrollStack, fadeAlpha);
@@ -191,7 +192,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
 
     private void renderStabilityText(GuiGraphicsExtractor graphics, ItemStack scrollStack, int fadeAlpha) {
         Component text = Component.translatable(getStabilityTranslationKey(scrollStack));
-        int color = colorWithAlpha(0x4a2f21, fadeAlpha);
+        int color = ARGB.color(fadeAlpha, 0x4a2f21);
         graphics.text(font, text, leftPos + SCROLL_PAGE_X + STABILITY_TEXT_OFFSET_X, topPos + SCROLL_PAGE_Y + STABILITY_TEXT_OFFSET_Y, color, false);
     }
 
@@ -240,8 +241,8 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
 
         if (visibleHalfWidth > 0.0f) {
             int scrollHeight = Textures.SCROLL_PAGE.height();
-            Textures.SCROLL_PAGE.render(graphics, TextureOption.DEFAULT, pageLeftX, pageY, pageHalfWidth - visibleHalfWidth, 0, visibleHalfWidth, scrollHeight);
-            Textures.SCROLL_PAGE.render(graphics, TextureOption.DEFAULT, pageCenterX, pageY, pageHalfWidth, 0, visibleHalfWidth, scrollHeight);
+            Textures.SCROLL_PAGE.render(graphics, pageLeftX, pageY, pageHalfWidth - visibleHalfWidth, 0, visibleHalfWidth, scrollHeight, TextureOption.DEFAULT);
+            Textures.SCROLL_PAGE.render(graphics, pageCenterX, pageY, pageHalfWidth, 0, visibleHalfWidth, scrollHeight, TextureOption.DEFAULT);
         }
 
         float leftGripX = pageLeftX - LEFT_GRIP_TO_PAGE_OFFSET;
@@ -261,7 +262,7 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         }
         float u = x - leftPos - SCROLL_PAGE_X;
         float v = y - topPos - SCROLL_PAGE_Y;
-        Textures.SCROLL_PAGE.render(graphics, TextureOption.withAlpha(alpha), x, y, u, v, 16, 16);
+        Textures.SCROLL_PAGE.render(graphics, x, y, u, v, 16, 16, TextureOption.withAlpha(alpha));
     }
 
     private float advanceOpenAnim(float partialTick) {
@@ -278,10 +279,6 @@ public class ScreenTransmutationScroll extends AbstractContainerScreen<AbstractT
         fadeAnimTicks = Mth.clamp(fadeAnimTicks + partialTick, 0.0f, FADE_ANIM_DURATION_TICKS);
         float tick = Mth.clamp(fadeAnimTicks, 0.0f, FADE_ANIM_DURATION_TICKS);
         return Easing.CUBIC_OUT.ease(tick, 0.0f, 1.0f, FADE_ANIM_DURATION_TICKS);
-    }
-
-    private static int colorWithAlpha(int color, int alpha) {
-        return (Mth.clamp(alpha, 0, 255) << 24) | (color & 0x00ffffff);
     }
 
     private static @NotNull ItemStack getScrollFromPlayer(Player player) {

@@ -4,11 +4,11 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 
 public interface TextureRenderable {
-    void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y, int u, int v);
+    void render(GuiGraphicsExtractor guiGraphics, int x, int y, int u, int v, TextureOption option);
 
-    void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y, float u, float v);
+    void render(GuiGraphicsExtractor guiGraphics, float x, float y, float u, float v, TextureOption option);
 
-    void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y, float u, float v, float widthOverride, float heightOverride);
+    void render(GuiGraphicsExtractor guiGraphics, float x, float y, float u, float v, float widthOverride, float heightOverride, TextureOption option);
 
     int width();
 
@@ -17,26 +17,26 @@ public interface TextureRenderable {
     Identifier identifier();
 
     default void render(GuiGraphicsExtractor guiGraphics, int x, int y) {
-        render(guiGraphics, TextureOption.DEFAULT, x, y, 0, 0);
+        render(guiGraphics, x, y, 0, 0, TextureOption.DEFAULT);
     }
 
-    default void render(GuiGraphicsExtractor guiGraphics, TextureOption option, int x, int y) {
-        render(guiGraphics, option, x, y, 0, 0);
+    default void render(GuiGraphicsExtractor guiGraphics, int x, int y, TextureOption option) {
+        render(guiGraphics, x, y, 0, 0, option);
     }
 
     default void render(GuiGraphicsExtractor guiGraphics, int x, int y, int u, int v) {
-        render(guiGraphics, TextureOption.DEFAULT, x, y, u, v);
+        render(guiGraphics, x, y, u, v, TextureOption.DEFAULT);
     }
 
     default void render(GuiGraphicsExtractor guiGraphics, float x, float y) {
-        render(guiGraphics, TextureOption.DEFAULT, x, y, 0, 0);
+        render(guiGraphics, x, y, 0, 0, TextureOption.DEFAULT);
     }
 
-    default void render(GuiGraphicsExtractor guiGraphics, TextureOption option, float x, float y) {
-        render(guiGraphics, option, x, y, 0, 0);
+    default void render(GuiGraphicsExtractor guiGraphics, float x, float y, TextureOption option) {
+        render(guiGraphics, x, y, 0, 0, option);
     }
 
     default void render(GuiGraphicsExtractor guiGraphics, float x, float y, float u, float v) {
-        render(guiGraphics, TextureOption.DEFAULT, x, y, u, v);
+        render(guiGraphics, x, y, u, v, TextureOption.DEFAULT);
     }
 }

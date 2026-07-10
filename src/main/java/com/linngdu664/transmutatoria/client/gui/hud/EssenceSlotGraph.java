@@ -334,7 +334,7 @@ public class EssenceSlotGraph implements HudComponent {
         if (itemDraw instanceof ItemStack itemStack) {
             guiGraphics.item(itemStack, x + 6, y + 5);
         } else if (itemDraw instanceof TextureRenderable texture) {
-            texture.render(guiGraphics, VIRTUAL_ITEM, x + 6, y + 5);
+            texture.render(guiGraphics, x + 6, y + 5, VIRTUAL_ITEM);
         }
     }
 
