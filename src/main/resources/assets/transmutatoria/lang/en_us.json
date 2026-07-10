@@ -1,15 +1,14 @@
 {
   "itemGroup.transmutatoria": "Transmutatoria",
   "block.transmutatoria.transmutation_crucible": "Transmutation Crucible",
-  "item.transmutatoria.transmutation_crucible": "Transmutation Crucible",
-  "item.transmutatoria.alchemist_storage_box": "Alchemist's Storage Box",
-  "item.transmutatoria.nigredo_alchemist_storage_box": "Nigredo Alchemist's Storage Box",
-  "item.transmutatoria.albedo_alchemist_storage_box": "Albedo Alchemist's Storage Box",
-  "item.transmutatoria.citrinitas_alchemist_storage_box": "Citrinitas Alchemist's Storage Box",
-  "item.transmutatoria.transmutation_crystal": "Transmutation Crystal",
+  "block.transmutatoria.alchemist_storage_box": "Alchemist's Storage Box",
+  "block.transmutatoria.nigredo_alchemist_storage_box": "Nigredo Alchemist's Storage Box",
+  "block.transmutatoria.albedo_alchemist_storage_box": "Albedo Alchemist's Storage Box",
+  "block.transmutatoria.citrinitas_alchemist_storage_box": "Citrinitas Alchemist's Storage Box",
+  "block.transmutatoria.transmutation_crystal": "Transmutation Crystal",
+  "block.transmutatoria.alchemical_dross_block": "Alchemical Dross Block",
   "item.transmutatoria.alchemical_dross": "Alchemical Dross",
   "item.transmutatoria.unknown_essence": "???",
-  "block.transmutatoria.alchemical_dross_block": "Alchemical Dross Block",
 
   "item.transmutatoria.eclipsium": "Eclipsium",
   "item.transmutatoria.nigredo_eclipsium": "Nigredo-tainted Eclipsium",
@@ -208,7 +207,7 @@
   "gui.transmutatoria.recipe_generator.error.reload": "JSON was written to %s, but datapack reload failed. Check the log.",
   "tooltip.transmutatoria.scroll.one_time": "One-time scroll: consumed after a successful reaction",
 
-  "key.categories.transmutatoria.main": "Transmutatoria",
+  "key.category.transmutatoria.main": "Transmutatoria",
   "key.transmutatoria.toggle_crucible_hud": "Toggle Crucible HUD",
   "gui.transmutatoria.crucible_hint.hud_on": "<%s> Show HUD",
   "gui.transmutatoria.crucible_hint.hud_off": "<%s> Hide HUD"

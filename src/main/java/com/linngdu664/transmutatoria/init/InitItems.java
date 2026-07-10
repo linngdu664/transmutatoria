@@ -23,17 +23,17 @@ public class InitItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    // ================= [ 方块/特殊物品示例 ] =================
-    public static DeferredItem<Item> TRANSMUTATION_CRUCIBLE = ITEMS.register("transmutation_crucible", TransmutationCrucibleItem::new);
+    // ================= [ 炼金锅 ] =================
+    public static DeferredItem<BlockItem> TRANSMUTATION_CRUCIBLE = ITEMS.registerSimpleBlockItem("transmutation_crucible", InitBlocks.TRANSMUTATION_CRUCIBLE);
 
     // ================= [ 炼金术士储物盒 ] =================
-    public static DeferredItem<Item> ALCHEMIST_STORAGE_BOX = ITEMS.register("alchemist_storage_box",
+    public static DeferredItem<BlockItem> ALCHEMIST_STORAGE_BOX = ITEMS.register("alchemist_storage_box",
             (id) -> new AlchemistStorageBoxItem(id, InitBlocks.ALCHEMIST_STORAGE_BOX.get(), 0));
-    public static DeferredItem<Item> NIGREDO_ALCHEMIST_STORAGE_BOX = ITEMS.register("nigredo_alchemist_storage_box",
+    public static DeferredItem<BlockItem> NIGREDO_ALCHEMIST_STORAGE_BOX = ITEMS.register("nigredo_alchemist_storage_box",
             (id) -> new AlchemistStorageBoxItem(id, InitBlocks.NIGREDO_ALCHEMIST_STORAGE_BOX.get(), -1));
-    public static DeferredItem<Item> ALBEDO_ALCHEMIST_STORAGE_BOX = ITEMS.register("albedo_alchemist_storage_box",
+    public static DeferredItem<BlockItem> ALBEDO_ALCHEMIST_STORAGE_BOX = ITEMS.register("albedo_alchemist_storage_box",
             (id) -> new AlchemistStorageBoxItem(id, InitBlocks.ALBEDO_ALCHEMIST_STORAGE_BOX.get(), 1));
-    public static DeferredItem<Item> CITRINITAS_ALCHEMIST_STORAGE_BOX = ITEMS.register("citrinitas_alchemist_storage_box",
+    public static DeferredItem<BlockItem> CITRINITAS_ALCHEMIST_STORAGE_BOX = ITEMS.register("citrinitas_alchemist_storage_box",
             (id) -> new AlchemistStorageBoxItem(id, InitBlocks.CITRINITAS_ALCHEMIST_STORAGE_BOX.get(), 2));
 
     // ================= [ 基础物品 ] =================

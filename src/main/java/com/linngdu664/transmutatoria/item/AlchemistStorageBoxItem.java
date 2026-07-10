@@ -32,6 +32,7 @@ public class AlchemistStorageBoxItem extends BlockItem {
     public AlchemistStorageBoxItem(Identifier id, Block block, int state) {
         super(block, new Properties()
                 .setId(ResourceKey.create(Registries.ITEM, id))
+                .useBlockDescriptionPrefix()
                 .component(DataComponents.CONTAINER, ItemContainerContents.fromItems(
                         NonNullList.withSize(AlchemistStorageBoxMenu.CONTAINER_SLOTS, ItemStack.EMPTY)))
                 .stacksTo(1));
