@@ -1,0 +1,9 @@
+{
+  "parent": "transmutatoria:alchemy/scroll_activated",
+  "display": {
+    "icon": "transmutatoria:transmutation_sigil_scroll",
+    "title": {"translate": "advancements.transmutatoria.alchemical_replication.title"},
+    "description": {"translate": "advancements.transmutatoria.alchemical_replication.description"}
+  },
+  "criteria": {"completed": {"trigger": "minecraft:impossible"}}
+}

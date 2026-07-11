@@ -1,0 +1,16 @@
+{
+  "parent": "transmutatoria:alchemy/essence_metal",
+  "display": {
+    "icon": "transmutatoria:alchemist_storage_box",
+    "title": {"translate": "advancements.transmutatoria.storage_box.title"},
+    "description": {"translate": "advancements.transmutatoria.storage_box.description"}
+  },
+  "criteria": {
+    "has_storage_box": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{"items": ["transmutatoria:alchemist_storage_box", "transmutatoria:nigredo_alchemist_storage_box", "transmutatoria:albedo_alchemist_storage_box", "transmutatoria:citrinitas_alchemist_storage_box"]}]
+      }
+    }
+  }
+}

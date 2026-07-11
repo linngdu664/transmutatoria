@@ -1,0 +1,14 @@
+{
+  "parent": "transmutatoria:alchemy/crucible",
+  "display": {
+    "icon": "transmutatoria:eclipsium",
+    "title": {"translate": "advancements.transmutatoria.essence_metal.title"},
+    "description": {"translate": "advancements.transmutatoria.essence_metal.description"}
+  },
+  "criteria": {
+    "has_essence_metal": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {"items": [{"items": "#transmutatoria:all_essence_metals"}]}
+    }
+  }
+}

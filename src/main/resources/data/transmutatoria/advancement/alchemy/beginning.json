@@ -1,0 +1,16 @@
+{
+  "display": {
+    "icon": "transmutatoria:transmutation_crystal",
+    "title": {"translate": "advancements.transmutatoria.beginning.title"},
+    "description": {"translate": "advancements.transmutatoria.beginning.description"},
+    "background": "minecraft:gui/advancements/backgrounds/stone",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "has_crystal": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {"items": [{"items": "transmutatoria:transmutation_crystal"}]}
+    }
+  }
+}

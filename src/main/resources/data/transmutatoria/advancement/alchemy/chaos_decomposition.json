@@ -1,0 +1,9 @@
+{
+  "parent": "transmutatoria:alchemy/great_work",
+  "display": {
+    "icon": "transmutatoria:pandemonium",
+    "title": {"translate": "advancements.transmutatoria.chaos_decomposition.title"},
+    "description": {"translate": "advancements.transmutatoria.chaos_decomposition.description"}
+  },
+  "criteria": {"completed": {"trigger": "minecraft:impossible"}}
+}

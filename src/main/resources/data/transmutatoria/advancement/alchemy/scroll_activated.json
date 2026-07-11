@@ -1,0 +1,9 @@
+{
+  "parent": "transmutatoria:alchemy/essence_metal",
+  "display": {
+    "icon": "transmutatoria:transmutation_sigil_scroll",
+    "title": {"translate": "advancements.transmutatoria.scroll_activated.title"},
+    "description": {"translate": "advancements.transmutatoria.scroll_activated.description"}
+  },
+  "criteria": {"completed": {"trigger": "minecraft:impossible"}}
+}

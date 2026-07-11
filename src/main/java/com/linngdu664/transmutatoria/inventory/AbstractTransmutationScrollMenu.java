@@ -1,10 +1,12 @@
 package com.linngdu664.transmutatoria.inventory;
 
+import com.linngdu664.transmutatoria.init.InitAdvancements;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -181,6 +183,7 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
             int otherSlot = 1 - inputSlotIndex;
             container.setItem(otherSlot, recipe.getOtherSideItemStack());
             scrollItem.activate(level, scrollStack, single, recipe);
+            InitAdvancements.award((ServerPlayer) player, InitAdvancements.SCROLL_ACTIVATED);
             broadcastChanges();
         }
 

@@ -1,0 +1,15 @@
+{
+  "parent": "transmutatoria:alchemy/alchemical_transformation",
+  "display": {
+    "icon": "transmutatoria:philosophers_stone",
+    "title": {"translate": "advancements.transmutatoria.great_work.title"},
+    "description": {"translate": "advancements.transmutatoria.great_work.description"},
+    "frame": "goal"
+  },
+  "criteria": {
+    "has_philosophers_stone": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {"items": [{"items": "transmutatoria:philosophers_stone"}]}
+    }
+  }
+}

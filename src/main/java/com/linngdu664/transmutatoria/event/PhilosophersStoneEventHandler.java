@@ -1,7 +1,9 @@
 package com.linngdu664.transmutatoria.event;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
+import com.linngdu664.transmutatoria.init.InitAdvancements;
 import com.linngdu664.transmutatoria.init.InitItems;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Inventory;
@@ -46,6 +48,7 @@ public class PhilosophersStoneEventHandler {
         player.setHealth(1.0F);
         player.deathTime = 0;
         player.getCooldowns().addCooldown(stone, DEATH_PREVENTION_COOLDOWN);
+        InitAdvancements.award((ServerPlayer) player, InitAdvancements.DEATHLESS_PHILOSOPHER);
     }
 
     private static boolean isHoldingPhilosophersStone(Player player) {

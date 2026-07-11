@@ -1,0 +1,9 @@
+{
+  "parent": "transmutatoria:alchemy/beginning",
+  "display": {
+    "icon": "transmutatoria:transmutation_crucible",
+    "title": {"translate": "advancements.transmutatoria.crucible.title"},
+    "description": {"translate": "advancements.transmutatoria.crucible.description"}
+  },
+  "criteria": {"completed": {"trigger": "minecraft:impossible"}}
+}

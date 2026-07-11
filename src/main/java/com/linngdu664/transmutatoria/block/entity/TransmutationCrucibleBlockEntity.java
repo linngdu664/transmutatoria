@@ -1,11 +1,14 @@
 package com.linngdu664.transmutatoria.block.entity;
 
 import com.linngdu664.transmutatoria.client.tool.CrucibleItemAnimator;
+import com.linngdu664.transmutatoria.init.InitAdvancements;
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import com.linngdu664.transmutatoria.init.InitItems;
 import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.item.EssenceMetalItem;
+import com.linngdu664.transmutatoria.item.TransmutationEquationScrollItem;
+import com.linngdu664.transmutatoria.item.TransmutationSigilScrollItem;
 import com.linngdu664.transmutatoria.item.component.RecipeConditions;
 import com.linngdu664.transmutatoria.network.to_client.*;
 import com.linngdu664.transmutatoria.recipe.CrucibleRecipeManager;
@@ -30,7 +33,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -87,6 +92,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private int selectedSlot;
     private int processTimer;
     private int targetTimer;
+    @Nullable
+    private UUID reactionStarter;
     private int essenceInputPulseSlot = -1; // client only
     private long essenceInputPulseStartedAtMillis;  // client only
     @Nullable
@@ -664,6 +671,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     private void startReact(int targetTimer, TransactionContext txContext) {
         this.targetTimer = targetTimer;
+        Player player = level.getNearestPlayer(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5, 16.0, false);
+        reactionStarter = player instanceof ServerPlayer serverPlayer ? serverPlayer.getUUID() : null;
         if (txContext == null) {
             PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetTargetTimerPayload(getBlockPos(), targetTimer));
         }
@@ -682,6 +691,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         if (clearInputOrder) {
             this.inputOrder.clear();
         }
+        this.reactionStarter = null;
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleResetPayload(getBlockPos(), polarity));
     }
 
@@ -862,6 +872,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             items.set(slot, itemStack);
             updates.add(new ItemStackWithTwoSlots(slot, allocateRendererSlot(slot), itemStack));
         }
+        awardReactionStarter(InitAdvancements.CHAOS_DECOMPOSITION);
     }
 
     private void handleEssenceMetalReaction(ArrayList<ItemStackWithTwoSlots> updates) {
@@ -941,6 +952,11 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 ItemStack outStack = container.getStackInSlot(1);
                 items.set(OUTPUT_SLOT, outStack);
                 updates.add(new ItemStackWithTwoSlots(OUTPUT_SLOT, allocateRendererSlot(OUTPUT_SLOT), outStack));
+                if (catalyst.getItem() instanceof TransmutationSigilScrollItem) {
+                    awardReactionStarter(InitAdvancements.ALCHEMICAL_REPLICATION);
+                } else if (catalyst.getItem() instanceof TransmutationEquationScrollItem) {
+                    awardReactionStarter(InitAdvancements.ALCHEMICAL_TRANSFORMATION);
+                }
             }
         }
 
@@ -1007,6 +1023,16 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     private ChunkPos getChunkPos() {
         return new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ()));
+    }
+
+    private void awardReactionStarter(Identifier advancementId) {
+        if (reactionStarter == null || !(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(reactionStarter);
+        if (player != null) {
+            InitAdvancements.award(player, advancementId);
+        }
     }
 
     /**

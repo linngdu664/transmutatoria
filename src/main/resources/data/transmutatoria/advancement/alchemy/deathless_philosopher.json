@@ -1,0 +1,11 @@
+{
+  "parent": "transmutatoria:alchemy/great_work",
+  "display": {
+    "icon": "transmutatoria:philosophers_stone",
+    "title": {"translate": "advancements.transmutatoria.deathless_philosopher.title"},
+    "description": {"translate": "advancements.transmutatoria.deathless_philosopher.description"},
+    "frame": "challenge",
+    "hidden": true
+  },
+  "criteria": {"completed": {"trigger": "minecraft:impossible"}}
+}

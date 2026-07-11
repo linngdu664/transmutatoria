@@ -1,0 +1,9 @@
+{
+  "parent": "transmutatoria:alchemy/scroll_activated",
+  "display": {
+    "icon": "transmutatoria:transmutation_equation_scroll",
+    "title": {"translate": "advancements.transmutatoria.alchemical_transformation.title"},
+    "description": {"translate": "advancements.transmutatoria.alchemical_transformation.description"}
+  },
+  "criteria": {"completed": {"trigger": "minecraft:impossible"}}
+}
