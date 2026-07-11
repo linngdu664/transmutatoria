@@ -1,6 +1,8 @@
 package com.linngdu664.transmutatoria.block.entity;
 
 import com.linngdu664.transmutatoria.client.tool.CrucibleItemAnimator;
+import com.linngdu664.transmutatoria.client.particle.AlchemyParticleSpawner;
+import com.linngdu664.transmutatoria.client.particle.AlchemyGatherParticle;
 import com.linngdu664.transmutatoria.init.InitAdvancements;
 import com.linngdu664.transmutatoria.init.InitBlocks;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
@@ -96,6 +98,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private UUID reactionStarter;
     private int essenceInputPulseSlot = -1; // client only
     private long essenceInputPulseStartedAtMillis;  // client only
+    private int previousClientProcessTimer;  // client only
+    private int previousClientTargetTimer;  // client only
     @Nullable
     private CrucibleItemAnimator animator;  // client only
 
@@ -383,6 +387,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             return;
         }
         if (level.isClientSide()) {
+            crucible.tickClientParticles();
             if (crucible.animator != null) {
                 crucible.animator.tick(crucible.processTimer, crucible.targetTimer);
             }
@@ -1023,6 +1028,22 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     private ChunkPos getChunkPos() {
         return new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ()));
+    }
+
+    private void tickClientParticles() {
+        if (targetTimer > 0) {
+            if (processTimer < targetTimer - AlchemyGatherParticle.LIFETIME) {
+                AlchemyParticleSpawner.spawnGather((net.minecraft.client.multiplayer.ClientLevel) level, getBlockPos(), getClientAlchemyLevel(targetTimer));
+            }
+        } else if (previousClientTargetTimer > 0 && previousClientProcessTimer >= previousClientTargetTimer) {
+            AlchemyParticleSpawner.spawnBurst((net.minecraft.client.multiplayer.ClientLevel) level, getBlockPos(), getClientAlchemyLevel(previousClientTargetTimer));
+        }
+        previousClientProcessTimer = processTimer;
+        previousClientTargetTimer = targetTimer;
+    }
+
+    private static int getClientAlchemyLevel(int reactionTime) {
+        return Math.clamp(reactionTime / TIME_PER_ESSENCE, 1, 24);
     }
 
     private void awardReactionStarter(Identifier advancementId) {
