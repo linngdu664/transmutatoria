@@ -40,6 +40,8 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
     private static final float WATER_Z1 = 13.9375F / 16.0F;
     private static final int MIN_POLARITY = -50;
     private static final int MAX_POLARITY = 50;
+    /** RGB tint baked into water_0.png before it was converted to a white texture. */
+    private static final int ORIGINAL_WATER_TEXTURE_COLOR = ARGB.color(212, 36, 212);
     private static final int NEGATIVE_WATER_COLOR = ARGB.color(190, 18, 45, 160);
     private static final int POSITIVE_WATER_COLOR = ARGB.color(190, 240, 42, 32);
 
@@ -115,8 +117,8 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
 
         float fill = Mth.clamp((float) state.waterAmount / WATER_CAPACITY, 0.0F, 1.0F);
         float waterY = WATER_MIN_Y + (WATER_MAX_Y - WATER_MIN_Y) * fill;
-        int topColor = state.waterColor;
-        int sideColor = ARGB.scaleRGB(topColor, 0.72F);
+        int topColor = compensateWhiteWaterTexture(state.waterColor);
+        int sideColor = compensateWhiteWaterTexture(ARGB.scaleRGB(state.waterColor, 0.72F));
 
         submitNodeCollector.submitCustomGeometry(
                 poseStack,
@@ -125,9 +127,30 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
     }
 
     private static int getWaterColor(TransmutationCrucibleBlockEntity blockEntity) {
-        int polarity = Mth.clamp(blockEntity.getPolarity(), MIN_POLARITY, MAX_POLARITY);
+        return getWaterColor(blockEntity.getPolarity());
+    }
+
+    private static int getWaterColor(int polarity) {
+        polarity = Mth.clamp(polarity, MIN_POLARITY, MAX_POLARITY);
         float progress = (float) (polarity - MIN_POLARITY) * (1f / (MAX_POLARITY - MIN_POLARITY));
         return ARGB.srgbLerp(progress, NEGATIVE_WATER_COLOR, POSITIVE_WATER_COLOR);
+    }
+
+    /** Returns the exact RGB tint used by the water's top surface. */
+    public static int getWaterSurfaceColor(int polarity) {
+        return compensateWhiteWaterTexture(getWaterColor(polarity));
+    }
+
+    /**
+     * Keeps the displayed colour unchanged after water_0.png was made white by moving its former RGB tint to the
+     * vertex colour. The texture alpha remains in the texture, so it is deliberately not multiplied here.
+     */
+    private static int compensateWhiteWaterTexture(int color) {
+        return ARGB.color(
+                ARGB.alpha(color),
+                Math.round(ARGB.red(color) * ARGB.red(ORIGINAL_WATER_TEXTURE_COLOR) / 255.0F),
+                Math.round(ARGB.green(color) * ARGB.green(ORIGINAL_WATER_TEXTURE_COLOR) / 255.0F),
+                Math.round(ARGB.blue(color) * ARGB.blue(ORIGINAL_WATER_TEXTURE_COLOR) / 255.0F));
     }
 
     private static void renderWater(

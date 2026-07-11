@@ -1033,17 +1033,13 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private void tickClientParticles() {
         if (targetTimer > 0) {
             if (processTimer < targetTimer - AlchemyGatherParticle.LIFETIME) {
-                AlchemyParticleSpawner.spawnGather((net.minecraft.client.multiplayer.ClientLevel) level, getBlockPos(), getClientAlchemyLevel(targetTimer));
+                AlchemyParticleSpawner.spawnGather((net.minecraft.client.multiplayer.ClientLevel) level, getBlockPos(), polarity);
             }
         } else if (previousClientTargetTimer > 0 && previousClientProcessTimer >= previousClientTargetTimer) {
-            AlchemyParticleSpawner.spawnBurst((net.minecraft.client.multiplayer.ClientLevel) level, getBlockPos(), getClientAlchemyLevel(previousClientTargetTimer));
+            AlchemyParticleSpawner.spawnBurst((net.minecraft.client.multiplayer.ClientLevel) level, getBlockPos(), polarity);
         }
         previousClientProcessTimer = processTimer;
         previousClientTargetTimer = targetTimer;
-    }
-
-    private static int getClientAlchemyLevel(int reactionTime) {
-        return Math.clamp(reactionTime / TIME_PER_ESSENCE, 1, 24);
     }
 
     private void awardReactionStarter(Identifier advancementId) {
