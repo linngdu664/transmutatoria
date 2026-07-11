@@ -26,6 +26,7 @@ import java.util.List;
 public class RenderGuiEventHandler {
     private static final List<HudComponent> HUD_COMPONENTS = List.of(new EssenceSlotGraph(), new StorageBoxRing(), new ItemBar(), new Dashboard(), new SlotDescription());
     private static final ToggleHudDescription TOGGLE_HUD_DESCRIPTION = new ToggleHudDescription();
+    private static final ExpandStorageBoxRingDescription EXPAND_STORAGE_BOX_RING_DESCRIPTION = new ExpandStorageBoxRingDescription();
     private static final SmoothValue HUD_INTRO = new SmoothValue();
     public static boolean isHudManuallyHidden = true;
 
@@ -82,6 +83,9 @@ public class RenderGuiEventHandler {
 
             TOGGLE_HUD_DESCRIPTION.prepare(player, crucible, delta);
             TOGGLE_HUD_DESCRIPTION.render(guiGraphics);
+
+            EXPAND_STORAGE_BOX_RING_DESCRIPTION.prepare(player, crucible, delta);
+            EXPAND_STORAGE_BOX_RING_DESCRIPTION.render(guiGraphics);
         }
     }
 

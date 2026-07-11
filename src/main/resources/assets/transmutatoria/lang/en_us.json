@@ -211,6 +211,7 @@
   "key.transmutatoria.toggle_crucible_hud": "Toggle Crucible HUD",
   "gui.transmutatoria.crucible_hint.hud_on": "<%s> Show HUD",
   "gui.transmutatoria.crucible_hint.hud_off": "<%s> Hide HUD",
+  "gui.transmutatoria.crucible_hint.storage_box_ring_expand": "<%s> Expand wheel downward",
 
   "advancements.transmutatoria.beginning.title": "The Beginning of Transmutation",
   "advancements.transmutatoria.beginning.description": "Obtain a Transmutation Crystal.",

@@ -211,6 +211,7 @@
   "key.transmutatoria.toggle_crucible_hud": "开关炼金锅HUD",
   "gui.transmutatoria.crucible_hint.hud_on": "<%s> 开启HUD",
   "gui.transmutatoria.crucible_hint.hud_off": "<%s> 关闭HUD",
+  "gui.transmutatoria.crucible_hint.storage_box_ring_expand": "<%s> 向下展开轮盘",
 
   "advancements.transmutatoria.beginning.title": "嬗变之始",
   "advancements.transmutatoria.beginning.description": "获得一枚嬗变结晶。",
