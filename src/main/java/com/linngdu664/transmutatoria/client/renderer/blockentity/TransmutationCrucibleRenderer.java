@@ -207,8 +207,8 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
     }
 
     /**
-     * Keeps the displayed colour unchanged after water_0.png was made white by moving its former RGB tint to the
-     * vertex colour. The texture alpha remains in the texture, so it is deliberately not multiplied here.
+     * Keeps the displayed color unchanged after water_0.png was made white by moving its former RGB tint to the
+     * vertex color. The texture alpha remains in the texture, so it is deliberately not multiplied here.
      */
     private static int compensateWhiteWaterTexture(int color) {
         return ARGB.color(
