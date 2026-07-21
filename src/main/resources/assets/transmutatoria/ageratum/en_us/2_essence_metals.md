@@ -126,7 +126,7 @@ The storage box is the core tool for managing essence stock. It is both an item 
 
 **Automatic storage**: When you pick up essence metals, a storage box in your inventory with the matching state will automatically absorb them.
 
-**Use while held**: Right-click while holding a storage box to open it and view or organize stored essences. When holding a storage box and looking at a crucible, an essence wheel appears above the HUD for convenient feeding.
+**Use while held**: Right-click while holding a storage box to open it and view or organize stored essences. For quick crucible feeding, see [Advanced Alchemy - Part I: HUD Overview](4_advanced_alchemy_1.md#hud-overview).
 
 ::: tip Tip
 The storage box is a block form when placed on the ground. Shift + right-click to retrieve it. See [Appendix: Alchemist's Storage Box] for details.

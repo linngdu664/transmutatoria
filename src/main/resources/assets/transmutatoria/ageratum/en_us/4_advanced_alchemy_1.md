@@ -98,6 +98,24 @@ Every recipe has a **level**. The higher the level, the more essences are requir
 <item id="transmutatoria:transmutation_crucible"/>
 </row>
 
+### HUD Overview
+
+![Scroll alchemy HUD overview](../textures/general_en_us.png)
+
+- **Item bar on the left**: Shows the catalyst, input item, and output item from top to bottom. The purple bar beside it represents scroll durability and current stability, while the red bar shows essence-slot unlock progress.
+- **Essence slot diagram in the center**: A colored border marks the selected essence slot. Unlocked slots reveal their target essence, while locked slots remain gray. Hold Shift and scroll the mouse wheel to change the selected slot.
+- **Essence wheel at the top**: Appears while holding a storage box and shows its currently selected essence. Scroll the mouse wheel to change essences, then right-click the crucible to insert one. Hold Alt to expand the full wheel and inspect essence relationships.
+- **Dial in the upper right**: The outer indicator shows the crucible's current polarity. The two inner indicators mark the positive and negative limits allowed by the recipe. The hourglass displays the scroll's expiration countdown.
+- **Control hint in the lower right**: Explains why the reaction cannot proceed, such as missing water, a catalyst, or an input item.
+
+### Storage Box Essence Wheel
+
+![Storage box essence wheel and relationship indicators](../textures/wheel_down_en_us.png)
+
+When you hold a storage box and look at a crucible, its essence wheel appears at the top of the HUD. The enlarged item frame at the top is the **current essence**. Scroll the mouse wheel to change it; right-clicking the crucible takes one of that essence from the storage box and inserts it into the currently selected essence slot.
+
+Hold **Alt** to expand the wheel downward and show how every other essence relates to the current essence. In the image, “Restrains” means that the current essence restrains that essence, while “Restrained By” means that the current essence is restrained by it. Double-restraint relationships have their own borders as well. Essences with no reaction are dimmed. Release Alt to collapse the wheel and restore a clear view of the crucible.
+
 ### Operation Steps
 
 1. **Put in the scroll**: Drop the activated scroll into the crucible, entering the catalyst slot. The HUD center immediately displays the scroll's essence slot diagram, and the left side immediately displays the scroll durability bar.
