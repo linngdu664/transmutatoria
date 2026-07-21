@@ -46,7 +46,7 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
     private static final float MODEL_EDGE_INNER_MAX = 13.0F / 16.0F;
     private static final float MODEL_EDGE_OUTER_MAX = 14.0F / 16.0F;
     /** Moves the light half a model sub-pixel into the hollow to prevent z-fighting with the inner wall. */
-    private static final float INTERIOR_LIGHT_WALL_OFFSET = 1.0F / 512.0F;
+    private static final float INTERIOR_LIGHT_WALL_OFFSET = 1.0F / 1024.0F;
     /**
      * The 12 vertices of the stepped inner outline after mitering each corner. Adjacent wall panels share
      * these exact endpoints, preventing the gaps and crossings caused by independently offset panels.
@@ -80,9 +80,9 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
             MODEL_EDGE_INNER_MIN + INTERIOR_LIGHT_WALL_OFFSET
     };
     private static final float INTERIOR_LIGHT_BOTTOM_Y = 5.0F / 16.0F + INTERIOR_LIGHT_WALL_OFFSET;
-    // The fade continues three eighths of a block beyond the 15/16-high crucible rim.
-    private static final float INTERIOR_LIGHT_TOP_Y = 21.0F / 16.0F;
-    private static final int INTERIOR_LIGHT_BOTTOM_ALPHA = 255;
+    private static final float CRUCIBLE_OPENING_Y = 15.0F / 16.0F + INTERIOR_LIGHT_WALL_OFFSET;
+    private static final float INTERIOR_LIGHT_TOP_Y = 20.0F / 16.0F;
+    private static final int INTERIOR_LIGHT_BOTTOM_ALPHA = 224;
     private static final int INTERIOR_LIGHT_TOP_ALPHA = 0;
     private static final int MIN_POLARITY = -50;
     private static final int MAX_POLARITY = 50;
@@ -148,7 +148,7 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
         for (var pair : state.itemAndPoses) {
             CrucibleRSlotPose slotPose = pair.right();
             poseStack.pushPose();
-            poseStack.translate(0.5f + slotPose.x(), slotPose.y(), 0.5f + slotPose.z());
+            poseStack.translate(0.5F + slotPose.x(), slotPose.y(), 0.5F + slotPose.z());
             float scale = slotPose.scale();
             poseStack.scale(scale, scale, scale);
             poseStack.mulPose(new Quaternionf(new AxisAngle4f(slotPose.yaw(), 0, 1, 0))
@@ -166,7 +166,8 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
             submitNodeCollector.submitCustomGeometry(
                     poseStack,
                     RenderTypes.entityTranslucent(WATER_TEXTURE, false),
-                    (pose, buffer) -> renderWater(pose, buffer, waterY, topColor, sideColor, lightCoords));
+                    (pose, buffer) -> renderWater(pose, buffer, waterY, topColor, sideColor, lightCoords)
+            );
         }
 
         int openingLightColor = compensateWhiteWaterTexture(state.waterColor);
@@ -179,7 +180,9 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
                         pose, buffer,
                         ARGB.red(openingLightColor),
                         ARGB.green(openingLightColor),
-                        ARGB.blue(openingLightColor)));
+                        ARGB.blue(openingLightColor)
+                )
+        );
     }
 
     @Override
@@ -194,7 +197,7 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
 
     private static int getWaterColor(int polarity) {
         polarity = Mth.clamp(polarity, MIN_POLARITY, MAX_POLARITY);
-        float progress = (float) (polarity - MIN_POLARITY) * (1f / (MAX_POLARITY - MIN_POLARITY));
+        float progress = (float) (polarity - MIN_POLARITY) * (1F / (MAX_POLARITY - MIN_POLARITY));
         return ARGB.srgbLerp(progress, NEGATIVE_WATER_COLOR, POSITIVE_WATER_COLOR);
     }
 
@@ -212,7 +215,8 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
                 ARGB.alpha(color),
                 Math.round(ARGB.red(color) * ARGB.red(ORIGINAL_WATER_TEXTURE_COLOR) / 255.0F),
                 Math.round(ARGB.green(color) * ARGB.green(ORIGINAL_WATER_TEXTURE_COLOR) / 255.0F),
-                Math.round(ARGB.blue(color) * ARGB.blue(ORIGINAL_WATER_TEXTURE_COLOR) / 255.0F));
+                Math.round(ARGB.blue(color) * ARGB.blue(ORIGINAL_WATER_TEXTURE_COLOR) / 255.0F)
+        );
     }
 
     private static void renderWater(
@@ -223,112 +227,351 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
             int sideColor,
             int lightCoords
     ) {
-        quad(pose, buffer,
+        waterQuad(
+                pose, buffer,
                 WATER_X0, waterY, WATER_Z0,
                 WATER_X0, waterY, WATER_Z1,
                 WATER_X1, waterY, WATER_Z1,
                 WATER_X1, waterY, WATER_Z0,
                 0.0F, 1.0F, 1.0F, 0.0F,
                 topColor, lightCoords,
-                0.0F, 1.0F, 0.0F);
+                0.0F, 1.0F, 0.0F
+        );
 
-        quad(pose, buffer,
+        waterQuad(
+                pose, buffer,
                 WATER_X1, WATER_MIN_Y, WATER_Z0,
                 WATER_X1, waterY, WATER_Z0,
                 WATER_X0, waterY, WATER_Z0,
                 WATER_X0, WATER_MIN_Y, WATER_Z0,
                 0.0F, 1.0F, 1.0F, 0.0F,
                 sideColor, lightCoords,
-                0.0F, 0.0F, -1.0F);
+                0.0F, 0.0F, -1.0F
+        );
 
-        quad(pose, buffer,
+        waterQuad(
+                pose, buffer,
                 WATER_X0, WATER_MIN_Y, WATER_Z1,
                 WATER_X0, waterY, WATER_Z1,
                 WATER_X1, waterY, WATER_Z1,
                 WATER_X1, WATER_MIN_Y, WATER_Z1,
                 0.0F, 1.0F, 1.0F, 0.0F,
                 sideColor, lightCoords,
-                0.0F, 0.0F, 1.0F);
+                0.0F, 0.0F, 1.0F
+        );
 
-        quad(pose, buffer,
+        waterQuad(
+                pose, buffer,
                 WATER_X0, WATER_MIN_Y, WATER_Z0,
                 WATER_X0, waterY, WATER_Z0,
                 WATER_X0, waterY, WATER_Z1,
                 WATER_X0, WATER_MIN_Y, WATER_Z1,
                 0.0F, 1.0F, 1.0F, 0.0F,
                 sideColor, lightCoords,
-                -1.0F, 0.0F, 0.0F);
+                -1.0F, 0.0F, 0.0F
+        );
 
-        quad(pose, buffer,
+        waterQuad(
+                pose, buffer,
                 WATER_X1, WATER_MIN_Y, WATER_Z1,
                 WATER_X1, waterY, WATER_Z1,
                 WATER_X1, waterY, WATER_Z0,
                 WATER_X1, WATER_MIN_Y, WATER_Z0,
                 0.0F, 1.0F, 1.0F, 0.0F,
                 sideColor, lightCoords,
-                1.0F, 0.0F, 0.0F);
+                1.0F, 0.0F, 0.0F
+        );
+    }
+
+    private static void waterQuad(
+            PoseStack.Pose pose,
+            VertexConsumer buffer,
+            float x0, float y0, float z0,
+            float x1, float y1, float z1,
+            float x2, float y2, float z2,
+            float x3, float y3, float z3,
+            float u0, float v0,
+            float u1, float v1,
+            int color, int lightCoords,
+            float normalX, float normalY, float normalZ
+    ) {
+        waterVertex(pose, buffer, x0, y0, z0, u0, v0, color, lightCoords, normalX, normalY, normalZ);
+        waterVertex(pose, buffer, x1, y1, z1, u0, v1, color, lightCoords, normalX, normalY, normalZ);
+        waterVertex(pose, buffer, x2, y2, z2, u1, v1, color, lightCoords, normalX, normalY, normalZ);
+        waterVertex(pose, buffer, x3, y3, z3, u1, v0, color, lightCoords, normalX, normalY, normalZ);
+    }
+
+    private static void waterVertex(
+            PoseStack.Pose pose,
+            VertexConsumer buffer,
+            float x, float y, float z,
+            float u, float v,
+            int color, int lightCoords,
+            float normalX, float normalY, float normalZ
+    ) {
+        buffer.addVertex(pose, x, y, z)
+                .setColor(color)
+                .setUv(u, v)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(lightCoords)
+                .setNormal(pose, normalX, normalY, normalZ);
     }
 
     /** Renders the fixed floor light plus a vertical fade along the model's stepped inner outline. */
-    private static void renderInteriorLight(
-            PoseStack.Pose pose,
-            VertexConsumer buffer,
-            int red,
-            int green,
-            int blue
-    ) {
+    private static void renderInteriorLight(PoseStack.Pose pose, VertexConsumer buffer, int red, int green, int blue) {
         renderInteriorLightFloor(pose, buffer, red, green, blue);
-
-        for (int i = 0; i < INTERIOR_LIGHT_OUTLINE_X.length; i++) {
-            int next = (i + 1) % INTERIOR_LIGHT_OUTLINE_X.length;
-            interiorLightSide(
-                    pose,
-                    buffer,
-                    INTERIOR_LIGHT_OUTLINE_X[i],
-                    INTERIOR_LIGHT_OUTLINE_Z[i],
-                    INTERIOR_LIGHT_OUTLINE_X[next],
-                    INTERIOR_LIGHT_OUTLINE_Z[next],
-                    red,
-                    green,
-                    blue);
-        }
+        renderInteriorLightSide(pose, buffer, red, green, blue);
     }
 
-    /** Fills the model's stepped 12×12 floor outline without a vertical alpha gradient. */
     private static void renderInteriorLightFloor(PoseStack.Pose pose, VertexConsumer buffer, int red, int green, int blue) {
-        // 10×10 centre, then the four 10×1 strips. Together these are the 12×12 outline with its four 1×1 corners removed.
-        interiorLightFloorQuad(pose, buffer, MODEL_EDGE_INNER_MIN, MODEL_EDGE_INNER_MIN, MODEL_EDGE_INNER_MAX, MODEL_EDGE_INNER_MAX, red, green, blue);
-        interiorLightFloorQuad(pose, buffer, MODEL_EDGE_INNER_MIN, MODEL_EDGE_OUTER_MIN, MODEL_EDGE_INNER_MAX, MODEL_EDGE_INNER_MIN, red, green, blue);
-        interiorLightFloorQuad(pose, buffer, MODEL_EDGE_INNER_MIN, MODEL_EDGE_INNER_MAX, MODEL_EDGE_INNER_MAX, MODEL_EDGE_OUTER_MAX, red, green, blue);
-        interiorLightFloorQuad(pose, buffer, MODEL_EDGE_OUTER_MIN, MODEL_EDGE_INNER_MIN, MODEL_EDGE_INNER_MIN, MODEL_EDGE_INNER_MAX, red, green, blue);
-        interiorLightFloorQuad(pose, buffer, MODEL_EDGE_INNER_MAX, MODEL_EDGE_INNER_MIN, MODEL_EDGE_OUTER_MAX, MODEL_EDGE_INNER_MAX, red, green, blue);
+        // 10×10 center, then the four 10×1 strips. Together these are the 12×12 outline with its four 1×1 corners removed.
+        interiorLightFloorQuad(
+                pose, buffer,
+                MODEL_EDGE_INNER_MIN + INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_INNER_MIN + INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_INNER_MAX - INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_INNER_MAX - INTERIOR_LIGHT_WALL_OFFSET,
+                red, green, blue
+        );
+        interiorLightFloorQuad(
+                pose, buffer,
+                MODEL_EDGE_INNER_MIN + INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_OUTER_MIN + INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_INNER_MAX - INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_INNER_MIN + INTERIOR_LIGHT_WALL_OFFSET,
+                red, green, blue
+        );
+        interiorLightFloorQuad(
+                pose, buffer,
+                MODEL_EDGE_INNER_MIN + INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_INNER_MAX - INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_INNER_MAX - INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_OUTER_MAX - INTERIOR_LIGHT_WALL_OFFSET,
+                red, green, blue
+        );
+        interiorLightFloorQuad(
+                pose, buffer,
+                MODEL_EDGE_OUTER_MIN + INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_INNER_MIN + INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_INNER_MIN + INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_INNER_MAX - INTERIOR_LIGHT_WALL_OFFSET,
+                red, green, blue
+        );
+        interiorLightFloorQuad(
+                pose, buffer,
+                MODEL_EDGE_INNER_MAX - INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_INNER_MIN + INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_OUTER_MAX - INTERIOR_LIGHT_WALL_OFFSET,
+                MODEL_EDGE_INNER_MAX - INTERIOR_LIGHT_WALL_OFFSET,
+                red, green, blue
+        );
     }
 
-    private static void interiorLightSide(
+    private static void renderInteriorLightSide(PoseStack.Pose pose, VertexConsumer buffer, int red, int green, int blue) {
+        int openingAlpha = Math.round(
+                INTERIOR_LIGHT_BOTTOM_ALPHA + (INTERIOR_LIGHT_TOP_ALPHA - INTERIOR_LIGHT_BOTTOM_ALPHA)
+                        * (CRUCIBLE_OPENING_Y - INTERIOR_LIGHT_BOTTOM_Y) / (INTERIOR_LIGHT_TOP_Y - INTERIOR_LIGHT_BOTTOM_Y));
+
+        // 4 large faces
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[0], INTERIOR_LIGHT_OUTLINE_Z[0],
+                INTERIOR_LIGHT_OUTLINE_X[1], INTERIOR_LIGHT_OUTLINE_Z[1],
+                red, green, blue,
+                INTERIOR_LIGHT_BOTTOM_Y, INTERIOR_LIGHT_BOTTOM_ALPHA,
+                INTERIOR_LIGHT_TOP_Y, INTERIOR_LIGHT_TOP_ALPHA
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[3], INTERIOR_LIGHT_OUTLINE_Z[3],
+                INTERIOR_LIGHT_OUTLINE_X[4], INTERIOR_LIGHT_OUTLINE_Z[4],
+                red, green, blue,
+                INTERIOR_LIGHT_BOTTOM_Y, INTERIOR_LIGHT_BOTTOM_ALPHA,
+                INTERIOR_LIGHT_TOP_Y, INTERIOR_LIGHT_TOP_ALPHA
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[6], INTERIOR_LIGHT_OUTLINE_Z[6],
+                INTERIOR_LIGHT_OUTLINE_X[7], INTERIOR_LIGHT_OUTLINE_Z[7],
+                red, green, blue,
+                INTERIOR_LIGHT_BOTTOM_Y, INTERIOR_LIGHT_BOTTOM_ALPHA,
+                INTERIOR_LIGHT_TOP_Y, INTERIOR_LIGHT_TOP_ALPHA
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[9], INTERIOR_LIGHT_OUTLINE_Z[9],
+                INTERIOR_LIGHT_OUTLINE_X[10], INTERIOR_LIGHT_OUTLINE_Z[10],
+                red, green, blue,
+                INTERIOR_LIGHT_BOTTOM_Y, INTERIOR_LIGHT_BOTTOM_ALPHA,
+                INTERIOR_LIGHT_TOP_Y, INTERIOR_LIGHT_TOP_ALPHA
+        );
+
+        // 8 inner small faces
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[1], INTERIOR_LIGHT_OUTLINE_Z[1],
+                INTERIOR_LIGHT_OUTLINE_X[2], INTERIOR_LIGHT_OUTLINE_Z[2],
+                red, green, blue,
+                INTERIOR_LIGHT_BOTTOM_Y, INTERIOR_LIGHT_BOTTOM_ALPHA,
+                CRUCIBLE_OPENING_Y, openingAlpha
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[2], INTERIOR_LIGHT_OUTLINE_Z[2],
+                INTERIOR_LIGHT_OUTLINE_X[3], INTERIOR_LIGHT_OUTLINE_Z[3],
+                red, green, blue,
+                INTERIOR_LIGHT_BOTTOM_Y, INTERIOR_LIGHT_BOTTOM_ALPHA,
+                CRUCIBLE_OPENING_Y, openingAlpha
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[4], INTERIOR_LIGHT_OUTLINE_Z[4],
+                INTERIOR_LIGHT_OUTLINE_X[5], INTERIOR_LIGHT_OUTLINE_Z[5],
+                red, green, blue,
+                INTERIOR_LIGHT_BOTTOM_Y, INTERIOR_LIGHT_BOTTOM_ALPHA,
+                CRUCIBLE_OPENING_Y, openingAlpha
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[5], INTERIOR_LIGHT_OUTLINE_Z[5],
+                INTERIOR_LIGHT_OUTLINE_X[6], INTERIOR_LIGHT_OUTLINE_Z[6],
+                red, green, blue,
+                INTERIOR_LIGHT_BOTTOM_Y, INTERIOR_LIGHT_BOTTOM_ALPHA,
+                CRUCIBLE_OPENING_Y, openingAlpha
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[7], INTERIOR_LIGHT_OUTLINE_Z[7],
+                INTERIOR_LIGHT_OUTLINE_X[8], INTERIOR_LIGHT_OUTLINE_Z[8],
+                red, green, blue,
+                INTERIOR_LIGHT_BOTTOM_Y, INTERIOR_LIGHT_BOTTOM_ALPHA,
+                CRUCIBLE_OPENING_Y, openingAlpha
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[8], INTERIOR_LIGHT_OUTLINE_Z[8],
+                INTERIOR_LIGHT_OUTLINE_X[9], INTERIOR_LIGHT_OUTLINE_Z[9],
+                red, green, blue,
+                INTERIOR_LIGHT_BOTTOM_Y, INTERIOR_LIGHT_BOTTOM_ALPHA,
+                CRUCIBLE_OPENING_Y, openingAlpha
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[10], INTERIOR_LIGHT_OUTLINE_Z[10],
+                INTERIOR_LIGHT_OUTLINE_X[11], INTERIOR_LIGHT_OUTLINE_Z[11],
+                red, green, blue,
+                INTERIOR_LIGHT_BOTTOM_Y, INTERIOR_LIGHT_BOTTOM_ALPHA,
+                CRUCIBLE_OPENING_Y, openingAlpha
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[11], INTERIOR_LIGHT_OUTLINE_Z[11],
+                INTERIOR_LIGHT_OUTLINE_X[0], INTERIOR_LIGHT_OUTLINE_Z[0],
+                red, green, blue,
+                INTERIOR_LIGHT_BOTTOM_Y, INTERIOR_LIGHT_BOTTOM_ALPHA,
+                CRUCIBLE_OPENING_Y, openingAlpha
+        );
+
+        // Above crucible opening: 4 diagonal faces connecting adjacent large faces, forming a convex octagon, from y=15/16
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[1], INTERIOR_LIGHT_OUTLINE_Z[1],
+                INTERIOR_LIGHT_OUTLINE_X[3], INTERIOR_LIGHT_OUTLINE_Z[3],
+                red, green, blue,
+                CRUCIBLE_OPENING_Y, openingAlpha,
+                INTERIOR_LIGHT_TOP_Y, INTERIOR_LIGHT_TOP_ALPHA
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[4], INTERIOR_LIGHT_OUTLINE_Z[4],
+                INTERIOR_LIGHT_OUTLINE_X[6], INTERIOR_LIGHT_OUTLINE_Z[6],
+                red, green, blue,
+                CRUCIBLE_OPENING_Y, openingAlpha,
+                INTERIOR_LIGHT_TOP_Y, INTERIOR_LIGHT_TOP_ALPHA
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[7], INTERIOR_LIGHT_OUTLINE_Z[7],
+                INTERIOR_LIGHT_OUTLINE_X[9], INTERIOR_LIGHT_OUTLINE_Z[9],
+                red, green, blue,
+                CRUCIBLE_OPENING_Y, openingAlpha,
+                INTERIOR_LIGHT_TOP_Y, INTERIOR_LIGHT_TOP_ALPHA
+        );
+        interiorLightSideQuad(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[10], INTERIOR_LIGHT_OUTLINE_Z[10],
+                INTERIOR_LIGHT_OUTLINE_X[0], INTERIOR_LIGHT_OUTLINE_Z[0],
+                red, green, blue,
+                CRUCIBLE_OPENING_Y, openingAlpha,
+                INTERIOR_LIGHT_TOP_Y, INTERIOR_LIGHT_TOP_ALPHA
+        );
+
+        // 4 horizontal right triangles capping the gaps between the concave 12-gon and convex octagon at y=CRUCIBLE_OPENING_Y
+        interiorLightTriangle(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[1], INTERIOR_LIGHT_OUTLINE_Z[1],
+                INTERIOR_LIGHT_OUTLINE_X[2], INTERIOR_LIGHT_OUTLINE_Z[2],
+                INTERIOR_LIGHT_OUTLINE_X[3], INTERIOR_LIGHT_OUTLINE_Z[3],
+                CRUCIBLE_OPENING_Y, openingAlpha, red, green, blue
+        );
+        interiorLightTriangle(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[4], INTERIOR_LIGHT_OUTLINE_Z[4],
+                INTERIOR_LIGHT_OUTLINE_X[5], INTERIOR_LIGHT_OUTLINE_Z[5],
+                INTERIOR_LIGHT_OUTLINE_X[6], INTERIOR_LIGHT_OUTLINE_Z[6],
+                CRUCIBLE_OPENING_Y, openingAlpha, red, green, blue
+        );
+        interiorLightTriangle(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[7], INTERIOR_LIGHT_OUTLINE_Z[7],
+                INTERIOR_LIGHT_OUTLINE_X[8], INTERIOR_LIGHT_OUTLINE_Z[8],
+                INTERIOR_LIGHT_OUTLINE_X[9], INTERIOR_LIGHT_OUTLINE_Z[9],
+                CRUCIBLE_OPENING_Y, openingAlpha, red, green, blue
+        );
+        interiorLightTriangle(
+                pose, buffer,
+                INTERIOR_LIGHT_OUTLINE_X[10], INTERIOR_LIGHT_OUTLINE_Z[10],
+                INTERIOR_LIGHT_OUTLINE_X[11], INTERIOR_LIGHT_OUTLINE_Z[11],
+                INTERIOR_LIGHT_OUTLINE_X[0], INTERIOR_LIGHT_OUTLINE_Z[0],
+                CRUCIBLE_OPENING_Y, openingAlpha, red, green, blue
+        );
+    }
+
+    private static void interiorLightTriangle(
             PoseStack.Pose pose,
             VertexConsumer buffer,
-            float x0,
-            float z0,
-            float x1,
-            float z1,
-            int red, int green, int blue
+            float x0, float z0,
+            float x1, float z1,
+            float x2, float z2,
+            float y, int alpha, int red, int green, int blue
     ) {
-        interiorLightVertex(pose, buffer, x0, INTERIOR_LIGHT_BOTTOM_Y, z0, INTERIOR_LIGHT_BOTTOM_ALPHA, red, green, blue);
-        interiorLightVertex(pose, buffer, x1, INTERIOR_LIGHT_BOTTOM_Y, z1, INTERIOR_LIGHT_BOTTOM_ALPHA, red, green, blue);
-        interiorLightVertex(pose, buffer, x1, INTERIOR_LIGHT_TOP_Y, z1, INTERIOR_LIGHT_TOP_ALPHA, red, green, blue);
-        interiorLightVertex(pose, buffer, x0, INTERIOR_LIGHT_TOP_Y, z0, INTERIOR_LIGHT_TOP_ALPHA, red, green, blue);
+        interiorLightVertex(pose, buffer, x0, y, z0, alpha, red, green, blue);
+        interiorLightVertex(pose, buffer, x1, y, z1, alpha, red, green, blue);
+        interiorLightVertex(pose, buffer, x2, y, z2, alpha, red, green, blue);
+        interiorLightVertex(pose, buffer, x2, y, z2, alpha, red, green, blue);
+    }
+
+    private static void interiorLightSideQuad(
+            PoseStack.Pose pose,
+            VertexConsumer buffer,
+            float x0, float z0,
+            float x1, float z1,
+            int red, int green, int blue,
+            float bottomY, int bottomAlpha,
+            float topY, int topAlpha
+    ) {
+        interiorLightVertex(pose, buffer, x0, bottomY, z0, bottomAlpha, red, green, blue);
+        interiorLightVertex(pose, buffer, x1, bottomY, z1, bottomAlpha, red, green, blue);
+        interiorLightVertex(pose, buffer, x1, topY, z1, topAlpha, red, green, blue);
+        interiorLightVertex(pose, buffer, x0, topY, z0, topAlpha, red, green, blue);
     }
 
     private static void interiorLightFloorQuad(
             PoseStack.Pose pose,
             VertexConsumer buffer,
-            float x0,
-            float z0,
-            float x1,
-            float z1,
-            int red,
-            int green,
-            int blue
+            float x0, float z0,
+            float x1, float z1,
+            int red, int green, int blue
     ) {
         interiorLightVertex(pose, buffer, x0, INTERIOR_LIGHT_BOTTOM_Y, z0, INTERIOR_LIGHT_BOTTOM_ALPHA, red, green, blue);
         interiorLightVertex(pose, buffer, x0, INTERIOR_LIGHT_BOTTOM_Y, z1, INTERIOR_LIGHT_BOTTOM_ALPHA, red, green, blue);
@@ -348,39 +591,5 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(LightCoordsUtil.FULL_BRIGHT)
                 .setNormal(pose, 0.0F, 1.0F, 0.0F);
-    }
-
-    private static void quad(
-            PoseStack.Pose pose,
-            VertexConsumer buffer,
-            float x0, float y0, float z0,
-            float x1, float y1, float z1,
-            float x2, float y2, float z2,
-            float x3, float y3, float z3,
-            float u0, float v0,
-            float u1, float v1,
-            int color, int lightCoords,
-            float normalX, float normalY, float normalZ
-    ) {
-        vertex(pose, buffer, x0, y0, z0, u0, v0, color, lightCoords, normalX, normalY, normalZ);
-        vertex(pose, buffer, x1, y1, z1, u0, v1, color, lightCoords, normalX, normalY, normalZ);
-        vertex(pose, buffer, x2, y2, z2, u1, v1, color, lightCoords, normalX, normalY, normalZ);
-        vertex(pose, buffer, x3, y3, z3, u1, v0, color, lightCoords, normalX, normalY, normalZ);
-    }
-
-    private static void vertex(
-            PoseStack.Pose pose,
-            VertexConsumer buffer,
-            float x, float y, float z,
-            float u, float v,
-            int color, int lightCoords,
-            float normalX, float normalY, float normalZ
-    ) {
-        buffer.addVertex(pose, x, y, z)
-                .setColor(color)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(lightCoords)
-                .setNormal(pose, normalX, normalY, normalZ);
     }
 }
