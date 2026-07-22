@@ -1,0 +1,46 @@
+{
+  "name": "贤者之石",
+  "category": "transmutatoria:06_great_work",
+  "icon": "transmutatoria:philosophers_stone",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "赤化只是胚胎，而非终点。将赤化质料放入熔炉煅烧，便能获得混沌炼金术的至高成就——$(item)贤者之石$()。"
+    },
+    {
+      "type": "patchouli:smelting",
+      "recipe": "transmutatoria:philosophers_stone",
+      "title": "煅烧",
+      "text": "$(quote)此即完成，我为此作证，凭这世界的审判。$()"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "minecraft:zombie_villager",
+      "name": "治愈腐化",
+      "text": "手持贤者之石右键僵尸村民，可以立刻完成转化，无需虚弱药水与金苹果。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "生命守护",
+      "text": "主手或副手持有时持续获得生命恢复，每秒还会获得短暂饱和。受到致命伤害时，若快捷栏中有未冷却的贤者之石，死亡会被取消，生命值变为 1，该石头进入 60 秒冷却。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:transmutation_crucible",
+      "title": "极性调节",
+      "text": "手持贤者之石右键炼金锅，会使任何非零极性向 0 回调 1 点。虽然缓慢，却精确而安全。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:philosophers_stone",
+      "title": "混沌分解",
+      "text": "以贤者之石作为炼金锅催化剂，再投入任何可被印记卷复制的物品。该物品会被逆向分解成随机数量的常态源质金属，是大量获取源质的有效方式。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "伟大之作已成",
+      "text": "你从炼药锅中的三种粉末开始，最终学会阅读十二金隐藏的关系。手握贤者之石，分解、转化、生命与平衡都已归于同一门技艺。$(br2)$(quote)关于太阳运行之工的我言已毕。$()"
+    }
+  ]
+}

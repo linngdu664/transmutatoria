@@ -1,0 +1,24 @@
+{
+  "name": "patchouli.transmutatoria.book.name",
+  "landing_text": "patchouli.transmutatoria.book.landing_text",
+  "subtitle": "patchouli.transmutatoria.book.subtitle",
+  "version": "1",
+  "use_resource_pack": true,
+  "dont_generate_book": true,
+  "custom_book_item": "transmutatoria:codex_alchemica",
+  "index_icon": "transmutatoria:codex_alchemica",
+  "book_texture": "patchouli:textures/gui/book_green.png",
+  "show_progress": false,
+  "show_toasts": false,
+  "pause_game": false,
+  "text_overflow_mode": "resize",
+  "header_color": "314C35",
+  "nameplate_color": "D4AF37",
+  "link_color": "3E6B43",
+  "link_hover_color": "941400",
+  "macros": {
+    "$(quote)": "$(#941400)$(o)",
+    "$(term)": "$(#3E6B43)$(l)",
+    "$(warn)": "$(#941400)$(l)"
+  }
+}

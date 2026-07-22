@@ -1,0 +1,6 @@
+{
+  "name": "I · Introduction",
+  "description": "$(quote)As above, so below; as below, so above.$()$(br2)Obtain a Transmutation Crystal, craft a Transmutation Crucible, and decompose your first essence metal.",
+  "icon": "transmutatoria:transmutation_crystal",
+  "sortnum": 10
+}

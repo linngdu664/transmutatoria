@@ -1,0 +1,38 @@
+{
+  "name": "嬗变结晶",
+  "category": "transmutatoria:01_introduction",
+  "icon": "transmutatoria:transmutation_crystal",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "炼金的第一步是获取$(item)嬗变结晶$()——整个模组的起点材料。用它制作混沌炼金锅，再揭示物质内部的源质本性，你便踏入了混沌炼金术的世界。"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "结晶装置",
+      "multiblock": {
+        "pattern": [["0"], ["E"]],
+        "mapping": {
+          "0": "minecraft:water_cauldron[level=3]",
+          "E": "minecraft:emerald_block"
+        },
+        "symmetrical": true
+      },
+      "text": "在绿宝石块上放置炼药锅，并用水桶装满水。绿宝石块与炼药锅不会被消耗。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:redstone,minecraft:gunpowder,minecraft:glowstone_dust",
+      "title": "三种试剂",
+      "text": "将红石粉、火药、萤石粉各一份丢入装满水的锅中。三者接触水面后便转化为嬗变结晶。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:transmutation_crystal",
+      "title": "第一质料",
+      "link_recipe": true,
+      "text": "装置可以反复使用，适合批量生产。炼金分解和许多配方都会消耗嬗变结晶，最好一次多准备一些。"
+    }
+  ]
+}

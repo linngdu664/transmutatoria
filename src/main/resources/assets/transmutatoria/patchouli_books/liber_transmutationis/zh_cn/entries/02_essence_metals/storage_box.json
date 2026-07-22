@@ -1,0 +1,35 @@
+{
+  "name": "炼金术士储物盒",
+  "category": "transmutatoria:02_essence_metals",
+  "icon": "transmutatoria:alchemist_storage_box",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(item)炼金术士储物盒$()既是容器物品，也是可放置的方块。十二个固定槽位各自对应一种源质，让日渐庞大的库存保持井然有序。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:alchemist_storage_box",
+      "recipe2": "transmutatoria:nigredo_alchemist_storage_box",
+      "title": "常态与黑化储物盒"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:albedo_alchemist_storage_box",
+      "recipe2": "transmutatoria:citrinitas_alchemist_storage_box",
+      "title": "白化与黄化储物盒"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:nigredo_alchemist_storage_box,transmutatoria:alchemist_storage_box,transmutatoria:albedo_alchemist_storage_box,transmutatoria:citrinitas_alchemist_storage_box",
+      "title": "四种对应状态",
+      "text": "每种变体只收纳对应状态的源质。捡起源质金属时，副手或背包中的匹配储物盒会自动将其吸入。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "物品与方块",
+      "text": "手持右键可以整理储物盒；放在地上后，Shift + 右键即可连同内容一起收回。$(br2)手持储物盒面对炼金锅时，它还能快速投放源质。轮盘操作见$(l:transmutatoria:04_advanced_alchemy_1/scroll_alchemy)卷轴炼金$(/l)。"
+    }
+  ]
+}

@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.fml.ModList;
 
 public class LiberTransmutationisArsTransmutatoriaItem extends Item {
-    private static final Identifier GUIDE_ID = ArsTransmutatoria.makeMyIdentifier("index");
+    private static final Identifier AGERATUM_GUIDE_ID = ArsTransmutatoria.makeMyIdentifier("index");
     private static final String AGERATUM_MOD_ID = "ageratum";
     private static final String AGERATUM_CLASS_NAME = "dev.anvilcraft.resource.ageratum.Ageratum";
 
@@ -41,7 +41,7 @@ public class LiberTransmutationisArsTransmutatoriaItem extends Item {
                         1.0F);
             } else {
                 serverPlayer.sendSystemMessage(
-                        Component.literal("Install Ageratum to open this guide."),
+                        Component.translatable("message.transmutatoria.ageratum_guide.missing_backend"),
                         true);
             }
         }
@@ -57,7 +57,7 @@ public class LiberTransmutationisArsTransmutatoriaItem extends Item {
             Class<?> ageratumClass = Class.forName(AGERATUM_CLASS_NAME);
             ageratumClass
                     .getMethod("openGuide", ServerPlayer.class, Identifier.class)
-                    .invoke(null, player, GUIDE_ID);
+                    .invoke(null, player, AGERATUM_GUIDE_ID);
             return true;
         } catch (ReflectiveOperationException | LinkageError ignored) {
             return false;

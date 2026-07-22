@@ -1,0 +1,56 @@
+{
+  "name": "Scroll Alchemy",
+  "category": "transmutatoria:04_advanced_alchemy_1",
+  "icon": "transmutatoria:transmutation_crucible",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "An activated scroll becomes the catalyst for replication or transformation. Its hexagonal slot diagram appears in the center of the crucible HUD and turns hidden knowledge into an experiment."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Reading the HUD",
+      "text": "The left bar shows catalyst, input, and output. Its purple gauge reports scroll durability and stability; the red gauge shows slot discovery progress.$(br2)In the center, a colored border marks the selected essence slot. Hold Shift and scroll the mouse wheel to select another slot."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Dial and Warnings",
+      "text": "The upper-right dial shows current polarity with its outer pointer. Two inner pointers mark the recipe's allowed range, and the hourglass counts down to expiration.$(br2)A lower-right hint explains what is missing whenever the reaction cannot proceed."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:alchemist_storage_box",
+      "title": "Essence Wheel",
+      "text": "Hold a storage box while looking at the crucible. Scroll to select an essence; right-click to insert one into the selected slot. Hold Alt to expand the wheel and compare how that essence relates to all the others."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Set the Reaction",
+      "text": "$(li)Drop the activated scroll into the catalyst slot.$(li)Drop in the item shown on the scroll's left side. If a Sigil has no left-side input, skip it.$(li)Use a storage box to fill each essence slot. Scroll changes essence; Shift-scroll changes crucible slot."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Complete the Reaction",
+      "text": "When every essence slot is filled, the reaction begins automatically. Wait for it to resolve, then right-click the crucible to collect all outputs.$(br2)The order in which slots were filled becomes important once special slots appear."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Annihilation",
+      "text": "Each slot has a hidden target essence. Insert the same essence and it $(term)annihilates$(): the input vanishes, the target is revealed, and the scroll loses durability. Insert a different essence and it reacts normally; its product helps you infer the hidden target."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Success and Failure",
+      "text": "The final item appears only when every slot annihilates and the other recipe conditions are satisfied. Otherwise, the transformed essence metals remain as outputs. Recover them, study the results, and try again instead of guessing blindly."
+    },
+    {
+      "type": "patchouli:relations",
+      "entries": [
+        "transmutatoria:05_advanced_alchemy_2/entropy_and_expiration",
+        "transmutatoria:05_advanced_alchemy_2/advanced_slots"
+      ],
+      "text": "Durability loss, polarity failures, expiration, and special slot behavior are examined in the next chapter."
+    }
+  ]
+}

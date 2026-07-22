@@ -1,0 +1,49 @@
+{
+  "name": "Entropy, Polarity, and Time",
+  "category": "transmutatoria:05_advanced_alchemy_2",
+  "icon": "transmutatoria:lunar_sigil_scroll",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "A scroll remembers more than discovered targets. Wrong essences accumulate $(term)entropy$(); recipes demand a polarity window; lesser scrolls decay with time. Mastery means balancing all three."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Entropy",
+      "text": "Each slot reaction adds entropy according to the relation:$(br2)$(li)Double restraint: +2.$(li)Restraint, mutual restraint, or symbiosis: +1.$(li)Neutral or matching annihilation: +0.$(br2)The interface describes the scroll's current stability."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:nigredo_venotite,transmutatoria:venotite,transmutatoria:albedo_venotite,transmutatoria:citrinitas_venotite",
+      "title": "The Price of Guessing",
+      "text": "Higher entropy makes every later annihilation consume more scroll durability. Brute-force guessing is costly; infer the target from each state change instead."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Polarity Window",
+      "text": "Every alchemical recipe allows a polarity range. Even perfect annihilation produces nothing if the crucible falls outside it. The HUD's two inner pointers mark the limits; the outer pointer must lie between them."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Prepare the Crucible",
+      "text": "Mismatched targets can change polarity during a scroll reaction, because the virtual target's change becomes a crucible change. Before synthesis, use ordinary essence reactions—especially symbiosis or mutual restraint—to approach the required window."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "One-Time Recipes",
+      "text": "Some recipes are one-time. Once such a synthesis produces its item, the scroll in the catalyst slot vanishes regardless of its remaining durability. Reserve a suitable scroll for the attempt."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:transmutation_equation_scroll,transmutatoria:terrestrial_equation_scroll,transmutatoria:lunar_equation_scroll",
+      "title": "Expiration",
+      "text": "Transmutation and Terrestrial scrolls expire at noon; Lunar scrolls at new-moon midnight every eight days. The HUD hourglass displays the remaining time. Solar and Void scrolls never expire."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Mutation",
+      "text": "When a scroll expires, every target essence becomes hidden again, and some targets may be randomly replaced. You must explore the pattern anew. Use activated scrolls promptly, or choose Lunar and higher tiers for long, difficult work."
+    }
+  ]
+}

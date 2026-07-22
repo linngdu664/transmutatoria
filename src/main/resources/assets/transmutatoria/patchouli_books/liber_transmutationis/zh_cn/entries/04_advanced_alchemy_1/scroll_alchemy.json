@@ -1,0 +1,56 @@
+{
+  "name": "卷轴炼金",
+  "category": "transmutatoria:04_advanced_alchemy_1",
+  "icon": "transmutatoria:transmutation_crucible",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "激活后的卷轴是复制或转化反应的催化剂。它的六边形槽位图会显示在炼金锅 HUD 中央，将隐藏的知识变成一场实验。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "阅读 HUD",
+      "text": "左侧物品栏显示催化剂、输入和输出；紫色长条表示卷轴耐久与稳定度，红色长条表示槽位解锁进度。$(br2)中央的彩色边框标出当前槽位。按住 Shift 滚动鼠标滚轮可以切换槽位。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "表盘与提示",
+      "text": "右上表盘的外侧指针显示当前极性，两根内侧指针标记配方允许的范围；沙漏显示过期倒计时。$(br2)无法继续反应时，右下角提示会说明缺少水、催化剂或输入等原因。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:alchemist_storage_box",
+      "title": "源质轮盘",
+      "text": "手持储物盒看向炼金锅：滚轮选择源质，右键投入当前槽位。按住 Alt 展开完整轮盘，即可比较当前源质与其他源质的全部关系。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "布置反应",
+      "text": "$(li)把激活卷轴丢入催化剂槽。$(li)投入卷轴左侧显示的原料；印记卷左侧为空时跳过。$(li)用储物盒填满每个源质槽。滚轮换源质，Shift + 滚轮换炼金锅槽位。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "完成反应",
+      "text": "所有源质槽填满后，反应自动开始。等待结算，随后右键取出全部产物。$(br2)高级槽位出现后，源质槽的填入顺序将变得十分重要。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "湮灭",
+      "text": "每个槽位都有一种隐藏的目标源质。投入同种源质便会$(term)湮灭$()：输入消失，目标被揭示，卷轴损失耐久。投入不同源质则按关系反应；观察产物，就能推断隐藏目标。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "成功与失败",
+      "text": "只有全部槽位湮灭且其他配方条件满足，最终物品才会出现。否则，变化后的源质会留在输出槽。取回它们，分析结果后再试，不必盲目穷举。"
+    },
+    {
+      "type": "patchouli:relations",
+      "entries": [
+        "transmutatoria:05_advanced_alchemy_2/entropy_and_expiration",
+        "transmutatoria:05_advanced_alchemy_2/advanced_slots"
+      ],
+      "text": "耐久消耗、极性失败、过期以及特殊槽位，将在下一章继续说明。"
+    }
+  ]
+}

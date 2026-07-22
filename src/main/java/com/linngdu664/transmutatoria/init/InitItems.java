@@ -126,6 +126,7 @@ public class InitItems {
     public static DeferredItem<Item> EMERALD_TABLET = ITEMS.register("emerald_tablet", EmeraldTabletItem::new);
     public static DeferredItem<Item> LIBER_TRANSMUTATIONIS_ARS_TRANSMUTATORIA = ITEMS.register("liber_transmutationis_ars_transmutatoria",
             LiberTransmutationisArsTransmutatoriaItem::new);
+    public static DeferredItem<Item> CODEX_ALCHEMICA = ITEMS.register("codex_alchemica", CodexAlchemicaItem::new);
 
     // ================= [ 卷轴 — 印记（复制） ] =================
     public static DeferredItem<Item> TRANSMUTATION_SIGIL_SCROLL = ITEMS.register("transmutation_sigil_scroll",
@@ -244,6 +245,7 @@ public class InitItems {
                 output.accept(new ItemStack(PHILOSOPHERS_STONE.get()));
 
                 output.accept(new ItemStack(EMERALD_TABLET.get()));
+                output.accept(new ItemStack(CODEX_ALCHEMICA.get()));
                 if (ModList.get().isLoaded(AGERATUM_MOD_ID)) {
                     output.accept(new ItemStack(LIBER_TRANSMUTATIONIS_ARS_TRANSMUTATORIA.get()));
                 }

@@ -1,0 +1,46 @@
+{
+  "name": "The Philosopher's Stone",
+  "category": "transmutatoria:06_great_work",
+  "icon": "transmutatoria:philosophers_stone",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Rubedo is the embryo, not the conclusion. Calcine it in a furnace to obtain the $(item)Philosopher's Stone$()—the supreme achievement of Chaos Alchemy."
+    },
+    {
+      "type": "patchouli:smelting",
+      "recipe": "transmutatoria:philosophers_stone",
+      "title": "Calcination",
+      "text": "$(quote)This is complete; I testify to it by the judgment of the world.$()"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "minecraft:zombie_villager",
+      "name": "Healing Corruption",
+      "text": "Right-click a zombie villager while holding the stone to complete its conversion immediately, without weakness or a golden apple."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Life Protection",
+      "text": "Holding the stone in either hand continuously grants regeneration and a brief saturation effect each second. If an off-cooldown stone is in the hotbar when you suffer fatal damage, death is canceled, health becomes 1, and that stone enters a 60-second cooldown."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:transmutation_crucible",
+      "title": "Polarity Adjustment",
+      "text": "Right-click a crucible while holding the Philosopher's Stone to move any nonzero polarity one point toward 0. It is slow, but exact and safe."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:philosophers_stone",
+      "title": "Chaos Decomposition",
+      "text": "Use the stone as a crucible catalyst, then insert any item that a Sigil Scroll can replicate. The item is reverse-decomposed into a random quantity of base essence metals—an effective source for large reserves."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "The Work Is Complete",
+      "text": "You began with three powders in a cauldron and learned to read the hidden relations of twelve metals. With the stone in hand, decomposition, transformation, life, and balance have become parts of one art.$(br2)$(quote)What I have said of the operation of the Sun is complete.$()"
+    }
+  ]
+}

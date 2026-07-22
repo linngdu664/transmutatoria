@@ -87,6 +87,7 @@
   "gui.transmutatoria.emerald_tablet.legend.mutual_restrained": "Mutual restraint",
   "gui.transmutatoria.emerald_tablet.legend.symbiosis": "Symbiosis",
   "item.transmutatoria.liber_transmutationis_ars_transmutatoria": "Liber Transmutationis: Ars Transmutatoria",
+  "item.transmutatoria.codex_alchemica": "Codex Alchemica: Ars Transmutatoria",
 
   "item.transmutatoria.transmutation_sigil_scroll": "Transmutation Sigil Scroll",
   "item.transmutatoria.terrestrial_sigil_scroll": "Terrestrial Sigil Scroll",
@@ -232,5 +233,9 @@
   "advancements.transmutatoria.chaos_decomposition.title": "Answer to Chaos",
   "advancements.transmutatoria.chaos_decomposition.description": "Use the Philosopher's Stone to complete a chaos decomposition.",
   "advancements.transmutatoria.deathless_philosopher.title": "The Deathless Philosopher",
-  "advancements.transmutatoria.deathless_philosopher.description": "Let the Philosopher's Stone spare you from death."
+  "advancements.transmutatoria.deathless_philosopher.description": "Let the Philosopher's Stone spare you from death.",
+  "patchouli.transmutatoria.book.name": "Codex Alchemica: Ars Transmutatoria",
+  "patchouli.transmutatoria.book.subtitle": "A Guide to Chaos Alchemy",
+  "patchouli.transmutatoria.book.landing_text": "The world rests upon four pillars: $(thing)Astral Flame, Abyssal Water, Blighted Earth, and Calamitous Wind$(). Each gives rise to three essence metals. They nurture, restrain, or annihilate one another—the foundation of Chaos Alchemy.$(br2)May the wisdom of the Emerald Tablet guide your path.",
+  "message.transmutatoria.ageratum_guide.missing_backend": "Install Ageratum to open this guide."
 }

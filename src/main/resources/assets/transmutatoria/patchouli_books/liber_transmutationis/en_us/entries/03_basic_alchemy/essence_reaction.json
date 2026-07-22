@@ -1,0 +1,34 @@
+{
+  "name": "Essence Reaction",
+  "category": "transmutatoria:03_basic_alchemy",
+  "icon": "transmutatoria:transmutation_crystal",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "An $(term)Essence Reaction$() lets two metals react directly and change state according to their relationship. Its catalyst is a Transmutation Crystal."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:transmutation_crystal",
+      "title": "The Catalyst",
+      "text": "Drop a crystal into the catalyst slot. The crucible HUD displays two essence slots. Fill both with essence metals; the reaction begins automatically."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Reaction Results",
+      "text": "$(li)A restrains B: A +1, B -1.$(li)A doubly restrains B: A +2, B -2.$(li)Symbiosis: both +1.$(li)Mutual restraint: both -1.$(li)Neutral: neither changes.$(br2)Right-click afterward to collect both products."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:nigredo_venotite,transmutatoria:venotite,transmutatoria:albedo_venotite,transmutatoria:citrinitas_venotite",
+      "title": "State, Not Identity",
+      "text": "The products remain the same essence metals; only their states change. Crossing below Nigredo or above Citrinitas still destroys the essence."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Useful Controls",
+      "text": "Hold a storage box and right-click the crucible to insert its selected essence. Scroll to change the box selection.$(br2)Before a reaction starts, or while it is in progress, Shift-right-click with an empty hand to recover materials and the catalyst."
+    }
+  ]
+}

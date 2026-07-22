@@ -1,0 +1,42 @@
+{
+  "name": "源质融合与极性",
+  "category": "transmutatoria:03_basic_alchemy",
+  "icon": "transmutatoria:pandemonium",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(term)源质融合$()以一种源质金属作为催化剂，聚合它所克制的全部源质，合成一份与催化剂相同的金属。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:eclipsium,transmutatoria:abyssion,transmutatoria:fulgurzinc,transmutatoria:pandemonium",
+      "title": "任意源质催化",
+      "text": "将想合成的源质丢入催化剂槽。HUD 会列出它克制与双倍克制的全部源质；你必须完整填满这组材料。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "融合",
+      "text": "材料种类全部齐备后，融合自动开始。所有输入源质被消耗，转化输出槽产出催化金属。$(br2)克制面越广，材料越多；无相源金克制其余十一种源质，因此需要投入全部十一种。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "极性",
+      "text": "炼金锅的$(term)极性$()通常在 -50 到 50 之间，初始为 0。HUD 右上角表盘的外侧指针表示当前值。$(br2)共生使极性 +2，互相克制使极性 -2；其他关系与源质融合不改变极性。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:redstone_block,transmutatoria:alchemical_dross_block",
+      "title": "失衡的代价",
+      "text": "$(warn)务必小心：$()极性高于 +50，锅会变成红石块；低于 -50，则会变成炼金渣块。内容物会掉落，但炼金锅就此损毁。"
+    },
+    {
+      "type": "patchouli:relations",
+      "entries": [
+        "transmutatoria:02_essence_metals/essence_metals",
+        "transmutatoria:04_advanced_alchemy_1/scroll_alchemy"
+      ],
+      "text": "卷轴炼金会将极性用作配方条件。挑战伟大之作前，应先熟练掌握调节方法。"
+    }
+  ]
+}

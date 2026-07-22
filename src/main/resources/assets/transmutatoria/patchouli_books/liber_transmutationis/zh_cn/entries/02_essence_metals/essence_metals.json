@@ -1,0 +1,65 @@
+{
+  "name": "源质与相生相克",
+  "category": "transmutatoria:02_essence_metals",
+  "icon": "transmutatoria:eclipsium",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "十二种源质金属分属四大元素柱。它们之间的相生相克是混沌炼金术的核心逻辑，贯穿后续所有反应。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:eclipsium,transmutatoria:lunargent,transmutatoria:astrotite",
+      "title": "星火柱",
+      "text": "蚀日金、泣月银、灾星钛。星火克制劫风，并被渊水克制。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:abyssion,transmutatoria:animercury,transmutatoria:necroplumb",
+      "title": "渊水柱",
+      "text": "渊海钢、幻魂汞、冥沼铅。渊水克制星火，并被腐土克制。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:sanguibronze,transmutatoria:venotite,transmutatoria:ossantimony",
+      "title": "腐土柱",
+      "text": "棘血铜、鸩林锡、骸骨锑。腐土克制渊水，并被劫风克制。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:fulgurzinc,transmutatoria:chronoplatinum,transmutatoria:pandemonium",
+      "title": "劫风柱",
+      "text": "怒雷锌、凝时铂、无相源金。劫风克制腐土，并被星火克制。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "相生相克",
+      "text": "四柱循环为：$(br2)$(term)星火 → 劫风 → 腐土 → 渊水 → 星火$()。$(br2)反应时，克制方活化，被克制方劣化。金属之间的额外关系可能叠成双倍克制、形成互相克制；共生则会令双方一同活化。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:pandemonium",
+      "title": "无相源金",
+      "text": "无相源金是唯一的例外：它克制其他十一种源质，且不被任何源质克制。其稀有程度正与高级炼金中的价值相称。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:emerald_tablet",
+      "title": "翠绿石板",
+      "text": "由一枚嬗变结晶与四颗绿宝石制成。手持右键即可查阅任意两种源质之间的完整关系。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:nigredo_eclipsium,transmutatoria:eclipsium,transmutatoria:albedo_eclipsium,transmutatoria:citrinitas_eclipsium",
+      "title": "四种状态",
+      "text": "每种源质都有黑化（-1）、常态（0）、白化（+1）、黄化（+2）四种状态。状态只改变程度，不改变源质的身份与关系。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:alchemical_dross,minecraft:redstone",
+      "title": "越过界限",
+      "text": "低于黑化，源质崩解为炼金渣；高于黄化，源质烧尽为红石粉。两种残余都已失去炼金用途。"
+    }
+  ]
+}

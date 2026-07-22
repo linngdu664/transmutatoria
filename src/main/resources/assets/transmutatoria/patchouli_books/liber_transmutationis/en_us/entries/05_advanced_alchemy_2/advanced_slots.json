@@ -1,0 +1,47 @@
+{
+  "name": "Advanced Essence Slots",
+  "category": "transmutatoria:05_advanced_alchemy_2",
+  "icon": "transmutatoria:void_sigil_scroll",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Above recipe level 8, generated slots may have $(term)special types$() that alter reactions. Their chance and number grow with level. Some hide their type until their first annihilation."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Order Is Part of the Formula",
+      "text": "Slots resolve in the order their essences were inserted. A slot can affect only neighbors that have already produced an output—or inhibit neighbors still empty—so filling 1 then 2 may differ completely from filling 2 then 1."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Basic Modifiers",
+      "text": "$(li)$(term)Normal$(): the basic relation reaction.$(li)$(term)Deterioration$(): product -1; polarity +1.$(li)$(term)Activation$(): product +1; polarity -1.$(li)$(term)Inversion$(): reverses state and polarity changes.$(li)$(term)Restoration$(): a matching essence annihilates but is retained."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Diffusion and Inhibition",
+      "text": "$(li)$(term)Diffusion$(): passes its activation or deterioration to adjacent produced, uninhibited outputs; polarity applies for each spread.$(li)$(term)Inhibition$(): if it does not annihilate, adjacent empty slots are inhibited. Their later non-annihilation changes to state, polarity, and entropy become ineffective."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Purge and Resonance",
+      "text": "$(li)$(term)Purge$(): if its product deteriorates, clears adjacent existing products without counting them as annihilated.$(li)$(term)Resonance$(): adds the states of adjacent existing products to itself, counting Nigredo, base, Albedo, and Citrinitas as -1, 0, 1, and 2."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Directional Slots",
+      "text": "An arrow is hidden with the slot type and appears once revealed.$(br2)$(li)$(term)Activity$(): if not annihilated, reacts once more with the arrow's adjacent existing product; the extra reaction does not change polarity.$(li)$(term)Exchange$(): swaps products with that neighbor."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Delayed Disturbances",
+      "text": "$(li)$(term)Spin$(): after all reactions, rotates adjacent non-empty products clockwise.$(li)$(term)Unstable$(): if its essence changes state, swaps its type with a random other slot after all reactions.$(br2)Recheck the HUD after either disturbance."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Using Them Well",
+      "text": "Special slots are not merely obstacles. Resonance and Activity benefit from resolving after useful neighbors; Purge, Spin, Exchange, and Inhibition demand care with order. Reveal types, plan a route, then feed the crucible deliberately."
+    }
+  ]
+}

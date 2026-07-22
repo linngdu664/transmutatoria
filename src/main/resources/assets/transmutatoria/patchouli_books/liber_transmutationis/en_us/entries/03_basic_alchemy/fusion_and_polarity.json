@@ -1,0 +1,42 @@
+{
+  "name": "Essence Fusion and Polarity",
+  "category": "transmutatoria:03_basic_alchemy",
+  "icon": "transmutatoria:pandemonium",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(term)Essence Fusion$() uses one essence metal as its catalyst, then gathers every essence it restrains to produce another copy of that catalyst metal."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:eclipsium,transmutatoria:abyssion,transmutatoria:fulgurzinc,transmutatoria:pandemonium",
+      "title": "Any Essence Catalyst",
+      "text": "Drop the essence you want to produce into the catalyst slot. The HUD shows every essence it restrains or doubly restrains. Fill the displayed set completely."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Fusion",
+      "text": "When every required kind is present, fusion begins. All input essences are consumed and the transformation output receives the catalyst essence.$(br2)Metals with broader restraint need more ingredients. Pandemonium restrains all other eleven, so its fusion demands all eleven."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Polarity",
+      "text": "The crucible's $(term)polarity$() normally ranges from -50 to 50 and begins at 0. The outer pointer on the upper-right HUD dial shows its current value.$(br2)Symbiosis raises polarity by 2; mutual restraint lowers it by 2. Other essence relations and fusion leave it unchanged."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:redstone_block,transmutatoria:alchemical_dross_block",
+      "title": "A Broken Balance",
+      "text": "$(warn)Take care:$() above +50, the crucible becomes a redstone block; below -50, it becomes an alchemical dross block. The contents drop, but the crucible is lost."
+    },
+    {
+      "type": "patchouli:relations",
+      "entries": [
+        "transmutatoria:02_essence_metals/essence_metals",
+        "transmutatoria:04_advanced_alchemy_1/scroll_alchemy"
+      ],
+      "text": "Polarity becomes a recipe condition in scroll alchemy. Practice adjusting it before attempting the Great Work."
+    }
+  ]
+}

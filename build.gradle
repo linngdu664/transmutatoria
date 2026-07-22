@@ -28,11 +28,11 @@ sourceSets.main.resources {
 
 repositories {
     // Add here additional repositories if required by some of the dependencies below.
-//    maven {
-//        // location of the maven that hosts JEI files since January 2023
-//        name = "Jared's maven"
-//        url = "https://maven.blamejared.com/"
-//    }
+    maven {
+        // Patchouli releases and API artifacts
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
+    }
     maven {
         // location of the maven that hosts JEI files
         name = "Progwml6 maven"
@@ -128,6 +128,21 @@ configurations {
 }
 
 dependencies {
+    // Patchouli powers the default guidebook and is shipped inside the mod jar.
+    // The range lets NeoForge negotiate a compatible external/embedded copy.
+    jarJar(implementation("vazkii.patchouli:patchouli-neoforge:${patchouli_version}")) {
+        version {
+            strictly "[26.1-94,26.2)"
+            prefer patchouli_version
+        }
+    }
+    jarJar(implementation("vazkii.patchouli:patchouli-xplat:${patchouli_version}")) {
+        version {
+            strictly "[26.1-94,26.2)"
+            prefer patchouli_version
+        }
+    }
+
     // Example optional mod dependency with JEI
     // compile against the JEI API but do not include it at runtime
     compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")

@@ -1,0 +1,34 @@
+{
+  "name": "源质反应",
+  "category": "transmutatoria:03_basic_alchemy",
+  "icon": "transmutatoria:transmutation_crystal",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(term)源质反应$()让两种金属直接发生作用，按彼此关系改变状态。它以嬗变结晶作为催化剂。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:transmutation_crystal",
+      "title": "催化剂",
+      "text": "将结晶丢入催化剂槽，炼金锅 HUD 会显示两个源质槽。分别填入源质金属后，反应自动开始。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "反应结果",
+      "text": "$(li)A 克制 B：A +1，B -1。$(li)A 双倍克制 B：A +2，B -2。$(li)共生：双方 +1。$(li)互相克制：双方 -1。$(li)中性：双方不变。$(br2)完成后右键取出两个产物。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:nigredo_venotite,transmutatoria:venotite,transmutatoria:albedo_venotite,transmutatoria:citrinitas_venotite",
+      "title": "状态而非本质",
+      "text": "产物仍是原本的源质金属，只改变状态。若越过黑化或黄化的边界，源质依然会被破坏。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "实用操作",
+      "text": "手持储物盒右键炼金锅，可直接投入当前选中的源质；滚轮切换储物盒选项。$(br2)反应开始前或进行中，Shift + 空手右键可以取回材料和催化剂。"
+    }
+  ]
+}

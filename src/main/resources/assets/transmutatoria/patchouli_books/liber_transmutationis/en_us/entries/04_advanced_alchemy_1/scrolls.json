@@ -1,0 +1,70 @@
+{
+  "name": "Transmutation Scrolls",
+  "category": "transmutatoria:04_advanced_alchemy_1",
+  "icon": "transmutatoria:transmutation_sigil_scroll",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Transmutation Scrolls are an alchemist's central tools. They turn knowledge of essence relations into two arts: $(term)Alchemical Replication$() and $(term)Alchemical Transformation$()."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:transmutation_sigil_scroll,transmutatoria:terrestrial_sigil_scroll,transmutatoria:lunar_sigil_scroll,transmutatoria:solar_sigil_scroll,transmutatoria:void_sigil_scroll",
+      "title": "Sigil Scrolls",
+      "text": "A Sigil Scroll replicates an item: choose the object you want to create, then use its pattern to produce another copy in the crucible."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:transmutation_equation_scroll,transmutatoria:terrestrial_equation_scroll,transmutatoria:lunar_equation_scroll,transmutatoria:solar_equation_scroll,transmutatoria:void_equation_scroll",
+      "title": "Equation Scrolls",
+      "text": "An Equation Scroll transforms one item into another. Choose the input material, and the scroll reveals the output prescribed by its alchemical recipe."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Five Tiers",
+      "text": "$(li)Transmutation: 48 durability; expires at noon.$(li)Terrestrial: 120; expires at noon.$(li)Lunar: 300; expires every eight days at new-moon midnight.$(li)Solar: 750; never expires.$(li)Void: unbreakable; never expires."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:transmutation_sigil_scroll",
+      "recipe2": "transmutatoria:transmutation_equation_scroll",
+      "title": "Base Scrolls",
+      "text": "Both use an essence, crystal, paper, and gold. Sigils add glowstone; equations add redstone."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:terrestrial_sigil_scroll",
+      "recipe2": "transmutatoria:terrestrial_equation_scroll",
+      "title": "Terrestrial Scrolls"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:lunar_sigil_scroll",
+      "recipe2": "transmutatoria:lunar_equation_scroll",
+      "title": "Lunar Scrolls"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:solar_sigil_scroll",
+      "recipe2": "transmutatoria:solar_equation_scroll",
+      "title": "Solar Scrolls"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:void_sigil_scroll",
+      "recipe2": "transmutatoria:void_equation_scroll",
+      "title": "Void Scrolls"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Activation",
+      "text": "Right-click while holding a blank scroll. For a Sigil, place the item you want to replicate in the right slot. For an Equation, place the input you want to transform in the left slot. If a matching recipe exists, the item is consumed and the scroll activates."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Read Before Sealing",
+      "text": "$(warn)The placed item cannot be recovered after activation.$()$(br2)The activated interface previews the other side of the recipe and generates a connected hexagonal pattern of target essence slots. Their essences begin hidden as question marks. A higher recipe level generally means more slots."
+    }
+  ]
+}

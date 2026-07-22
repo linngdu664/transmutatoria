@@ -1,0 +1,49 @@
+{
+  "name": "熵值、极性与时间",
+  "category": "transmutatoria:05_advanced_alchemy_2",
+  "icon": "transmutatoria:lunar_sigil_scroll",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "卷轴记录的不仅是已经揭示的目标。错误源质会积累$(term)熵值$()，配方要求极性窗口，低阶卷轴还会随时间衰变。真正的掌握在于平衡三者。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "熵值",
+      "text": "每次槽位反应按关系增加熵值：$(br2)$(li)双倍克制或被双倍克制：+2。$(li)普通克制、互克或共生：+1。$(li)中性或同源湮灭：+0。$(br2)卷轴界面会描述当前稳定度。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:nigredo_venotite,transmutatoria:venotite,transmutatoria:albedo_venotite,transmutatoria:citrinitas_venotite",
+      "title": "猜测的代价",
+      "text": "熵值越高，之后每次湮灭消耗的卷轴耐久越多。暴力穷举代价高昂；应当根据每次状态变化推断目标。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "极性窗口",
+      "text": "每个炼金配方都允许一段极性范围。即使全部湮灭，锅的极性不在其中也不会产出。HUD 两根内侧指针标记上下限，外侧指针必须落在它们之间。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "预先调节",
+      "text": "槽位不匹配时，虚目标的状态变化会反映为炼金锅的极性变化。合成前可先做普通源质反应，尤其利用共生和互相克制，让极性靠近窗口。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "一次性配方",
+      "text": "部分炼金配方只能使用一次。成功产出后，无论卷轴还剩多少耐久，催化剂槽中的卷轴都会消失。应为这次尝试专门准备合适的卷轴。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:transmutation_equation_scroll,transmutatoria:terrestrial_equation_scroll,transmutatoria:lunar_equation_scroll",
+      "title": "过期",
+      "text": "嬗变与地相卷轴每天正午过期；月相卷轴每八天的新月午夜过期。HUD 沙漏显示剩余时间。日相与无相卷轴永不过期。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "突变",
+      "text": "卷轴过期后，所有目标源质会重新隐藏，部分目标还可能被随机替换。你必须重新探索槽位。激活后应尽快使用；耗时的高难合成宜选择月相或更高阶卷轴。"
+    }
+  ]
+}

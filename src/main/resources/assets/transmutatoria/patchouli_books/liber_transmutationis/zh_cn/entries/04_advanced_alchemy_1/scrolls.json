@@ -1,0 +1,70 @@
+{
+  "name": "嬗变卷轴",
+  "category": "transmutatoria:04_advanced_alchemy_1",
+  "icon": "transmutatoria:transmutation_sigil_scroll",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "嬗变卷轴是炼金术士的核心工具，将源质关系的知识化为两门技艺：$(term)炼金复制$()与$(term)炼金转化$()。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:transmutation_sigil_scroll,transmutatoria:terrestrial_sigil_scroll,transmutatoria:lunar_sigil_scroll,transmutatoria:solar_sigil_scroll,transmutatoria:void_sigil_scroll",
+      "title": "印记卷",
+      "text": "嬗变印记卷用于复制：选择想创造的物品，以它为模板，在炼金锅中复制出新的一份。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:transmutation_equation_scroll,transmutatoria:terrestrial_equation_scroll,transmutatoria:lunar_equation_scroll,transmutatoria:solar_equation_scroll,transmutatoria:void_equation_scroll",
+      "title": "方程卷",
+      "text": "嬗变方程卷用于转化：选择作为原料的物品，卷轴便会揭示炼金配方所规定的产物。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "五个等级",
+      "text": "$(li)嬗变：48 耐久，每天正午过期。$(li)地相：120 耐久，每天正午过期。$(li)月相：300 耐久，每八天新月午夜过期。$(li)日相：750 耐久，永不过期。$(li)无相：永不损坏，永不过期。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:transmutation_sigil_scroll",
+      "recipe2": "transmutatoria:transmutation_equation_scroll",
+      "title": "基础卷轴",
+      "text": "两者都使用源质、结晶、纸和金粒；印记卷另加萤石粉，方程卷另加红石粉。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:terrestrial_sigil_scroll",
+      "recipe2": "transmutatoria:terrestrial_equation_scroll",
+      "title": "地相卷轴"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:lunar_sigil_scroll",
+      "recipe2": "transmutatoria:lunar_equation_scroll",
+      "title": "月相卷轴"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:solar_sigil_scroll",
+      "recipe2": "transmutatoria:solar_equation_scroll",
+      "title": "日相卷轴"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:void_sigil_scroll",
+      "recipe2": "transmutatoria:void_equation_scroll",
+      "title": "无相卷轴"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "激活",
+      "text": "手持空白卷轴右键。印记卷在右侧放入想复制的物品；方程卷在左侧放入想转化的原料。如果存在匹配配方，物品被消耗，卷轴随即激活。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "封缄之前",
+      "text": "$(warn)激活后，放入的物品不可取出。$()$(br2)激活界面会预览配方另一端，并生成连通的六边形目标源质槽位。它们最初都以问号隐藏；配方等级越高，通常需要的槽位越多。"
+    }
+  ]
+}

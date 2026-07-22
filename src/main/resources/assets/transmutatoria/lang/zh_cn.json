@@ -87,6 +87,7 @@
   "gui.transmutatoria.emerald_tablet.legend.mutual_restrained": "互克",
   "gui.transmutatoria.emerald_tablet.legend.symbiosis": "共生",
   "item.transmutatoria.liber_transmutationis_ars_transmutatoria": "《转化秘典：混沌炼金术》",
+  "item.transmutatoria.codex_alchemica": "《炼金术全典：混沌嬗变》",
 
   "item.transmutatoria.transmutation_sigil_scroll": "嬗变印记卷",
   "item.transmutatoria.terrestrial_sigil_scroll": "地相印记卷",
@@ -232,5 +233,9 @@
   "advancements.transmutatoria.chaos_decomposition.title": "混沌的解答",
   "advancements.transmutatoria.chaos_decomposition.description": "用贤者之石完成一次混沌分解。",
   "advancements.transmutatoria.deathless_philosopher.title": "不死的哲人",
-  "advancements.transmutatoria.deathless_philosopher.description": "贤者之石使你免于一次死亡。"
+  "advancements.transmutatoria.deathless_philosopher.description": "贤者之石使你免于一次死亡。",
+  "patchouli.transmutatoria.book.name": "《炼金术全典：混沌嬗变》",
+  "patchouli.transmutatoria.book.subtitle": "炼金术士手册",
+  "patchouli.transmutatoria.book.landing_text": "世界由四柱承载：$(thing)星火、渊水、腐土、劫风$()。每柱分化出三种源质金属，共十二种。它们彼此滋生、压制或湮灭——这便是混沌炼金术的根基。$(br2)愿翠玉录的智慧指引你的道路。",
+  "message.transmutatoria.ageratum_guide.missing_backend": "安装藿香后即可打开本手册。"
 }

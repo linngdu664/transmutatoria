@@ -1,0 +1,38 @@
+{
+  "name": "Transmutation Crystal",
+  "category": "transmutatoria:01_introduction",
+  "icon": "transmutatoria:transmutation_crystal",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The first step in alchemy is obtaining a $(item)Transmutation Crystal$(), the starting material of this art. With it, you can craft a Transmutation Crucible and begin revealing the essence hidden within matter."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Crystal Apparatus",
+      "multiblock": {
+        "pattern": [["0"], ["E"]],
+        "mapping": {
+          "0": "minecraft:water_cauldron[level=3]",
+          "E": "minecraft:emerald_block"
+        },
+        "symmetrical": true
+      },
+      "text": "Place a cauldron on an emerald block and fill it with water. The two blocks are not consumed."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:redstone,minecraft:gunpowder,minecraft:glowstone_dust",
+      "title": "The Three Reagents",
+      "text": "Throw one redstone dust, one gunpowder, and one glowstone dust into the full cauldron. When all three touch the water, they transform into a crystal."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:transmutation_crystal",
+      "title": "The First Matter",
+      "link_recipe": true,
+      "text": "The emerald block and cauldron remain intact, so one apparatus can produce crystals repeatedly. Prepare several: decomposition and many recipes depend upon them."
+    }
+  ]
+}

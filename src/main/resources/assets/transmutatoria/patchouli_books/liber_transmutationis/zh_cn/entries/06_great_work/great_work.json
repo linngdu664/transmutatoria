@@ -1,0 +1,65 @@
+{
+  "name": "三基质与四阶段",
+  "category": "transmutatoria:06_great_work",
+  "icon": "transmutatoria:prima_materia",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "伟大之作是炼金术的终极考验。先制备解锁高阶卷轴的三种基质，再让原初质料依次经历黑化、白化、黄化与赤化。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:sand,transmutatoria:salic_matrix",
+      "title": "盐化基质",
+      "text": "用沙子激活方程卷，在极性不高于 0 时完成等级 4 的转化。盐化基质用于制作地相卷轴。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:salic_matrix,transmutatoria:mercurial_matrix",
+      "title": "汞化基质",
+      "text": "在极性不低于 20 时，以等级 8 转化盐化基质。汞化基质用于制作月相卷轴。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:mercurial_matrix,transmutatoria:sulfuric_matrix",
+      "title": "硫化基质",
+      "text": "在极性 -1 到 1 之间，以等级 13 转化汞化基质。窗口极窄，需要精确控制。硫化基质用于制作日相卷轴。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:prima_materia",
+      "title": "原初质料",
+      "text": "一枚嬗变结晶与四块圆石，构成伟大之作四阶段的起始质料。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:prima_materia,transmutatoria:nigredo_matter",
+      "title": "黑化 · Nigredo",
+      "text": "将原初质料转化为黑化质料。等级 3；极性 -50 到 -10。$(br2)$(quote)下如同上，上如同下。$()"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:nigredo_matter,transmutatoria:albedo_matter",
+      "title": "白化 · Albedo",
+      "text": "将黑化质料转化为白化质料。等级 6；极性 20 到 50。前一步留下负极性，因此必须逆转平衡。$(br2)$(quote)从地养护，从风孕育。$()"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:albedo_matter,transmutatoria:citrinitas_matter",
+      "title": "黄化 · Citrinitas",
+      "text": "将白化质料转化为黄化质料。等级 12；极性 40 到 50。十二个槽位开始出现特殊类型。$(br2)$(quote)太阳为父，月亮为母。$()"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:citrinitas_matter,transmutatoria:rubedo_matter",
+      "title": "赤化 · Rubedo",
+      "text": "将黄化质料转化为赤化质料。等级 24；极性 49 到 50；一次性。二十四个槽位与大量特殊类型使它成为最困难的合成。$(br2)$(quote)这便是万力之力。$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "赤化之前",
+      "text": "使用月相或更高阶卷轴，准备各种状态的充足源质，并在投入第一个槽位前把极性稳定在 49 或 50。等级 24 时约有一半槽位可能是特殊类型；应预先规划结算顺序。"
+    }
+  ]
+}

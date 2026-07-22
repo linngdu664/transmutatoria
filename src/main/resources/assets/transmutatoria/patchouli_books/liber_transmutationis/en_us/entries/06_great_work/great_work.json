@@ -1,0 +1,65 @@
+{
+  "name": "Matrices and the Four Stages",
+  "category": "transmutatoria:06_great_work",
+  "icon": "transmutatoria:prima_materia",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Great Work is alchemy's final trial. First prepare the three matrices that unlock higher scroll tiers, then carry Prima Materia through Nigredo, Albedo, Citrinitas, and Rubedo."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:sand,transmutatoria:salic_matrix",
+      "title": "Salic Matrix",
+      "text": "Activate an Equation Scroll with sand, then complete a level 4 transformation at polarity 0 or below. Salic Matrix is used to craft Terrestrial scrolls."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:salic_matrix,transmutatoria:mercurial_matrix",
+      "title": "Mercurial Matrix",
+      "text": "Transform Salic Matrix at level 8 and polarity 20 or above. Mercurial Matrix is used to craft Lunar scrolls."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:mercurial_matrix,transmutatoria:sulfuric_matrix",
+      "title": "Sulfuric Matrix",
+      "text": "Transform Mercurial Matrix at level 13 while polarity lies from -1 to 1. This narrow window demands precise control. Sulfuric Matrix is used to craft Solar scrolls."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:prima_materia",
+      "title": "Prima Materia",
+      "text": "One Transmutation Crystal and four cobblestone form the starting matter of the four stages."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:prima_materia,transmutatoria:nigredo_matter",
+      "title": "Nigredo · Blackening",
+      "text": "Transform Prima Materia into Nigredo Matter. Level 3; polarity -50 to -10.$(br2)$(quote)That which is below is like that which is above.$()"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:nigredo_matter,transmutatoria:albedo_matter",
+      "title": "Albedo · Whitening",
+      "text": "Transform Nigredo Matter into Albedo Matter. Level 6; polarity 20 to 50. The first stage leaves negative polarity, so the balance must be reversed.$(br2)$(quote)The earth nourished it; the wind carried it.$()"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:albedo_matter,transmutatoria:citrinitas_matter",
+      "title": "Citrinitas · Yellowing",
+      "text": "Transform Albedo Matter into Citrinitas Matter. Level 12; polarity 40 to 50. Twelve slots invite the first special slot types.$(br2)$(quote)The Sun is its father, the Moon its mother.$()"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:citrinitas_matter,transmutatoria:rubedo_matter",
+      "title": "Rubedo · Reddening",
+      "text": "Transform Citrinitas Matter into Rubedo Matter. Level 24; polarity 49 to 50; one-time. Twenty-four slots and many special types make this the hardest synthesis.$(br2)$(quote)The force of all forces.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Before Rubedo",
+      "text": "Use a Lunar or higher-tier scroll, stock every essence state, and stabilize polarity at 49 or 50 before filling the first slot. At level 24, roughly half the generated slots may be special; plan their resolution order instead of improvising."
+    }
+  ]
+}

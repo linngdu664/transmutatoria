@@ -1,0 +1,65 @@
+{
+  "name": "Essences and Their Relations",
+  "category": "transmutatoria:02_essence_metals",
+  "icon": "transmutatoria:eclipsium",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The twelve essence metals belong to four elemental pillars. Their restraint and symbiosis form the core logic of Chaos Alchemy and govern every later reaction."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:eclipsium,transmutatoria:lunargent,transmutatoria:astrotite",
+      "title": "Astral Flame",
+      "text": "Eclipsium, Lunargent, and Astrotite. Astral Flame restrains Calamitous Wind and is restrained by Abyssal Water."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:abyssion,transmutatoria:animercury,transmutatoria:necroplumb",
+      "title": "Abyssal Water",
+      "text": "Abyssion, Animercury, and Necroplumb. Abyssal Water restrains Astral Flame and is restrained by Blighted Earth."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:sanguibronze,transmutatoria:venotite,transmutatoria:ossantimony",
+      "title": "Blighted Earth",
+      "text": "Sanguibronze, Venotite, and Ossantimony. Blighted Earth restrains Abyssal Water and is restrained by Calamitous Wind."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:fulgurzinc,transmutatoria:chronoplatinum,transmutatoria:pandemonium",
+      "title": "Calamitous Wind",
+      "text": "Fulgurzinc, Chronoplatinum, and Pandemonium. Calamitous Wind restrains Blighted Earth and is restrained by Astral Flame."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Relations",
+      "text": "The pillar cycle is:$(br2)$(term)Astral Flame → Calamitous Wind → Blighted Earth → Abyssal Water → Astral Flame$().$(br2)The restraining essence activates while the restrained essence deteriorates. Metal-specific relations may add a second restraint, create mutual restraint, or link two essences in symbiosis so both activate."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:pandemonium",
+      "title": "Pandemonium",
+      "text": "Pandemonium is the great exception: it restrains all eleven other essences and is restrained by none. Its rarity matches its value in high alchemy."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "transmutatoria:emerald_tablet",
+      "title": "Emerald Tablet",
+      "text": "Crafted from one Transmutation Crystal and four emeralds. Right-click while holding it to inspect the complete relationship between any two essences."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:nigredo_eclipsium,transmutatoria:eclipsium,transmutatoria:albedo_eclipsium,transmutatoria:citrinitas_eclipsium",
+      "title": "Four States",
+      "text": "Each essence has four states: Nigredo (-1), base (0), Albedo (+1), and Citrinitas (+2). A state changes its degree, never the essence's identity or relationships."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:alchemical_dross,minecraft:redstone",
+      "title": "Beyond the Bounds",
+      "text": "Below Nigredo, an essence collapses into alchemical dross. Above Citrinitas, it burns out into redstone dust. Neither remnant retains alchemical use."
+    }
+  ]
+}
