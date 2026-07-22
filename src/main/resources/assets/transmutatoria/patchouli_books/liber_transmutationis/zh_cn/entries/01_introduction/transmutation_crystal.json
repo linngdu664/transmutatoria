@@ -9,6 +9,15 @@
       "text": "炼金的第一步是获取$(item)嬗变结晶$()——整个模组的起点材料。用它制作混沌炼金锅，再揭示物质内部的源质本性，你便踏入了混沌炼金术的世界。"
     },
     {
+      "type": "patchouli:image",
+      "images": [
+        "transmutatoria:textures/gui/patchouli/ageratum/logo.png"
+      ],
+      "title": "混沌嬗变术",
+      "border": true,
+      "text": "以翠玉录的智慧为引，洞见万物隐秘的源质。"
+    },
+    {
       "type": "patchouli:multiblock",
       "name": "结晶装置",
       "multiblock": {

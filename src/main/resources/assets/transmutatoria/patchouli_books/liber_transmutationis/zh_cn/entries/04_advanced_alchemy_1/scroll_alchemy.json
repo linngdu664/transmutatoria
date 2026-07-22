@@ -19,10 +19,42 @@
       "text": "右上表盘的外侧指针显示当前极性，两根内侧指针标记配方允许的范围；沙漏显示过期倒计时。$(br2)无法继续反应时，右下角提示会说明缺少水、催化剂或输入等原因。"
     },
     {
+      "type": "patchouli:image",
+      "images": [
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_1.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_2.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_3.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_4.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_5.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_6.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_7.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_8.png"
+      ],
+      "title": "卷轴炼金 HUD 图解",
+      "border": true,
+      "text": "使用图片右下角的箭头依次查看 HUD 各区域的标注。"
+    },
+    {
       "type": "patchouli:spotlight",
       "item": "transmutatoria:alchemist_storage_box",
       "title": "源质轮盘",
       "text": "手持储物盒看向炼金锅：滚轮选择源质，右键投入当前槽位。按住 Alt 展开完整轮盘，即可比较当前源质与其他源质的全部关系。"
+    },
+    {
+      "type": "patchouli:image",
+      "images": [
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_1.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_2.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_3.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_4.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_5.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_6.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_7.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_8.png"
+      ],
+      "title": "源质轮盘与关系提示",
+      "border": true,
+      "text": "展开轮盘后，边框颜色会提示当前源质与候选源质的关系。"
     },
     {
       "type": "patchouli:text",

@@ -9,6 +9,15 @@
       "text": "The first step in alchemy is obtaining a $(item)Transmutation Crystal$(), the starting material of this art. With it, you can craft a Transmutation Crucible and begin revealing the essence hidden within matter."
     },
     {
+      "type": "patchouli:image",
+      "images": [
+        "transmutatoria:textures/gui/patchouli/ageratum/logo.png"
+      ],
+      "title": "Ars Transmutatoria",
+      "border": true,
+      "text": "Guided by the wisdom of the Emerald Tablet, perceive the hidden essences of all matter."
+    },
+    {
       "type": "patchouli:multiblock",
       "name": "Crystal Apparatus",
       "multiblock": {

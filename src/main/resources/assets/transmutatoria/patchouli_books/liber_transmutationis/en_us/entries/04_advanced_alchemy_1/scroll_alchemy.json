@@ -19,10 +19,42 @@
       "text": "The upper-right dial shows current polarity with its outer pointer. Two inner pointers mark the recipe's allowed range, and the hourglass counts down to expiration.$(br2)A lower-right hint explains what is missing whenever the reaction cannot proceed."
     },
     {
+      "type": "patchouli:image",
+      "images": [
+        "transmutatoria:textures/gui/patchouli/ageratum/general_en_us_1.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_en_us_2.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_en_us_3.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_en_us_4.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_en_us_5.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_en_us_6.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_en_us_7.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_en_us_8.png"
+      ],
+      "title": "Scroll Alchemy HUD",
+      "border": true,
+      "text": "Use the arrows at the lower-right of the image to inspect each annotated region of the HUD."
+    },
+    {
       "type": "patchouli:spotlight",
       "item": "transmutatoria:alchemist_storage_box",
       "title": "Essence Wheel",
       "text": "Hold a storage box while looking at the crucible. Scroll to select an essence; right-click to insert one into the selected slot. Hold Alt to expand the wheel and compare how that essence relates to all the others."
+    },
+    {
+      "type": "patchouli:image",
+      "images": [
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_en_us_1.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_en_us_2.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_en_us_3.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_en_us_4.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_en_us_5.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_en_us_6.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_en_us_7.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_en_us_8.png"
+      ],
+      "title": "Essence Wheel Relations",
+      "border": true,
+      "text": "With the wheel expanded, border colors show how the selected essence relates to each candidate."
     },
     {
       "type": "patchouli:text",
