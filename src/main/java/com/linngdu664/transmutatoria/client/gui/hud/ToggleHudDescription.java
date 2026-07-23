@@ -24,7 +24,8 @@ public class ToggleHudDescription extends AbstractDescription {
 
     @Override
     public void prepare(Player player, TransmutationCrucibleBlockEntity crucible, DeltaTracker delta) {
-        String keyName = InitKeyMappings.TOGGLE_CRUCIBLE_HUD.getTranslatedKeyMessage().getString();
+        String keyName = InitKeyMappings.TOGGLE_CRUCIBLE_HUD.getTranslatedKeyMessage()
+                .getString().replace("Control", "Ctrl");    // what can i say
         setState(null, RenderGuiEventHandler.isHudManuallyHidden
                 ? Component.translatable("gui.transmutatoria.crucible_hint.hud_on", keyName)
                 : Component.translatable("gui.transmutatoria.crucible_hint.hud_off", keyName), false);

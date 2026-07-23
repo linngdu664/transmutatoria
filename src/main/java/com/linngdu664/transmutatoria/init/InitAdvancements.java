@@ -3,7 +3,6 @@ package com.linngdu664.transmutatoria.init;
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 /** Advancement IDs and helpers for completed alchemical interactions. */
@@ -21,7 +20,7 @@ public final class InitAdvancements {
     }
 
     public static void award(ServerPlayer player, Identifier advancementId) {
-        AdvancementHolder advancement = ((ServerLevel) player.level()).getServer().getAdvancements().get(advancementId);
+        AdvancementHolder advancement = player.level().getServer().getAdvancements().get(advancementId);
         if (advancement != null) {
             player.getAdvancements().award(advancement, MANUAL_CRITERION);
         }

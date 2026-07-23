@@ -10,7 +10,7 @@ import java.util.List;
 
 public abstract class AbstractDescription implements HudComponent {
     private static final int PADDING = 6;
-    private static final int MAX_WIDTH = 130;
+    private static final int MAX_WIDTH = 132;
     private static final int LINE_HEIGHT = 9;
     private static final int TITLE_GAP = 4;
     private static final int BG_COLOR = 0xb0181116;

@@ -27,7 +27,7 @@ public class ExpandStorageBoxRingDescription extends AbstractDescription {
         boolean holdingStorageBox = player.getMainHandItem().getItem() instanceof AlchemistStorageBoxItem
                 || player.getOffhandItem().getItem() instanceof AlchemistStorageBoxItem;
         setState(null, !RenderGuiEventHandler.isHudManuallyHidden && holdingStorageBox
-                ? Component.translatable("gui.transmutatoria.crucible_hint.storage_box_ring_expand", "Alt")
+                ? Component.translatable("gui.transmutatoria.crucible_hint.storage_box_ring_expand")
                 : null, false);
     }
 }

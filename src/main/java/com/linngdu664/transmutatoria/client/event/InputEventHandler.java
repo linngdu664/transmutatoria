@@ -45,7 +45,7 @@ public class InputEventHandler {
             return;
         }
 
-        if (player.isShiftKeyDown()) {
+        if (mc.hasShiftDown()) {
             ClientPacketDistributor.sendToServer(new ChangeCrucibleSelectedSlotPayload(blockHit.getBlockPos(), event.getScrollDeltaY() < 0));
 
             // 取消原版滚轮事件（切换快捷栏）
