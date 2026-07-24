@@ -84,12 +84,18 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     public static final int SLOT_COUNT = 51;
     public static final int RENDERER_SLOT_COUNT = 27;
     public static final int NO_RENDERER_SLOT = 127;
+    private static final int ENDER_EYE_MASK = 1;
+    private static final int TRANSMUTATION_CRYSTAL_MASK = 2;
+    private static final int ESSENCE_METAL_MASK = 4;
+    private static final int PHILOSOPHERS_STONE_MASK = 8;
+    private static final int SCROLL_MASK = 16;
 
     // 源质输入 - 源质输出 - 催化剂 - 转化输入 - 转化输出
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
     private int[] realSlotToRendererSlot = new int[SLOT_COUNT];
     private IntArrayList inputOrder = new IntArrayList();   // server only
     private int rendererSlotUsage;  // server only
+    private int acceptedCatalysts = -1; // server only，限制催化剂类型，用于演示模式
     private int polarity;
     private int selectedSlot;
     private int processTimer;
@@ -329,6 +335,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         output.putIntArray("InputOrder", inputOrder.toIntArray());
         output.putIntArray("RealSlotToRendererSlot", realSlotToRendererSlot);
         output.putInt("RendererSlotUsage", rendererSlotUsage);
+        output.putInt("AcceptedCatalysts", acceptedCatalysts);
     }
 
     @Override
@@ -346,6 +353,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             return arr;
         });
         rendererSlotUsage = input.getIntOr("RendererSlotUsage", 0);
+        acceptedCatalysts = input.getIntOr("AcceptedCatalysts", -1);
     }
 
     @Override
@@ -439,9 +447,11 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     public boolean canAddCatalyst(ItemStack itemStack) {
         return targetTimer == 0 && !hasAnyOutput() && getCatalyst().isEmpty()
-                && (itemStack.is(Items.ENDER_EYE) || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL)
-                || itemStack.is(InitItems.PHILOSOPHERS_STONE) || itemStack.getItem() instanceof EssenceMetalItem
-                || (itemStack.getItem() instanceof AbstractTransmutationScrollItem && itemStack.has(InitDataComponents.ALCHEMY_SLOTS) && itemStack.has(InitDataComponents.RECIPE_CONDITIONS)));
+                && (itemStack.is(Items.ENDER_EYE) && (acceptedCatalysts & ENDER_EYE_MASK) != 0
+                || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL) && (acceptedCatalysts & TRANSMUTATION_CRYSTAL_MASK) != 0
+                || itemStack.is(InitItems.PHILOSOPHERS_STONE) && (acceptedCatalysts & PHILOSOPHERS_STONE_MASK) != 0
+                || itemStack.getItem() instanceof EssenceMetalItem && (acceptedCatalysts & ESSENCE_METAL_MASK) != 0
+                || itemStack.getItem() instanceof AbstractTransmutationScrollItem && itemStack.has(InitDataComponents.ALCHEMY_SLOTS) && itemStack.has(InitDataComponents.RECIPE_CONDITIONS) && (acceptedCatalysts & SCROLL_MASK) != 0);
     }
 
     public boolean canAddInput(ItemStack itemStack) {
