@@ -146,6 +146,14 @@ public abstract class AbstractTransmutationScrollItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        ExpireInfo expireInfo = stack.get(InitDataComponents.EXPIRE_INFO);
+        String expireTooltipKey = expireInfo == null
+                ? "tooltip.transmutatoria.scroll.expire.never"
+                : expireInfo.equals(ExpireInfo.LUNAR)
+                ? "tooltip.transmutatoria.scroll.expire.lunar"
+                : "tooltip.transmutatoria.scroll.expire.daily_noon";
+        tooltipAdder.accept(Component.translatable(expireTooltipKey).withStyle(ChatFormatting.GRAY));
+
         RecipeConditions conditions = stack.get(InitDataComponents.RECIPE_CONDITIONS);
         if (conditions != null && conditions.oneTime()) {
             tooltipAdder.accept(Component.translatable("tooltip.transmutatoria.scroll.one_time").withStyle(ChatFormatting.RED));
