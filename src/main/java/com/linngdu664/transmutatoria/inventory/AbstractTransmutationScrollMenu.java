@@ -6,7 +6,9 @@ import com.linngdu664.transmutatoria.item.AbstractTransmutationScrollItem;
 import com.linngdu664.transmutatoria.recipe.crucible.CrucibleRecipe;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -163,7 +165,7 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
             if (isActivated()) {
                 return;
             }
-            if (level.isClientSide() || stack.isEmpty() || !(scrollStack.getItem() instanceof AbstractTransmutationScrollItem scrollItem)) {
+            if (!(level instanceof ServerLevel serverLevel) || stack.isEmpty() || !(scrollStack.getItem() instanceof AbstractTransmutationScrollItem scrollItem)) {
                 super.setByPlayer(stack);
                 return;
             }
@@ -183,6 +185,7 @@ public abstract class AbstractTransmutationScrollMenu extends AbstractContainerM
             int otherSlot = 1 - inputSlotIndex;
             container.setItem(otherSlot, recipe.getOtherSideItemStack());
             scrollItem.activate(level, scrollStack, single, recipe);
+            serverLevel.playSound(null, player, SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, player.getSoundSource(), 1.0F, 1.0F);
             InitAdvancements.award((ServerPlayer) player, InitAdvancements.SCROLL_ACTIVATED);
             broadcastChanges();
         }
