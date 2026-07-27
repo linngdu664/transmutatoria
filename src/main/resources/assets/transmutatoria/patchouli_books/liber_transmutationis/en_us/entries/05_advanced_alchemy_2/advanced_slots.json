@@ -6,7 +6,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Above recipe level 8, generated slots may have $(term)special types$() that alter reactions. Their chance and number grow with level. Some hide their type until their first annihilation."
+      "text": "Above recipe level 8, generated slots may have $(term)special types$() that alter reactions. Their chance and number grow with level, and the HUD displays each special slot's type."
     },
     {
       "type": "patchouli:text",
@@ -31,7 +31,7 @@
     {
       "type": "patchouli:text",
       "title": "Directional Slots",
-      "text": "An arrow is hidden with the slot type and appears once revealed.$(br2)$(li)$(term)Activity$(): if not annihilated, reacts once more with the arrow's adjacent existing product; the extra reaction does not change polarity.$(li)$(term)Exchange$(): swaps products with that neighbor."
+      "text": "An arrow in the HUD indicates the direction a slot affects.$(br2)$(li)$(term)Activity$(): if not annihilated, reacts once more with the arrow's adjacent existing product; the extra reaction does not change polarity.$(li)$(term)Exchange$(): swaps products with that neighbor."
     },
     {
       "type": "patchouli:text",
@@ -41,7 +41,7 @@
     {
       "type": "patchouli:text",
       "title": "Using Them Well",
-      "text": "Special slots are not merely obstacles. Resonance and Activity benefit from resolving after useful neighbors; Purge, Spin, Exchange, and Inhibition demand care with order. Reveal types, plan a route, then feed the crucible deliberately."
+      "text": "Special slots are not merely obstacles. Resonance and Activity benefit from resolving after useful neighbors; Purge, Spin, Exchange, and Inhibition demand care with order. Study their types and directions, plan a route, then feed the crucible deliberately."
     }
   ]
 }

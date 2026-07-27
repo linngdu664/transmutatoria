@@ -192,7 +192,7 @@ Slots react one by one in the order their essences were inserted:
 
 - Each slot calculates a state change from the relationship between the **inserted essence** and the slot's **target essence**. The basic rule is the same as an Essence Reaction (the restraining metal activates and the restrained metal deteriorates), but each slot's **special type** can alter that rule.
 - During the reaction, input essences are consumed and produce essence outputs with the corresponding state changes.
-- If an inserted essence **matches the slot's target essence**, the slot **triggers damage** (annihilation) and reveals its type and target essence. Every trigger damages the scroll by `1 + current entropy / 4` durability.
+- If an inserted essence **matches the slot's target essence**, the slot **triggers damage** (annihilation) and reveals its target essence. Every trigger damages the scroll by `1 + current entropy / 4` durability.
 - The final item is produced **only if every slot triggers damage**, the crucible's polarity lies within the range required by the scroll recipe, and the transformation input still matches the scroll's requirement.
 - Whether or not the final item is produced, all input essences are cleared after the reaction.
 
@@ -215,7 +215,7 @@ Right-click the crucible with a **Philosopher's Stone** to move its polarity 1 p
 ### Reading the HUD
 
 - **Vertical bar on the left**: displays the catalyst, transformation input, and transformation output from top to bottom.
-- **Hexagonal area in the center**: displays the scroll's essence slot diagram. Activated but unrevealed slots have gold borders; revealed slots show an essence icon and type marker.
+- **Hexagonal area in the center**: displays the scroll's essence slot diagram. Every slot shows its type marker; unrevealed target essences use gold borders, while revealed targets show an essence icon.
 - **Hourglass dial in the upper right**: displays current reaction progress. The outer ring indicates polarity.
 - **Metal tube on the far left**: displays the scroll's current durability and accumulated entropy. The purple portion is the estimated durability cost of crafting the item.
 

@@ -22,7 +22,7 @@ When a scroll activates, it generates a connected set of hexagonal alchemy slots
 - Normal Slots always display their type.
 - If the slot count is 8 or fewer, every slot is a Normal Slot.
 - Above 8 slots, special slots may generate. At level 24, the chance is approximately 50%.
-- A generated special slot may **hide its type** (appearing to be a Normal Slot) until a reaction triggers damage and reveals it.
+- A generated special slot displays its type immediately; directional slots also show their arrows in the HUD.
 
 ## The Thirteen Slot Types
 
@@ -104,7 +104,7 @@ Adds **the state values of all essence metals already produced in adjacent slots
 
 ### 10. Activity Slot · ACTIVITY
 
-Has a **direction** (determined by the magic number and shown by an arrow once revealed). If this slot does not clear its item, it performs **another relationship reaction** with the adjacent output in the indicated direction:
+Has a **direction** determined by the magic number and shown by an arrow in the HUD. If this slot does not clear its item, it performs **another relationship reaction** with the adjacent output in the indicated direction:
 
 - If the two essences are **the same**, both are cleared (annihilated).
 - Otherwise, their states are adjusted according to their relationship.

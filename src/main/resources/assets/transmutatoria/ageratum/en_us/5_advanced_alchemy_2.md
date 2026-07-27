@@ -65,7 +65,7 @@ Mutation means you need to explore the correct essences again. Therefore, after 
 
 In the previous chapters, all slots followed the basic restraint and symbiosis rules. But when the recipe level is **above 8**, generated slots have a chance to be **special types** - they change how reactions behave.
 
-The higher the level, the higher the chance and number of special slots. Some special slots also **hide their type** after generation (appearing no different from normal slots), and reveal their true type only after triggering annihilation.
+The higher the level, the higher the chance and number of special slots. The HUD displays every special slot's type, letting you plan the insertion order in advance.
 
 There are currently 12 kinds of special slots, for example:
 
@@ -84,11 +84,11 @@ For example, an Inhibition Slot: if the Inhibition Slot is filled first, it reac
 
 In the following descriptions, **this slot** means the slot currently resolving, **adjacent slots** means up to six slots around the hexagon, and **produced essences** means essences that have already resolved and remain on the output side during this reaction.
 
-Slots with arrows affect one adjacent slot along the arrow direction. If the slot type has not yet been revealed, the arrow is hidden as well; after that slot annihilates and is revealed, the HUD shows the real direction.
+Slots with arrows affect one adjacent slot along the direction shown by the HUD.
 
 | Slot | Behavior |
 |------|------|
-| Normal Slot | Reacts according to the base essence relation. A matching essence annihilates and reveals the slot. |
+| Normal Slot | Reacts according to the base essence relation. A matching essence annihilates and reveals the target essence. |
 | Deterioration Slot | After the base reaction, deteriorates the product by 1 stage and increases crucible polarity by 1. |
 | Activation Slot | After the base reaction, activates the product by 1 stage and decreases crucible polarity by 1. |
 | Inversion Slot | Reverses the base reaction's state change and polarity change. What originally activated becomes deterioration; what originally increased polarity becomes decreased polarity. |
