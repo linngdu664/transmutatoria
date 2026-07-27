@@ -101,7 +101,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private int processTimer;
     private int targetTimer;
     @Nullable
-    private UUID reactionStarter;
+    private UUID reactionStarter;   // server only
     private int essenceInputPulseSlot = -1; // client only
     private long essenceInputPulseStartedAtMillis;  // client only
     private int previousClientProcessTimer;  // client only
@@ -347,7 +347,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         processTimer = input.getIntOr("ProcessTimer", 0);
         targetTimer = input.getIntOr("TargetTimer", 0);
         inputOrder = new IntArrayList(input.getIntArray("InputOrder").orElse(new int[0]));
-        realSlotToRendererSlot = input.getIntArray("RealSlotToRendererSlot").orElseGet(() -> {
+        // 这里必须 clone 避免浅拷贝
+        realSlotToRendererSlot = input.getIntArray("RealSlotToRendererSlot").map(int[]::clone).orElseGet(() -> {
             int[] arr = new int[SLOT_COUNT];
             Arrays.fill(arr, NO_RENDERER_SLOT);
             return arr;
