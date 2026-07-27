@@ -83,7 +83,7 @@ public abstract class AbstractDescription implements HudComponent {
         }
 
         panelWidth = contentWidth + PADDING * 2;
-        panelHeight = PADDING * 2;
+        panelHeight = PADDING * 2 - 1;  // -1 让下padding的观感好一些，不然感觉下面空间比上面空间大
         if (title != null) {
             panelHeight += LINE_HEIGHT + TITLE_GAP;
         }

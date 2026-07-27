@@ -27,17 +27,9 @@ public class InputEventHandler {
     public static void onMouseScroll(InputEvent.MouseScrollingEvent event) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (player == null) {
-            return;
-        }
 
-        // 必须指向炼金锅
-        HitResult hit = mc.hitResult;
-        if (hit == null || hit.getType() != HitResult.Type.BLOCK) {
-            return;
-        }
-        BlockHitResult blockHit = (BlockHitResult) hit;
-        if (!(player.level().getBlockEntity(blockHit.getBlockPos()) instanceof TransmutationCrucibleBlockEntity)) {
+        BlockHitResult blockHit = testCrucible(mc, player);
+        if (blockHit == null) {
             return;
         }
 
@@ -47,7 +39,6 @@ public class InputEventHandler {
 
         if (mc.hasShiftDown()) {
             ClientPacketDistributor.sendToServer(new ChangeCrucibleSelectedSlotPayload(blockHit.getBlockPos(), event.getScrollDeltaY() < 0));
-
             // 取消原版滚轮事件（切换快捷栏）
             event.setCanceled(true);
             return;
@@ -93,19 +84,27 @@ public class InputEventHandler {
 
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (player == null) {
-            return;
-        }
 
-        HitResult hit = mc.hitResult;
-        if (hit == null || hit.getType() != HitResult.Type.BLOCK) {
-            return;
-        }
-        BlockHitResult blockHit = (BlockHitResult) hit;
-        if (!(player.level().getBlockEntity(blockHit.getBlockPos()) instanceof TransmutationCrucibleBlockEntity)) {
+        BlockHitResult blockHit = testCrucible(mc, player);
+        if (blockHit == null) {
             return;
         }
 
         RenderGuiEventHandler.isHudManuallyHidden = !RenderGuiEventHandler.isHudManuallyHidden;
+    }
+
+    private static BlockHitResult testCrucible(Minecraft mc, Player player) {
+        if (player == null) {
+            return null;
+        }
+        HitResult hit = mc.hitResult;
+        if (hit == null || hit.getType() != HitResult.Type.BLOCK) {
+            return null;
+        }
+        BlockHitResult blockHit = (BlockHitResult) hit;
+        if (!(player.level().getBlockEntity(blockHit.getBlockPos()) instanceof TransmutationCrucibleBlockEntity)) {
+            return null;
+        }
+        return blockHit;
     }
 }

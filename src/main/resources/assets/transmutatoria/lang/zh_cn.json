@@ -207,8 +207,9 @@
   "gui.transmutatoria.recipe_generator.error.save": "生成炼金配方失败：%s",
   "gui.transmutatoria.recipe_generator.error.reload": "JSON 已写入 %s，但数据包重载失败，请查看日志。",
   "tooltip.transmutatoria.scroll.expire.daily_noon": "过期规则：每天正午",
-  "tooltip.transmutatoria.scroll.expire.lunar": "过期规则：每 8 天（新月午夜）",
+  "tooltip.transmutatoria.scroll.expire.lunar": "过期规则：新月午夜",
   "tooltip.transmutatoria.scroll.expire.never": "过期规则：永不过期",
+  "tooltip.transmutatoria.scroll.expire.custom": "过期规则: 周期 %d gt, 偏移 %d gt",
   "tooltip.transmutatoria.scroll.one_time": "一次性卷轴：成功反应后消耗",
 
   "key.category.transmutatoria.main": "混沌炼金",

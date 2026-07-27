@@ -207,8 +207,9 @@
   "gui.transmutatoria.recipe_generator.error.save": "Failed to generate alchemy recipe: %s",
   "gui.transmutatoria.recipe_generator.error.reload": "JSON was written to %s, but datapack reload failed. Check the log.",
   "tooltip.transmutatoria.scroll.expire.daily_noon": "Expiration: Every day at noon",
-  "tooltip.transmutatoria.scroll.expire.lunar": "Expiration: Every 8 days (new moon at midnight)",
+  "tooltip.transmutatoria.scroll.expire.lunar": "Expiration: new moon at midnight",
   "tooltip.transmutatoria.scroll.expire.never": "Expiration: Never",
+  "tooltip.transmutatoria.scroll.expire.custom": "Expiration: Period %d gt, offset %d gt",
   "tooltip.transmutatoria.scroll.one_time": "One-time scroll: consumed after a successful reaction",
 
   "key.category.transmutatoria.main": "Transmutatoria",
