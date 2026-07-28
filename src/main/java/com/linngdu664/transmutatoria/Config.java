@@ -13,6 +13,13 @@ public class Config {
             )
             .define("enableRecipeGeneratorCommands", false);
 
+    /**
+     * 女仆炼金每次观察、投料或切换槽位之间的全局间隔。
+     */
+    public static final ModConfigSpec.IntValue MAID_ALCHEMY_ACTION_INTERVAL = BUILDER
+            .comment("Maid alchemy action interval in game ticks.")
+            .defineInRange("maidAlchemyActionInterval", 5, 1, 200);
+
 //    public static final int DEFAULT_TRANSMUTATION_SCROLL_DURABILITY = 32;
 //    public static final int DEFAULT_TERRESTRIAL_SCROLL_DURABILITY = 64;
 //    public static final int DEFAULT_LUNAR_SCROLL_DURABILITY = 96;

@@ -241,5 +241,7 @@
   "patchouli.transmutatoria.book.name": "《炼金术全典：混沌嬗变》",
   "patchouli.transmutatoria.book.subtitle": "炼金术士手册",
   "patchouli.transmutatoria.book.landing_text": "世界由四柱承载：$(thing)星火、渊水、腐土、劫风$()。每柱分化出三种源质金属，共十二种。它们彼此滋生、压制或湮灭——这便是混沌炼金术的根基。$(br2)愿翠玉录的智慧指引你的道路。",
-  "message.transmutatoria.ageratum_guide.missing_backend": "安装藿香后即可打开本手册。"
+  "message.transmutatoria.ageratum_guide.missing_backend": "安装藿香后即可打开本手册。",
+  "task.transmutatoria.alchemy": "炼金术士",
+  "task.transmutatoria.alchemy.desc": "寻找装有已完全解锁卷轴且满足水量、源质极性要求的混沌炼金锅，并逐步完成投料。"
 }

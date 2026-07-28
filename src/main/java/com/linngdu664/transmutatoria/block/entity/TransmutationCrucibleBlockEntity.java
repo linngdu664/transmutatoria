@@ -89,6 +89,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private static final int ESSENCE_METAL_MASK = 4;
     private static final int PHILOSOPHERS_STONE_MASK = 8;
     private static final int SCROLL_MASK = 16;
+    public static final String MAID_ALCHEMY_DROP_TAG = "transmutatoria.maid_alchemy_drop";
 
     // 源质输入 - 源质输出 - 催化剂 - 转化输入 - 转化输出
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
@@ -536,6 +537,113 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
                 || input.is(InitItems.CITRINITAS_MATTER) && output.is(InitItems.RUBEDO_MATTER);
     }
 
+    /**
+     * 女仆自动炼金只接受已启封、且所有源质需求都已揭示的卷轴。
+     */
+    public static boolean isUnlockedMaidAlchemyScroll(ItemStack stack) {
+        if (!(stack.getItem() instanceof AbstractTransmutationScrollItem)
+                || !stack.has(InitDataComponents.ALCHEMY_SLOTS)
+                || !stack.has(InitDataComponents.RECIPE_CONDITIONS)) {
+            return false;
+        }
+        List<AbstractAlchemySlot> slots = stack.getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
+        ItemContainerContents container = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+        return !slots.isEmpty()
+                && slots.size() <= ESSENCE_OUTPUT_SLOT_BEGIN - ESSENCE_INPUT_SLOT_BEGIN
+                && slots.stream().allMatch(AbstractAlchemySlot::isShowEssence)
+                && container.getSlots() >= 2
+                && !container.getStackInSlot(0).isEmpty()
+                && !container.getStackInSlot(1).isEmpty();
+    }
+
+    /**
+     * 女仆只操作水量、EP 和完全解锁卷轴都满足要求的锅。
+     */
+    public boolean meetsMaidAlchemyRequirements() {
+        ItemStack scroll = getCatalyst();
+        if (!isUnlockedMaidAlchemyScroll(scroll) || waterHandler.getAmountAsInt(0) < getRequiredWater()) {
+            return false;
+        }
+        RecipeConditions conditions = scroll.getOrDefault(InitDataComponents.RECIPE_CONDITIONS, RecipeConditions.DEFAULT);
+        return polarity >= conditions.minPolarity() && polarity <= conditions.maxPolarity();
+    }
+
+    public ItemStack getMaidAlchemyRequiredInput() {
+        ItemContainerContents container = getCatalyst().getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+        return container.getSlots() > 0 ? container.getStackInSlot(0).copyWithCount(1) : ItemStack.EMPTY;
+    }
+
+    @Nullable
+    public EssenceMetal getMaidSelectedRequiredEssence() {
+        List<AbstractAlchemySlot> slots = getCatalyst().getOrDefault(InitDataComponents.ALCHEMY_SLOTS, List.of());
+        int index = getSelectedSlot();
+        return index >= 0 && index < slots.size() ? slots.get(index).getEssenceMetal() : null;
+    }
+
+    public ItemStack getMaidSelectedInputEssence() {
+        int index = getSelectedSlot();
+        return index >= 0 && index < ESSENCE_OUTPUT_SLOT_BEGIN
+                ? items.get(ESSENCE_INPUT_SLOT_BEGIN + index)
+                : ItemStack.EMPTY;
+    }
+
+    /**
+     * 取回当前选中槽中的错误源质，同时修正投入顺序，避免重新投料后重复计数。
+     */
+    public ItemStack extractMaidSelectedInputEssence() {
+        int slot = ESSENCE_INPUT_SLOT_BEGIN + getSelectedSlot();
+        if (targetTimer != 0 || slot < ESSENCE_INPUT_SLOT_BEGIN || slot >= ESSENCE_OUTPUT_SLOT_BEGIN) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack result = items.get(slot).copy();
+        if (result.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        for (int i = inputOrder.size() - 1; i >= 0; i--) {
+            if (inputOrder.getInt(i) == slot) {
+                inputOrder.removeInt(i);
+            }
+        }
+        ArrayList<ItemStackWithTwoSlots> updates = new ArrayList<>(1);
+        clearItemAndRecordChange(slot, updates);
+        PacketDistributor.sendToPlayersTrackingChunk(
+                (ServerLevel) level,
+                getChunkPos(),
+                new CrucibleSetItemPayload(getBlockPos(), updates)
+        );
+        setChanged();
+        return result;
+    }
+
+    /**
+     * 女仆直接收走反应输出；催化剂卷轴和尚未反应的输入不会被移动。
+     */
+    public List<ItemStack> extractAllMaidAlchemyOutputs() {
+        if (targetTimer != 0 || !hasAnyOutput()) {
+            return List.of();
+        }
+        ArrayList<ItemStack> result = new ArrayList<>();
+        ArrayList<ItemStackWithTwoSlots> updates = new ArrayList<>();
+        for (int slot = ESSENCE_OUTPUT_SLOT_BEGIN; slot < CATALYST_SLOT; slot++) {
+            if (!items.get(slot).isEmpty()) {
+                result.add(items.get(slot).copy());
+                clearItemAndRecordChange(slot, updates);
+            }
+        }
+        if (!getOutput().isEmpty()) {
+            result.add(getOutput().copy());
+            clearItemAndRecordChange(OUTPUT_SLOT, updates);
+        }
+        PacketDistributor.sendToPlayersTrackingChunk(
+                (ServerLevel) level,
+                getChunkPos(),
+                new CrucibleSetItemPayload(getBlockPos(), updates)
+        );
+        setAndSyncReset(true);
+        setChanged();
+        return result;
+    }
+
     public void takeCatalyst(Player player) {
         ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getCatalyst());
         level.addFreshEntity(itemEntity);
@@ -660,11 +768,15 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         if (!canAddEssence(selectedSlot, itemStack)) {
             return false;
         }
+        // 女仆需要在下一个行动周期确认投料正确后再切槽，因此不在吸入时自动切换。
+        boolean isMaidAlchemyDrop = entity.removeTag(MAID_ALCHEMY_DROP_TAG);
         // 吸入源质金属并记录加入顺序
         suckOneAndSync(entity, selectedSlot);
         inputOrder.add(selectedSlot);
-        // 自动指向下一个槽位
-        setAndSyncSelectedSlot((selectedSlot + 1) % getRequiredEssenceCount());
+        // 玩家投料保持原来的自动切槽体验；女仆投料由工作 AI 显式切槽。
+        if (!isMaidAlchemyDrop) {
+            setAndSyncSelectedSlot((selectedSlot + 1) % getRequiredEssenceCount());
+        }
         tryReact(null);
         return true;
     }
