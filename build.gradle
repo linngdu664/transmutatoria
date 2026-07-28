@@ -29,6 +29,14 @@ sourceSets.main.resources {
 repositories {
     // Add here additional repositories if required by some of the dependencies below.
     maven {
+        // Touhou Little Maid 26.1 development artifact
+        name = "JitPack"
+        url = "https://jitpack.io"
+        content {
+            includeGroup "com.github.TouhouLittleMaid"
+        }
+    }
+    maven {
         // Patchouli releases and API artifacts
         name = "Jared's maven"
         url = "https://maven.blamejared.com/"
@@ -128,6 +136,11 @@ configurations {
 }
 
 dependencies {
+    // Optional Touhou Little Maid integration.
+    // Compile against the API and provide the full mod only in development runs.
+    compileOnly "com.github.TouhouLittleMaid:TouhouLittleMaid-26.1:54c0184d6d"
+    localRuntime "com.github.TouhouLittleMaid:TouhouLittleMaid-26.1:54c0184d6d"
+
     // Patchouli powers the default guidebook and is shipped inside the mod jar.
     // The range lets NeoForge negotiate a compatible external/embedded copy.
     jarJar(implementation("vazkii.patchouli:patchouli-neoforge:${patchouli_version}")) {

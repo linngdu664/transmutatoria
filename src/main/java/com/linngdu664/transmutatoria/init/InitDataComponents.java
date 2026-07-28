@@ -56,4 +56,9 @@ public class InitDataComponents {
                     "polarity",
                     builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
             );
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> MAID_DEATH_PREVENTION_READY_TIME =
+            DATA_COMPONENTS.registerComponentType(
+                    "maid_death_prevention_ready_time",
+                    builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.LONG)
+            );
 }
