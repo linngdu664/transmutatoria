@@ -4,15 +4,12 @@ import com.github.tartaricacid.touhoulittlemaid.api.bauble.IMaidBauble;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.linngdu664.transmutatoria.init.InitDataComponents;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.item.ItemStack;
 
 public final class PhilosophersStoneMaidBauble implements IMaidBauble {
     private static final int DEATH_PREVENTION_COOLDOWN = 20 * 60;
-    private static final int REGENERATION_DURATION = 20 * 11;
-    private static final int SATURATION_INTERVAL = 20;
+    private static final int REGENERATION_INTERVAL = 50;
 
     @Override
     public void onTick(EntityMaid maid, ItemStack baubleItem) {
@@ -20,9 +17,12 @@ public final class PhilosophersStoneMaidBauble implements IMaidBauble {
             return;
         }
 
-        maid.addEffect(new MobEffectInstance(MobEffects.REGENERATION, REGENERATION_DURATION, 0, true, false, true));
-        if (maid.tickCount % SATURATION_INTERVAL == 0) {
-            maid.addEffect(new MobEffectInstance(MobEffects.SATURATION, 1, 0, true, false, true));
+        // Touhou Little Maid sends getActiveEffects() to Netty as a live collection.
+        // Mutating that collection from the server tick can make its packet encoder
+        // fail with ConcurrentModificationException, so emulate Regeneration I
+        // without adding a MobEffectInstance. Saturation only affects Player anyway.
+        if (maid.tickCount % REGENERATION_INTERVAL == 0) {
+            maid.heal(1.0F);
         }
     }
 
