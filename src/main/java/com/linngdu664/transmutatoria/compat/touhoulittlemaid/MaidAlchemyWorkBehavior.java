@@ -18,7 +18,9 @@ import net.minecraft.world.item.ItemStack;
 
 final class MaidAlchemyWorkBehavior extends Behavior<EntityMaid> {
     private static final double WORK_DISTANCE_SQR = 9.0;
+    private static final int NEARBY_RESTOCK_RETRY_INTERVAL = 20;
     private long nextActionTime;
+    private long nextNearbyRestockTime;
 
     MaidAlchemyWorkBehavior() {
         super(ImmutableMap.of(InitBrains.TARGET_POS.get(), MemoryStatus.VALUE_PRESENT), 1200);
@@ -82,13 +84,21 @@ final class MaidAlchemyWorkBehavior extends Behavior<EntityMaid> {
         }
 
         // 输入先于源质投放；投下物品后自然等待到下一个行动周期。
-        if (crucible.requiresTransformationInput() && !crucible.hasInput()) {
-            ItemStack input = MaidAlchemyInventory.takeInput(maid, crucible.getMaidAlchemyRequiredInput());
-            if (!input.isEmpty()) {
-                MaidAlchemyInventory.dropIntoCrucible(level, target, maid, input, false);
-                maid.swing(InteractionHand.MAIN_HAND);
+        if (crucible.requiresTransformationInput()) {
+            if (crucible.hasInput()) {
+                // 防御性检查：错误输入的锅不会继续消耗源质。
+                if (!crucible.hasCorrectMaidAlchemyInput()) {
+                    clearTarget(maid);
+                    return;
+                }
+            } else {
+                ItemStack input = takeInput(maid, crucible.getMaidAlchemyRequiredInput(), gameTime);
+                if (!input.isEmpty()) {
+                    MaidAlchemyInventory.dropIntoCrucible(level, target, maid, input, false);
+                    maid.swing(InteractionHand.MAIN_HAND);
+                }
+                return;
             }
-            return;
         }
 
         EssenceMetal required = crucible.getMaidSelectedRequiredEssence();
@@ -97,7 +107,7 @@ final class MaidAlchemyWorkBehavior extends Behavior<EntityMaid> {
         }
         ItemStack current = crucible.getMaidSelectedInputEssence();
         if (current.isEmpty()) {
-            putCorrectEssence(level, target, maid, required);
+            putCorrectEssence(level, target, maid, required, gameTime);
             return;
         }
         if (current.getItem() instanceof EssenceMetalItem metal
@@ -109,7 +119,7 @@ final class MaidAlchemyWorkBehavior extends Behavior<EntityMaid> {
         }
 
         // 没有正确源质时保持锅原样；有材料时才替换错误投料。
-        ItemStack correct = MaidAlchemyInventory.takeEssence(maid, required);
+        ItemStack correct = takeEssence(maid, required, gameTime);
         if (correct.isEmpty()) {
             return;
         }
@@ -127,13 +137,34 @@ final class MaidAlchemyWorkBehavior extends Behavior<EntityMaid> {
             ServerLevel level,
             BlockPos target,
             EntityMaid maid,
-            EssenceMetal required
+            EssenceMetal required,
+            long gameTime
     ) {
-        ItemStack essence = MaidAlchemyInventory.takeEssence(maid, required);
+        ItemStack essence = takeEssence(maid, required, gameTime);
         if (!essence.isEmpty()) {
             // 使用掉落物进入锅，行为与玩家使用炼金术士储物盒投料一致。
             MaidAlchemyInventory.dropIntoCrucible(level, target, maid, essence, true);
             maid.swing(InteractionHand.MAIN_HAND);
+        }
+    }
+
+    private ItemStack takeInput(EntityMaid maid, ItemStack required, long gameTime) {
+        boolean searchNearby = gameTime >= nextNearbyRestockTime;
+        ItemStack result = MaidAlchemyInventory.takeInput(maid, required, searchNearby);
+        delayNearbySearchAfterMiss(result, searchNearby, gameTime);
+        return result;
+    }
+
+    private ItemStack takeEssence(EntityMaid maid, EssenceMetal required, long gameTime) {
+        boolean searchNearby = gameTime >= nextNearbyRestockTime;
+        ItemStack result = MaidAlchemyInventory.takeEssence(maid, required, searchNearby);
+        delayNearbySearchAfterMiss(result, searchNearby, gameTime);
+        return result;
+    }
+
+    private void delayNearbySearchAfterMiss(ItemStack result, boolean searchedNearby, long gameTime) {
+        if (result.isEmpty() && searchedNearby) {
+            nextNearbyRestockTime = gameTime + NEARBY_RESTOCK_RETRY_INTERVAL;
         }
     }
 

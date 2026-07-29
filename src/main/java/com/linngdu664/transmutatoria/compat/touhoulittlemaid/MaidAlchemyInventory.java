@@ -33,23 +33,25 @@ final class MaidAlchemyInventory {
     private static final int NEARBY_CONTAINER_SEARCH_RADIUS = 2;
     private static final double NEARBY_CONTAINER_SEARCH_RADIUS_SQR =
             NEARBY_CONTAINER_SEARCH_RADIUS * NEARBY_CONTAINER_SEARCH_RADIUS;
+    private static final int MAX_CONTAINER_CANDIDATES = 12;
+    private static final int MAX_HANDLER_SLOTS = 256;
 
     private MaidAlchemyInventory() {
     }
 
-    static ItemStack takeInput(EntityMaid maid, ItemStack required) {
+    static ItemStack takeInput(EntityMaid maid, ItemStack required, boolean searchNearby) {
         Predicate<ItemStack> matchesRequired =
                 stack -> ItemStack.isSameItemSameComponents(stack, required);
-        ItemStack loose = takeLoose(maid.getAvailableBackpackInv(), matchesRequired);
-        return loose.isEmpty() ? takeNearbyContainer(maid, matchesRequired) : loose;
+        ItemStack loose = takeLoose(maid.getAvailableInv(true), matchesRequired);
+        return loose.isEmpty() && searchNearby ? takeNearbyContainer(maid, matchesRequired) : loose;
     }
 
-    static ItemStack takeEssence(EntityMaid maid, EssenceMetal required) {
-        // 按需求先找女仆背包里的散装源质，再检查炼金术士储物盒。
+    static ItemStack takeEssence(EntityMaid maid, EssenceMetal required, boolean searchNearby) {
+        // 先找左右手和背包里的散装源质，再检查炼金术士储物盒。
         Predicate<ItemStack> matchesRequired =
                 stack -> stack.getItem() instanceof EssenceMetalItem metal
                         && metal.getEssenceMetal() == required;
-        ItemStack loose = takeLoose(maid.getAvailableBackpackInv(), matchesRequired);
+        ItemStack loose = takeLoose(maid.getAvailableInv(true), matchesRequired);
         if (!loose.isEmpty()) {
             return loose;
         }
@@ -60,7 +62,7 @@ final class MaidAlchemyInventory {
             boxes.apply();
             return stored;
         }
-        return takeNearbyContainer(maid, matchesRequired);
+        return searchNearby ? takeNearbyContainer(maid, matchesRequired) : ItemStack.EMPTY;
     }
 
     static void giveToMaid(EntityMaid maid, ItemStack stack) {
@@ -155,7 +157,9 @@ final class MaidAlchemyInventory {
         }
 
         candidates.sort(Comparator.comparingDouble(pos -> pos.distToCenterSqr(maid.position())));
-        for (BlockPos pos : candidates) {
+        int candidateCount = Math.min(candidates.size(), MAX_CONTAINER_CANDIDATES);
+        for (int i = 0; i < candidateCount; i++) {
+            BlockPos pos = candidates.get(i);
             ItemStack result = takeFromBlockContainer(level, pos, predicate);
             if (!result.isEmpty()) {
                 return result;
@@ -211,7 +215,12 @@ final class MaidAlchemyInventory {
         if (inventory == null) {
             return ItemStack.EMPTY;
         }
-        for (int slot = 0; slot < inventory.size(); slot++) {
+        int size = inventory.size();
+        // 大型虚拟仓储需要专门适配，不能在服务端主线程无界扫描。
+        if (size < 0 || size > MAX_HANDLER_SLOTS) {
+            return ItemStack.EMPTY;
+        }
+        for (int slot = 0; slot < size; slot++) {
             ItemStack stack = ItemUtil.getStack(inventory, slot);
             if ((skipStorageBoxes && stack.getItem() instanceof AlchemistStorageBoxItem)
                     || !predicate.test(stack)) {

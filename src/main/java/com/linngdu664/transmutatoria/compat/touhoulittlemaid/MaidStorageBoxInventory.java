@@ -21,13 +21,14 @@ import java.util.List;
  * 女仆背包内炼金术士储物盒的事务外快照。只有在整次操作成功后才调用 {@link #apply()}。
  */
 final class MaidStorageBoxInventory {
-    private final ResourceHandler<ItemResource> backpack;
+    private final ResourceHandler<ItemResource> carriedInventory;
     private final List<BoxSlot> boxes = new ArrayList<>();
 
     MaidStorageBoxInventory(EntityMaid maid) {
-        this.backpack = maid.getAvailableBackpackInv();
-        for (int slot = 0; slot < backpack.size(); slot++) {
-            ItemStack stack = ItemUtil.getStack(backpack, slot);
+        // 背包槽位优先，随后检查主手和副手中的储物盒。
+        this.carriedInventory = maid.getAvailableInv(false);
+        for (int slot = 0; slot < carriedInventory.size(); slot++) {
+            ItemStack stack = ItemUtil.getStack(carriedInventory, slot);
             if (stack.getItem() instanceof AlchemistStorageBoxItem) {
                 boxes.add(new BoxSlot(slot, stack));
             }
@@ -90,7 +91,7 @@ final class MaidStorageBoxInventory {
                 continue;
             }
             box.stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(box.items));
-            ItemsUtil.setStackInSlot(backpack, box.inventorySlot, box.stack);
+            ItemsUtil.setStackInSlot(carriedInventory, box.inventorySlot, box.stack);
         }
     }
 
