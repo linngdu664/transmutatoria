@@ -86,6 +86,6 @@ There are **12** essence metals in total, belonging to the four elemental pillar
 <item id="transmutatoria:pandemonium"/>
 </row>
 
-Among them, **Pandemonium** is extremely rare (only a 1% chance from Transmutation Decomposition) and is a key material for many advanced recipes and ultimate alchemy.
+Among them, **Pandemonium** is extremely rare (only a 1% chance from Transmutation Decomposition).
 
 The restraint relationships between essence metals, as well as their state changes, will be introduced in detail in the next chapter.

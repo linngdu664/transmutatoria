@@ -72,8 +72,6 @@ Some metals have a **symbiosis** relationship, and both sides activate when reac
 
 Pandemonium is a special exception: **it restrains all other 11 essences and is not restrained by any essence**. It is not bound by the four-pillar relationships and is a key material for advanced alchemy.
 
-The above are the core rules of restraint and symbiosis. For the complete table of restraint and symbiosis relationships, see [Appendix: Essence Relations].
-
 ## Emerald Tablet
 
 Crafted from 1 Transmutation Crystal and 4 emeralds in a crafting table.
@@ -129,7 +127,7 @@ The storage box is the core tool for managing essence stock. It is both an item 
 **Use while held**: Right-click while holding a storage box to open it and view or organize stored essences. For quick crucible feeding, see [Advanced Alchemy - Part I: HUD Overview](4_advanced_alchemy_1.md#hud-overview).
 
 ::: tip Tip
-The storage box is a block form when placed on the ground. Shift + right-click to retrieve it. See [Appendix: Alchemist's Storage Box] for details.
+The storage box is a block form when placed on the ground. Right-click to open it, Shift + right-click to retrieve it.
 :::
 
 After mastering essence relationships, states, and storage methods, the next chapter will teach you how to use the crucible for actual essence reactions.

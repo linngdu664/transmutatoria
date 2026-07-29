@@ -102,10 +102,10 @@ Every recipe has a **level**. The higher the level, the more essences are requir
 
 ![Scroll alchemy HUD overview](../textures/general_en_us.png)
 
-- **Item bar on the left**: Shows the catalyst, input item, and output item from top to bottom. The purple bar beside it represents scroll durability and current stability, while the red bar shows essence-slot unlock progress.
-- **Essence slot diagram in the center**: A colored border marks the selected essence slot. Unlocked slots reveal their target essence, while locked slots remain gray. Hold Shift and scroll the mouse wheel to change the selected slot.
+- **Item bar on the left**: Shows the catalyst, input item, recipe unlock progress, and output item from top to bottom. The leftmost bar represents scroll durability and current stability.
+- **Essence slot diagram in the center**: A colored border marks the selected essence slot. Unlocked slots reveal their target essence. Hold Shift and scroll the mouse wheel to change the selected slot.
 - **Essence wheel at the top**: Appears while holding a storage box and shows its currently selected essence. Scroll the mouse wheel to change essences, then right-click the crucible to insert one. Hold Alt to expand the full wheel and inspect essence relationships.
-- **Dial in the upper right**: The outer indicator shows the crucible's current polarity. The two inner indicators mark the positive and negative limits allowed by the recipe. The hourglass displays the scroll's expiration countdown.
+- **Dial in the upper right**: The outer indicator shows the crucible's current polarity. The two inner indicators mark the polarity range allowed by the recipe. The hourglass displays the scroll's expiration countdown.
 - **Control hint in the lower right**: Explains why the reaction cannot proceed, such as missing water, a catalyst, or an input item.
 
 ### Storage Box Essence Wheel
@@ -114,24 +114,24 @@ Every recipe has a **level**. The higher the level, the more essences are requir
 
 When you hold a storage box and look at a crucible, its essence wheel appears at the top of the HUD. The enlarged item frame at the top is the **current essence**. Scroll the mouse wheel to change it; right-clicking the crucible takes one of that essence from the storage box and inserts it into the currently selected essence slot.
 
-Hold **Alt** to expand the wheel downward and show how every other essence relates to the current essence. In the image, “Restrains” means that the current essence restrains that essence, while “Restrained By” means that the current essence is restrained by it. Double-restraint relationships have their own borders as well. Essences with no reaction are dimmed. Release Alt to collapse the wheel and restore a clear view of the crucible.
+Hold **Alt** to expand the wheel downward and show how every other essence relates to the current essence. In the image, “Restrains” means that the current essence restrains that essence, while “Restrained By” means that the current essence is restrained by it. Release Alt to collapse the wheel.
 
 ### Operation Steps
 
-1. **Put in the scroll**: Drop the activated scroll into the crucible, entering the catalyst slot. The HUD center immediately displays the scroll's essence slot diagram, and the left side immediately displays the scroll durability bar.
+1. **Put in the scroll**: Drop the activated scroll into the crucible, entering the catalyst slot. The HUD center immediately displays the scroll's essence slot diagram.
 2. **Put in the input**: Drop the item shown in the **left slot** after scroll activation into the crucible, entering the input slot. If the Sigil Scroll's left side is empty (replication from nothing), skip this step.
 3. **Fill essences**: Hold a storage box and right-click the crucible to put essence metals into the currently selected essence slot one by one. Use the mouse wheel to switch the storage box's currently selected essence, and **Shift + mouse wheel** to switch the crucible's currently selected slot.
 4. **Wait for the reaction**: After all essence slots are filled, the reaction starts automatically.
 5. **Take the product**: After the reaction ends, right-click the crucible to take the product from the output slot.
 
-### Essence Slots and Annihilation
+### Reaction Mechanism
 
 In the scroll's essence slot diagram, each slot has a **target essence** (hidden at first). You need to find out which essence each slot requires through attempts:
 
 - If the filled essence is **the same as the target essence**: the filled essence **annihilates**, the target essence is revealed, and the scroll loses a small amount of durability.
 - If the filled essence is **different from the target essence**: the filled essence reacts with the target essence. The filled essence changes state according to the restraint and symbiosis rules, while the target essence is "virtual" - its state change is reflected as a change to the crucible's **polarity**. By observing the state change of the filled essence, you can infer the identity of the target essence.
 
-**Only when all slots are fully annihilated** will the output slot produce the final item. If annihilation is incomplete, the reaction fails - the filled essences remain in the slots as their post-reaction states. You can take them out and try again.
+**Only when all essences are fully annihilated** can the output slot produce the final item. If annihilation is incomplete, the reaction fails - the filled essences remain in the slots as their post-reaction states. You can take them out and try again.
 
 ---
 

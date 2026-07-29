@@ -61,34 +61,14 @@ After a scroll expires, **mutation** triggers:
 
 Mutation means you need to explore the correct essences again. Therefore, after activating a scroll, use it as soon as possible. For complex synthesis that takes a long time, Lunar or higher-tier scrolls are recommended.
 
-## Advanced Slots
+## Special Slots
 
-In the previous chapters, all slots followed the basic restraint and symbiosis rules. But when the recipe level is **above 8**, generated slots have a chance to be **special types** - they change how reactions behave.
+In the previous chapters, all slots followed the basic restraint and symbiosis rules. But when the recipe level is **above 8**, slots have a chance to be **special types** - they change how reactions behave. The higher the level, the higher the chance and number of special slots.
 
-The higher the level, the higher the chance and number of special slots. The HUD displays every special slot's type, letting you plan the insertion order in advance.
-
-There are currently 12 kinds of special slots, for example:
-
-- **Inversion Slot**: reverses restraint relationships (restraining becomes restrained, symbiosis becomes mutual restraint).
-- **Diffusion Slot**: spreads this slot's state change to adjacent slots.
-- **Inhibition Slot**: if it does not annihilate, locks adjacent empty slots, making their later non-annihilation reactions ineffective.
-- **Restoration Slot**: does not consume the inserted essence when annihilating.
-
-For the complete slot types and their behavior, see the [Appendix: Slot Types](#appendix-slot-types) below.
-
-When special slots exist, **slot filling order is crucial** - reactions resolve slot by slot, and the resolution order is the order in which the slots were filled with essences. Filling slot 1 before slot 2 may produce a completely different result from filling 2 before 1.
-
-For example, an Inhibition Slot: if the Inhibition Slot is filled first, it reacts first, adjacent empty slots are locked, and later filled essences have ineffective non-annihilation reactions; if adjacent slots are filled first, they have already finished resolving, and the later Inhibition Slot cannot interfere with them.
-
-## Appendix: Slot Types
-
-In the following descriptions, **this slot** means the slot currently resolving, **adjacent slots** means up to six slots around the hexagon, and **produced essences** means essences that have already resolved and remain on the output side during this reaction.
-
-Slots with arrows affect one adjacent slot along the direction shown by the HUD.
+There are currently 12 kinds of special slots:
 
 | Slot | Behavior |
 |------|------|
-| Normal Slot | Reacts according to the base essence relation. A matching essence annihilates and reveals the target essence. |
 | Deterioration Slot | After the base reaction, deteriorates the product by 1 stage and increases crucible polarity by 1. |
 | Activation Slot | After the base reaction, activates the product by 1 stage and decreases crucible polarity by 1. |
 | Inversion Slot | Reverses the base reaction's state change and polarity change. What originally activated becomes deterioration; what originally increased polarity becomes decreased polarity. |
@@ -103,8 +83,14 @@ Slots with arrows affect one adjacent slot along the direction shown by the HUD.
 | Unstable Slot | If this slot's essence activates or deteriorates, it swaps its type with a random other slot after all slots react. |
 
 ::: tip Tip
-Special slots are not simply obstacles. Resonance Slots and Activity Slots, which need adjacent product support, are suited to resolving later; Purge Slots, Spin Slots, and Exchange Slots, which clear or disturb neighbors, require extra attention to order. After encountering an Unstable Slot, it is best to recheck the slot layout in the HUD before the next reaction.
+**This slot** means the slot currently resolving, **adjacent slots** means up to six slots around the hexagon, and **produced essences** means essences that have already resolved and remain on the output side during this reaction.
 :::
+
+When special slots exist, **slot filling order is crucial** - reactions resolve slot by slot, and the resolution order is the order in which the slots were filled with essences. Filling slot 1 before slot 2 may produce a completely different result from filling 2 before 1.
+
+For example, an Inhibition Slot: if the Inhibition Slot is filled first, it reacts first, adjacent empty slots are locked, and later filled essences have ineffective non-annihilation reactions; if adjacent slots are filled first, they have already finished resolving, and the later Inhibition Slot cannot interfere with them.
+
+The HUD displays every special slot's type, letting you plan the insertion order in advance.
 
 ---
 

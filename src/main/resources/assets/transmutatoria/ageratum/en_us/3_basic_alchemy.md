@@ -18,7 +18,9 @@ In the first two chapters, you accumulated essence metals and understood restrai
 
 ## Basic Crucible Operation
 
-You already used the crucible in the first chapter, gaining an initial impression of its HUD and basic operations - adding water, dropping in the catalyst and materials, waiting for the reaction, and taking out the product.
+You already used the crucible in the first chapter, gaining an initial impression of its basic operations - adding water, dropping in the catalyst and materials, waiting for the reaction, and taking out the product.
+
+The crucible has a HUD. Press the **Left Ctrl** key to toggle it on or off. In later alchemy operations, it is recommended to keep the HUD open for easier operation.
 
 The two reactions in this chapter operate in the same way as Transmutation Decomposition. The difference is that after you put in a Transmutation Crystal or essence metal as the catalyst, an **essence slot diagram** appears in the middle of the HUD.
 

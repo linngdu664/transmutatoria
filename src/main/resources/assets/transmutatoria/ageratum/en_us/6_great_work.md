@@ -120,7 +120,7 @@ The gold is ignited into crimson, and the embryo of the Philosopher's Stone is b
 | Polarity Requirement | **49 to 50** |
 | One-Time | **Yes** |
 
-This is the most difficult step in the entire Great Work: 24 slots, about a 50% chance for special slots; a polarity window with only 2 points of tolerance. It is recommended to use Lunar or higher-tier scrolls, prepare ample reserves of essence metals, and stabilize polarity at 49 to 50 before beginning.
+This is the most difficult step in the entire Great Work: 24 slots, about a 25% chance for special slots; a polarity window with only 2 points of tolerance. It is recommended to use Lunar or higher-tier scrolls, prepare ample reserves of essence metals, and stabilize polarity at 49 to 50 during the formal reaction.
 
 ### Calcination
 
@@ -134,7 +134,7 @@ Smelt Rubedo Matter in a **furnace** to obtain the Philosopher's Stone.
 
 The Philosopher's Stone is the supreme achievement of alchemy. Holding it grants the following abilities:
 
-**Life protection**: When held in the main hand or offhand, continuously grants regeneration. Every second grants a brief saturation effect, removing the need to eat. If an off-cooldown Philosopher's Stone exists in the hotbar when fatal damage occurs, the death is canceled - health is locked to 1 point, and that stone enters a **60-second cooldown**.
+**Life protection**: When held in the main hand or offhand, continuously grants regeneration and saturation effect. If an off-cooldown Philosopher's Stone exists in the hotbar when fatal damage occurs, the death is canceled - health is locked to 1 point, and that stone enters a **60-second cooldown**.
 
 **Healing corruption**: Right-click a zombie villager while holding the Philosopher's Stone to complete conversion directly, without the vanilla weakness potion and golden apple process.
 
