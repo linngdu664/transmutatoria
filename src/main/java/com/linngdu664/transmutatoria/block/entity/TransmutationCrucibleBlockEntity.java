@@ -327,6 +327,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     @Override
     public void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
         ContainerHelper.saveAllItems(output, items, true);
         waterHandler.serialize(output);
         output.putInt("Polarity", polarity);
@@ -341,6 +342,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     @Override
     public void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        items.clear();
         ContainerHelper.loadAllItems(input, items);
         waterHandler.deserialize(input);
         polarity = input.getIntOr("Polarity", 0);
