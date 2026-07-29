@@ -242,6 +242,6 @@
   "patchouli.transmutatoria.book.subtitle": "A Guide to Chaos Alchemy",
   "patchouli.transmutatoria.book.landing_text": "The world rests upon four pillars: $(thing)Astral Flame, Abyssal Water, Blighted Earth, and Calamitous Wind$(). Each gives rise to three essence metals. They nurture, restrain, or annihilate one another—the foundation of Chaos Alchemy.$(br2)May the wisdom of the Emerald Tablet guide your path.",
   "message.transmutatoria.ageratum_guide.missing_backend": "Install Ageratum to open this guide.",
-  "task.transmutatoria.alchemy": "Alchemist",
-  "task.transmutatoria.alchemy.desc": "Find a Transmutation Crucible with a fully unlocked scroll and valid water and EP, then add its ingredients step by step."
+  "task.transmutatoria.alchemy": "Alchemy",
+  "task.transmutatoria.alchemy.desc": "Find a Transmutation Crucible and craft the scroll recipe’s output."
 }

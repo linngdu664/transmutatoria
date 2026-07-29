@@ -567,8 +567,16 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         if (!isUnlockedMaidAlchemyScroll(scroll) || waterHandler.getAmountAsInt(0) < getRequiredWater()) {
             return false;
         }
+        // 输入槽为空时允许女仆补料；已有错误输入时不选择这个锅。
+        if (requiresTransformationInput() && hasInput() && !hasCorrectMaidAlchemyInput()) {
+            return false;
+        }
         RecipeConditions conditions = scroll.getOrDefault(InitDataComponents.RECIPE_CONDITIONS, RecipeConditions.DEFAULT);
         return polarity >= conditions.minPolarity() && polarity <= conditions.maxPolarity();
+    }
+
+    public boolean hasCorrectMaidAlchemyInput() {
+        return hasInput() && ItemStack.isSameItemSameComponents(getInput(), getMaidAlchemyRequiredInput());
     }
 
     public ItemStack getMaidAlchemyRequiredInput() {
