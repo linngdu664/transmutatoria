@@ -1,0 +1,23 @@
+{
+  "name": "Essence Fusion",
+  "category": "transmutatoria:03_basic_alchemy",
+  "icon": "transmutatoria:pandemonium",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(term)Essence Fusion$() uses one essence metal as its catalyst, then gathers every essence it restrains to produce another copy of that catalyst metal."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:eclipsium,transmutatoria:abyssion,transmutatoria:fulgurzinc,transmutatoria:pandemonium",
+      "title": "Operating Steps",
+      "text": "Drop the essence you want to produce as catalyst into the empty crucible. The HUD shows every essence it restrains or doubly restrains. Fill the displayed set completely."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Fusion",
+      "text": "When every required kind is present, fusion begins. All input essences are consumed and the transformation output receives the catalyst essence.$(br2)Metals with broader restraint need more ingredients. Pandemonium restrains all other eleven, so its fusion demands all eleven."
+    }
+  ]
+}

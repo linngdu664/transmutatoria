@@ -41,7 +41,7 @@
       "item": "transmutatoria:transmutation_crystal",
       "title": "第一质料",
       "link_recipe": true,
-      "text": "装置可以反复使用，适合批量生产。炼金分解和许多配方都会消耗嬗变结晶，最好一次多准备一些。"
+      "text": "装置可以反复使用，适合批量生产。嬗变分解和许多配方都会消耗嬗变结晶，最好一次多准备一些。"
     }
   ]
 }

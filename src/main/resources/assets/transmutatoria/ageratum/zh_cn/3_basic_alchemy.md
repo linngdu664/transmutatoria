@@ -22,7 +22,7 @@ items:
 
 炼金锅有一个 HUD，默认按**左 Ctrl** 键开关。在后续的炼金中，建议保持 HUD 开启，便于操作。
 
-本章的两个反应操作方式与炼金分解相同，区别在于：投入嬗变结晶或源质金属作为催化剂后，HUD 中部会显示对应的**源质槽位图**。
+本章的两个反应操作方式与嬗变分解相同，区别在于：投入嬗变结晶或源质金属作为催化剂后，HUD 中部会显示对应的**源质槽位图**。
 
 <row>
 <item id="transmutatoria:transmutation_crucible"/>
@@ -59,16 +59,16 @@ items:
 
 反应结束后，右键炼金锅取出变化后的两个金属。
 
-**实例**：幻魂汞克制蚀日金。黄化幻魂汞与黑化蚀日金反应，结果为：黄化幻魂汞 **-1** → 白化幻魂汞；黑化蚀日金 **+1** → 常态蚀日金。
+**实例**：幻魂汞克制蚀日金。黑化幻魂汞与黄化蚀日金反应，结果为：黑化幻魂汞 **+1** → 常态幻魂汞；黄化蚀日金 **-1** → 白化蚀日金。
 
 <row>
-<item id="transmutatoria:citrinitas_animercury"/>
-<item id="transmutatoria:nigredo_eclipsium"/>
+<item id="transmutatoria:nigredo_animercury"/>
+<item id="transmutatoria:citrinitas_eclipsium"/>
 </row>
 
 <row>
-<item id="transmutatoria:albedo_animercury"/>
-<item id="transmutatoria:eclipsium"/>
+<item id="transmutatoria:animercury"/>
+<item id="transmutatoria:albedo_eclipsium"/>
 </row>
 
 ## 源质融合
@@ -94,17 +94,17 @@ items:
 
 ## 极性
 
-极性是炼金锅的一项核心属性，范围 **-50 到 50**，初始为 0。HUD 右上角表盘的**外侧指针**指示锅的当前极性。
+极性是炼金锅的一项核心属性，范围 **-50 到 +50**，初始为 0。HUD 右上角表盘的**外侧指针**指示锅的当前极性。
 
 源质反应会改变锅的极性：
 
 | 关系 | 极性变化 |
-|------|---------|
-| 共生 | +2 |
-| 互相克制 | -2 |
-| 其他关系 | 0 |
+|------|------|
+| 共生 | -2   |
+| 互相克制 | +2   |
+| 其他关系 | 0    |
 
-源质融合不改变极性。
+嬗变分解和源质融合不改变极性。
 
 ::: warning 注意
 极性超出范围时，炼金锅会被破坏：**极性 > 50 变为红石块**，**极性 < -50 变为残渣块**，锅内所有物品掉落。

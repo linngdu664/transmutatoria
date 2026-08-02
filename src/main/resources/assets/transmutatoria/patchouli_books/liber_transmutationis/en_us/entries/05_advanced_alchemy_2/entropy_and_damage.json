@@ -1,0 +1,28 @@
+{
+  "name": "Entropy and Damage",
+  "category": "transmutatoria:05_advanced_alchemy_2",
+  "icon": "transmutatoria:lunar_sigil_scroll",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(term)Entropy$() is a property of the scroll that measures its instability. During scroll alchemy, guessing the essence of each slot may accumulate entropy on the scroll."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Entropy Table",
+      "text": "$(li)Double restraint / being doubly restrained: +2.$(li)Restraint / being restrained / mutual restraint / symbiosis: +1.$(li)Neutral / matching (annihilation): +0.$(br2)The lower-left of the scroll interface describes its current stability."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:nigredo_venotite,transmutatoria:venotite,transmutatoria:albedo_venotite,transmutatoria:citrinitas_venotite",
+      "title": "The Price of Guessing",
+      "text": "The higher the entropy, the more scroll durability each later annihilation consumes, and the fewer outputs the scroll can produce. Brute-force guessing is costly; infer the target from each state change with as few attempts as possible."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "One-Time Recipes",
+      "text": "Some recipes are $(term)one-time$(): after a successful production, the scroll in the catalyst slot vanishes regardless of how much durability it has left."
+    }
+  ]
+}

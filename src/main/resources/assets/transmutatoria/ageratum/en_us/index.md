@@ -12,7 +12,7 @@ items:
 
 ## Introduction
 
-The world is borne by four pillars: **Starfire, Abyssal Water, Rotten Earth, and Calamitous Wind**. Each pillar divides into three essence metals, twelve in all. They nourish, restrain, or annihilate one another - this is the foundation of Ars Transmutatoria.
+The world is borne by four pillars: **Astral Fire, Abyssal Water, Decaying Earth, and Tempest Air**. Each pillar divides into three essence metals, twelve in all. They nourish, restrain, or annihilate one another - this is the foundation of Ars Transmutatoria.
 
 Dissolve redstone, gunpowder, and glowstone in water, catalyzed by emerald, to obtain a Transmutation Crystal. With this as your beginning, craft a Transmutation Crucible, decompose essence metals from it, and you will gradually master Alchemical Replication, Alchemical Transformation, and even the refinement of the Philosopher's Stone.
 

@@ -10,20 +10,14 @@
     },
     {
       "type": "patchouli:spotlight",
-      "item": "transmutatoria:transmutation_sigil_scroll,transmutatoria:terrestrial_sigil_scroll,transmutatoria:lunar_sigil_scroll,transmutatoria:solar_sigil_scroll,transmutatoria:void_sigil_scroll",
-      "title": "印记卷",
-      "text": "嬗变印记卷用于复制：选择想创造的物品，以它为模板，在炼金锅中复制出新的一份。"
-    },
-    {
-      "type": "patchouli:spotlight",
-      "item": "transmutatoria:transmutation_equation_scroll,transmutatoria:terrestrial_equation_scroll,transmutatoria:lunar_equation_scroll,transmutatoria:solar_equation_scroll,transmutatoria:void_equation_scroll",
-      "title": "方程卷",
-      "text": "嬗变方程卷用于转化：选择作为原料的物品，卷轴便会揭示炼金配方所规定的产物。"
+      "item": "transmutatoria:transmutation_sigil_scroll,transmutatoria:transmutation_equation_scroll",
+      "title": "两类卷轴",
+      "text": "卷轴分为两种类型：$(li)$(term)印记卷$()：用于炼金复制——以一件物品为模板，复制出一份新的。$(li)$(term)方程卷$()：用于炼金转化——将一种物品转化为另一种。"
     },
     {
       "type": "patchouli:text",
       "title": "五个等级",
-      "text": "$(li)嬗变：48 耐久，每天正午过期。$(li)地相：120 耐久，每天正午过期。$(li)月相：300 耐久，每八天新月午夜过期。$(li)日相：750 耐久，永不过期。$(li)无相：永不损坏，永不过期。"
+      "text": "$(li)嬗变：50 耐久，每天正午过期。$(li)地相：150 耐久，每天正午过期。$(li)月相：300 耐久，新月午夜过期。$(li)日相：500 耐久，永不过期。$(li)无相：永不损坏，永不过期。"
     },
     {
       "type": "patchouli:crafting",
@@ -64,7 +58,7 @@
     {
       "type": "patchouli:text",
       "title": "封缄之前",
-      "text": "$(warn)激活后，放入的物品不可取出。$()$(br2)激活界面会预览配方另一端，并生成连通的六边形目标源质槽位。它们最初都以问号隐藏；配方等级越高，通常需要的槽位越多。"
+      "text": "$(warn)激活后，放入的物品不可取出。$()$(br2)激活界面会预览配方另一端，并显示配方所需源质，它们最初都以问号隐藏。配方等级越高，需要的源质越多。"
     }
   ]
 }

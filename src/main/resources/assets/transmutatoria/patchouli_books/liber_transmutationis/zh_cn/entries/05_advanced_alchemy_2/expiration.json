@@ -1,0 +1,17 @@
+{
+  "name": "过期与突变",
+  "category": "transmutatoria:05_advanced_alchemy_2",
+  "icon": "minecraft:clock",
+  "sortnum": 30,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "低等级的卷轴被激活后存在$(term)有效期$()：嬗变与地相卷轴每天正午过期，月相卷轴新月午夜过期。日相与无相卷轴永不过期。$(br2)HUD 上的沙漏显示过期倒计时。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "突变",
+      "text": "卷轴过期后触发$(term)突变$()：所有槽位的目标源质重新隐藏，部分目标源质发生变动，你必须重新探索。$(br2)耗时的高难合成宜选择月相或更高阶卷轴。"
+    }
+  ]
+}

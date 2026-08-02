@@ -11,37 +11,37 @@
     {
       "type": "patchouli:spotlight",
       "item": "transmutatoria:eclipsium,transmutatoria:lunargent,transmutatoria:astrotite",
-      "title": "Astral Flame",
-      "text": "Eclipsium, Lunargent, and Astrotite. Astral Flame restrains Calamitous Wind and is restrained by Abyssal Water."
+      "title": "Astral Fire",
+      "text": "Eclipsium, Lunargent, and Astrotite. Astral Fire restrains Tempest Air and is restrained by Abyssal Water."
     },
     {
       "type": "patchouli:spotlight",
       "item": "transmutatoria:abyssion,transmutatoria:animercury,transmutatoria:necroplumb",
       "title": "Abyssal Water",
-      "text": "Abyssion, Animercury, and Necroplumb. Abyssal Water restrains Astral Flame and is restrained by Blighted Earth."
+      "text": "Abyssion, Animercury, and Necroplumb. Abyssal Water restrains Astral Fire and is restrained by Decaying Earth."
     },
     {
       "type": "patchouli:spotlight",
       "item": "transmutatoria:sanguibronze,transmutatoria:venotite,transmutatoria:ossantimony",
-      "title": "Blighted Earth",
-      "text": "Sanguibronze, Venotite, and Ossantimony. Blighted Earth restrains Abyssal Water and is restrained by Calamitous Wind."
+      "title": "Decaying Earth",
+      "text": "Sanguibronze, Venotite, and Ossantimony. Decaying Earth restrains Abyssal Water and is restrained by Tempest Air."
     },
     {
       "type": "patchouli:spotlight",
       "item": "transmutatoria:fulgurzinc,transmutatoria:chronoplatinum,transmutatoria:pandemonium",
-      "title": "Calamitous Wind",
-      "text": "Fulgurzinc, Chronoplatinum, and Pandemonium. Calamitous Wind restrains Blighted Earth and is restrained by Astral Flame."
+      "title": "Tempest Air",
+      "text": "Fulgurzinc, Chronoplatinum, and Pandemonium. Tempest Air restrains Decaying Earth and is restrained by Astral Fire."
     },
     {
       "type": "patchouli:text",
       "title": "Relations",
-      "text": "The pillar cycle is:$(br2)$(term)Astral Flame → Calamitous Wind → Blighted Earth → Abyssal Water → Astral Flame$().$(br2)The restraining essence activates while the restrained essence deteriorates. Metal-specific relations may add a second restraint, create mutual restraint, or link two essences in symbiosis so both activate."
+      "text": "The pillar cycle is:$(br2)$(term)Astral Fire → Tempest Air → Decaying Earth → Abyssal Water → Astral Fire$().$(br2)The restraining essence activates while the restrained essence deteriorates. Metal-specific relations may add a second restraint, create mutual restraint, or link two essences in symbiosis so both activate."
     },
     {
       "type": "patchouli:spotlight",
       "item": "transmutatoria:pandemonium",
       "title": "Pandemonium",
-      "text": "Pandemonium is the great exception: it restrains all eleven other essences and is restrained by none. Its rarity matches its value in high alchemy."
+      "text": "Pandemonium is the great exception: it restrains all eleven other essences and is restrained by none."
     },
     {
       "type": "patchouli:crafting",

@@ -10,27 +10,21 @@
     },
     {
       "type": "patchouli:spotlight",
-      "item": "transmutatoria:transmutation_sigil_scroll,transmutatoria:terrestrial_sigil_scroll,transmutatoria:lunar_sigil_scroll,transmutatoria:solar_sigil_scroll,transmutatoria:void_sigil_scroll",
-      "title": "Sigil Scrolls",
-      "text": "A Sigil Scroll replicates an item: choose the object you want to create, then use its pattern to produce another copy in the crucible."
-    },
-    {
-      "type": "patchouli:spotlight",
-      "item": "transmutatoria:transmutation_equation_scroll,transmutatoria:terrestrial_equation_scroll,transmutatoria:lunar_equation_scroll,transmutatoria:solar_equation_scroll,transmutatoria:void_equation_scroll",
-      "title": "Equation Scrolls",
-      "text": "An Equation Scroll transforms one item into another. Choose the input material, and the scroll reveals the output prescribed by its alchemical recipe."
+      "item": "transmutatoria:transmutation_sigil_scroll,transmutatoria:transmutation_equation_scroll",
+      "title": "Two Kinds of Scrolls",
+      "text": "Scrolls come in two kinds:$(li)$(term)Sigil Scrolls$(): for Alchemical Replication—use one item as a template to produce a new copy.$(li)$(term)Equation Scrolls$(): for Alchemical Transformation—transform one item into another."
     },
     {
       "type": "patchouli:text",
       "title": "Five Tiers",
-      "text": "$(li)Transmutation: 48 durability; expires at noon.$(li)Terrestrial: 120; expires at noon.$(li)Lunar: 300; expires every eight days at new-moon midnight.$(li)Solar: 750; never expires.$(li)Void: unbreakable; never expires."
+      "text": "$(li)Transmutation: 50 durability; expires at noon.$(li)Terrestrial: 150; expires at noon.$(li)Lunar: 300; expires at new-moon midnight.$(li)Solar: 500; never expires.$(li)Void: unbreakable; never expires."
     },
     {
       "type": "patchouli:crafting",
       "recipe": "transmutatoria:transmutation_sigil_scroll",
       "recipe2": "transmutatoria:transmutation_equation_scroll",
       "title": "Base Scrolls",
-      "text": "Both use an essence, crystal, paper, and gold. Sigils add glowstone; equations add redstone."
+      "text": "Both use an essence, crystal, paper, and gold nugget. Sigils add glowstone; equations add redstone."
     },
     {
       "type": "patchouli:crafting",
@@ -64,7 +58,7 @@
     {
       "type": "patchouli:text",
       "title": "Read Before Sealing",
-      "text": "$(warn)The placed item cannot be recovered after activation.$()$(br2)The activated interface previews the other side of the recipe and generates a connected hexagonal pattern of target essence slots. Their essences begin hidden as question marks. A higher recipe level generally means more slots."
+      "text": "$(warn)The placed item cannot be recovered after activation.$()$(br2)The activated interface previews the other side of the recipe and shows essences required by the recipe, which are hidden as question marks initially. A higher recipe level means more essences."
     }
   ]
 }

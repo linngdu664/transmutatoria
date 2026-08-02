@@ -54,12 +54,12 @@
       "type": "patchouli:spotlight",
       "item": "transmutatoria:citrinitas_matter,transmutatoria:rubedo_matter",
       "title": "Rubedo · Reddening",
-      "text": "Transform Citrinitas Matter into Rubedo Matter. Level 24; polarity 49 to 50; one-time. Twenty-four slots and many special types make this the hardest synthesis.$(br2)$(quote)The force of all forces.$()"
+      "text": "Transform Citrinitas Matter into Rubedo Matter. Level 24; polarity 49 to 50; one-time. Twenty-four slots and special slots make this the hardest synthesis.$(br2)$(quote)The force of all forces.$()"
     },
     {
       "type": "patchouli:text",
       "title": "Before Rubedo",
-      "text": "Use a Lunar or higher-tier scroll, stock every essence state, and stabilize polarity at 49 or 50 before filling the first slot. At level 24, roughly half the generated slots may be special; plan their resolution order instead of improvising."
+      "text": "Use a Lunar or higher-tier scroll, stock every essence state, and stabilize polarity at 49 or 50 during the formal reaction. Roughly a quarter of the slots may be special. Plan their resolution order instead of improvising when trying."
     }
   ]
 }

@@ -1,0 +1,60 @@
+{
+  "name": "HUD 详解",
+  "category": "transmutatoria:04_advanced_alchemy_1",
+  "icon": "transmutatoria:transmutation_crucible",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "向空炼金锅投入激活后的卷轴。在正式开始卷轴炼金前，有必要系统性地学习炼金锅的 HUD。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "阅读 HUD",
+      "text": "左侧物品栏显示催化剂、输入、槽位解锁进度和输出；最左侧长条表示卷轴耐久与稳定度。$(br2)中央槽位图中，彩色边框标出当前槽位，已解锁槽位会显示目标源质。按住 Shift 滚动鼠标滚轮可以切换槽位。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "表盘与提示",
+      "text": "右上表盘的外侧指针显示当前极性，两根内侧指针标记配方允许的极性范围；沙漏显示卷轴的过期倒计时。$(br2)无法继续反应时，右下角提示会说明缺少水、催化剂或输入等原因。"
+    },
+    {
+      "type": "patchouli:image",
+      "images": [
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_1.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_2.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_3.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_4.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_5.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_6.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_7.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/general_zh_cn_8.png"
+      ],
+      "title": "卷轴炼金 HUD 图解",
+      "border": true,
+      "text": "使用图片右下角的箭头依次查看 HUD 各区域的标注。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:alchemist_storage_box",
+      "title": "源质轮盘",
+      "text": "手持储物盒看向炼金锅：滚轮选择源质，右键填入当前槽位。按住 Alt 展开完整轮盘，即可查看当前源质与其他源质的全部关系。"
+    },
+    {
+      "type": "patchouli:image",
+      "images": [
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_1.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_2.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_3.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_4.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_5.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_6.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_7.png",
+        "transmutatoria:textures/gui/patchouli/ageratum/wheel_down_zh_cn_8.png"
+      ],
+      "title": "源质轮盘与关系提示",
+      "border": true,
+      "text": "展开轮盘后，边框颜色会提示当前源质与候选源质的关系。"
+    }
+  ]
+}

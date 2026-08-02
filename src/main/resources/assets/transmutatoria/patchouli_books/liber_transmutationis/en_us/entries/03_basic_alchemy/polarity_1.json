@@ -1,0 +1,29 @@
+{
+  "name": "Polarity Ⅰ",
+  "category": "transmutatoria:03_basic_alchemy",
+  "icon": "transmutatoria:alchemical_dross_block",
+  "sortnum": 30,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The crucible's $(term)polarity$() ranges from -50 to 50 and begins at 0. The outer pointer on the upper-right HUD dial shows its current value."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Changing Polarity Ⅰ",
+      "text": "In essence reaction, symbiosis lowers polarity by 2; mutual restraint raises it by 2; other essence relations leave it unchanged. Transmutation Decomposition and Essence Fusion do not change polarity."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:redstone_block,transmutatoria:alchemical_dross_block",
+      "title": "A Broken Balance",
+      "text": "$(warn)Take care:$() above +50, the crucible becomes a redstone block; below -50, it becomes an alchemical dross block. The contents drop, but the crucible is lost."
+    },
+    {
+      "type": "patchouli:relations",
+      "entries": [
+        "transmutatoria:05_advanced_alchemy_2/polarity_2"
+      ]
+    }
+  ]
+}

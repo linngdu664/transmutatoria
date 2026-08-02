@@ -21,8 +21,8 @@ In the first three chapters, you mastered obtaining essence metals, their relati
 
 Scrolls are divided into two types:
 
-- **Transmutation Sigil Scroll**: used for **Alchemical Replication** - using one item as a template to replicate a new copy in the crucible.
-- **Transmutation Equation Scroll**: used for **Alchemical Transformation** - transforming one item into another.
+- **Sigil Scroll**: used for **Alchemical Replication** - using one item as a template to replicate a new copy.
+- **Equation Scroll**: used for **Alchemical Transformation** - transforming one item into another.
 
 <row>
 <item id="transmutatoria:transmutation_sigil_scroll"/>
@@ -33,10 +33,10 @@ Each has five tiers:
 
 | Tier | Durability | Expiration Rule |
 |------|------|----------|
-| Transmutation | 48 | Every noon |
-| Terrestrial | 120 | Every noon |
+| Transmutation | 50 | Every noon |
+| Terrestrial | 150 | Every noon |
 | Lunar | 300 | Every 8 days (new moon midnight) |
-| Solar | 750 | Never expires |
+| Solar | 500 | Never expires |
 | Void | Never breaks | Never expires |
 
 Advanced scrolls require more resources to craft, but provide higher durability and more lenient expiration rules.

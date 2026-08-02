@@ -1,5 +1,5 @@
 {
-  "name": "炼金锅与炼金分解",
+  "name": "炼金锅与嬗变分解",
   "category": "transmutatoria:01_introduction",
   "icon": "transmutatoria:transmutation_crucible",
   "sortnum": 20,
@@ -11,12 +11,12 @@
     {
       "type": "patchouli:crafting",
       "recipe": "transmutatoria:transmutation_crucible",
-      "text": "每次反应只消耗少量水；一桶水足以支撑许多次反应。"
+      "text": "每次反应只消耗少量水。一桶水足以支撑许多次反应。"
     },
     {
       "type": "patchouli:spotlight",
       "item": "minecraft:ender_eye",
-      "title": "炼金分解",
+      "title": "嬗变分解",
       "text": "末影之眼作为催化剂“观测”嬗变结晶，揭示其内部的源质本质。催化剂不会被消耗。"
     },
     {
@@ -28,7 +28,7 @@
       "type": "patchouli:spotlight",
       "item": "transmutatoria:eclipsium,transmutatoria:lunargent,transmutatoria:astrotite,transmutatoria:abyssion,transmutatoria:animercury,transmutatoria:necroplumb,transmutatoria:sanguibronze,transmutatoria:venotite,transmutatoria:ossantimony,transmutatoria:fulgurzinc,transmutatoria:chronoplatinum,transmutatoria:pandemonium",
       "title": "十二源质金属",
-      "text": "分解通常产出十一种常见源质之一。$(item)无相源金$()只有 1% 的概率出现，却是高级配方的关键。建议批量分解，积累多样化的源质。"
+      "text": "分解通常产出十一种常见源质之一。$(item)无相源金$()只有 1% 的概率出现。建议批量分解，积累多样化的源质。"
     }
   ]
 }

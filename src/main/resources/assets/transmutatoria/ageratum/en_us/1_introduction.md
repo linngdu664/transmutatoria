@@ -57,10 +57,10 @@ There are **12** essence metals in total, belonging to the four elemental pillar
 
 | Four Pillars | Essence Metals |
 |------|---------|
-| Starfire | Eclipsium, Lunargent, Astrotite |
+| Astral Fire | Eclipsium, Lunargent, Astrotite |
 | Abyssal Water | Abyssion, Animercury, Necroplumb |
-| Rotten Earth | Sanguibronze, Venotite, Ossantimony |
-| Calamitous Wind | Fulgurzinc, Chronoplatinum, Pandemonium |
+| Decaying Earth | Sanguibronze, Venotite, Ossantimony |
+| Tempest Air | Fulgurzinc, Chronoplatinum, Pandemonium |
 
 <row>
 <item id="transmutatoria:eclipsium"/>

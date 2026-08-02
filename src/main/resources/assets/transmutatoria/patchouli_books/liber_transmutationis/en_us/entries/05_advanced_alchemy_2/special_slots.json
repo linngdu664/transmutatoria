@@ -1,8 +1,8 @@
 {
-  "name": "Advanced Essence Slots",
+  "name": "Special Essence Slots",
   "category": "transmutatoria:05_advanced_alchemy_2",
   "icon": "transmutatoria:void_sigil_scroll",
-  "sortnum": 20,
+  "sortnum": 40,
   "pages": [
     {
       "type": "patchouli:text",
@@ -10,13 +10,13 @@
     },
     {
       "type": "patchouli:text",
-      "title": "Order Is Part of the Formula",
+      "title": "Order Is Important",
       "text": "Slots resolve in the order their essences were inserted. A slot can affect only neighbors that have already produced an output—or inhibit neighbors still empty—so filling 1 then 2 may differ completely from filling 2 then 1."
     },
     {
       "type": "patchouli:text",
       "title": "Basic Modifiers",
-      "text": "$(li)$(term)Normal$(): the basic relation reaction.$(li)$(term)Deterioration$(): product -1; polarity +1.$(li)$(term)Activation$(): product +1; polarity -1.$(li)$(term)Inversion$(): reverses state and polarity changes.$(li)$(term)Restoration$(): a matching essence annihilates but is retained."
+      "text": "$(li)$(term)Normal$(): the basic relation reaction.$(li)$(term)Deterioration$(): product additionally -1; polarity additionally +1.$(li)$(term)Activation$(): product additionally +1; polarity additionally -1.$(li)$(term)Inversion$(): reverses state and polarity changes.$(li)$(term)Restoration$(): retains the input essence when annihilating."
     },
     {
       "type": "patchouli:text",
@@ -31,17 +31,12 @@
     {
       "type": "patchouli:text",
       "title": "Directional Slots",
-      "text": "An arrow in the HUD indicates the direction a slot affects.$(br2)$(li)$(term)Activity$(): if not annihilated, reacts once more with the arrow's adjacent existing product; the extra reaction does not change polarity.$(li)$(term)Exchange$(): swaps products with that neighbor."
+      "text": "$(li)$(term)Activity$(): if not annihilated, reacts once more with the arrow's adjacent existing product; if the essences match, both annihilate; the extra reaction does not change polarity.$(li)$(term)Exchange$(): if the pointed adjacent slot already holds a product, swaps products with it.$(br2)An arrow in the HUD indicates the direction a slot affects."
     },
     {
       "type": "patchouli:text",
       "title": "Delayed Disturbances",
-      "text": "$(li)$(term)Spin$(): after all reactions, rotates adjacent non-empty products clockwise.$(li)$(term)Unstable$(): if its essence changes state, swaps its type with a random other slot after all reactions.$(br2)Recheck the HUD after either disturbance."
-    },
-    {
-      "type": "patchouli:text",
-      "title": "Using Them Well",
-      "text": "Special slots are not merely obstacles. Resonance and Activity benefit from resolving after useful neighbors; Purge, Spin, Exchange, and Inhibition demand care with order. Study their types and directions, plan a route, then feed the crucible deliberately."
+      "text": "$(li)$(term)Spin$(): after all reactions, rotates adjacent non-empty products clockwise.$(li)$(term)Unstable$(): if its essence changes state, swaps its type with a random other slot after all reactions."
     }
   ]
 }

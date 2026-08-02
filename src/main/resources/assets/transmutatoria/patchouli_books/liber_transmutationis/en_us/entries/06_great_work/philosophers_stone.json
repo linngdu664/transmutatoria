@@ -23,19 +23,19 @@
     {
       "type": "patchouli:text",
       "title": "Life Protection",
-      "text": "Holding the stone in either hand continuously grants regeneration and a brief saturation effect each second. If an off-cooldown stone is in the hotbar when you suffer fatal damage, death is canceled, health becomes 1, and that stone enters a 60-second cooldown."
+      "text": "Holding the stone in either hand continuously grants regeneration and saturation effect. If an off-cooldown stone is in the hotbar when you suffer fatal damage, death is canceled, health becomes 1, and that stone enters a 60-second cooldown."
     },
     {
       "type": "patchouli:spotlight",
       "item": "transmutatoria:transmutation_crucible",
       "title": "Polarity Adjustment",
-      "text": "Right-click a crucible while holding the Philosopher's Stone to move any nonzero polarity one point toward 0. It is slow, but exact and safe."
+      "text": "Right-click a crucible while holding the Philosopher's Stone to move any nonzero polarity one point toward 0. It is exact and safe."
     },
     {
       "type": "patchouli:spotlight",
       "item": "transmutatoria:philosophers_stone",
       "title": "Chaos Decomposition",
-      "text": "Use the stone as a crucible catalyst, then insert any item that a Sigil Scroll can replicate. The item is reverse-decomposed into a random quantity of base essence metals—an effective source for large reserves."
+      "text": "Use the stone as a crucible catalyst, then drop any item that a Sigil Scroll can replicate. The item is reverse-decomposed into base essence metals — an effective source for large reserves."
     },
     {
       "type": "patchouli:text",

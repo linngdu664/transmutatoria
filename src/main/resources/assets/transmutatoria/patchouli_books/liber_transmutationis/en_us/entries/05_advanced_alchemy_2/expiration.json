@@ -1,0 +1,17 @@
+{
+  "name": "Expiration and Mutation",
+  "category": "transmutatoria:05_advanced_alchemy_2",
+  "icon": "minecraft:clock",
+  "sortnum": 30,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Lower-tier scrolls have a $(term)validity period$() after activation: Transmutation and Terrestrial scrolls expire at noon each day, and Lunar scrolls at new-moon midnight. Solar and Void scrolls never expire.$(br2)An hourglass on the HUD shows the countdown to expiration."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Mutation",
+      "text": "Expiration triggers a $(term)mutation$(): every slot's target essence becomes hidden again, and some targets change. You must explore the pattern anew.$(br2)For long, difficult work, choose Lunar or higher-tier scrolls."
+    }
+  ]
+}

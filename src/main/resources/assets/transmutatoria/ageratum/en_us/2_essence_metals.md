@@ -25,10 +25,10 @@ Review the twelve metals and their four-pillar affiliations from the previous ch
 
 | Four Pillars | Essence Metals |
 |------|---------|
-| Starfire | Eclipsium, Lunargent, Astrotite |
+| Astral Fire | Eclipsium, Lunargent, Astrotite |
 | Abyssal Water | Abyssion, Animercury, Necroplumb |
-| Rotten Earth | Sanguibronze, Venotite, Ossantimony |
-| Calamitous Wind | Fulgurzinc, Chronoplatinum, Pandemonium |
+| Decaying Earth | Sanguibronze, Venotite, Ossantimony |
+| Tempest Air | Fulgurzinc, Chronoplatinum, Pandemonium |
 
 <row>
 <item id="transmutatoria:eclipsium"/>
@@ -56,9 +56,9 @@ Review the twelve metals and their four-pillar affiliations from the previous ch
 
 There is a fixed restraint cycle between the pillars:
 
-**Starfire -> Calamitous Wind -> Rotten Earth -> Abyssal Water -> Starfire**
+**Astral Fire → Tempest Air → Decaying Earth → Abyssal Water → Astral Fire**
 
-When two metals react, the restraining side activates (state increases), and the restrained side deteriorates (state decreases). For example, when Animercury of the Abyssal Water pillar meets Eclipsium of the Starfire pillar, Animercury activates and Eclipsium deteriorates.
+When two metals react, the restraining side activates (state increases), and the restrained side deteriorates (state decreases). For example, when Animercury of the Abyssal Water pillar meets Eclipsium of the Astral Fire pillar, Animercury activates and Eclipsium deteriorates.
 
 ### Elemental Restraint
 

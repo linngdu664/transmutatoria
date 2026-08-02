@@ -11,8 +11,8 @@
     {
       "type": "patchouli:spotlight",
       "item": "transmutatoria:transmutation_crystal",
-      "title": "催化剂",
-      "text": "将结晶丢入催化剂槽，炼金锅 HUD 会显示两个源质槽。分别填入源质金属后，反应自动开始。"
+      "title": "操作步骤",
+      "text": "按左 Ctrl 键打开炼金锅 HUD。在后续的炼金中，建议保持 HUD 开启，便于操作。$(br2)将嬗变结晶作为催化剂丢入空炼金锅，HUD 会显示两个源质槽。填入源质金属后，反应自动开始。"
     },
     {
       "type": "patchouli:text",
@@ -28,7 +28,7 @@
     {
       "type": "patchouli:text",
       "title": "实用操作",
-      "text": "手持储物盒右键炼金锅，可直接投入当前选中的源质；滚轮切换储物盒选项。$(br2)反应开始前或进行中，Shift + 空手右键可以取回材料和催化剂。"
+      "text": "手持储物盒右键炼金锅，可直接投入当前选中的源质，滚轮切换源质。$(br2)反应开始前或进行中，Shift + 空手右键可以取回材料和催化剂。"
     }
   ]
 }

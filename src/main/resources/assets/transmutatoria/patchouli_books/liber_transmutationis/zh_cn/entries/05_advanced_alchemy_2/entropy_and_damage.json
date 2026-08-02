@@ -1,0 +1,28 @@
+{
+  "name": "熵与损耗",
+  "category": "transmutatoria:05_advanced_alchemy_2",
+  "icon": "transmutatoria:lunar_sigil_scroll",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(term)熵值$()是卷轴的一项属性，反映卷轴的不稳定程度。卷轴炼金中，猜测每个槽位的源质时，可能会累积卷轴的熵值。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "熵值表",
+      "text": "$(li)双倍克制 / 被双倍克制：+2。$(li)普通克制 / 被克制 / 互相克制 / 共生：+1。$(li)中性 / 相同（湮灭）：+0。$(br2)卷轴界面左下角会描述当前稳定度。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "transmutatoria:nigredo_venotite,transmutatoria:venotite,transmutatoria:albedo_venotite,transmutatoria:citrinitas_venotite",
+      "title": "猜测的代价",
+      "text": "熵值越高，之后每次湮灭消耗的卷轴耐久越多，卷轴能产出的次数越少。暴力穷举代价高昂，应当根据每次状态变化以尽可能少的尝试次数推断目标。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "一次性配方",
+      "text": "部分炼金配方是$(term)一次性$()的——成功产出物品后，无论卷轴还有多少耐久，催化剂槽中的卷轴都会消失。"
+    }
+  ]
+}

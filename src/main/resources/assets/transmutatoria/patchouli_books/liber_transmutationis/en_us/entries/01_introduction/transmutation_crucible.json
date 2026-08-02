@@ -16,7 +16,7 @@
     {
       "type": "patchouli:spotlight",
       "item": "minecraft:ender_eye",
-      "title": "Alchemical Decomposition",
+      "title": "Transmutation Decomposition",
       "text": "An Eye of Ender serves as the catalyst. It observes a Transmutation Crystal and reveals the essence hidden inside. The catalyst is not consumed."
     },
     {
@@ -28,7 +28,7 @@
       "type": "patchouli:spotlight",
       "item": "transmutatoria:eclipsium,transmutatoria:lunargent,transmutatoria:astrotite,transmutatoria:abyssion,transmutatoria:animercury,transmutatoria:necroplumb,transmutatoria:sanguibronze,transmutatoria:venotite,transmutatoria:ossantimony,transmutatoria:fulgurzinc,transmutatoria:chronoplatinum,transmutatoria:pandemonium",
       "title": "Twelve Essence Metals",
-      "text": "Decomposition normally yields one of eleven common essences. $(item)Pandemonium$() appears only one time in a hundred, yet is vital to advanced alchemy. Decompose crystals in batches to build a varied reserve."
+      "text": "Decomposition normally yields one of eleven common essences. $(item)Pandemonium$() appears only one time in a hundred. Decompose crystals in batches to build a varied reserve."
     }
   ]
 }

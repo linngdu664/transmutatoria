@@ -1,0 +1,23 @@
+{
+  "name": "极性 Ⅱ",
+  "category": "transmutatoria:05_advanced_alchemy_2",
+  "icon": "minecraft:redstone_block",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "每个卷轴炼金配方都有极性范围，即使全部湮灭，如果锅的极性不在范围内，也不会产出。$(br2)HUD 两根内侧指针标记上下限，外侧指针必须落在它们之间，必要时预先调整。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "改变极性 Ⅱ",
+      "text": "卷轴炼金中，不匹配的槽位反应也会改变极性（“虚”目标源质的变化体现为极性改变）。$(br2)除了用共生/互克源质反应调整极性，还可以用刻意规划的失败卷轴炼金调整极性。"
+    },
+    {
+      "type": "patchouli:relations",
+      "entries": [
+        "transmutatoria:03_basic_alchemy/polarity_1"
+      ]
+    }
+  ]
+}

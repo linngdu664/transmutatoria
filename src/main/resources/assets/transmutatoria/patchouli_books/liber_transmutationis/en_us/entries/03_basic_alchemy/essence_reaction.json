@@ -11,8 +11,8 @@
     {
       "type": "patchouli:spotlight",
       "item": "transmutatoria:transmutation_crystal",
-      "title": "The Catalyst",
-      "text": "Drop a crystal into the catalyst slot. The crucible HUD displays two essence slots. Fill both with essence metals; the reaction begins automatically."
+      "title": "Operating Steps",
+      "text": "Press the Left Ctrl key to open HUD. In later alchemy operations, it is recommended to keep the HUD open for easier operation.$(br2)Drop a crystal as catalyst into the empty crucible. The crucible HUD displays two essence slots. Fill both with essence metals; the reaction begins automatically."
     },
     {
       "type": "patchouli:text",

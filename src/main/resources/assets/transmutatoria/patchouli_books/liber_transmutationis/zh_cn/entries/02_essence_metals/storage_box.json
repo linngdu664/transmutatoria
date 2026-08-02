@@ -24,12 +24,12 @@
       "type": "patchouli:spotlight",
       "item": "transmutatoria:nigredo_alchemist_storage_box,transmutatoria:alchemist_storage_box,transmutatoria:albedo_alchemist_storage_box,transmutatoria:citrinitas_alchemist_storage_box",
       "title": "四种对应状态",
-      "text": "每种变体只收纳对应状态的源质。捡起源质金属时，副手或背包中的匹配储物盒会自动将其吸入。"
+      "text": "每种变体只收纳对应状态的源质。捡起源质金属时，背包中的匹配储物盒会自动将其吸入。"
     },
     {
       "type": "patchouli:text",
       "title": "物品与方块",
-      "text": "手持右键可以整理储物盒；放在地上后，Shift + 右键即可连同内容一起收回。$(br2)手持储物盒面对炼金锅时，它还能快速投放源质。轮盘操作见$(l:transmutatoria:04_advanced_alchemy_1/scroll_alchemy)卷轴炼金$(/l)。"
+      "text": "手持右键可以打开储物盒。放在地上是方块形态，右键打开储物盒，Shift + 右键即可连同内容一起收回。$(br2)手持储物盒面对炼金锅时，它还能快速投放源质。"
     }
   ]
 }

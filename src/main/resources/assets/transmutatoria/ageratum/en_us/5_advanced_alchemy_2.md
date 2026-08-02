@@ -48,7 +48,7 @@ Chapter 3 introduced polarity. In scroll alchemy, polarity gains a new meaning: 
 
 After putting in an activated scroll, the dial in the upper right of the HUD displays the polarity window: **the two inner pointers** mark the recipe's required polarity range, and **the outer pointer** indicates the crucible's current polarity. The polarity condition is satisfied only when the outer pointer falls between the two inner pointers.
 
-In scroll reactions, unmatched slot reactions also change polarity (the target essence's "virtual" change is reflected as a polarity change). Therefore, before starting synthesis, first check whether the outer pointer is inside the window. If the deviation is large, you can use Chapter 3's Essence Reaction (symbiosis / mutual restraint) to adjust polarity in advance.
+In scroll reactions, unmatched slot reactions also change polarity (the "virtual" target essence's change is reflected as a polarity change). Therefore, before starting synthesis, first check whether the outer pointer is inside the window. If the deviation is large, you can use Chapter 3's Essence Reaction (symbiosis / mutual restraint) to adjust polarity in advance.
 
 ## Expiration and Mutation
 

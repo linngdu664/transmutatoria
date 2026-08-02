@@ -1,0 +1,29 @@
+{
+  "name": "极性 Ⅰ",
+  "category": "transmutatoria:03_basic_alchemy",
+  "icon": "transmutatoria:alchemical_dross_block",
+  "sortnum": 30,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "每个炼金锅都有$(term)极性$()属性，范围在 -50 到 +50 之间，初始为 0。HUD 右上角表盘的外侧指针表示当前值。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "改变极性 Ⅰ",
+      "text": "源质反应中，共生使极性 -2，互相克制使极性 +2，其他关系不改变极性。$(br2)嬗变分解和源质融合不改变极性。"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:redstone_block,transmutatoria:alchemical_dross_block",
+      "title": "失衡的代价",
+      "text": "$(warn)务必小心：$()极性高于 +50，锅会变成红石块；低于 -50，则会变成残渣块。内容物会掉落，但炼金锅就此损毁。"
+    },
+    {
+      "type": "patchouli:relations",
+      "entries": [
+        "transmutatoria:05_advanced_alchemy_2/polarity_2"
+      ]
+    }
+  ]
+}

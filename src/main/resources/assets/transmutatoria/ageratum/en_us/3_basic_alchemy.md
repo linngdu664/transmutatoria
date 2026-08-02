@@ -59,16 +59,16 @@ The two metals change simultaneously according to their restraint and symbiosis 
 
 After the reaction ends, right-click the crucible to take out the two changed metals.
 
-**Example**: Animercury restrains Eclipsium. Citrinitas-infused Animercury reacting with Nigredo-tainted Eclipsium results in: Citrinitas-infused Animercury **-1** -> Albedo-infused Animercury; Nigredo-tainted Eclipsium **+1** -> Eclipsium.
+**Example**: Animercury restrains Eclipsium. Nigredo-tainted Animercury reacting with Citrinitas-infused Eclipsium results in: Nigredo-tainted Animercury **+1** → Animercury; Citrinitas-infused Eclipsium **-1** → Albedo-infused Eclipsium.
 
 <row>
-<item id="transmutatoria:citrinitas_animercury"/>
-<item id="transmutatoria:nigredo_eclipsium"/>
+<item id="transmutatoria:nigredo_animercury"/>
+<item id="transmutatoria:citrinitas_eclipsium"/>
 </row>
 
 <row>
-<item id="transmutatoria:albedo_animercury"/>
-<item id="transmutatoria:eclipsium"/>
+<item id="transmutatoria:animercury"/>
+<item id="transmutatoria:albedo_eclipsium"/>
 </row>
 
 ## Essence Fusion
@@ -94,17 +94,17 @@ Different metals require different amounts of fusion materials - the wider a met
 
 ## Polarity
 
-Polarity is a core attribute of the crucible, ranging from **-50 to 50**, initially 0. The **outer pointer** of the dial in the upper right of the HUD indicates the current polarity of the crucible.
+Polarity is a core attribute of the crucible, ranging from **-50 to +50**, initially 0. The **outer pointer** of the dial in the upper right of the HUD indicates the current polarity of the crucible.
 
 Essence Reaction changes crucible polarity:
 
 | Relationship | Polarity Change |
-|------|---------|
-| Symbiosis | +2 |
-| Mutual restraint | -2 |
-| Other relationships | 0 |
+|------|-----------------|
+| Symbiosis | -2              |
+| Mutual restraint | +2              |
+| Other relationships | 0               |
 
-Essence Fusion does not change polarity.
+Transmutation Decomposition and Essence Fusion do not change polarity.
 
 ::: warning Note
 When polarity exceeds the range, the crucible is destroyed: **polarity > 50 becomes a redstone block**, and **polarity < -50 becomes an Alchemical Dross Block**. All items in the crucible drop.

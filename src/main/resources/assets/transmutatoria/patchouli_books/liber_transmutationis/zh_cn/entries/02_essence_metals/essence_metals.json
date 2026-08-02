@@ -41,7 +41,7 @@
       "type": "patchouli:spotlight",
       "item": "transmutatoria:pandemonium",
       "title": "无相源金",
-      "text": "无相源金是唯一的例外：它克制其他十一种源质，且不被任何源质克制。其稀有程度正与高级炼金中的价值相称。"
+      "text": "无相源金是唯一的例外：它克制其他十一种源质，且不被任何源质克制。"
     },
     {
       "type": "patchouli:crafting",
@@ -59,7 +59,7 @@
       "type": "patchouli:spotlight",
       "item": "transmutatoria:alchemical_dross,minecraft:redstone",
       "title": "越过界限",
-      "text": "低于黑化，源质崩解为炼金渣；高于黄化，源质烧尽为红石粉。两种残余都已失去炼金用途。"
+      "text": "低于黑化，源质崩解为残渣；高于黄化，源质烧尽为红石粉。两种残余都已失去炼金用途。"
     }
   ]
 }

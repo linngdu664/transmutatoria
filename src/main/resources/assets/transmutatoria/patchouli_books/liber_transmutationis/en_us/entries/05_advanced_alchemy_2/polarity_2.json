@@ -1,0 +1,23 @@
+{
+  "name": "Polarity Ⅱ",
+  "category": "transmutatoria:05_advanced_alchemy_2",
+  "icon": "minecraft:redstone_block",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Every scroll recipe has a polarity range. Even with all essences annihilated, nothing is produced if the crucible's polarity falls outside it.$(br2)The HUD's two inner pointers mark the upper and lower limits; the outer pointer must lie between them—adjust in advance when necessary."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Changing Polarity Ⅱ",
+      "text": "In scroll alchemy, mismatched slot reactions also change polarity: the change of a \"virtual\" target essence manifests as a change to the crucible's polarity.$(br2)Besides tuning polarity through symbiosis or mutual-restraint essence reactions, you can also use deliberately planned failed reactions to adjust it."
+    },
+    {
+      "type": "patchouli:relations",
+      "entries": [
+        "transmutatoria:03_basic_alchemy/polarity_1"
+      ]
+    }
+  ]
+}
