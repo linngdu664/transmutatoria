@@ -33,11 +33,10 @@ public class InputEventHandler {
             return;
         }
 
-        if (RenderGuiEventHandler.isHudManuallyHidden) {
-            return;
-        }
-
         if (mc.hasShiftDown()) {
+            if (RenderGuiEventHandler.isHudManuallyHidden) {
+                return;
+            }
             ClientPacketDistributor.sendToServer(new ChangeCrucibleSelectedSlotPayload(blockHit.getBlockPos(), event.getScrollDeltaY() < 0));
             // 取消原版滚轮事件（切换快捷栏）
             event.setCanceled(true);

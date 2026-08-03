@@ -209,14 +209,15 @@
   "tooltip.transmutatoria.scroll.expire.daily_noon": "过期规则：每天正午",
   "tooltip.transmutatoria.scroll.expire.lunar": "过期规则：新月午夜",
   "tooltip.transmutatoria.scroll.expire.never": "过期规则：永不过期",
-  "tooltip.transmutatoria.scroll.expire.custom": "过期规则: 周期 %d gt, 偏移 %d gt",
+  "tooltip.transmutatoria.scroll.expire.custom": "过期规则：周期 %d gt, 偏移 %d gt",
   "tooltip.transmutatoria.scroll.one_time": "一次性卷轴：成功反应后消耗",
 
   "key.category.transmutatoria.main": "混沌炼金",
   "key.transmutatoria.toggle_crucible_hud": "开关炼金锅HUD",
   "gui.transmutatoria.crucible_hint.hud_on": "<%s> 开启HUD",
-  "gui.transmutatoria.crucible_hint.hud_off": "<Shift+滚轮> 切换槽位\n<%s> 关闭HUD",
-  "gui.transmutatoria.crucible_hint.storage_box_ring_expand": "<滚轮> 切换源质\n<Alt> 展开轮盘",
+  "gui.transmutatoria.crucible_hint.hud_on_with_essence": "储物盒源质：%s\n<%s> 开启HUD",
+  "gui.transmutatoria.crucible_hint.hud_off": "<Shift+滚轮> 选择槽位\n<%s> 关闭HUD",
+  "gui.transmutatoria.crucible_hint.storage_box_ring_expand": "<滚轮> 选择源质\n<Alt> 展开轮盘",
 
   "advancements.transmutatoria.beginning.title": "嬗变之始",
   "advancements.transmutatoria.beginning.description": "获得一枚嬗变结晶。",

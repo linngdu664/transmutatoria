@@ -343,6 +343,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     @Override
     public void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
+        // 清空物品，loadAllItems 不覆盖空物品
         items.clear();
         ContainerHelper.loadAllItems(input, items);
         waterHandler.deserialize(input);
