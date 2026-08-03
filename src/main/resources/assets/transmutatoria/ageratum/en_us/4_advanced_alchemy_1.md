@@ -102,9 +102,9 @@ Every recipe has a **level**. The higher the level, the more essences are requir
 
 ![Scroll alchemy HUD overview](../textures/general_en_us.png)
 
-- **Item bar on the left**: Shows the catalyst, input item, recipe unlock progress, and output item from top to bottom. The leftmost bar represents scroll durability and current stability.
-- **Essence slot diagram in the center**: A colored border marks the selected essence slot. Unlocked slots reveal their target essence. Hold Shift and scroll the mouse wheel to change the selected slot.
-- **Essence wheel at the top**: Appears while holding a storage box and shows its currently selected essence. Scroll the mouse wheel to change essences, then right-click the crucible to insert one. Hold Alt to expand the full wheel and inspect essence relationships.
+- **Item bar on the left**: Shows the catalyst, input item, recipe reveal progress, and output item from top to bottom. The leftmost bar represents scroll durability and current stability.
+- **Essence slot diagram in the center**: A colored border marks the selected essence slot. Revealed slots display their target essence. Hold Shift and scroll the mouse wheel to change the selected slot.
+- **Essence wheel at the top**: Appears while holding a storage box and shows its currently selected essence. Scroll the mouse wheel to change essences, then right-click the crucible to insert one.
 - **Dial in the upper right**: The outer indicator shows the crucible's current polarity. The two inner indicators mark the polarity range allowed by the recipe. The hourglass displays the scroll's expiration countdown.
 - **Control hint in the lower right**: Explains why the reaction cannot proceed, such as missing water, a catalyst, or an input item.
 
