@@ -17,8 +17,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 @EventBusSubscriber(modid = ArsTransmutatoria.MODID)
 public class PhilosophersStoneEventHandler {
     private static final int DEATH_PREVENTION_COOLDOWN = 20 * 60;
-    private static final int REGENERATION_DURATION = 20 * 11;
-    private static final int SATURATION_INTERVAL = 20;
+    private static final int DURATION = 20 * 4;
+    private static final int EFFECT_INTERVAL = 20;
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -27,8 +27,8 @@ public class PhilosophersStoneEventHandler {
             return;
         }
 
-        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, REGENERATION_DURATION, 0, true, false, true));
-        if (player.tickCount % SATURATION_INTERVAL == 0) {
+        if (player.tickCount % EFFECT_INTERVAL == 0) {
+            player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, DURATION, 0, true, false, true));
             player.addEffect(new MobEffectInstance(MobEffects.SATURATION, 1, 0, true, false, true));
         }
     }
