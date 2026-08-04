@@ -29,7 +29,7 @@ public class SlotDescription extends AbstractDescription {
     @Override
     public void prepare(Player player, TransmutationCrucibleBlockEntity crucible, DeltaTracker delta) {
         ItemStack catalyst = crucible.getCatalyst();
-        if (crucible.getTargetTimer() == 0 && !crucible.hasAnyOutput()) {
+        if (crucible.getTargetTimer() <= 0 && !crucible.hasAnyOutput()) {
             if (catalyst.isEmpty()) {
                 setState(
                         Component.translatable("gui.transmutatoria.crucible_hint.catalyst.title"),

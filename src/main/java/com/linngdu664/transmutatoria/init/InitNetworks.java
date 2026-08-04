@@ -41,11 +41,6 @@ public class InitNetworks {
                 (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
         );
         registrar.playToClient(
-                CrucibleSetProcessTimerPayload.TYPE,
-                CrucibleSetProcessTimerPayload.STREAM_CODEC,
-                (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
-        );
-        registrar.playToClient(
                 CrucibleSetTargetTimerPayload.TYPE,
                 CrucibleSetTargetTimerPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
@@ -53,6 +48,11 @@ public class InitNetworks {
         registrar.playToClient(
                 CrucibleResetPayload.TYPE,
                 CrucibleResetPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
+        );
+        registrar.playToClient(
+                CrucibleFinishPayload.TYPE,
+                CrucibleFinishPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> payload.handle(context.player()))
         );
         registrar.playToClient(

@@ -31,8 +31,8 @@ public record AlchemicalTransformationRecipe(
                 ItemStackTemplate.CODEC.fieldOf("output").forGetter(AlchemicalTransformationRecipe::output),
                 Codec.BOOL.optionalFieldOf("one_time", false).forGetter(AlchemicalTransformationRecipe::oneTime),
                 LevelFunction.CODEC.optionalFieldOf("level", new FixedLevel(2, 2)).forGetter(AlchemicalTransformationRecipe::level),
-                Codec.INT.optionalFieldOf("min_polarity", -50).forGetter(AlchemicalTransformationRecipe::minPolarity),
-                Codec.INT.optionalFieldOf("max_polarity", 50).forGetter(AlchemicalTransformationRecipe::maxPolarity)
+                Codec.INT.optionalFieldOf("min_polarity", MIN_POLARITY).forGetter(AlchemicalTransformationRecipe::minPolarity),
+                Codec.INT.optionalFieldOf("max_polarity", MAX_POLARITY).forGetter(AlchemicalTransformationRecipe::maxPolarity)
         ).apply(inst, AlchemicalTransformationRecipe::new))
                 .validate(recipe -> recipe.isValid()
                         ? DataResult.success(recipe)

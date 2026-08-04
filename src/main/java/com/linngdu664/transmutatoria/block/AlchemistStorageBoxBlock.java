@@ -81,12 +81,11 @@ public class AlchemistStorageBoxBlock extends BaseEntityBlock {
             BlockState state,
             BlockEntityType<T> type
     ) {
-        return level.isClientSide()
-                ? createTickerHelper(
-                        type,
-                        InitBlocks.ALCHEMIST_STORAGE_BOX_BLOCK_ENTITY.get(),
-                        AlchemistStorageBoxBlockEntity::lidAnimateTick)
-                : null;
+        return level.isClientSide() ? createTickerHelper(
+                type,
+                InitBlocks.ALCHEMIST_STORAGE_BOX_BLOCK_ENTITY.get(),
+                AlchemistStorageBoxBlockEntity::lidAnimateTick
+        ) : null;
     }
 
     @Override

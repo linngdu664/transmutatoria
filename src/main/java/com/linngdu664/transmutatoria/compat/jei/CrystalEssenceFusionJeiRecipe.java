@@ -1,4 +1,4 @@
-package com.linngdu664.transmutatoria.jei;
+package com.linngdu664.transmutatoria.compat.jei;
 
 import com.linngdu664.transmutatoria.util.EssenceMetal;
 

@@ -10,14 +10,14 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public record CrucibleSetPolarityPayload(BlockPos blockPos, int polarity) implements CustomPacketPayload {
+public record CrucibleSetPolarityPayload(BlockPos blockPos, byte polarity) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<CrucibleSetPolarityPayload> TYPE =
             new CustomPacketPayload.Type<>(ArsTransmutatoria.makeMyIdentifier("crucible_set_polarity"));
 
     public static final StreamCodec<ByteBuf, CrucibleSetPolarityPayload> STREAM_CODEC =
             StreamCodec.composite(
                     BlockPos.STREAM_CODEC, CrucibleSetPolarityPayload::blockPos,
-                    ByteBufCodecs.VAR_INT, CrucibleSetPolarityPayload::polarity,
+                    ByteBufCodecs.BYTE, CrucibleSetPolarityPayload::polarity,
                     CrucibleSetPolarityPayload::new
             );
 

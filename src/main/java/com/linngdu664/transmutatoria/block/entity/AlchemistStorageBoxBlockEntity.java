@@ -49,6 +49,10 @@ public class AlchemistStorageBoxBlockEntity extends BlockEntity implements LidBl
             playSound(level, pos, SoundEvents.CHEST_CLOSE);
         }
 
+        private static void playSound(Level level, BlockPos pos, SoundEvent sound) {
+            level.playSound(null, pos, sound, SoundSource.BLOCKS, 0.5F, level.getRandom().nextFloat() * 0.1F + 0.9F);
+        }
+
         @Override
         protected void openerCountChanged(Level level, BlockPos pos, BlockState state, int previousCount, int currentCount) {
             level.blockEvent(pos, state.getBlock(), 1, currentCount);
@@ -65,9 +69,7 @@ public class AlchemistStorageBoxBlockEntity extends BlockEntity implements LidBl
     }
 
     public int getBoxState() {
-        return getBlockState().getBlock() instanceof AlchemistStorageBoxBlock storageBox
-                ? storageBox.getBoxState()
-                : 0;
+        return getBlockState().getBlock() instanceof AlchemistStorageBoxBlock storageBox ? storageBox.getBoxState() : 0;
     }
 
     public ItemStack createItemStack() {
@@ -80,23 +82,8 @@ public class AlchemistStorageBoxBlockEntity extends BlockEntity implements LidBl
         return itemHandler;
     }
 
-    public static void lidAnimateTick(
-            Level level,
-            BlockPos pos,
-            BlockState state,
-            AlchemistStorageBoxBlockEntity storageBox
-    ) {
+    public static void lidAnimateTick(Level level, BlockPos pos, BlockState state, AlchemistStorageBoxBlockEntity storageBox) {
         storageBox.lidController.tickLid();
-    }
-
-    private static void playSound(Level level, BlockPos pos, SoundEvent sound) {
-        level.playSound(
-                null,
-                pos,
-                sound,
-                SoundSource.BLOCKS,
-                0.5F,
-                level.getRandom().nextFloat() * 0.1F + 0.9F);
     }
 
     @Override

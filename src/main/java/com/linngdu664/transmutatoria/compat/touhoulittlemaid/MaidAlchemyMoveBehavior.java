@@ -51,7 +51,7 @@ final class MaidAlchemyMoveBehavior extends MaidCheckRateTask {
 
     private BlockPos findNearestCrucible(ServerLevel level, EntityMaid maid) {
         BlockPos center = maid.getBrainSearchPos();
-        int radius = Math.max(1, (int) maid.getHomeRadius());
+        int radius = Math.max(1, maid.getHomeRadius());
         int minChunkX = SectionPos.blockToSectionCoord(center.getX() - radius);
         int maxChunkX = SectionPos.blockToSectionCoord(center.getX() + radius);
         int minChunkZ = SectionPos.blockToSectionCoord(center.getZ() - radius);

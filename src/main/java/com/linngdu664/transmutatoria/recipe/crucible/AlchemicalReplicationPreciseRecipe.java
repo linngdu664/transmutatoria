@@ -33,8 +33,8 @@ public record AlchemicalReplicationPreciseRecipe(
                 ItemStackTemplate.CODEC.fieldOf("output").forGetter(AlchemicalReplicationPreciseRecipe::output),
                 Codec.BOOL.optionalFieldOf("one_time", false).forGetter(AlchemicalReplicationPreciseRecipe::oneTime),
                 LevelFunction.CODEC.optionalFieldOf("level", new FixedLevel(2, 2)).forGetter(AlchemicalReplicationPreciseRecipe::level),
-                Codec.INT.optionalFieldOf("min_polarity", -50).forGetter(AlchemicalReplicationPreciseRecipe::minPolarity),
-                Codec.INT.optionalFieldOf("max_polarity", 50).forGetter(AlchemicalReplicationPreciseRecipe::maxPolarity)
+                Codec.INT.optionalFieldOf("min_polarity", MIN_POLARITY).forGetter(AlchemicalReplicationPreciseRecipe::minPolarity),
+                Codec.INT.optionalFieldOf("max_polarity", MAX_POLARITY).forGetter(AlchemicalReplicationPreciseRecipe::maxPolarity)
         ).apply(inst, AlchemicalReplicationPreciseRecipe::new))
                 .validate(recipe -> recipe.isValid()
                         ? DataResult.success(recipe)

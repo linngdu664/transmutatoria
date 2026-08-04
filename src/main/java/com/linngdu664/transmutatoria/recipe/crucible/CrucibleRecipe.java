@@ -4,6 +4,9 @@ import com.linngdu664.transmutatoria.recipe.crucible.level_function.LevelFunctio
 import net.minecraft.world.item.ItemStack;
 
 public interface CrucibleRecipe {
+    int MIN_POLARITY = -50;
+    int MAX_POLARITY = 50;
+
     boolean oneTime();
     LevelFunction level();
     int minPolarity();

@@ -5,7 +5,7 @@ import com.linngdu664.transmutatoria.recipe.crucible.level_function.LevelFunctio
 import net.minecraft.world.item.ItemStack;
 
 public final class AlchemicalEmptyRecipe implements CrucibleRecipe {
-    public static AlchemicalEmptyRecipe INSTANCE = new AlchemicalEmptyRecipe();
+    public static final AlchemicalEmptyRecipe INSTANCE = new AlchemicalEmptyRecipe();
 
     private AlchemicalEmptyRecipe() {}
 

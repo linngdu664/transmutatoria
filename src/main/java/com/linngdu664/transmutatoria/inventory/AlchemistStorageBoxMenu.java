@@ -277,7 +277,7 @@ public class AlchemistStorageBoxMenu extends AbstractContainerMenu {
 
         @Override
         public void clearContent() {
-            items.replaceAll(ignored -> ItemStack.EMPTY);
+            items.clear();
             saveToStack();
         }
     }

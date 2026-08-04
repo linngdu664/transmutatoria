@@ -1,4 +1,4 @@
-package com.linngdu664.transmutatoria.jei;
+package com.linngdu664.transmutatoria.compat.jei;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.client.gui.texture.Textures;

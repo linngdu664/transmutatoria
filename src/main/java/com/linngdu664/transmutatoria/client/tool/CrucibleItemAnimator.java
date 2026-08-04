@@ -45,13 +45,11 @@ public class CrucibleItemAnimator {
         states0 = states1;
         inputScale0 = inputScale1;
 
-        if (stopTimer != 0) {
+        if (stopTimer > 0) {
             stopTimer--;
             if (stopTimer == 0) {
                 suppressInputSlotScale = false;
             }
-        } else if (targetTimer != 0 && processTimer >= targetTimer) {
-            stopTimer = TIME_PER_ESSENCE;
         }
 
         int timer = Math.max(Math.max(Math.min(processTimer, TIME_PER_ESSENCE), Math.min(stopTimer, TIME_PER_ESSENCE)), 0);
@@ -89,16 +87,20 @@ public class CrucibleItemAnimator {
         }
     }
 
-    public CrucibleRSlotPose extractPose(int rendererSlot, int realSlot, float partialTicks) {
-        CrucibleRSlotState s0 = states0[rendererSlot];
-        CrucibleRSlotState s1 = states1[rendererSlot];
-        return s0.lerp(s1, partialTicks, getScaleForSlot(realSlot, partialTicks));
+    public void onReactionFinished() {
+        stopTimer = TIME_PER_ESSENCE;
     }
 
     public void onInputSlotFilled() {
         if (stopTimer > 0) {
             suppressInputSlotScale = true;
         }
+    }
+
+    public CrucibleRSlotPose extractPose(int rendererSlot, int realSlot, float partialTicks) {
+        CrucibleRSlotState s0 = states0[rendererSlot];
+        CrucibleRSlotState s1 = states1[rendererSlot];
+        return s0.lerp(s1, partialTicks, getScaleForSlot(realSlot, partialTicks));
     }
 
     private float getScaleForSlot(int realSlot, float partialTicks) {

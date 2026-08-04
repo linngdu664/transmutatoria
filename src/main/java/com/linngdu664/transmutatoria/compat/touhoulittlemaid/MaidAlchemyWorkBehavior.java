@@ -67,7 +67,7 @@ final class MaidAlchemyWorkBehavior extends Behavior<EntityMaid> {
         maid.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
 
         // 反应过程中只观察，不对锅内物品做任何修改。
-        if (crucible.getTargetTimer() != 0) {
+        if (crucible.getTargetTimer() > 0) {
             return;
         }
         if (crucible.hasAnyOutput()) {

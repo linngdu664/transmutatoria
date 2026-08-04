@@ -22,6 +22,7 @@ import com.linngdu664.transmutatoria.util.alchemy_slots.AbstractAlchemySlot;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -94,20 +95,18 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     // 源质输入 - 源质输出 - 催化剂 - 转化输入 - 转化输出
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
     private int[] realSlotToRendererSlot = new int[SLOT_COUNT];
-    private IntArrayList inputOrder = new IntArrayList();   // server only
-    private int rendererSlotUsage;  // server only
-    private int acceptedCatalysts = -1; // server only，限制催化剂类型，用于演示
-    private boolean canTakeCatalyst = true; // server only，限制取出催化剂，用于演示
     private int polarity;
     private int selectedSlot;
     private int processTimer;
     private int targetTimer;
+    private IntArrayList inputOrder = new IntArrayList();   // server only
+    private int rendererSlotUsage;  // server only
+    private int acceptedCatalysts = -1; // server only，限制催化剂类型，用于演示
+    private boolean canTakeCatalyst = true; // server only，限制取出催化剂，用于演示
     @Nullable
     private UUID reactionStarter;   // server only
     private int essenceInputPulseSlot = -1; // client only
     private long essenceInputPulseStartedAtMillis;  // client only
-    private int previousClientProcessTimer;  // client only
-    private int previousClientTargetTimer;  // client only
     @Nullable
     private CrucibleItemAnimator animator;  // client only
 
@@ -164,9 +163,9 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             if (level instanceof ServerLevel serverLevel) {
                 int water = getAmountAsInt(0);
                 PacketDistributor.sendToPlayersTrackingChunk(serverLevel, getChunkPos(), new CrucibleSetWaterPayload(getBlockPos(), water));
-                if (targetTimer == 0 && !hasAnyOutput()) {
+                if (targetTimer <= 0 && !hasAnyOutput()) {
                     tryReact(null);
-                } else if (targetTimer != 0 && water < getRequiredWater()) {
+                } else if (targetTimer > 0 && water < getRequiredWater()) {
                     setAndSyncReset(false);
                 }
             }
@@ -403,20 +402,29 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         if (!(blockEntity instanceof TransmutationCrucibleBlockEntity crucible)) {
             return;
         }
+
+        int targetTimer = crucible.targetTimer;
+        int processTimer = crucible.processTimer;
+
         if (level.isClientSide()) {
-            crucible.tickClientParticles();
+            if (targetTimer > 0 && processTimer < targetTimer - AlchemyGatherParticle.LIFETIME) {
+                AlchemyParticleSpawner.spawnGather((ClientLevel) level, pos, crucible.polarity);
+            }
             if (crucible.animator != null) {
-                crucible.animator.tick(crucible.processTimer, crucible.targetTimer);
+                crucible.animator.tick(processTimer, targetTimer);
+            }
+            if (targetTimer > 0 && processTimer < targetTimer) {
+                crucible.processTimer = processTimer + 1;
             }
             return;
         }
-        if (crucible.targetTimer != 0) {
-            // targetTimer != 0 说明正在运行
-            if (crucible.processTimer >= crucible.targetTimer) {
+
+        if (targetTimer > 0) {
+            // targetTimer > 0 说明正在运行，运行时不能处理过期逻辑
+            if (processTimer >= targetTimer) {
                 crucible.clearInputAndSetAllOutput();   // 反应结果
             } else {
-                crucible.processTimer++;
-                PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, crucible.getChunkPos(), new CrucibleSetProcessTimerPayload(pos, crucible.processTimer));
+                crucible.processTimer = processTimer + 1;
             }
             crucible.setChanged();
         } else {
@@ -447,7 +455,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     public void adjustPolarityWithPhilosophersStone() {
         if (polarity != 0) {
             polarity += polarity < 0 ? 1 : -1;
-            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetPolarityPayload(getBlockPos(), polarity));
+            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetPolarityPayload(getBlockPos(), (byte) polarity));
             level.playSound(null, getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5,
                     SoundEvents.END_PORTAL_FRAME_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
             setChanged();
@@ -455,7 +463,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     }
 
     public boolean canAddCatalyst(ItemStack itemStack) {
-        return targetTimer == 0 && !hasAnyOutput() && getCatalyst().isEmpty()
+        return targetTimer <= 0 && !hasAnyOutput() && getCatalyst().isEmpty()
                 && (itemStack.is(Items.ENDER_EYE) && (acceptedCatalysts & ENDER_EYE_MASK) != 0
                 || itemStack.is(InitItems.TRANSMUTATION_CRYSTAL) && (acceptedCatalysts & TRANSMUTATION_CRYSTAL_MASK) != 0
                 || itemStack.is(InitItems.PHILOSOPHERS_STONE) && (acceptedCatalysts & PHILOSOPHERS_STONE_MASK) != 0
@@ -464,7 +472,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     }
 
     public boolean canAddInput(ItemStack itemStack) {
-        if (targetTimer != 0 || hasAnyOutput() || !getInput().isEmpty() || itemStack.isEmpty()) {
+        if (targetTimer > 0 || hasAnyOutput() || !getInput().isEmpty() || itemStack.isEmpty()) {
             return false;
         }
         ItemStack catalyst = getCatalyst();
@@ -490,7 +498,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     }
 
     public boolean canAddEssence(int slot, ItemStack itemStack) {
-        if (targetTimer != 0 || hasAnyOutput() || !(itemStack.getItem() instanceof EssenceMetalItem) || slot < ESSENCE_INPUT_SLOT_BEGIN || !items.get(slot).isEmpty()) {
+        if (targetTimer > 0 || hasAnyOutput() || !(itemStack.getItem() instanceof EssenceMetalItem) || slot < ESSENCE_INPUT_SLOT_BEGIN || !items.get(slot).isEmpty()) {
             return false;
         }
         ItemStack catalyst = getCatalyst();
@@ -607,7 +615,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
      */
     public ItemStack extractMaidSelectedInputEssence() {
         int slot = ESSENCE_INPUT_SLOT_BEGIN + getSelectedSlot();
-        if (targetTimer != 0 || slot < ESSENCE_INPUT_SLOT_BEGIN || slot >= ESSENCE_OUTPUT_SLOT_BEGIN) {
+        if (targetTimer > 0 || slot < ESSENCE_INPUT_SLOT_BEGIN || slot >= ESSENCE_OUTPUT_SLOT_BEGIN) {
             return ItemStack.EMPTY;
         }
         ItemStack result = items.get(slot).copy();
@@ -634,7 +642,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
      * 女仆直接收走反应输出；催化剂卷轴和尚未反应的输入不会被移动。
      */
     public List<ItemStack> extractAllMaidAlchemyOutputs() {
-        if (targetTimer != 0 || !hasAnyOutput()) {
+        if (targetTimer > 0 || !hasAnyOutput()) {
             return List.of();
         }
         ArrayList<ItemStack> result = new ArrayList<>();
@@ -664,7 +672,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getCatalyst());
             level.addFreshEntity(itemEntity);
             PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), clearItemAndRecordChange(CATALYST_SLOT, new ArrayList<>())));
-            setAndSyncReset(true);
+            setAndSyncReset(false);
             setChanged();
         }
     }
@@ -673,7 +681,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getInput());
         level.addFreshEntity(itemEntity);
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), clearItemAndRecordChange(INPUT_SLOT, new ArrayList<>())));
-        setAndSyncReset(true);
+        setAndSyncReset(false);
         setChanged();
     }
 
@@ -837,7 +845,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             this.inputOrder.clear();
         }
         this.reactionStarter = null;
-        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleResetPayload(getBlockPos(), polarity));
+        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleResetPayload(getBlockPos()));
     }
 
     private void tryReact(TransactionContext txContext) {
@@ -934,9 +942,13 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
             } else {
                 ((ServerLevel) level).sendParticles(ParticleTypes.FIREWORK, centerX, centerY + 0.625, centerZ, 6, 0.125, 0.125, 0.125, 0.06);
             }
-            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(blockPos, itemStackUpdate));
             // 先重置 timer，否则 waterHandler 可能会多发一个包，虽然无伤大雅
-            setAndSyncReset(true);
+            this.processTimer = 0;
+            this.targetTimer = 0;
+            this.selectedSlot = 0;
+            this.inputOrder.clear();
+            this.reactionStarter = null;
+            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleFinishPayload(getBlockPos(), (byte) polarity, itemStackUpdate));
             // 消耗水
             try (var tx = Transaction.openRoot()) {
                 waterHandler.extract(0, FluidResource.of(Fluids.WATER), requiredWater, tx);
@@ -1168,18 +1180,6 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
 
     private ChunkPos getChunkPos() {
         return new ChunkPos(SectionPos.blockToSectionCoord(getBlockPos().getX()), SectionPos.blockToSectionCoord(getBlockPos().getZ()));
-    }
-
-    private void tickClientParticles() {
-        if (targetTimer > 0) {
-            if (processTimer < targetTimer - AlchemyGatherParticle.LIFETIME) {
-                AlchemyParticleSpawner.spawnGather((net.minecraft.client.multiplayer.ClientLevel) level, getBlockPos(), polarity);
-            }
-        } else if (previousClientTargetTimer > 0 && previousClientProcessTimer >= previousClientTargetTimer) {
-            AlchemyParticleSpawner.spawnBurst((net.minecraft.client.multiplayer.ClientLevel) level, getBlockPos(), polarity);
-        }
-        previousClientProcessTimer = processTimer;
-        previousClientTargetTimer = targetTimer;
     }
 
     private void awardReactionStarter(Identifier advancementId) {
