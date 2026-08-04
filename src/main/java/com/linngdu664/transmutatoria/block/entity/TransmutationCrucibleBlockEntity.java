@@ -668,7 +668,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     }
 
     public void takeCatalyst(Player player) {
-        if (canTakeCatalyst) {
+        if (player.isCreative() || canTakeCatalyst) {
             ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getCatalyst());
             level.addFreshEntity(itemEntity);
             PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), clearItemAndRecordChange(CATALYST_SLOT, new ArrayList<>())));
