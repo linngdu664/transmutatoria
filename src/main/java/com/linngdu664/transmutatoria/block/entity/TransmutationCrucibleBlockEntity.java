@@ -96,7 +96,8 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     private int[] realSlotToRendererSlot = new int[SLOT_COUNT];
     private IntArrayList inputOrder = new IntArrayList();   // server only
     private int rendererSlotUsage;  // server only
-    private int acceptedCatalysts = -1; // server only，限制催化剂类型，用于演示模式
+    private int acceptedCatalysts = -1; // server only，限制催化剂类型，用于演示
+    private boolean canTakeCatalyst = true; // server only，限制取出催化剂，用于演示
     private int polarity;
     private int selectedSlot;
     private int processTimer;
@@ -338,6 +339,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         output.putIntArray("RealSlotToRendererSlot", realSlotToRendererSlot);
         output.putInt("RendererSlotUsage", rendererSlotUsage);
         output.putInt("AcceptedCatalysts", acceptedCatalysts);
+        output.putBoolean("CanTakeCatalyst", canTakeCatalyst);
     }
 
     @Override
@@ -360,6 +362,7 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
         });
         rendererSlotUsage = input.getIntOr("RendererSlotUsage", 0);
         acceptedCatalysts = input.getIntOr("AcceptedCatalysts", -1);
+        canTakeCatalyst = input.getBooleanOr("CanTakeCatalyst", true);
     }
 
     @Override
@@ -657,11 +660,13 @@ public class TransmutationCrucibleBlockEntity extends BlockEntity {
     }
 
     public void takeCatalyst(Player player) {
-        ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getCatalyst());
-        level.addFreshEntity(itemEntity);
-        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), clearItemAndRecordChange(CATALYST_SLOT, new ArrayList<>())));
-        setAndSyncReset(true);
-        setChanged();
+        if (canTakeCatalyst) {
+            ItemEntity itemEntity = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), getCatalyst());
+            level.addFreshEntity(itemEntity);
+            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, getChunkPos(), new CrucibleSetItemPayload(getBlockPos(), clearItemAndRecordChange(CATALYST_SLOT, new ArrayList<>())));
+            setAndSyncReset(true);
+            setChanged();
+        }
     }
 
     public void takeInput(Player player) {
