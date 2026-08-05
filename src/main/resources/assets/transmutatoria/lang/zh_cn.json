@@ -215,7 +215,6 @@
   "key.category.transmutatoria.main": "混沌炼金",
   "key.transmutatoria.toggle_crucible_hud": "开关炼金锅HUD",
   "gui.transmutatoria.crucible_hint.hud_on": "<%s> 开启HUD",
-  "gui.transmutatoria.crucible_hint.hud_on_with_essence": "储物盒源质：%s\n<%s> 开启HUD",
   "gui.transmutatoria.crucible_hint.hud_off": "<Shift+滚轮> 选择槽位\n<%s> 关闭HUD",
   "gui.transmutatoria.crucible_hint.storage_box_ring_expand": "<滚轮> 选择源质\n<Alt> 展开轮盘",
 

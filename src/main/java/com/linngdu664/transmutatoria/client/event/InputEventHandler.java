@@ -14,29 +14,29 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
-// 处理手持炼金术士储物盒对准炼金锅时的滚轮事件，旋转外圈刻度
 @EventBusSubscriber(modid = ArsTransmutatoria.MODID, value = Dist.CLIENT)
 public class InputEventHandler {
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onMouseScroll(InputEvent.MouseScrollingEvent event) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
 
+        if (RenderGuiEventHandler.isHudManuallyHidden) {
+            return;
+        }
         BlockHitResult blockHit = testCrucible(mc, player);
         if (blockHit == null) {
             return;
         }
 
         if (mc.hasShiftDown()) {
-            if (RenderGuiEventHandler.isHudManuallyHidden) {
-                return;
-            }
             ClientPacketDistributor.sendToServer(new ChangeCrucibleSelectedSlotPayload(blockHit.getBlockPos(), event.getScrollDeltaY() < 0));
             // 取消原版滚轮事件（切换快捷栏）
             event.setCanceled(true);

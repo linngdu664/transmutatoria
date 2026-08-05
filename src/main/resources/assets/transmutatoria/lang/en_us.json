@@ -215,7 +215,6 @@
   "key.category.transmutatoria.main": "Transmutatoria",
   "key.transmutatoria.toggle_crucible_hud": "Toggle Crucible HUD",
   "gui.transmutatoria.crucible_hint.hud_on": "<%s> Show HUD",
-  "gui.transmutatoria.crucible_hint.hud_on_with_essence": "Box ess.: %s\n<%s> Show HUD",
   "gui.transmutatoria.crucible_hint.hud_off": "<Shift+Scroll> Select slot\n<%s> Hide HUD",
   "gui.transmutatoria.crucible_hint.storage_box_ring_expand": "<Scroll> Select ess.\n<Alt> Expand wheel",
 
