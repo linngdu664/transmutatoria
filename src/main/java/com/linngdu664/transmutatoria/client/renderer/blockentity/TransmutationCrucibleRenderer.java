@@ -2,6 +2,8 @@ package com.linngdu664.transmutatoria.client.renderer.blockentity;
 
 import com.linngdu664.transmutatoria.ArsTransmutatoria;
 import com.linngdu664.transmutatoria.block.entity.TransmutationCrucibleBlockEntity;
+import com.linngdu664.transmutatoria.client.renderer.effect.CrucibleHeatHazeCapture;
+import com.linngdu664.transmutatoria.client.renderer.effect.CrucibleHeatHazeRenderType;
 import com.linngdu664.transmutatoria.client.renderer.state.blockentity.CrucibleRSlotPose;
 import com.linngdu664.transmutatoria.client.renderer.state.blockentity.TransmutationCrucibleRenderState;
 import com.linngdu664.transmutatoria.client.tool.CrucibleItemAnimator;
@@ -82,6 +84,8 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
     private static final float INTERIOR_LIGHT_BOTTOM_Y = 5.0F / 16.0F + INTERIOR_LIGHT_WALL_OFFSET;
     private static final float CRUCIBLE_OPENING_Y = 15.0F / 16.0F + INTERIOR_LIGHT_WALL_OFFSET;
     private static final float INTERIOR_LIGHT_TOP_Y = 20.0F / 16.0F;
+    private static final float HEAT_HAZE_TOP_Y = 2.15F;
+    private static final float IDLE_HEAT_HAZE_STRENGTH = 0.28F;
     private static final int INTERIOR_LIGHT_BOTTOM_ALPHA = 224;
     private static final int INTERIOR_LIGHT_TOP_ALPHA = 0;
     private static final int MIN_POLARITY = -50;
@@ -113,6 +117,12 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.waterAmount = blockEntity.getWaterAmount();
         state.waterColor = getWaterColor(blockEntity);
+        state.heatHazeStrength = state.waterAmount <= 0
+                ? 0.0F
+                : blockEntity.getTargetTimer() > 0 ? 1.0F : IDLE_HEAT_HAZE_STRENGTH;
+        if (state.heatHazeStrength > 0.0F) {
+            CrucibleHeatHazeCapture.request();
+        }
 
         CrucibleItemAnimator animator = blockEntity.getAnimator();
         if (animator == null) {
@@ -170,6 +180,18 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
             );
         }
 
+        if (state.heatHazeStrength > 0.0F) {
+            poseStack.pushPose();
+            poseStack.translate(0.5F, 1.0F, 0.5F);
+            poseStack.mulPose(camera.orientation);
+            submitNodeCollector.submitCustomGeometry(
+                    poseStack,
+                    CrucibleHeatHazeRenderType.get(),
+                    (pose, buffer) -> renderHeatHaze(pose, buffer, state.heatHazeStrength)
+            );
+            poseStack.popPose();
+        }
+
         int openingLightColor = compensateWhiteWaterTexture(state.waterColor);
         submitNodeCollector.submitCustomGeometry(
                 poseStack,
@@ -188,7 +210,48 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
     @Override
     public AABB getRenderBoundingBox(TransmutationCrucibleBlockEntity blockEntity) {
         var pos = blockEntity.getBlockPos();
-        return new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + INTERIOR_LIGHT_TOP_Y, pos.getZ() + 1);
+        return new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + HEAT_HAZE_TOP_Y, pos.getZ() + 1);
+    }
+
+    private static void renderHeatHaze(PoseStack.Pose pose, VertexConsumer buffer, float strength) {
+        int strengthByte = Mth.clamp(Math.round(strength * 255.0F), 0, 255);
+        heatHazeQuad(pose, buffer, -0.42F, -0.03F, 0.42F, 0.90F, 0.0F, strengthByte, 37, 210);
+        heatHazeQuad(pose, buffer, -0.34F, 0.07F, 0.34F, 1.08F, 0.012F, strengthByte, 173, 145);
+    }
+
+    private static void heatHazeQuad(
+            PoseStack.Pose pose,
+            VertexConsumer buffer,
+            float minX,
+            float minY,
+            float maxX,
+            float maxY,
+            float z,
+            int strength,
+            int phase,
+            int alpha
+    ) {
+        heatHazeVertex(pose, buffer, minX, minY, z, 0.0F, 0.0F, strength, phase, alpha);
+        heatHazeVertex(pose, buffer, maxX, minY, z, 1.0F, 0.0F, strength, phase, alpha);
+        heatHazeVertex(pose, buffer, maxX, maxY, z, 1.0F, 1.0F, strength, phase, alpha);
+        heatHazeVertex(pose, buffer, minX, maxY, z, 0.0F, 1.0F, strength, phase, alpha);
+    }
+
+    private static void heatHazeVertex(
+            PoseStack.Pose pose,
+            VertexConsumer buffer,
+            float x,
+            float y,
+            float z,
+            float u,
+            float v,
+            int strength,
+            int phase,
+            int alpha
+    ) {
+        buffer.addVertex(pose, x, y, z)
+                .setUv(u, v)
+                .setColor(strength, phase, 0, alpha);
     }
 
     private static int getWaterColor(TransmutationCrucibleBlockEntity blockEntity) {

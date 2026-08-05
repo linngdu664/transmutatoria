@@ -9,5 +9,6 @@ import java.util.ArrayList;
 public class TransmutationCrucibleRenderState extends BlockEntityRenderState {
     public int waterAmount;
     public int waterColor;
+    public float heatHazeStrength;
     public final ArrayList<Pair<ItemStackRenderState, CrucibleRSlotPose>> itemAndPoses = new ArrayList<>();
 }
