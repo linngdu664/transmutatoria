@@ -112,6 +112,7 @@ final class MaidAlchemyInventory {
         if (keepSelectedSlot) {
             entity.addTag(TransmutationCrucibleBlockEntity.MAID_ALCHEMY_DROP_TAG);
         }
+        entity.setDefaultPickUpDelay();
         level.addFreshEntity(entity);
     }
 

@@ -79,7 +79,8 @@ public class AlchemistStorageBoxItem extends BlockItem {
                         stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items));
 
                         Vec3 dropPos = pos.getCenter().add(0, 0.5, 0);
-                        ItemEntity itemEntity = new ItemEntity(level, dropPos.x, dropPos.y, dropPos.z, toDrop,0,0,0);
+                        ItemEntity itemEntity = new ItemEntity(level, dropPos.x, dropPos.y, dropPos.z, toDrop, 0, 0, 0);
+                        itemEntity.setDefaultPickUpDelay();
                         level.addFreshEntity(itemEntity);
                     }
                 }
