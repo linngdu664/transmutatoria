@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class CrucibleHeatHazeCapture extends AbstractTexture {
     public static final Identifier TEXTURE_ID = ArsTransmutatoria.makeMyIdentifier("dynamic/crucible_heat_haze_scene");
 
-    private static final CrucibleHeatHazeCapture INSTANCE = new CrucibleHeatHazeCapture();
     private static final AtomicBoolean REQUESTED = new AtomicBoolean();
 
     private boolean registered;
@@ -44,8 +43,16 @@ public final class CrucibleHeatHazeCapture extends AbstractTexture {
     @SubscribeEvent
     public static void captureAfterOpaqueFeatures(RenderLevelStageEvent.AfterOpaqueFeatures event) {
         if (REQUESTED.getAndSet(false)) {
-            INSTANCE.capture();
+            LazyInstance.INSTANCE.capture();
         }
+    }
+
+    /**
+     * Event subscriber classes are initialized during mod loading, before the renderer's sampler cache.
+     * Defer constructing the texture until the first world-frame capture so its sampler is valid.
+     */
+    private static final class LazyInstance {
+        private static final CrucibleHeatHazeCapture INSTANCE = new CrucibleHeatHazeCapture();
     }
 
     private void capture() {

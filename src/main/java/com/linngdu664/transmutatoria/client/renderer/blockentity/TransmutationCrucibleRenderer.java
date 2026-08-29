@@ -84,8 +84,9 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
     private static final float INTERIOR_LIGHT_BOTTOM_Y = 5.0F / 16.0F + INTERIOR_LIGHT_WALL_OFFSET;
     private static final float CRUCIBLE_OPENING_Y = 15.0F / 16.0F + INTERIOR_LIGHT_WALL_OFFSET;
     private static final float INTERIOR_LIGHT_TOP_Y = 20.0F / 16.0F;
-    private static final float HEAT_HAZE_TOP_Y = 2.15F;
-    private static final float IDLE_HEAT_HAZE_STRENGTH = 0.28F;
+    private static final float HEAT_HAZE_TOP_Y = 2.70F;
+    private static final float HEAT_HAZE_HORIZONTAL_PADDING = 0.25F;
+    private static final float IDLE_HEAT_HAZE_STRENGTH = 0.65F;
     private static final int INTERIOR_LIGHT_BOTTOM_ALPHA = 224;
     private static final int INTERIOR_LIGHT_TOP_ALPHA = 0;
     private static final int MIN_POLARITY = -50;
@@ -210,13 +211,20 @@ public class TransmutationCrucibleRenderer implements BlockEntityRenderer<Transm
     @Override
     public AABB getRenderBoundingBox(TransmutationCrucibleBlockEntity blockEntity) {
         var pos = blockEntity.getBlockPos();
-        return new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + HEAT_HAZE_TOP_Y, pos.getZ() + 1);
+        return new AABB(
+                pos.getX() - HEAT_HAZE_HORIZONTAL_PADDING,
+                pos.getY(),
+                pos.getZ() - HEAT_HAZE_HORIZONTAL_PADDING,
+                pos.getX() + 1 + HEAT_HAZE_HORIZONTAL_PADDING,
+                pos.getY() + HEAT_HAZE_TOP_Y,
+                pos.getZ() + 1 + HEAT_HAZE_HORIZONTAL_PADDING
+        );
     }
 
     private static void renderHeatHaze(PoseStack.Pose pose, VertexConsumer buffer, float strength) {
         int strengthByte = Mth.clamp(Math.round(strength * 255.0F), 0, 255);
-        heatHazeQuad(pose, buffer, -0.42F, -0.03F, 0.42F, 0.90F, 0.0F, strengthByte, 37, 210);
-        heatHazeQuad(pose, buffer, -0.34F, 0.07F, 0.34F, 1.08F, 0.012F, strengthByte, 173, 145);
+        heatHazeQuad(pose, buffer, -0.62F, -0.05F, 0.62F, 1.35F, 0.0F, strengthByte, 37, 230);
+        heatHazeQuad(pose, buffer, -0.52F, 0.08F, 0.52F, 1.58F, 0.012F, strengthByte, 173, 190);
     }
 
     private static void heatHazeQuad(

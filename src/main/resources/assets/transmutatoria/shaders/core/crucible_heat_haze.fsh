@@ -29,12 +29,12 @@ void main() {
     vec2 pixelSize = 1.0 / sceneSize;
     float strength = parameters.r;
     vec2 offset = vec2(waveA + waveB * 0.45, waveB * 0.20);
-    offset *= pixelSize * mix(1.5, 4.0, strength) * mask;
+    offset *= pixelSize * mix(4.0, 10.0, strength) * mask;
 
     vec2 screenUv = gl_FragCoord.xy / sceneSize;
     screenUv = clamp(screenUv + offset, pixelSize, vec2(1.0) - pixelSize);
 
     vec3 refracted = texture(SceneSampler, screenUv).rgb;
-    float alpha = mask * mix(0.20, 0.55, strength) * parameters.a;
+    float alpha = mask * mix(0.32, 0.68, strength) * parameters.a;
     fragColor = vec4(refracted, alpha);
 }
