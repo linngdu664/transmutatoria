@@ -66,6 +66,20 @@ items:
 前面的章节中，所有槽位的行为都遵循基础的相生相克规则。但当配方等级**超过 8** 时，有概率出现**特殊槽位**，它们会改变反应的行为。等级越高，特殊槽位出现概率越大、数量越多。
 
 有 12 种特殊槽位：
+<row>
+![劣化槽位](../textures/slots/deterioration.png)
+![活化槽位](../textures/slots/activation.png)
+![反转槽位](../textures/slots/inversion.png)
+![扩散槽位](../textures/slots/diffusion.png)
+![抑制槽位](../textures/slots/inhibition.png)
+![清理槽位](../textures/slots/purge.png)
+![还原槽位](../textures/slots/restoration.png)
+![共振槽位](../textures/slots/resonance.png)
+![活动槽位](../textures/slots/activity.png)
+![交换槽位](../textures/slots/exchange.png)
+![自旋槽位](../textures/slots/spin.png)
+![不稳槽位](../textures/slots/unstable.png)
+</row>
 
 | 槽位 | 行为 |
 |------|------|

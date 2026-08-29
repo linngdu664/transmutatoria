@@ -66,6 +66,20 @@ Mutation means you need to explore the correct essences again. Therefore, after 
 In the previous chapters, all slots followed the basic restraint and symbiosis rules. But when the recipe level is **above 8**, slots have a chance to be **special types** - they change how reactions behave. The higher the level, the higher the chance and number of special slots.
 
 There are currently 12 kinds of special slots:
+<row>
+![劣化槽位](../textures/slots/deterioration.png)
+![活化槽位](../textures/slots/activation.png)
+![反转槽位](../textures/slots/inversion.png)
+![扩散槽位](../textures/slots/diffusion.png)
+![抑制槽位](../textures/slots/inhibition.png)
+![清理槽位](../textures/slots/purge.png)
+![还原槽位](../textures/slots/restoration.png)
+![共振槽位](../textures/slots/resonance.png)
+![活动槽位](../textures/slots/activity.png)
+![交换槽位](../textures/slots/exchange.png)
+![自旋槽位](../textures/slots/spin.png)
+![不稳槽位](../textures/slots/unstable.png)
+</row>
 
 | Slot | Behavior |
 |------|------|
