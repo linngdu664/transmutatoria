@@ -14,11 +14,13 @@ import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jspecify.annotations.Nullable;
 
 import static com.linngdu664.transmutatoria.ArsTransmutatoria.MODID;
 
 public class InitItems {
     private static final String AGERATUM_MOD_ID = "ageratum";
+    private static final String PATCHOULI_MOD_ID = "patchouli";
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
@@ -126,7 +128,9 @@ public class InitItems {
     public static final DeferredItem<Item> EMERALD_TABLET = ITEMS.register("emerald_tablet", EmeraldTabletItem::new);
     public static final DeferredItem<Item> LIBER_TRANSMUTATIONIS_ARS_TRANSMUTATORIA = ITEMS.register("liber_transmutationis_ars_transmutatoria",
             LiberTransmutationisArsTransmutatoriaItem::new);
-    public static final DeferredItem<Item> CODEX_ALCHEMICA = ITEMS.register("codex_alchemica", CodexAlchemicaItem::new);
+    public static final @Nullable DeferredItem<Item> CODEX_ALCHEMICA = ModList.get().isLoaded(PATCHOULI_MOD_ID)
+            ? ITEMS.register("codex_alchemica", CodexAlchemicaItem::new)
+            : null;
 
     // ================= [ 卷轴 — 印记（复制） ] =================
     public static final DeferredItem<Item> TRANSMUTATION_SIGIL_SCROLL = ITEMS.register("transmutation_sigil_scroll",
@@ -245,7 +249,9 @@ public class InitItems {
                 output.accept(new ItemStack(PHILOSOPHERS_STONE.get()));
 
                 output.accept(new ItemStack(EMERALD_TABLET.get()));
-                output.accept(new ItemStack(CODEX_ALCHEMICA.get()));
+                if (CODEX_ALCHEMICA != null) {
+                    output.accept(new ItemStack(CODEX_ALCHEMICA.get()));
+                }
                 if (ModList.get().isLoaded(AGERATUM_MOD_ID)) {
                     output.accept(new ItemStack(LIBER_TRANSMUTATIONIS_ARS_TRANSMUTATORIA.get()));
                 }

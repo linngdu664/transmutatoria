@@ -141,20 +141,10 @@ dependencies {
     compileOnly "com.github.TouhouLittleMaid:TouhouLittleMaid-26.1:54c0184d6d"
     localRuntime "com.github.TouhouLittleMaid:TouhouLittleMaid-26.1:54c0184d6d"
 
-    // Patchouli powers the default guidebook and is shipped inside the mod jar.
-    // The range lets NeoForge negotiate a compatible external/embedded copy.
-    jarJar(implementation("vazkii.patchouli:patchouli-neoforge:${patchouli_version}")) {
-        version {
-            strictly "[26.1-94,26.2)"
-            prefer patchouli_version
-        }
-    }
-    jarJar(implementation("vazkii.patchouli:patchouli-xplat:${patchouli_version}")) {
-        version {
-            strictly "[26.1-94,26.2)"
-            prefer patchouli_version
-        }
-    }
+    // Optional Patchouli integration: compile against its API and provide the
+    // full mod only for local development. Patchouli is not bundled in our jar.
+    compileOnly "vazkii.patchouli:patchouli-neoforge:${patchouli_version}:api"
+    localRuntime "vazkii.patchouli:patchouli-neoforge:${patchouli_version}"
 
     // Example optional mod dependency with JEI
     // compile against the JEI API but do not include it at runtime

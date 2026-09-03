@@ -1,25 +1,22 @@
+<p align="center">
+  <img src="src/main/resources/transmutatoria.png" alt="Ars Transmutatoria logo" width="180">
+</p>
 
-Installation information
-=======
+# Ars Transmutatoria (Chaos Alchemy)
+[简体中文 README](doc/zh_cn/README.md)
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+Ars Transmutatoria is a Minecraft mod centered around alchemy. Use transmutation scrolls to discover recipes and create items through alchemical reactions.
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+## Core Gameplay
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+The mod adds 12 essences with relationships such as restraint and symbiosis. Each essence has four states: Nigredo, normal, Albedo, and Citrinitas.
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+For each crafting recipe, you must use alchemical reactions to deduce the items in its transmutation chain. Every item has a unique recipe, and recipes can change randomly over time. Essence reactions increase entropy; the higher a scroll's entropy, the faster its durability is consumed.
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+Once a recipe has been unlocked, you can use the corresponding essences to produce its result. Study the reaction results and derive each recipe in as few steps as possible.
+
+![Chaos Alchemy crucible HUD guide](src/main/resources/assets/transmutatoria/ageratum/textures/general_en_us.png)
+
+## Credits
+
+Created by **linngdu664** and **zx1316**. Licensed under the [GNU GPLv3](LICENSE.txt).

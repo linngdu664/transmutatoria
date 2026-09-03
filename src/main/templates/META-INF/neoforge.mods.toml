@@ -92,8 +92,8 @@ file="META-INF/accesstransformer.cfg"
 
 [[dependencies.${mod_id}]]
     modId="patchouli"
-    type="required"
-    reason="Provides the built-in Codex Alchemica guidebook."
+    type="optional"
+    reason="Enables the Codex Alchemica guidebook."
     versionRange="[26.1-94,26.2)"
     ordering="AFTER"
     side="BOTH"
