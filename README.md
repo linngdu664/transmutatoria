@@ -17,6 +17,9 @@ Once a recipe has been unlocked, you can use the corresponding essences to produ
 
 ![Chaos Alchemy crucible HUD guide](src/main/resources/assets/transmutatoria/ageratum/textures/general_en_us.png)
 
+## Tutorial book
+Install [Ageratum](https://www.curseforge.com/minecraft/mc-mods/ageratum) or [Patchouli](https://www.curseforge.com/minecraft/mc-mods/patchouli) to get the in-game tutorial book.
+
 ## Credits
 
 Created by **linngdu664** and **zx1316**. Licensed under the [GNU GPLv3](LICENSE.txt).

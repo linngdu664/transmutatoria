@@ -15,6 +15,9 @@
 
 ![混沌炼金锅 HUD 标注图](../../src/main/resources/assets/transmutatoria/ageratum/textures/general_zh_cn.png)
 
+## 教程书
+安装[藿香](https://www.curseforge.com/minecraft/mc-mods/ageratum)或[帕秋莉手册](https://www.curseforge.com/minecraft/mc-mods/patchouli)来获取内置教程书
+
 ## 制作人员
 
 由 **linngdu664** 与 **zx1316** 制作。采用 [GNU GPLv3](../../LICENSE.txt) 许可证。
