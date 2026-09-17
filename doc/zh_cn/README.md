@@ -2,7 +2,7 @@
   <img src="../../src/main/resources/transmutatoria.png" alt="Ars Transmutatoria 标志" width="180">
 </p>
 
-# Ars Transmutatoria（混沌炼金）
+# Ars Transmutatoria（嬗变工艺）
 [English README](../../README.md)
 
 这是一个以炼金术为主题的 Minecraft 模组。可以通过卷轴炼金合成物品。

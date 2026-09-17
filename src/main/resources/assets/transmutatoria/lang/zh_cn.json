@@ -1,5 +1,5 @@
 {
-  "itemGroup.transmutatoria": "混沌炼金",
+  "itemGroup.transmutatoria": "嬗变工艺",
   "block.transmutatoria.transmutation_crucible": "混沌炼金锅",
   "block.transmutatoria.alchemist_storage_box": "炼金术士储物盒",
   "block.transmutatoria.nigredo_alchemist_storage_box": "黑化炼金术士储物盒",
@@ -86,7 +86,7 @@
   "gui.transmutatoria.emerald_tablet.legend.double_restrain": "双重克制",
   "gui.transmutatoria.emerald_tablet.legend.mutual_restrained": "互克",
   "gui.transmutatoria.emerald_tablet.legend.symbiosis": "共生",
-  "item.transmutatoria.liber_transmutationis_ars_transmutatoria": "《转化秘典：混沌炼金术》",
+  "item.transmutatoria.liber_transmutationis_ars_transmutatoria": "《转化秘典：嬗变工艺》",
   "item.transmutatoria.codex_alchemica": "《炼金术全典：混沌嬗变》",
 
   "item.transmutatoria.transmutation_sigil_scroll": "嬗变印记卷",
@@ -212,7 +212,7 @@
   "tooltip.transmutatoria.scroll.expire.custom": "过期规则：周期 %d gt, 偏移 %d gt",
   "tooltip.transmutatoria.scroll.one_time": "一次性卷轴：成功反应后消耗",
 
-  "key.category.transmutatoria.main": "混沌炼金",
+  "key.category.transmutatoria.main": "嬗变工艺",
   "key.transmutatoria.toggle_crucible_hud": "开关炼金锅HUD",
   "gui.transmutatoria.crucible_hint.hud_on": "<%s> 开启HUD",
   "gui.transmutatoria.crucible_hint.hud_off": "<Shift+滚轮> 选择槽位\n<%s> 关闭HUD",
@@ -240,7 +240,7 @@
   "advancements.transmutatoria.deathless_philosopher.description": "贤者之石使你免于一次死亡。",
   "patchouli.transmutatoria.book.name": "《炼金术全典：混沌嬗变》",
   "patchouli.transmutatoria.book.subtitle": "炼金术士手册",
-  "patchouli.transmutatoria.book.landing_text": "世界由四柱承载：$(thing)星火、渊水、腐土、劫风$()。每柱分化出三种源质金属，共十二种。它们彼此滋生、压制或湮灭——这便是混沌炼金术的根基。$(br2)愿翠玉录的智慧指引你的道路。",
+  "patchouli.transmutatoria.book.landing_text": "世界由四柱承载：$(thing)星火、渊水、腐土、劫风$()。每柱分化出三种源质金属，共十二种。它们彼此滋生、压制或湮灭——这便是炼金术的根基。$(br2)愿翠玉录的智慧指引你的道路。",
   "message.transmutatoria.ageratum_guide.missing_backend": "安装藿香后即可打开本手册。",
   "task.transmutatoria.alchemy": "炼金",
   "task.transmutatoria.alchemy.desc": "寻找混沌炼金锅，自行合成卷轴配方产物。"
